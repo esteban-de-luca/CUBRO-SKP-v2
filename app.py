@@ -32,6 +32,7 @@ def _default_state() -> dict:
         "muebles": None,
         "selecciones_paso_1": {},
         "pedido_paso_2": None,
+        "entrada_modulo_c": None,
         "pending_csv": None,
         "uploader_nonce": 0,
         "csv_fallback_a_mock": False,
@@ -193,6 +194,7 @@ def _calcular_pedido_paso_2() -> list[dict]:
     selecciones = st.session_state.selecciones_paso_1 or {}
     catalogo = modulo_b._cargar_catalogo()
     entrada = modulo_b.construir_entrada_modulo_c(muebles, selecciones, catalogo)
+    st.session_state.entrada_modulo_c = entrada
     if USE_MOCK_C:
         return _mock_pedido(muebles, entrada)
     return modulo_c.calcular_opciones(entrada) or []
