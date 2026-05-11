@@ -115,7 +115,7 @@ _ETIQUETAS_OPCIONALES_MOCK = {
     "op_223": "Cajón interior",
     "op_227": "Mueble de caldera",
     "op_700_opcional": "Mueble sin encolar",
-    "op_126": "Referencia del electrodoméstico",
+    "op_126": "Electrodoméstico",
 }
 
 
@@ -136,6 +136,24 @@ def _mock_pedido(muebles: list[dict], selecciones: dict) -> list[dict]:
         sel_op = (selecciones.get(clave, {}) or {}).get("opcionales", {}) or {}
         opciones_adicionales: list[dict] = []
         for op_id, valor in sel_op.items():
+            if op_id == "op_126":
+                # op_126 es un dict con 4 subcampos obligatorios. Si está
+                # incompleto, el check del mueble bloquea el avance, asi que
+                # aqui solo lo emitimos cuando esta completo.
+                if not isinstance(valor, dict):
+                    continue
+                partes = [
+                    str(valor.get(k, "")).strip()
+                    for k in ("marca", "referencia", "altura", "tipo")
+                ]
+                if not all(partes):
+                    continue
+                opciones_adicionales.append({
+                    "etiqueta": _ETIQUETAS_OPCIONALES_MOCK["op_126"],
+                    "valor": " · ".join(partes),
+                    "origen": "usuario",
+                })
+                continue
             if valor in (False, "", "ninguno", None):
                 continue
             etiqueta = _ETIQUETAS_OPCIONALES_MOCK.get(op_id, op_id)
