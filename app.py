@@ -5,6 +5,7 @@ Orquestación Streamlit del flujo A → B → C → B.
 
 from datetime import datetime
 
+import pandas as pd
 import streamlit as st
 
 import modulo_a
@@ -33,6 +34,7 @@ def _default_state() -> dict:
         "pedido_paso_2": None,
         "pending_csv": None,
         "uploader_nonce": 0,
+        "csv_fallback_a_mock": False,
     }
 
 
@@ -180,15 +182,45 @@ def _calcular_pedido_paso_2() -> list[dict]:
     return modulo_c.calcular_opciones(muebles, selecciones) or []
 
 
+# Schema del output del Módulo A (ver CLAUDE.md §9).
+_COLUMNAS_OUTPUT_MODULO_A = {
+    "Name", "Name SKP", "Estado", "Apertura", "D_Gama", "ColorFrente",
+    "Color del interior", "Tirador", "Trasera", "Color tir. de superficie",
+    "C_Rodapietext", "Ancho", "Ancho reducido", "LenZ", "Avisos",
+}
+
+
+def _parsear_csv_output_modulo_a(file) -> list[dict] | None:
+    # Workaround mientras modulo_a.parsear_csv siga siendo stub: si el CSV
+    # subido ya es el output del Módulo A (mismas columnas), lo usamos
+    # directamente. Devuelve None si el schema no coincide.
+    try:
+        df = pd.read_csv(file, dtype=str).fillna("")
+    except Exception:
+        return None
+    if not _COLUMNAS_OUTPUT_MODULO_A.issubset(df.columns):
+        return None
+    return df.to_dict("records")
+
+
 def _cargar_csv(file) -> None:
     st.session_state.csv_filename = file.name
     st.session_state.csv_uploaded_at = datetime.now()
     st.session_state.selecciones_paso_1 = {}
     st.session_state.pedido_paso_2 = None
     st.session_state.pantalla = PANTALLA_VALIDACION
-    st.session_state.muebles = (
-        _mock_muebles() if USE_MOCK_DATA else modulo_a.parsear_csv(file)
-    )
+    st.session_state.csv_fallback_a_mock = False
+
+    if not USE_MOCK_DATA:
+        st.session_state.muebles = modulo_a.parsear_csv(file)
+        return
+
+    muebles_reales = _parsear_csv_output_modulo_a(file)
+    if muebles_reales is not None:
+        st.session_state.muebles = muebles_reales
+    else:
+        st.session_state.muebles = _mock_muebles()
+        st.session_state.csv_fallback_a_mock = True
 
 
 def _reset_completo() -> None:
@@ -285,6 +317,12 @@ def main() -> None:
         st.title("CUBRO × Schmidt Groupe")
         st.info("Sube un CSV exportado desde SketchUp en la barra lateral para comenzar.")
         return
+
+    if st.session_state.get("csv_fallback_a_mock"):
+        st.warning(
+            "El CSV no coincide con el output esperado del Módulo A — "
+            "se están usando datos mock para que puedas seguir probando."
+        )
 
     pantalla = st.session_state.pantalla
     if pantalla == PANTALLA_VALIDACION:
