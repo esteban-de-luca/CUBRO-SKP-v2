@@ -170,7 +170,7 @@ def _identificador_mueble(mueble: dict) -> str:
 
 def _cabecera_card(mueble: dict, catalogo: dict, revisado: bool) -> str:
     """[check] · Name · Designación · Gama Color · Tirador Color (CLAUDE.md §7)."""
-    check = "☑" if revisado else "☐"
+    check = "🟢" if revisado else "🔴"
     nombre = mueble.get("Name") or mueble.get("Name SKP") or "—"
     partes = [f"{check} {nombre}"]
 
