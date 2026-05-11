@@ -644,6 +644,10 @@ def paso_2(pedido: list[dict] | None) -> None:
 
     st.header("Paso 2 — Revisión")
 
+    if st.button("← Volver al Paso 1"):
+        st.session_state.pantalla = PANTALLA_PASO_1
+        st.rerun()
+
     if not pedido:
         st.error("No hay pedido que revisar. Vuelve al Paso 1.")
         return
