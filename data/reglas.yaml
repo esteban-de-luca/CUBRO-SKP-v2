@@ -1,0 +1,783 @@
+# =============================================================================
+# data/reglas.yaml
+# Reglas y opciones por mueble — Módulo C — Mapeo y cálculo
+# SOLO LECTURA — no modificar sin actualizar también la documentación en Notion
+#
+# Estructura:
+#   reglas_condicionales: lógica de negocio que depende de condiciones
+#   muebles:             opciones forzadas y facultativas por código de mueble
+#
+# Lógica de ejecución del Módulo C:
+#   1. Primero reglas_condicionales → determinan qué opciones calcular
+#   2. Después mapeos.yaml → convierten los valores a códigos SG
+#
+# "auto" = valor calculado en modulo_c.py según lógica de mapeos o reglas
+#
+# Pendientes:
+#   - op_300: Confirmar qué son Q2H y Q3H
+#   - op_231: Formato de entrega del valor final a SG pendiente IT SG
+# =============================================================================
+
+
+# =============================================================================
+# REGLAS CONDICIONALES
+# =============================================================================
+
+reglas_condicionales:
+
+  # ---------------------------------------------------------------------------
+  # op_121 — Mecanizado de frente (SPF)
+  # ---------------------------------------------------------------------------
+  op_121:
+    tiradores_sin_spf:
+      - "2"   # Round
+      - "3"   # Square
+      - "20"  # Touch Latch
+      - "21"  # Prise de main
+    tirador_spf_siempre:
+      - "7"   # Plantea
+    muebles_spf_forzado_line_curve:
+      - "AQC31P4520057"
+      - "AQC31P6020057"
+      - "AQC31P4522057"
+      - "AQC31P6022057"
+      - "AVA1P4520035"
+      - "AVA1P6020035"
+      - "AVA1P9020035"
+      - "AVA1P4520057"
+      - "AVA1P6020057"
+      - "AVA1P4522035"
+      - "AVA1P6022035"
+      - "AVA1P9022035"
+      - "AVA1P4522057"
+      - "AVA1P6022057"
+      - "A2I1P6020057"
+      - "A2I1P6022057"
+    tiradores_spf_forzado_monoporte:
+      - "4"   # Curve
+      - "5"   # Line
+
+  # ---------------------------------------------------------------------------
+  # op_301 — Color del tirador
+  # ---------------------------------------------------------------------------
+  op_301:
+    tiradores_integrados:
+      - "ROU"
+      - "SQU"
+    tiradores_superficie:
+      - "Q2C"
+      - "Q2H"
+      - "Q3C"
+      - "Q3H"
+      - "Q1C"
+    sin_tirador:
+      - "499"
+
+  # ---------------------------------------------------------------------------
+  # op_103 — Sentido de la veta
+  # ---------------------------------------------------------------------------
+  op_103:
+    gamas_con_veta:
+      - "WOD"
+    colores_con_veta:
+      - "Metal LAMINADO"
+
+  # ---------------------------------------------------------------------------
+  # op_104 — Acabado canto del frente
+  # ---------------------------------------------------------------------------
+  op_104:
+    por_gama:
+      "LAC": null   # mismo código que op_101
+      "WOD": ""
+      "LNO": "HAK"
+      "LMI": ""
+
+  # ---------------------------------------------------------------------------
+  # op_231 — Reducción de ancho
+  # Ver trigger y código en mapeos.yaml → del_csv → op_231
+  # ---------------------------------------------------------------------------
+  op_231: {}
+
+  # ---------------------------------------------------------------------------
+  # op_700 — DEM
+  # Ver listas en mapeos.yaml → forzadas → op_700_forzada
+  # ---------------------------------------------------------------------------
+  op_700: {}
+
+
+# =============================================================================
+# OPCIONES POR MUEBLE
+# =============================================================================
+
+muebles:
+
+  # -----------------------------------------------
+  # MUEBLES BAJOS — ALMACENAMIENTO
+  # -----------------------------------------------
+
+  B308035:
+    forzadas:
+      op_103: auto
+      op_104: auto
+      op_200: auto
+      op_203: "E14"
+      op_204: auto
+      op_206: "FSP"
+    facultativas:
+      - op_121
+      - op_217
+      - op_223
+      - op_231
+      - op_700
+
+  B458035: &base_B_1puerta
+    forzadas:
+      op_103: auto
+      op_104: auto
+      op_200: auto
+      op_203: "E14"
+      op_204: auto
+      op_206: "FSP"
+    facultativas:
+      - op_121
+      - op_217
+      - op_223
+      - op_231
+      - op_700
+
+  B608035:
+    <<: *base_B_1puerta
+
+  B908035: &base_B_2puertas
+    forzadas:
+      op_103: auto
+      op_104: auto
+      op_200: auto
+      op_203: "E14"
+      op_204: auto
+      op_206: "FSP"
+    facultativas:
+      - op_121
+      - op_223
+      - op_700
+
+  B308057:
+    <<: *base_B_1puerta
+  B458057:
+    <<: *base_B_1puerta
+  B608057:
+    <<: *base_B_1puerta
+  B908057:
+    <<: *base_B_2puertas
+
+  BB2T458035: &base_BB2T
+    forzadas:
+      op_103: auto
+      op_104: auto
+      op_200: auto
+      op_203: "E14"
+      op_204: auto
+      op_209: "BES"
+    facultativas:
+      - op_121
+      - op_700
+
+  BB2T608035:
+    <<: *base_BB2T
+  BB2T908035:
+    <<: *base_BB2T
+  BB2T458057:
+    <<: *base_BB2T
+  BB2T608057:
+    <<: *base_BB2T
+  BB2T908057:
+    <<: *base_BB2T
+
+  B2B458035: &base_B2B
+    forzadas:
+      op_103: auto
+      op_104: auto
+      op_200: auto
+      op_203: "E14"
+      op_204: auto
+      op_209: "BES"
+    facultativas:
+      - op_121
+      - op_223
+      - op_700
+
+  B2B608035:
+    <<: *base_B2B
+  B2B908035:
+    <<: *base_B2B
+  B2B458057:
+    <<: *base_B2B
+  B2B608057:
+    <<: *base_B2B
+  B2B908057:
+    <<: *base_B2B
+
+  BC158057:
+    forzadas:
+      op_103: auto
+      op_104: auto
+      op_200: auto
+      op_203: "E14"
+      op_204: auto
+      op_209: "BES"
+      op_300: "499"
+    facultativas:
+      - op_700
+
+  BC604035: &base_BC_banco
+    forzadas:
+      op_103: auto
+      op_104: auto
+      op_200: auto
+      op_203: "E14"
+      op_204: auto
+      op_209: "BES"
+    facultativas:
+      - op_121
+      - op_700
+    # op_223 PENDIENTE confirmar con Jean
+
+  BC604057:
+    <<: *base_BC_banco
+
+  # -----------------------------------------------
+  # MUEBLES BAJOS — COCCIÓN
+  # -----------------------------------------------
+
+  BFT608057:
+    forzadas:
+      op_103: auto
+      op_104: auto
+      op_126: auto
+      op_200: auto
+      op_203: "E14"
+      op_204: auto
+      op_209: "BES"
+    facultativas:
+      - op_121
+      - op_700
+
+  BCUB2T458057: &base_BCUB2T
+    forzadas:
+      op_103: auto
+      op_104: auto
+      op_200: auto
+      op_203: "E14"
+      op_204: auto
+      op_209: "BES"
+    facultativas:
+      - op_121
+      - op_700
+
+  BCUB2T608057:
+    <<: *base_BCUB2T
+  BCUB2T908057:
+    <<: *base_BCUB2T
+  BIBTS608057:
+    <<: *base_BCUB2T
+  BIBTS908057:
+    <<: *base_BCUB2T
+
+  # -----------------------------------------------
+  # MUEBLES BAJOS — FREGADERO
+  # -----------------------------------------------
+
+  BETO458057: &base_BETO_1puerta
+    forzadas:
+      op_103: auto
+      op_104: auto
+      op_200: auto
+      op_203: "E14"
+      op_204: auto
+      op_206: "FSP"
+    facultativas:
+      - op_121
+      - op_217
+      - op_700
+
+  BETO608057:
+    <<: *base_BETO_1puerta
+
+  BETO908057:
+    forzadas:
+      op_103: auto
+      op_104: auto
+      op_200: auto
+      op_203: "E14"
+      op_204: auto
+      op_206: "FSP"
+    facultativas:
+      - op_121
+      - op_700
+
+  BETOQ908057:
+    forzadas:
+      op_103: auto
+      op_104: auto
+      op_200: auto
+      op_203: "E14"
+      op_204: auto
+      op_206: "FSP"
+      op_207: "P42"   # PENDIENTE confirmar con Jean si forzada u obligatoria
+    facultativas:
+      - op_121
+      - op_700
+
+  BE2B608057: &base_BE2B
+    forzadas:
+      op_103: auto
+      op_104: auto
+      op_200: auto
+      op_203: "E14"
+      op_204: auto
+      op_209: "BES"
+    facultativas:
+      - op_121
+      - op_207
+      - op_700
+
+  BE2B908057:
+    <<: *base_BE2B
+  BEBTS608057:
+    <<: *base_BE2B
+  BEBTS908057:
+    <<: *base_BE2B
+
+  # -----------------------------------------------
+  # LAVAVAJILLAS / LAVADORA
+  # -----------------------------------------------
+
+  POBIF4580: &base_POBIF
+    forzadas:
+      op_103: auto
+      op_104: auto
+    facultativas:
+      - op_121
+      - op_700
+
+  POBIF6080:
+    <<: *base_POBIF
+  PO2BIF4580:
+    <<: *base_POBIF
+  PO2BIF6080:
+    <<: *base_POBIF
+  PO1BIF4580:
+    <<: *base_POBIF
+  PO1BIF6080:
+    <<: *base_POBIF
+
+  FHABS6580:
+    forzadas:
+      op_103: auto
+      op_104: auto
+      op_200: auto
+      op_206: "FSP"
+    facultativas:
+      - op_121
+      - op_700
+
+  # -----------------------------------------------
+  # MUEBLES BAJOS — ESQUINERO
+  # -----------------------------------------------
+
+  BAV908057: &base_BAV
+    forzadas:
+      op_103: auto
+      op_104: auto
+      op_200: auto
+      op_203: "E14"
+      op_204: auto
+      op_206: "FSP"
+    facultativas:
+      - op_121
+      - op_217
+      - op_700
+
+  BAV1208057:
+    <<: *base_BAV
+
+  BAV1P908057: &base_BAV1P
+    forzadas:
+      op_103: auto
+      op_104: auto
+      op_200: auto
+      op_203: "E14"
+      op_204: auto
+      op_206: "FSP"
+      op_208: "CPA"
+    facultativas:
+      - op_121
+      - op_217
+      - op_700
+
+  BAV1P1208057:
+    <<: *base_BAV1P
+
+  # -----------------------------------------------
+  # MUEBLES DE PARED — ALMACENAMIENTO
+  # -----------------------------------------------
+
+  H1306035: &base_H1_1puerta
+    forzadas:
+      op_103: auto
+      op_104: auto
+      op_200: auto
+      op_203: "E14"
+      op_204: auto
+      op_206: "FSP"
+    facultativas:
+      - op_121
+      - op_217
+      - op_220
+      - op_222
+      - op_227
+      - op_231
+      - op_700
+
+  H1456035:
+    <<: *base_H1_1puerta
+  H1606035:
+    <<: *base_H1_1puerta
+  H1308035:
+    <<: *base_H1_1puerta
+  H1458035:
+    <<: *base_H1_1puerta
+  H1608035:
+    <<: *base_H1_1puerta
+  H13010035:
+    <<: *base_H1_1puerta
+  H14510035:
+    <<: *base_H1_1puerta
+  H16010035:
+    <<: *base_H1_1puerta
+
+  H1906035: &base_H1_2puertas
+    forzadas:
+      op_103: auto
+      op_104: auto
+      op_200: auto
+      op_203: "E14"
+      op_204: auto
+      op_206: "FSP"
+    facultativas:
+      - op_121
+      - op_217
+      - op_220
+      - op_222
+      - op_700
+
+  H1908035:
+    <<: *base_H1_2puertas
+  H19010035:
+    <<: *base_H1_2puertas
+
+  # -----------------------------------------------
+  # MUEBLES DE PARED — CAMPANA
+  # -----------------------------------------------
+
+  HH1606035: &base_HH1
+    forzadas:
+      op_103: auto
+      op_104: auto
+      op_200: auto
+      op_203: "E14"
+      op_204: auto
+      op_206: "FSP"
+      op_700: "DEM"
+    facultativas:
+      - op_121
+
+  HH1906035:
+    <<: *base_HH1
+  HH1608035:
+    <<: *base_HH1
+  HH1908035:
+    <<: *base_HH1
+  HH16010035:
+    <<: *base_HH1
+  HH19010035:
+    <<: *base_HH1
+
+  # -----------------------------------------------
+  # MUEBLES DE PARED — ESQUINERO
+  # -----------------------------------------------
+
+  HAV1906035: &base_HAV
+    forzadas:
+      op_103: auto
+      op_104: auto
+      op_200: auto
+      op_203: "E14"
+      op_204: auto
+      op_206: "FSP"
+    facultativas:
+      - op_121
+      - op_217
+      - op_700
+
+  HAV1908035:
+    <<: *base_HAV
+  HAV19010035:
+    <<: *base_HAV
+  HAV2906035:
+    <<: *base_HAV
+  HAV2908035:
+    <<: *base_HAV
+  HAV29010035:
+    <<: *base_HAV
+
+  # -----------------------------------------------
+  # MUEBLES DE PARED — ALTILLOS
+  # -----------------------------------------------
+
+  HR45V35: &base_HR
+    forzadas:
+      op_103: auto
+      op_104: auto
+      op_200: auto
+      op_203: "E14"
+      op_204: auto
+      op_206: "FSP"
+    facultativas:
+      - op_121
+      - op_217
+      - op_700
+
+  HR60V35:
+    <<: *base_HR
+  HR45V57:
+    <<: *base_HR
+  HR60V57:
+    <<: *base_HR
+
+  HLVV57:
+    forzadas:
+      op_103: auto
+      op_104: auto
+      op_200: auto
+      op_203: "E14"
+      op_204: auto
+    facultativas:
+      - op_121
+      - op_217
+      - op_700
+
+  HPT60V57:
+    forzadas:
+      op_103: auto
+      op_104: auto
+      op_200: auto
+      op_203: "E14"
+      op_204: auto
+      op_206: "FSP"
+    facultativas:
+      - op_121
+      - op_217
+      - op_227
+      - op_700
+
+  # -----------------------------------------------
+  # COLUMNAS — ALMACENAMIENTO
+  # -----------------------------------------------
+
+  AQC34520057: &base_AQC3
+    forzadas:
+      op_103: auto
+      op_104: auto
+      op_200: auto
+      op_203: "E14"
+      op_204: auto
+      op_206: "FSP"
+    facultativas:
+      - op_121
+      - op_217
+      - op_700
+
+  AQC36020057:
+    <<: *base_AQC3
+  AQC34522057:
+    <<: *base_AQC3
+  AQC36022057:
+    <<: *base_AQC3
+  AQC31P4520057:
+    <<: *base_AQC3
+  AQC31P6020057:
+    <<: *base_AQC3
+  AQC31P4522057:
+    <<: *base_AQC3
+  AQC31P6022057:
+    <<: *base_AQC3
+
+  AVA4520035: &base_AVA
+    forzadas:
+      op_103: auto
+      op_104: auto
+      op_200: auto
+      op_203: "E14"
+      op_204: auto
+      op_206: "FSP"
+    facultativas:
+      - op_121
+      - op_217
+      - op_227
+      - op_231
+      - op_700
+
+  AVA6020035:
+    <<: *base_AVA
+  AVA4520057:
+    <<: *base_AVA
+  AVA6020057:
+    <<: *base_AVA
+  AVA4522035:
+    <<: *base_AVA
+  AVA6022035:
+    <<: *base_AVA
+  AVA4522057:
+    <<: *base_AVA
+  AVA6022057:
+    <<: *base_AVA
+  AVA1P4520035:
+    <<: *base_AVA
+  AVA1P6020035:
+    <<: *base_AVA
+  AVA1P4520057:
+    <<: *base_AVA
+  AVA1P6020057:
+    <<: *base_AVA
+  AVA1P4522035:
+    <<: *base_AVA
+  AVA1P6022035:
+    <<: *base_AVA
+  AVA1P4522057:
+    <<: *base_AVA
+  AVA1P6022057:
+    <<: *base_AVA
+
+  AVA1P9020035: &base_AVA1P_900
+    forzadas:
+      op_103: auto
+      op_104: auto
+      op_200: auto
+      op_203: "E14"
+      op_204: auto
+      op_206: "FSP"
+    facultativas:
+      - op_121
+      - op_700
+
+  AVA1P9022035:
+    <<: *base_AVA1P_900
+
+  ABA6020057: &base_ABA
+    forzadas:
+      op_103: auto
+      op_104: auto
+      op_200: auto
+      op_203: "E14"
+      op_204: auto
+      op_206: "FSP"
+    facultativas:
+      - op_121
+      - op_217
+      - op_227
+      - op_231
+      - op_700
+
+  ABA6022057:
+    <<: *base_ABA
+
+  # -----------------------------------------------
+  # COLUMNAS — HORNO / MICRO
+  # -----------------------------------------------
+
+  AFS6020057: &base_AFS
+    forzadas:
+      op_103: auto
+      op_104: auto
+      op_126: auto
+      op_200: auto
+      op_203: "E14"
+      op_204: auto
+      op_206: "FSP"
+    facultativas:
+      - op_121
+      - op_217
+      - op_223
+      - op_700
+
+  AFS6022057:
+    <<: *base_AFS
+  AFSMO6020057:
+    <<: *base_AFS
+  AFSMO6022057:
+    <<: *base_AFS
+  AFS2B6020057:
+    <<: *base_AFS
+  AFS2B6022057:
+    <<: *base_AFS
+
+  AFSMOBT6020057: &base_AFSMOBT
+    forzadas:
+      op_103: auto
+      op_104: auto
+      op_126: auto
+      op_200: auto
+      op_203: "E14"
+      op_204: auto
+      op_206: "FSP"
+    facultativas:
+      - op_121
+      - op_217
+      - op_700
+
+  AFSMOBT6022057:
+    <<: *base_AFSMOBT
+
+  # -----------------------------------------------
+  # COLUMNAS — FRIGORÍFICO
+  # -----------------------------------------------
+
+  A2I6020057: &base_A2I
+    forzadas:
+      op_103: auto
+      op_104: auto
+      op_200: auto
+      op_203: "E14"
+      op_204: auto
+    facultativas:
+      - op_121
+      - op_700
+
+  A2I6022057:
+    <<: *base_A2I
+  A2I7522057:
+    <<: *base_A2I
+  A2I1P6020057:
+    <<: *base_A2I
+  A2I1P6022057:
+    <<: *base_A2I
+
+  # -----------------------------------------------
+  # COLUMNAS — DESPENSA
+  # -----------------------------------------------
+
+  AGM9020057: &base_AGM
+    forzadas:
+      op_103: auto
+      op_104: auto
+      op_200: auto
+      op_203: "E14"
+      op_204: auto
+      op_206: "FSP"
+    facultativas:
+      - op_121
+    # Sin op_700 — la despensa siempre se entrega encolada
+
+  AGM9022057:
+    <<: *base_AGM
