@@ -224,7 +224,7 @@ Contrato confirmado con Lucía el 2026-05-11 (hipótesis B). `list[dict]` plana,
 | 17 | Cajón interior | `"True"`/`"False"` | op_223 |
 | 18 | Mueble de caldera | `"True"`/`"False"` | op_227 |
 | 19 | Sin encolar | `"True"`/`"False"` | op_700_opcional |
-| 20 | Fabricante electro | `str` | op_126.marca |
+| 20 | Marca electro | `str` | op_126.marca |
 | 21 | Referencia electro | `str` | op_126.referencia |
 | 22 | Altura electro | `str` | op_126.altura |
 | 23 | Tipo electro | `str` | op_126.tipo |
