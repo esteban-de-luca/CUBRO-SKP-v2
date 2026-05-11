@@ -555,13 +555,20 @@ interfaz:
       - "AGM9022057"
 
   # ---------------------------------------------------------------------------
-  # Opción 126 — Referencia del electrodoméstico
-  # Etiqueta UI: "Referencia del electrodoméstico"
-  # Valor: texto libre introducido por el usuario. El Módulo C lo pasa tal cual.
+  # Opción 126 — Electrodoméstico
+  # Etiqueta UI: "Electrodoméstico". Bloque con 4 subcampos de texto libre.
+  # Valor: dict {marca, referencia, altura, tipo} con strings. El Módulo C
+  # los pasa tal cual al export. Los 4 campos son obligatorios para poder
+  # marcar el mueble como revisado en el Paso 1.
   # ---------------------------------------------------------------------------
   op_126:
-    etiqueta: "Referencia del electrodoméstico"
-    tipo: "texto_libre"
+    etiqueta: "Electrodoméstico"
+    tipo: "grupo_texto_libre"
+    subcampos:
+      marca: "Marca"
+      referencia: "Referencia"
+      altura: "Altura"
+      tipo: "Tipo"
     muebles:
       - "BFT608057"
       - "AFS6020057"

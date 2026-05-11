@@ -47,7 +47,7 @@ _TOOLTIPS_OPCIONALES = {
     "op_223": "TODO: explicar la utilidad del cajón interior y a qué muebles aplica.",
     "op_227": "TODO: explicar la opción 'Mueble de caldera' y sus implicaciones constructivas.",
     "op_700_opcional": "TODO: explicar 'Mueble sin encolar' (DEM) y los muebles excluidos.",
-    "op_126": "TODO: indicar formato esperado de la referencia del electrodoméstico.",
+    "op_126": "Rellena los 4 campos del electrodoméstico para poder marcar el mueble como revisado.",
 }
 
 _TIRADORES_SIN_COLOR = {"Touch Latch", "Prise de main"}
@@ -238,13 +238,22 @@ def _bloque_informativo(mueble: dict) -> None:
     )
 
 
-def _check_mueble(clave: str, selecciones: dict) -> None:
-    """Checkbox explícito de revisión. Auto-cierra la card vía rerun."""
+def _check_mueble(
+    clave: str, selecciones: dict, razon_bloqueo: str | None = None
+) -> None:
+    """Checkbox explícito de revisión. Auto-cierra la card vía rerun.
+
+    Si razon_bloqueo no es None y el check está desmarcado, se deshabilita
+    para impedir marcar. Permitimos desmarcar siempre.
+    """
     revisado = bool(selecciones.get(clave, {}).get("check", False))
+    disabled = (not revisado) and (razon_bloqueo is not None)
     nuevo = st.checkbox(
         "He revisado este mueble",
         value=revisado,
         key=f"check_{clave}",
+        disabled=disabled,
+        help=razon_bloqueo if disabled else None,
     )
     if nuevo != revisado:
         selecciones.setdefault(clave, {})["check"] = nuevo
@@ -338,16 +347,44 @@ def _control_radio_op_222(
         st.rerun()
 
 
-def _control_texto_op_126(
+# Subcampos obligatorios de op_126 cuando mapeos.yaml no provee `subcampos`.
+# La fuente de verdad es data/mapeos.yaml; esto es solo fallback defensivo.
+_SUBCAMPOS_OP_126_DEFAULT = {
+    "marca": "Marca",
+    "referencia": "Referencia",
+    "altura": "Altura",
+    "tipo": "Tipo",
+}
+
+
+def _op_126_completo(valor) -> bool:
+    if not isinstance(valor, dict):
+        return False
+    return all(
+        str(valor.get(k, "")).strip()
+        for k in _SUBCAMPOS_OP_126_DEFAULT.keys()
+    )
+
+
+def _control_electrodomestico_op_126(
     clave: str, meta: dict, opcionales: dict, selecciones: dict
 ) -> None:
-    prev = opcionales.get("op_126", "")
-    nuevo = st.text_input(
-        meta.get("etiqueta", "Referencia del electrodoméstico"),
-        value=prev,
-        key=f"op_126_{clave}",
-        help=_TOOLTIPS_OPCIONALES.get("op_126"),
-    )
+    subcampos = meta.get("subcampos") or _SUBCAMPOS_OP_126_DEFAULT
+    prev_raw = opcionales.get("op_126")
+    prev = prev_raw if isinstance(prev_raw, dict) else {}
+
+    st.markdown(f"**{meta.get('etiqueta', 'Electrodoméstico')}**")
+    if _TOOLTIPS_OPCIONALES.get("op_126"):
+        st.caption(_TOOLTIPS_OPCIONALES["op_126"])
+
+    nuevo: dict[str, str] = {}
+    for sub_key, sub_label in subcampos.items():
+        nuevo[sub_key] = st.text_input(
+            sub_label,
+            value=prev.get(sub_key, ""),
+            key=f"op_126_{sub_key}_{clave}",
+        )
+
     if nuevo != prev:
         opcionales["op_126"] = nuevo
         _registrar_edicion(clave, selecciones)
@@ -452,7 +489,7 @@ def paso_1(muebles: list[dict]) -> None:
                     _renderizar_opcionales(clave, aplicables, interfaz, selecciones)
                     if "op_126" in aplicables:
                         st.divider()
-                        _control_texto_op_126(
+                        _control_electrodomestico_op_126(
                             clave, interfaz.get("op_126", {}),
                             estado["opcionales"], selecciones,
                         )
@@ -462,8 +499,18 @@ def paso_1(muebles: list[dict]) -> None:
                         "Pre-marcado como revisado."
                     )
 
+                if "op_126" in aplicables and not _op_126_completo(
+                    estado["opcionales"].get("op_126")
+                ):
+                    razon_bloqueo = (
+                        "Completa los 4 datos del electrodoméstico "
+                        "(marca, referencia, altura y tipo)."
+                    )
+                else:
+                    razon_bloqueo = None
+
                 st.divider()
-                _check_mueble(clave, selecciones)
+                _check_mueble(clave, selecciones, razon_bloqueo=razon_bloqueo)
     else:
         st.info("No hay muebles pendientes. Todo revisado.")
 

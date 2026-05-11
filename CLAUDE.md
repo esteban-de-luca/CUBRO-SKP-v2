@@ -128,7 +128,7 @@ El Módulo B es la UI. Interviene en DOS momentos del flujo:
 - Cabecera global: `X muebles · Y revisados · Z pendientes` (actualización en vivo) + acciones `[Expandir todas] [Colapsar todas] [☐ Solo pendientes]`.
 - Cards plegables, una por mueble, en orden del CSV.
 - Cabecera plegada: `[check] · Name · Designación · Gama Color · Tirador Color` (sin apertura ni reducción).
-- Card abierta: bloque informativo (Apertura · Ancho · Color interior · Rodapié) → controles opcionales con tooltips → divisor → texto libre op_126 → check explícito.
+- Card abierta: bloque informativo (Apertura · Ancho · Color interior · Rodapié) → controles opcionales con tooltips → divisor → bloque op_126 (4 textos: Marca / Referencia / Altura / Tipo) → check explícito.
 - Sistema de check: explícito, bloquea avance, reset al editar, auto-cierre al marcar, pre-check para muebles sin opcionales.
 - Botón "Continuar al Paso 2" solo al final, avance directo.
 
@@ -241,7 +241,7 @@ Sección `interfaz` lista las 8 opciones opcionales que B debe presentar al usua
 - `op_223` Cajón interior (checkbox)
 - `op_227` Mueble de caldera (checkbox)
 - `op_700_opcional` Mueble sin encolar (checkbox)
-- `op_126` Referencia electrodoméstico (texto libre, solo BFT y AFS)
+- `op_126` Electrodoméstico (bloque de 4 textos libres: marca, referencia, altura, tipo; solo BFT y AFS). El valor en `opcionales["op_126"]` es un `dict[str, str]` con las 4 keys. Los 4 campos son obligatorios para poder marcar el mueble como revisado.
 
 ### `data/reglas.yaml`
 
