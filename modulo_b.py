@@ -243,7 +243,7 @@ def construir_entrada_modulo_c(
             "Cajón interior": _bool_str(opcionales.get("op_223", False)),
             "Mueble de caldera": _bool_str(opcionales.get("op_227", False)),
             "Sin encolar": _bool_str(opcionales.get("op_700_opcional", False)),
-            "Fabricante electro": str(op_126.get("marca", "")).strip(),
+            "Marca electro": str(op_126.get("marca", "")).strip(),
             "Referencia electro": str(op_126.get("referencia", "")).strip(),
             "Altura electro": str(op_126.get("altura", "")).strip(),
             "Tipo electro": str(op_126.get("tipo", "")).strip(),

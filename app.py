@@ -149,7 +149,7 @@ def _mock_pedido(muebles: list[dict], entrada: list[dict]) -> list[dict]:
             )
 
         electro_partes = [
-            fila.get("Fabricante electro", ""),
+            fila.get("Marca electro", ""),
             fila.get("Referencia electro", ""),
             fila.get("Altura electro", ""),
             fila.get("Tipo electro", ""),
