@@ -9,6 +9,8 @@ Interviene en dos momentos del flujo:
 Pantalla 0 (Validación) bloquea el avance si el CSV trae errores duros.
 """
 
+import csv
+import io
 import json
 import pathlib
 
@@ -725,6 +727,27 @@ def _render_card_resumen(mueble: dict, catalogo: dict) -> None:
                     st.caption("Sin códigos SG calculados.")
 
 
+def _csv_de_entrada(entrada: list[dict]) -> bytes:
+    # BOM UTF-8 al inicio para que Excel en Windows abra los acentos correctamente.
+    if not entrada:
+        return b""
+    buf = io.StringIO()
+    writer = csv.DictWriter(buf, fieldnames=list(entrada[0].keys()))
+    writer.writeheader()
+    writer.writerows(entrada)
+    return ("﻿" + buf.getvalue()).encode("utf-8")
+
+
+def _nombre_descarga_entrada() -> str:
+    csv_origen = (st.session_state.get("csv_filename") or "").strip()
+    if csv_origen.lower().endswith(".csv"):
+        csv_origen = csv_origen[:-4]
+    return (
+        f"entrada_modulo_c_{csv_origen}.csv" if csv_origen
+        else "entrada_modulo_c.csv"
+    )
+
+
 def paso_2(pedido: list[dict] | None) -> None:
     """Paso 2 — Revisión final del pedido y export a DealHub."""
     catalogo = _cargar_catalogo()
@@ -734,6 +757,18 @@ def paso_2(pedido: list[dict] | None) -> None:
     if st.button("← Volver al Paso 1"):
         st.session_state.pantalla = PANTALLA_PASO_1
         st.rerun()
+
+    entrada = st.session_state.get("entrada_modulo_c")
+    if entrada:
+        st.download_button(
+            "Descargar entrada Módulo C (.csv)",
+            data=_csv_de_entrada(entrada),
+            file_name=_nombre_descarga_entrada(),
+            mime="text/csv",
+        )
+        st.caption(
+            "Temporal — para verificar la traducción a las 23 columnas."
+        )
 
     if not pedido:
         st.error("No hay pedido que revisar. Vuelve al Paso 1.")
