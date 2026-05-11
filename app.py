@@ -1,4 +1,301 @@
+"""
+app.py — CUBRO × Schmidt Groupe
+Orquestación Streamlit del flujo A → B → C → B.
+"""
+
+from datetime import datetime
+
 import streamlit as st
 
-st.title("CUBRO × Schmidt Groupe")
-st.write("App en construcción.")
+import modulo_a
+import modulo_b
+import modulo_c
+from modulo_b import PANTALLA_VALIDACION, PANTALLA_PASO_1, PANTALLA_PASO_2
+
+
+# Mientras el Módulo A esté en stub, sustituimos su output por datos mock
+# para poder desarrollar el Módulo B de forma aislada.
+USE_MOCK_DATA = True
+
+# Mientras el Módulo C esté en stub, sustituimos su output por un pedido mock
+# para poder desarrollar el Paso 2. El shape generado por _mock_pedido es
+# una propuesta de contrato pendiente de validar con Lucía.
+USE_MOCK_C = True
+
+
+def _default_state() -> dict:
+    return {
+        "pantalla": PANTALLA_VALIDACION,
+        "csv_filename": None,
+        "csv_uploaded_at": None,
+        "muebles": None,
+        "selecciones_paso_1": {},
+        "pedido_paso_2": None,
+        "pending_csv": None,
+        "uploader_nonce": 0,
+    }
+
+
+def _init_session_state() -> None:
+    for key, value in _default_state().items():
+        st.session_state.setdefault(key, value)
+
+
+def _hay_progreso() -> bool:
+    selecciones = st.session_state.get("selecciones_paso_1") or {}
+    for mueble in selecciones.values():
+        if mueble.get("check") or mueble.get("opcionales"):
+            return True
+    return False
+
+
+def _mock_muebles() -> list[dict]:
+    return [
+        {
+            "Name": "B608035",
+            "Name SKP": "B608035-1",
+            "Estado": "✅ CORRECTO",
+            "Apertura": "1",
+            "D_Gama": "1",
+            "ColorFrente": "Crema LACA",
+            "Color del interior": "Blanco mueble",
+            "Tirador": "2",
+            "Trasera": "Laca",
+            "Color tir. de superficie": "Inox",
+            "C_Rodapietext": "100 mm",
+            "Ancho": "600 mm",
+            "Ancho reducido": "",
+            "LenZ": "800",
+            "Avisos": "",
+        },
+        {
+            "Name": "H1.60",
+            "Name SKP": "H1-60-1",
+            "Estado": "✅ CORRECTO",
+            "Apertura": "2",
+            "D_Gama": "2",
+            "ColorFrente": "Oak WOOD",
+            "Color del interior": "Roble mueble",
+            "Tirador": "20",
+            "Trasera": "Oak WOOD",
+            "Color tir. de superficie": "",
+            "C_Rodapietext": "0 mm",
+            "Ancho": "600 mm",
+            "Ancho reducido": "",
+            "LenZ": "720",
+            "Avisos": "",
+        },
+        {
+            "Name": "",
+            "Name SKP": "MUEBLE-CON-ERROR",
+            "Estado": "⚠️ REVISAR",
+            "Apertura": "",
+            "D_Gama": "",
+            "ColorFrente": "",
+            "Color del interior": "",
+            "Tirador": "",
+            "Trasera": "",
+            "Color tir. de superficie": "",
+            "C_Rodapietext": "",
+            "Ancho": "10000 mm",
+            "Ancho reducido": "",
+            "LenZ": "",
+            "Avisos": "A02 | A17",
+        },
+    ]
+
+
+_ETIQUETAS_OPCIONALES_MOCK = {
+    "op_121": "Sin mecanizado para tirador",
+    "op_207_opcional": "Cubos de basura",
+    "op_220": "Recorte para perfil LED",
+    "op_222": "Sensor para mando LED",
+    "op_223": "Cajón interior",
+    "op_227": "Mueble de caldera",
+    "op_700_opcional": "Mueble sin encolar",
+    "op_126": "Referencia del electrodoméstico",
+}
+
+
+def _mock_pedido(muebles: list[dict], selecciones: dict) -> list[dict]:
+    """Output mock del Módulo C — propuesta de contrato pendiente con Lucía.
+
+    Cada entrada extiende el dict del mueble original con:
+      - opciones_adicionales: list[dict] {etiqueta, valor, origen}
+        donde origen ∈ {'usuario', 'automatico'}.
+      - codigos_sg: dict[op_id, valor] — códigos SG crudos para detalle técnico.
+
+    El Paso 2 lee el dict del mueble (campos CSV originales) para los bloques
+    Configuración y Dimensiones, y los campos añadidos para Opciones adicionales.
+    """
+    pedido: list[dict] = []
+    for mueble in muebles:
+        clave = (mueble.get("Name SKP") or mueble.get("Name") or "").strip()
+        sel_op = (selecciones.get(clave, {}) or {}).get("opcionales", {}) or {}
+        opciones_adicionales: list[dict] = []
+        for op_id, valor in sel_op.items():
+            if valor in (False, "", "ninguno", None):
+                continue
+            etiqueta = _ETIQUETAS_OPCIONALES_MOCK.get(op_id, op_id)
+            if op_id == "op_222":
+                valor_ui = {"derecha": "Derecha", "izquierda": "Izquierda"}.get(
+                    valor, str(valor)
+                )
+            elif valor is True:
+                valor_ui = "Sí"
+            else:
+                valor_ui = str(valor)
+            opciones_adicionales.append(
+                {"etiqueta": etiqueta, "valor": valor_ui, "origen": "usuario"}
+            )
+        # Forzada de ejemplo para que el marcador ⚙ sea visible en el Paso 2.
+        opciones_adicionales.append(
+            {
+                "etiqueta": "Mecanizado tirador",
+                "valor": "Estándar (FSP)",
+                "origen": "automatico",
+            }
+        )
+        pedido.append(
+            {
+                **mueble,
+                "opciones_adicionales": opciones_adicionales,
+                "codigos_sg": {
+                    "op_100": "L",
+                    "op_101": "CR",
+                    "op_300": "Q2",
+                    "op_402": "P10",
+                },
+            }
+        )
+    return pedido
+
+
+def _calcular_pedido_paso_2() -> list[dict]:
+    """Llama al Módulo C (o a su mock) para obtener el pedido enriquecido."""
+    muebles = st.session_state.muebles or []
+    selecciones = st.session_state.selecciones_paso_1 or {}
+    if USE_MOCK_C:
+        return _mock_pedido(muebles, selecciones)
+    return modulo_c.calcular_opciones(muebles, selecciones) or []
+
+
+def _cargar_csv(file) -> None:
+    st.session_state.csv_filename = file.name
+    st.session_state.csv_uploaded_at = datetime.now()
+    st.session_state.selecciones_paso_1 = {}
+    st.session_state.pedido_paso_2 = None
+    st.session_state.pantalla = PANTALLA_VALIDACION
+    st.session_state.muebles = (
+        _mock_muebles() if USE_MOCK_DATA else modulo_a.parsear_csv(file)
+    )
+
+
+def _reset_completo() -> None:
+    nonce = st.session_state.get("uploader_nonce", 0) + 1
+    for key in list(st.session_state.keys()):
+        del st.session_state[key]
+    _init_session_state()
+    # Cambiar la key del uploader fuerza a Streamlit a redibujarlo vacío.
+    st.session_state.uploader_nonce = nonce
+
+
+def _render_sidebar() -> None:
+    with st.sidebar:
+        # Logo PNG pendiente de subir a assets/logo_cubro.png.
+        st.markdown("## CUBRO")
+        st.caption("× Schmidt Groupe")
+
+        st.divider()
+
+        uploader_key = f"csv_uploader_{st.session_state.uploader_nonce}"
+        nuevo = st.file_uploader(
+            "Sube el CSV exportado desde SketchUp",
+            type=["csv"],
+            key=uploader_key,
+        )
+
+        if nuevo is not None and nuevo.name != st.session_state.csv_filename:
+            if _hay_progreso():
+                st.session_state.pending_csv = nuevo
+            else:
+                _cargar_csv(nuevo)
+                st.rerun()
+
+        if st.session_state.csv_filename:
+            st.divider()
+            st.markdown(f"**Archivo:** `{st.session_state.csv_filename}`")
+            st.markdown(
+                f"**Subido:** {st.session_state.csv_uploaded_at:%d/%m/%Y %H:%M}"
+            )
+            n_muebles = len(st.session_state.muebles or [])
+            st.markdown(f"**Muebles detectados:** {n_muebles}")
+
+            if st.button("Subir otro CSV", use_container_width=True):
+                if _hay_progreso():
+                    st.session_state.pending_csv = "reset"
+                else:
+                    _reset_completo()
+                    st.rerun()
+
+
+def _render_modal_reemplazo() -> None:
+    pending = st.session_state.get("pending_csv")
+    if pending is None:
+        return
+
+    st.warning(
+        "Vas a reemplazar el CSV cargado. Se perderá el progreso del Paso 1."
+    )
+    col_ok, col_cancel = st.columns(2)
+    with col_ok:
+        if st.button("Reemplazar y perder progreso", type="primary"):
+            if pending == "reset":
+                _reset_completo()
+            else:
+                _cargar_csv(pending)
+            st.session_state.pending_csv = None
+            st.rerun()
+    with col_cancel:
+        if st.button("Cancelar"):
+            st.session_state.pending_csv = None
+            st.rerun()
+
+
+def main() -> None:
+    st.set_page_config(
+        page_title="CUBRO × Schmidt Groupe",
+        layout="wide",
+        initial_sidebar_state="expanded",
+    )
+    _init_session_state()
+
+    # modulo_b puede solicitar un reset completo desde la Pantalla 0.
+    if st.session_state.pop("_reset_requested", False):
+        _reset_completo()
+        st.rerun()
+
+    _render_sidebar()
+
+    if st.session_state.get("pending_csv") is not None:
+        _render_modal_reemplazo()
+        return
+
+    if st.session_state.muebles is None:
+        st.title("CUBRO × Schmidt Groupe")
+        st.info("Sube un CSV exportado desde SketchUp en la barra lateral para comenzar.")
+        return
+
+    pantalla = st.session_state.pantalla
+    if pantalla == PANTALLA_VALIDACION:
+        modulo_b.pantalla_validacion(st.session_state.muebles)
+    elif pantalla == PANTALLA_PASO_1:
+        modulo_b.paso_1(st.session_state.muebles)
+    elif pantalla == PANTALLA_PASO_2:
+        if st.session_state.pedido_paso_2 is None:
+            st.session_state.pedido_paso_2 = _calcular_pedido_paso_2()
+        modulo_b.paso_2(st.session_state.pedido_paso_2)
+
+
+if __name__ == "__main__":
+    main()
