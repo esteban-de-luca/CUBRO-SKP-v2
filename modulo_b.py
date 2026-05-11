@@ -47,7 +47,7 @@ _TOOLTIPS_OPCIONALES = {
     "op_223": "TODO: explicar la utilidad del cajón interior y a qué muebles aplica.",
     "op_227": "TODO: explicar la opción 'Mueble de caldera' y sus implicaciones constructivas.",
     "op_700_opcional": "TODO: explicar 'Mueble sin encolar' (DEM) y los muebles excluidos.",
-    "op_126": "Rellena los 4 campos del electrodoméstico para poder marcar el mueble como revisado.",
+    "op_126": "Marca y Tipo son siempre obligatorios. Referencia y Altura son intercambiables: al menos una de las dos debe estar rellena.",
 }
 
 _TIRADORES_SIN_COLOR = {"Touch Latch", "Prise de main"}
@@ -166,6 +166,88 @@ def _designacion(mueble: dict, catalogo: dict) -> str:
 def _identificador_mueble(mueble: dict) -> str:
     """Clave única para st.session_state. Name SKP es siempre el original de SketchUp."""
     return (mueble.get("Name SKP") or mueble.get("Name") or "").strip()
+
+
+# ----------------------------------------------------------------------------
+# Builder: Paso 1 → Módulo C (contrato Hipótesis B, 2026-05-11).
+# Genera una lista plana de 23 columnas por mueble. Mismas keys para todos
+# los muebles aunque la opcional no aplique (en ese caso "False" / "").
+# ----------------------------------------------------------------------------
+
+def _normalizar_vacio(valor: str) -> str:
+    # Los helpers _ui_* usan "—" como placeholder visual; el contrato con C
+    # exige cadena vacía cuando el campo no aplica.
+    return "" if valor == "—" else valor
+
+
+def _bool_str(valor) -> str:
+    return "True" if valor else "False"
+
+
+def _sensor_led_export(valor) -> str:
+    if valor == "derecha":
+        return "Derecha"
+    if valor == "izquierda":
+        return "Izquierda"
+    return ""
+
+
+def construir_entrada_modulo_c(
+    muebles: list[dict], selecciones: dict, catalogo: dict
+) -> list[dict]:
+    """Construye la entrada para el Módulo C (23 columnas por mueble).
+
+    Aplica las transformaciones CSV→UI de CLAUDE.md §8, incluyendo el caso
+    Trasera=Laca → color del frente (igual que en la cabecera de cards).
+    Las opcionales no marcadas o no aplicables se exportan como "False" / "".
+    """
+    entrada: list[dict] = []
+    for mueble in muebles:
+        clave = _identificador_mueble(mueble)
+        opcionales = (selecciones.get(clave, {}) or {}).get("opcionales", {}) or {}
+
+        ancho_raw = (mueble.get("Ancho") or "").strip()
+        reduccion = ancho_raw == _ANCHO_REDUCCION_RAW
+        ancho_reducido = (
+            (mueble.get("Ancho reducido") or "").strip() if reduccion else ""
+        )
+
+        tirador_ui = _ui_tirador(mueble.get("Tirador", ""))
+
+        op_126_raw = opcionales.get("op_126")
+        op_126 = op_126_raw if isinstance(op_126_raw, dict) else {}
+
+        fila: dict[str, str] = {
+            "Código mueble": (mueble.get("Name") or "").strip(),
+            "Descripción": _designacion(mueble, catalogo),
+            "Posición": "",  # placeholder reservado, lo rellenara C en el futuro
+            "Apertura": _normalizar_vacio(_ui_apertura(mueble.get("Apertura", ""))),
+            "Gama del frente": _ui_gama(mueble.get("D_Gama", "")),
+            "Acabado del frente": _ui_color_frente(mueble.get("ColorFrente", "")),
+            "Color interior": _normalizar_vacio(
+                _ui_color_interior(mueble.get("Color del interior", ""))
+            ),
+            "Tirador": tirador_ui,
+            "Color tirador": _ui_color_tirador(mueble, tirador_ui),
+            "Rodapié": _normalizar_vacio(
+                _ui_rodapie(mueble.get("C_Rodapietext", ""))
+            ),
+            "Reducción de ancho": _bool_str(reduccion),
+            "Ancho reducido": ancho_reducido,
+            "Sin mecanizado": _bool_str(opcionales.get("op_121", False)),
+            "Cubos de basura": _bool_str(opcionales.get("op_207_opcional", False)),
+            "Recorte LED": _bool_str(opcionales.get("op_220", False)),
+            "Sensor para mando LED": _sensor_led_export(opcionales.get("op_222")),
+            "Cajón interior": _bool_str(opcionales.get("op_223", False)),
+            "Mueble de caldera": _bool_str(opcionales.get("op_227", False)),
+            "Sin encolar": _bool_str(opcionales.get("op_700_opcional", False)),
+            "Fabricante electro": str(op_126.get("marca", "")).strip(),
+            "Referencia electro": str(op_126.get("referencia", "")).strip(),
+            "Altura electro": str(op_126.get("altura", "")).strip(),
+            "Tipo electro": str(op_126.get("tipo", "")).strip(),
+        }
+        entrada.append(fila)
+    return entrada
 
 
 def _cabecera_card(mueble: dict, catalogo: dict, revisado: bool) -> str:
@@ -358,12 +440,17 @@ _SUBCAMPOS_OP_126_DEFAULT = {
 
 
 def _op_126_completo(valor) -> bool:
+    # Regla validada con Lucia (2026-05-11): Marca y Tipo siempre obligatorios;
+    # Referencia y Altura son intercambiables (al menos una de las dos).
     if not isinstance(valor, dict):
         return False
-    return all(
-        str(valor.get(k, "")).strip()
-        for k in _SUBCAMPOS_OP_126_DEFAULT.keys()
-    )
+    marca = str(valor.get("marca", "")).strip()
+    tipo = str(valor.get("tipo", "")).strip()
+    if not marca or not tipo:
+        return False
+    referencia = str(valor.get("referencia", "")).strip()
+    altura = str(valor.get("altura", "")).strip()
+    return bool(referencia or altura)
 
 
 def _control_electrodomestico_op_126(
@@ -503,8 +590,8 @@ def paso_1(muebles: list[dict]) -> None:
                     estado["opcionales"].get("op_126")
                 ):
                     razon_bloqueo = (
-                        "Completa los 4 datos del electrodoméstico "
-                        "(marca, referencia, altura y tipo)."
+                        "Completa los datos del electrodoméstico: "
+                        "Marca y Tipo siempre, y al menos uno de Referencia o Altura."
                     )
                 else:
                     razon_bloqueo = None

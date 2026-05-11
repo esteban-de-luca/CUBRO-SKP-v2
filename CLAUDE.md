@@ -111,7 +111,7 @@ El Módulo B es la UI. Interviene en DOS momentos del flujo:
 ### Paso 1 — Selección de opciones opcionales (antes del Módulo C)
 - Recibe del Módulo A: `list[dict]`, un dict por mueble con datos del CSV validados.
 - Recibe del usuario: selección de opciones opcionales por mueble.
-- Envía al Módulo C: `list[dict]` original + dict de opciones seleccionadas.
+- Envía al Módulo C: **Entrada Módulo C** — `list[dict]` plana de 23 columnas por mueble, ya con las transformaciones CSV→UI aplicadas (CLAUDE.md §8). Ver schema en §9. La construye `modulo_b.construir_entrada_modulo_c(muebles, selecciones, catalogo)`.
 
 ### Paso 2 — Revisión y export (después del Módulo C)
 - Recibe del Módulo C: pedido completo con todas las opciones SG calculadas.
@@ -199,6 +199,36 @@ C_Rodapietext · Ancho · Ancho reducido · LenZ · Avisos
 - `Avisos`: string concatenada con ` | ` (con espacios). Códigos posibles: A02, A05, A09, A10, A11, A12, A17, A21, A22, A23, E07, CB12.
 - `Name SKP`: nombre original que vino de SketchUp. Siempre presente (úsalo como identificador en UI cuando `Name` esté vacío o no resuelto).
 
+### Output del Paso 1 → Entrada Módulo C
+
+Contrato confirmado con Lucía el 2026-05-11 (hipótesis B). `list[dict]` plana, una fila por mueble, **23 keys fijas** (las mismas en todas las filas; valores `""` o `"False"` cuando la opcional no aplica). Las transformaciones CSV→UI de §8 ya están aplicadas. Lo construye `modulo_b.construir_entrada_modulo_c(muebles, selecciones, catalogo)`.
+
+| # | Columna | Tipo | Origen |
+|---|---|---|---|
+| 1 | Código mueble | `str` | CSV `Name` |
+| 2 | Descripción | `str` | `catalogo.json.<name>.designaciones.es` |
+| 3 | Posición | `str` | Reservada (siempre `""`) |
+| 4 | Apertura | `str` | UI label o `""` |
+| 5 | Gama del frente | `str` | LACA / WOOD / LINOLEO / LAMINADO |
+| 6 | Acabado del frente | `str` | Color sin sufijo de gama ("Crema") |
+| 7 | Color interior | `str` | Sin "mueble" ("Blanco") |
+| 8 | Tirador | `str` | UI label (Round, Square, …) o `""` |
+| 9 | Color tirador | `str` | Touch Latch/Prise de main → `""`. Trasera=Laca → color del frente. Resto → valor crudo |
+| 10 | Rodapié | `str` | "70/100 mm" / "Sin patas" / `""` |
+| 11 | Reducción de ancho | `"True"`/`"False"` | CSV `Ancho == "10000 mm"` |
+| 12 | Ancho reducido | `str` | Valor cuando Reducción=True, sino `""` |
+| 13 | Sin mecanizado | `"True"`/`"False"` | op_121 |
+| 14 | Cubos de basura | `"True"`/`"False"` | op_207_opcional |
+| 15 | Recorte LED | `"True"`/`"False"` | op_220 |
+| 16 | Sensor para mando LED | `str` | "Derecha" / "Izquierda" / `""` (op_222) |
+| 17 | Cajón interior | `"True"`/`"False"` | op_223 |
+| 18 | Mueble de caldera | `"True"`/`"False"` | op_227 |
+| 19 | Sin encolar | `"True"`/`"False"` | op_700_opcional |
+| 20 | Fabricante electro | `str` | op_126.marca |
+| 21 | Referencia electro | `str` | op_126.referencia |
+| 22 | Altura electro | `str` | op_126.altura |
+| 23 | Tipo electro | `str` | op_126.tipo |
+
 ### `data/catalogo.json`
 
 121 muebles. Schema por entrada:
@@ -241,7 +271,7 @@ Sección `interfaz` lista las 8 opciones opcionales que B debe presentar al usua
 - `op_223` Cajón interior (checkbox)
 - `op_227` Mueble de caldera (checkbox)
 - `op_700_opcional` Mueble sin encolar (checkbox)
-- `op_126` Electrodoméstico (bloque de 4 textos libres: marca, referencia, altura, tipo; solo BFT y AFS). El valor en `opcionales["op_126"]` es un `dict[str, str]` con las 4 keys. Los 4 campos son obligatorios para poder marcar el mueble como revisado.
+- `op_126` Electrodoméstico (bloque de 4 textos libres: marca, referencia, altura, tipo; solo BFT y AFS). El valor en `opcionales["op_126"]` es un `dict[str, str]` con las 4 keys. **Validación para marcar revisado** (confirmada con Lucía el 2026-05-11): Marca y Tipo siempre obligatorios; Referencia y Altura son intercambiables, al menos una de las dos debe estar rellena.
 
 ### `data/reglas.yaml`
 

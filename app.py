@@ -107,67 +107,62 @@ def _mock_muebles() -> list[dict]:
     ]
 
 
-_ETIQUETAS_OPCIONALES_MOCK = {
-    "op_121": "Sin mecanizado para tirador",
-    "op_207_opcional": "Cubos de basura",
-    "op_220": "Recorte para perfil LED",
-    "op_222": "Sensor para mando LED",
-    "op_223": "Cajón interior",
-    "op_227": "Mueble de caldera",
-    "op_700_opcional": "Mueble sin encolar",
-    "op_126": "Electrodoméstico",
-}
+# Columnas booleanas de la entrada que se exponen como "Sí" en el bloque
+# "Opciones adicionales" del Paso 2 cuando el usuario las ha marcado.
+_OPCIONALES_BOOL_EN_ENTRADA = (
+    "Sin mecanizado",
+    "Cubos de basura",
+    "Recorte LED",
+    "Cajón interior",
+    "Mueble de caldera",
+    "Sin encolar",
+)
 
 
-def _mock_pedido(muebles: list[dict], selecciones: dict) -> list[dict]:
-    """Output mock del Módulo C — propuesta de contrato pendiente con Lucía.
+def _mock_pedido(muebles: list[dict], entrada: list[dict]) -> list[dict]:
+    """Mock del Módulo C — consume la entrada de 23 columnas (hipótesis B).
 
-    Cada entrada extiende el dict del mueble original con:
+    Devuelve la misma list[dict] que espera el Paso 2: cada entrada extiende
+    el dict del mueble original con:
       - opciones_adicionales: list[dict] {etiqueta, valor, origen}
-        donde origen ∈ {'usuario', 'automatico'}.
-      - codigos_sg: dict[op_id, valor] — códigos SG crudos para detalle técnico.
-
-    El Paso 2 lee el dict del mueble (campos CSV originales) para los bloques
-    Configuración y Dimensiones, y los campos añadidos para Opciones adicionales.
+      - codigos_sg: dict[op_id, valor]
     """
     pedido: list[dict] = []
-    for mueble in muebles:
-        clave = (mueble.get("Name SKP") or mueble.get("Name") or "").strip()
-        sel_op = (selecciones.get(clave, {}) or {}).get("opcionales", {}) or {}
+    for mueble, fila in zip(muebles, entrada):
         opciones_adicionales: list[dict] = []
-        for op_id, valor in sel_op.items():
-            if op_id == "op_126":
-                # op_126 es un dict con 4 subcampos obligatorios. Si está
-                # incompleto, el check del mueble bloquea el avance, asi que
-                # aqui solo lo emitimos cuando esta completo.
-                if not isinstance(valor, dict):
-                    continue
-                partes = [
-                    str(valor.get(k, "")).strip()
-                    for k in ("marca", "referencia", "altura", "tipo")
-                ]
-                if not all(partes):
-                    continue
-                opciones_adicionales.append({
-                    "etiqueta": _ETIQUETAS_OPCIONALES_MOCK["op_126"],
-                    "valor": " · ".join(partes),
-                    "origen": "usuario",
-                })
-                continue
-            if valor in (False, "", "ninguno", None):
-                continue
-            etiqueta = _ETIQUETAS_OPCIONALES_MOCK.get(op_id, op_id)
-            if op_id == "op_222":
-                valor_ui = {"derecha": "Derecha", "izquierda": "Izquierda"}.get(
-                    valor, str(valor)
+
+        for col in _OPCIONALES_BOOL_EN_ENTRADA:
+            if fila.get(col) == "True":
+                opciones_adicionales.append(
+                    {"etiqueta": col, "valor": "Sí", "origen": "usuario"}
                 )
-            elif valor is True:
-                valor_ui = "Sí"
-            else:
-                valor_ui = str(valor)
+
+        sensor = fila.get("Sensor para mando LED", "")
+        if sensor:
             opciones_adicionales.append(
-                {"etiqueta": etiqueta, "valor": valor_ui, "origen": "usuario"}
+                {
+                    "etiqueta": "Sensor para mando LED",
+                    "valor": sensor,
+                    "origen": "usuario",
+                }
             )
+
+        electro_partes = [
+            fila.get("Fabricante electro", ""),
+            fila.get("Referencia electro", ""),
+            fila.get("Altura electro", ""),
+            fila.get("Tipo electro", ""),
+        ]
+        electro_partes = [p for p in electro_partes if p]
+        if electro_partes:
+            opciones_adicionales.append(
+                {
+                    "etiqueta": "Electrodoméstico",
+                    "valor": " · ".join(electro_partes),
+                    "origen": "usuario",
+                }
+            )
+
         # Forzada de ejemplo para que el marcador ⚙ sea visible en el Paso 2.
         opciones_adicionales.append(
             {
@@ -176,6 +171,7 @@ def _mock_pedido(muebles: list[dict], selecciones: dict) -> list[dict]:
                 "origen": "automatico",
             }
         )
+
         pedido.append(
             {
                 **mueble,
@@ -192,12 +188,14 @@ def _mock_pedido(muebles: list[dict], selecciones: dict) -> list[dict]:
 
 
 def _calcular_pedido_paso_2() -> list[dict]:
-    """Llama al Módulo C (o a su mock) para obtener el pedido enriquecido."""
+    """Construye la entrada y la pasa al Módulo C (o a su mock)."""
     muebles = st.session_state.muebles or []
     selecciones = st.session_state.selecciones_paso_1 or {}
+    catalogo = modulo_b._cargar_catalogo()
+    entrada = modulo_b.construir_entrada_modulo_c(muebles, selecciones, catalogo)
     if USE_MOCK_C:
-        return _mock_pedido(muebles, selecciones)
-    return modulo_c.calcular_opciones(muebles, selecciones) or []
+        return _mock_pedido(muebles, entrada)
+    return modulo_c.calcular_opciones(entrada) or []
 
 
 # Schema del output del Módulo A (ver CLAUDE.md §9).
