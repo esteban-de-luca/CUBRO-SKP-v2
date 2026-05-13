@@ -254,7 +254,6 @@ def _render_sidebar() -> None:
     with st.sidebar:
         # Logo PNG pendiente de subir a assets/logo_cubro.png.
         st.markdown("## CUBRO")
-        st.caption("× Schmidt Groupe")
 
         st.divider()
 
