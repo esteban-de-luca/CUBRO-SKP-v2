@@ -1,6 +1,6 @@
-# Flujo de trabajo — CUBRO × Schmidt Groupe
+# Flujo de trabajo — CUBRO × Schmidt Gruppe
 
-> Cómo trabaja el equipo con GitHub + Google Drive.  
+> Cómo trabaja el equipo con el repositorio de GitHub.  
 > Última actualización: mayo 2026
 
 ---
@@ -9,9 +9,8 @@
 
 | Herramienta | Para qué sirve |
 |---|---|
-| **Google Drive** | Sincroniza archivos entre compañeros en tiempo real |
 | **GitHub** | Fuente de verdad del código — alimenta Streamlit |
-| **Temp/clon** | Repositorio git local desde donde se hace push a GitHub |
+| **Repositorio local (Temp/clon)** | Copia local desde donde se edita y se hace push a GitHub |
 
 ---
 
@@ -66,17 +65,11 @@ git commit -m "descripción del cambio"
 git push origin main
 ```
 
-Después de hacer push, copiar el archivo modificado al Drive para que los compañeros lo vean:
-
-```
-Temp\CUBRO-SKP-v2\modulo_X.py  →  copiar a  →  Drive\CUBRO-SKP\modulo_X.py
-```
-
 ---
 
 ## 4. El problema de `app.py`
 
-`app.py` es la orquestación general y **solo Esteban lo edita**. Esto elimina el conflicto en la mayoría de casos.
+`app.py` es la orquestación general y **solo Esteban lo edita** por defecto. Esto elimina el conflicto en la mayoría de casos.
 
 ### Si excepcionalmente alguien más necesita tocarlo:
 
@@ -106,11 +99,9 @@ Inicio de sesión
       ↓
 git pull  →  sincronizar cambios de compañeros
       ↓
-Editar MI archivo en el clon (Temp)
+Editar MI archivo en el repositorio local
       ↓
 git add + commit + push  →  GitHub  →  Streamlit se actualiza
-      ↓
-Copiar archivo al Drive  →  compañeros ven el cambio
 ```
 
 ---
