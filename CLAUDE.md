@@ -23,27 +23,20 @@ SketchUp → Export CSV → Módulo A (validación) → Módulo B (UI Paso 1)
 ```
 
 **Despliegue:** Streamlit Cloud (plan gratuito → repo público).
-**Repo:** https://github.com/luciarodriguez-cpu/CUBRO-skp
+**Repo:** https://github.com/esteban-de-luca/CUBRO-SKP-v2
 **URL pública:** https://cubro-skp-hmtqcrnptzyqww353nataj.streamlit.app
 
 ---
 
 ## 2. Equipo y propiedad de archivos
 
-| Persona | Módulo | Archivo Python | Rama Git | Email |
-|---|---|---|---|---|
-| Javier | A — Validación CSV | `modulo_a.py` | `feature/modulo-a` | javier.abad@cubrodesign.com |
-| Esteban | B — Interfaz y selección | `modulo_b.py` | `feature/modulo-b` | esteban.deluca@cubrodesign.com |
-| Lucía | C — Mapeo y cálculo | `modulo_c.py` | `feature/modulo-c` | lucia.rodriguez@cubrodesign.com |
+| Persona | Módulo | Archivo Python | Email |
+|---|---|---|---|
+| Javier | A — Validación CSV | `modulo_a.py` | javier.abad@cubrodesign.com |
+| Esteban | B — Interfaz y selección | `modulo_b.py` | esteban.deluca@cubrodesign.com |
+| Lucía | C — Mapeo y cálculo | `modulo_c.py` | lucia.rodriguez@cubrodesign.com |
 
-**Reglas Git inviolables:**
-- Nadie hace push a `main` directamente.
-- Cada persona trabaja exclusivamente en su rama.
-- Los merges a `main` se coordinan entre los tres antes de integrar.
-
-**Reglas de archivos:**
-- `modulo_X.py` → solo lo toca su responsable.
-- `data/*.yaml` y `data/catalogo.json` → archivos compartidos. Cualquier cambio debe comunicarse al equipo **antes** de push.
+> El flujo de trabajo con Git está documentado en [`FLUJO-DE-TRABAJO.md`](./FLUJO-DE-TRABAJO.md).
 
 ---
 
@@ -367,15 +360,7 @@ Orden razonable para arrancar `modulo_b.py` y `app.py`:
 9. **Paso 2 — detalle técnico (feature flag)**.
 10. **Paso 2 — botón export placeholder**.
 
-Cada hito es un commit separado en `feature/modulo-b`.
+Cada hito es un commit separado en `main`.
 
 ---
 
-## 16. Convención al cierre de una sesión
-
-Al final de cada sesión productiva, conviene:
-
-1. Hacer commit de los cambios con mensaje descriptivo.
-2. Si se han tomado decisiones arquitectónicas nuevas, anotarlas (idealmente en Notion vía la conversación del chat, no aquí).
-3. Si se ha cambiado algo del contrato con A o C, avisar al responsable.
-4. Actualizar este `CLAUDE.md` si han cambiado convenciones, pendientes o estructura.

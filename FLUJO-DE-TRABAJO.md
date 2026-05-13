@@ -1,4 +1,4 @@
-# Flujo de trabajo — CUBRO × Schmidt Gruppe
+# Flujo de trabajo — CUBRO × Schmidt Groupe
 
 > Cómo trabaja el equipo con el repositorio de GitHub.  
 > Última actualización: mayo 2026
@@ -10,19 +10,22 @@
 | Herramienta | Para qué sirve |
 |---|---|
 | **GitHub** | Fuente de verdad del código — alimenta Streamlit |
-| **Repositorio local (Temp/clon)** | Copia local desde donde se edita y se hace push a GitHub |
+| **Repositorio local** | Copia local desde donde se edita y se hace push a GitHub |
 
 ---
 
 ## Propiedad de archivos
 
-| Persona | Archivo propio | ¿Puede tocar `app.py`? |
+| Persona | Archivo propio | Email |
 |---|---|---|
-| Javier | `modulo_a.py` | ❌ No |
-| Esteban | `modulo_b.py` | ✅ Sí (es su responsabilidad) |
-| Lucía | `modulo_c.py` | ❌ No |
+| Javier | `modulo_a.py` | javier.abad@cubrodesign.com |
+| Esteban | `modulo_b.py` + `app.py` | esteban.deluca@cubrodesign.com |
+| Lucía | `modulo_c.py` | lucia.rodriguez@cubrodesign.com |
 
-> **Regla de oro:** cada persona edita exclusivamente su archivo. Nadie toca el archivo de otro sin coordinación explícita previa.
+**Reglas inviolables:**
+- Cada persona edita exclusivamente su archivo.
+- Nadie toca el archivo de otro sin coordinación explícita previa.
+- Los archivos compartidos (`data/*.yaml`, `data/catalogo.json`) requieren avisar al equipo **antes** de hacer push.
 
 ---
 
@@ -47,7 +50,7 @@ ls "C:\Users\TU_USUARIO\AppData\Local\Temp\CUBRO-SKP-v2"
 
 # Si no existe → volver al paso 1 (Configuración inicial)
 
-# Sincronizar con GitHub
+# Sincronizar con GitHub antes de tocar nada
 cd "C:\Users\TU_USUARIO\AppData\Local\Temp\CUBRO-SKP-v2"
 git pull origin main
 ```
@@ -60,7 +63,7 @@ git pull origin main
 
 ```bash
 cd "C:\Users\TU_USUARIO\AppData\Local\Temp\CUBRO-SKP-v2"
-git add modulo_X.py          # solo tu archivo
+git add modulo_X.py          # solo tu archivo (o los archivos que hayas tocado)
 git commit -m "descripción del cambio"
 git push origin main
 ```
@@ -92,7 +95,18 @@ git push origin main
 
 ---
 
-## 5. Resumen del flujo diario
+## 5. Cierre de sesión
+
+Al terminar cada sesión de trabajo:
+
+1. Hacer commit y push de todos los cambios pendientes.
+2. Si se han tomado decisiones arquitectónicas nuevas, anotarlas en Notion.
+3. Si se ha cambiado algo del contrato entre módulos, avisar al responsable afectado.
+4. Si han cambiado convenciones, pendientes o estructura, actualizar `CLAUDE.md`.
+
+---
+
+## 6. Resumen del flujo diario
 
 ```
 Inicio de sesión
@@ -102,6 +116,8 @@ git pull  →  sincronizar cambios de compañeros
 Editar MI archivo en el repositorio local
       ↓
 git add + commit + push  →  GitHub  →  Streamlit se actualiza
+      ↓
+Avisar al equipo si el cambio afecta a otros módulos
 ```
 
 ---
@@ -110,4 +126,4 @@ git add + commit + push  →  GitHub  →  Streamlit se actualiza
 
 - **Repositorio GitHub:** https://github.com/esteban-de-luca/CUBRO-SKP-v2
 - **App en Streamlit:** https://cubro-skp-hmtqcrnptzyqww353nataj.streamlit.app
-- **Documentación del proyecto:** ver `CLAUDE.md`
+- **Documentación técnica del proyecto:** ver `CLAUDE.md`
