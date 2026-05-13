@@ -253,7 +253,10 @@ def _reset_completo() -> None:
 def _render_sidebar() -> None:
     with st.sidebar:
         # Logo PNG pendiente de subir a assets/logo_cubro.png.
-        st.markdown("## CUBRO")
+        st.markdown(
+            "<h1 style='font-size: 60px; margin: 0 0 0.5rem 0;'>CUBRO</h1>",
+            unsafe_allow_html=True,
+        )
         _MESES = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"]
         hoy = datetime.today()
         st.caption(f"{hoy.day} de {_MESES[hoy.month - 1]} de {hoy.year}")
