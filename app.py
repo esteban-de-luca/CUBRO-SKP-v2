@@ -252,8 +252,10 @@ def _reset_completo() -> None:
 
 def _render_sidebar() -> None:
     with st.sidebar:
-        # Logo PNG pendiente de subir a assets/logo_cubro.png.
-        st.markdown("## CUBRO")
+        st.image("assets/Logo CUBRO_positivo.png", use_container_width=True)
+        _MESES = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"]
+        hoy = datetime.today()
+        st.caption(f"{hoy.day} de {_MESES[hoy.month - 1]} de {hoy.year}")
 
         st.divider()
 

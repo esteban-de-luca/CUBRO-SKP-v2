@@ -1,7 +1,7 @@
 # CLAUDE.md — Proyecto HbM CUBRO × Schmidt Groupe
 
 > Este archivo es el puente de contexto para Claude Code. Lee esto antes de tocar nada.
-> Última actualización: 10/05/2026 (cierre de arquitectura del Módulo B).
+> Última actualización: mayo 2026.
 
 ---
 
@@ -23,27 +23,90 @@ SketchUp → Export CSV → Módulo A (validación) → Módulo B (UI Paso 1)
 ```
 
 **Despliegue:** Streamlit Cloud (plan gratuito → repo público).
-**Repo:** https://github.com/luciarodriguez-cpu/CUBRO-skp
+**Repo:** https://github.com/esteban-de-luca/CUBRO-SKP-v2
 **URL pública:** https://cubro-skp-hmtqcrnptzyqww353nataj.streamlit.app
 
 ---
 
-## 2. Equipo y propiedad de archivos
+## 2. Equipo, propiedad de archivos y flujo de trabajo
 
-| Persona | Módulo | Archivo Python | Rama Git | Email |
-|---|---|---|---|---|
-| Javier | A — Validación CSV | `modulo_a.py` | `feature/modulo-a` | javier.abad@cubrodesign.com |
-| Esteban | B — Interfaz y selección | `modulo_b.py` | `feature/modulo-b` | esteban.deluca@cubrodesign.com |
-| Lucía | C — Mapeo y cálculo | `modulo_c.py` | `feature/modulo-c` | lucia.rodriguez@cubrodesign.com |
+### Equipo
 
-**Reglas Git inviolables:**
-- Nadie hace push a `main` directamente.
-- Cada persona trabaja exclusivamente en su rama.
-- Los merges a `main` se coordinan entre los tres antes de integrar.
+| Persona | Módulo | Archivo propio | Email |
+|---|---|---|---|
+| Javier | A — Validación CSV | `modulo_a.py` | javier.abad@cubrodesign.com |
+| Esteban | B — Interfaz y selección | `modulo_b.py` + `app.py` | esteban.deluca@cubrodesign.com |
+| Lucía | C — Mapeo y cálculo | `modulo_c.py` | lucia.rodriguez@cubrodesign.com |
 
-**Reglas de archivos:**
-- `modulo_X.py` → solo lo toca su responsable.
-- `data/*.yaml` y `data/catalogo.json` → archivos compartidos. Cualquier cambio debe comunicarse al equipo **antes** de push.
+### Reglas de archivos
+
+- Cada persona edita exclusivamente su archivo. Nadie toca el archivo de otro sin coordinación explícita previa.
+- `app.py` es responsabilidad de Esteban. Si excepcionalmente alguien más necesita tocarlo, avisar al equipo antes.
+- Los archivos compartidos (`data/*.yaml`, `data/catalogo.json`) requieren avisar al equipo **antes** de hacer push.
+
+### Herramientas
+
+| Herramienta | Para qué sirve |
+|---|---|
+| **GitHub** | Fuente de verdad del código — alimenta Streamlit |
+| **Repositorio local** | Copia local desde donde se edita y se hace push a GitHub |
+
+### Configuración inicial (solo una vez por persona)
+
+```bash
+git clone https://github.com/esteban-de-luca/CUBRO-SKP-v2 "C:\Users\TU_USUARIO\AppData\Local\Temp\CUBRO-SKP-v2"
+cd "C:\Users\TU_USUARIO\AppData\Local\Temp\CUBRO-SKP-v2"
+git config user.email "tu@cubrodesign.com"
+git config user.name "TuNombre"
+```
+
+### Inicio de cada sesión de trabajo
+
+```bash
+# Verificar que el clon existe (si no, repetir la configuración inicial)
+ls "C:\Users\TU_USUARIO\AppData\Local\Temp\CUBRO-SKP-v2"
+
+# Sincronizar con GitHub antes de tocar nada
+cd "C:\Users\TU_USUARIO\AppData\Local\Temp\CUBRO-SKP-v2"
+git pull origin main
+```
+
+> ⚠️ La carpeta Temp puede borrarse al reiniciar el ordenador. Si no existe, repetir la configuración inicial.
+
+### Publicar cambios
+
+```bash
+git add modulo_X.py          # solo tu archivo (o los archivos que hayas tocado)
+git commit -m "descripción del cambio"
+git push origin main
+```
+
+### Conflicto en `app.py`
+
+Si hay un conflicto porque dos personas han editado `app.py` a la vez:
+
+```bash
+git pull origin main
+# Git marca las líneas en conflicto con <<<<<<< y >>>>>>>
+# Abrir el archivo, resolver manualmente y guardar
+git add app.py
+git commit -m "fix: resolver conflicto en app.py"
+git push origin main
+```
+
+### Resumen del flujo diario
+
+```
+Inicio de sesión
+      ↓
+git pull  →  sincronizar cambios de compañeros
+      ↓
+Editar MI archivo en el repositorio local
+      ↓
+git add + commit + push  →  GitHub  →  Streamlit se actualiza
+      ↓
+Avisar al equipo si el cambio afecta a otros módulos
+```
 
 ---
 
@@ -89,7 +152,7 @@ streamlit run app.py
 CUBRO-skp/
 ├── app.py                  # Orquestación Streamlit (A → B → C → B). Lo gestiona Esteban.
 ├── modulo_a.py             # Javier
-├── modulo_b.py             # Esteban ← TU TRABAJO
+├── modulo_b.py             # Esteban
 ├── modulo_c.py             # Lucía
 ├── data/
 │   ├── catalogo.json       # 121 muebles. Generado 10/05/2026.
@@ -367,15 +430,15 @@ Orden razonable para arrancar `modulo_b.py` y `app.py`:
 9. **Paso 2 — detalle técnico (feature flag)**.
 10. **Paso 2 — botón export placeholder**.
 
-Cada hito es un commit separado en `feature/modulo-b`.
+Cada hito es un commit separado en `main`.
 
 ---
 
-## 16. Convención al cierre de una sesión
+## 16. Cierre de sesión
 
-Al final de cada sesión productiva, conviene:
+Al terminar cada sesión de trabajo:
 
-1. Hacer commit de los cambios con mensaje descriptivo.
-2. Si se han tomado decisiones arquitectónicas nuevas, anotarlas (idealmente en Notion vía la conversación del chat, no aquí).
-3. Si se ha cambiado algo del contrato con A o C, avisar al responsable.
-4. Actualizar este `CLAUDE.md` si han cambiado convenciones, pendientes o estructura.
+1. Hacer commit y push de todos los cambios pendientes.
+2. Si se han tomado decisiones arquitectónicas nuevas, anotarlas en Notion.
+3. Si se ha cambiado algo del contrato entre módulos, avisar al responsable afectado.
+4. Si han cambiado convenciones, pendientes o estructura, actualizar este `CLAUDE.md`.

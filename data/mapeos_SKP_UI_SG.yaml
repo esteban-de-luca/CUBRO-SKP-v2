@@ -1,0 +1,337 @@
+# =============================================================================
+# data/mapeos_SKP_UI_SG.yaml
+# Tablas de conversión: SketchUp CSV → Etiqueta UI → Código Schmidt Groupe
+#
+# Cada entrada del bloque del_csv tiene tres valores:
+#   skp — valor tal como llega en el CSV de SketchUp
+#   ui  — etiqueta en español que se muestra al usuario
+#   sg  — código que se envía a Schmidt Groupe
+#
+# Secciones:
+#   opciones — índice de todas las opciones: campo SKP, etiqueta UI y opción SG
+#   del_csv  — tablas de conversión de valores concretos del CSV
+#   forzadas — opciones calculadas automáticamente por el Módulo C (solo código SG)
+#   nombres  — designación ES (catalogo.json) → designación oficial en francés (SG)
+# =============================================================================
+
+
+# =============================================================================
+# OPCIONES
+# Índice de todas las opciones del pedido.
+# Muestra de dónde viene cada dato (skp), cómo se llama en la UI y a qué
+# opción SG corresponde.
+# Las tablas de valores concretos están en la sección del_csv.
+# =============================================================================
+
+opciones:
+
+  # Del CSV de SketchUp
+  - { skp: Apertura,                           ui: Apertura,              sg: p_hinge }
+  - { skp: D_Gama,                             ui: Gama del frente,       sg: op_100  }
+  - { skp: ColorFrente,                        ui: Acabado del frente,    sg: op_101  }
+  - { skp: "Color del interior",               ui: Color interior,        sg: op_200  }
+  - { skp: Tirador,                            ui: Apertura sin tirador,  sg: op_217  }
+  - { skp: Tirador,                            ui: Tipo de tirador,       sg: op_300  }
+  - { skp: "Trasera / Color tir. de superficie", ui: Color tirador,       sg: op_301  }
+  - { skp: C_Rodapietext,                      ui: Rodapié,               sg: op_402  }
+  - { skp: Ancho,                              ui: Reducción de ancho,    sg: op_231  }
+
+  # Selección del usuario en el Paso 1
+  - { skp: "", ui: Sin mecanizado para tirador, sg: op_121 }
+  - { skp: "", ui: Cubos de basura,             sg: op_207 }
+  - { skp: "", ui: Recorte para perfil LED,     sg: op_220 }
+  - { skp: "", ui: Sensor para mando LED,       sg: op_222 }
+  - { skp: "", ui: Cajón interior,              sg: op_223 }
+  - { skp: "", ui: Mueble de caldera,           sg: op_227 }
+  - { skp: "", ui: Mueble sin encolar,          sg: op_700 }
+  - { skp: "", ui: Electrodoméstico,            sg: op_126 }
+
+  # Forzadas por el Módulo C (sin intervención del usuario)
+  - { skp: "", ui: "", sg: op_103 }
+  - { skp: "", ui: "", sg: op_104 }
+  - { skp: "", ui: "", sg: op_203 }
+  - { skp: "", ui: "", sg: op_204 }
+  - { skp: "", ui: "", sg: op_206 }
+  - { skp: "", ui: "", sg: op_208 }
+  - { skp: "", ui: "", sg: op_209 }
+
+
+# =============================================================================
+# DEL CSV
+# Tablas de conversión de valores concretos del CSV de SketchUp.
+# =============================================================================
+
+del_csv:
+
+  # ---------------------------------------------------------------------------
+  # Apertura → Sentido de apertura de puerta
+  # G: Gauche (izquierda) · D: Droite (derecha) · L: Lift
+  # SketchUp puede enviar el valor como número o como letra.
+  # ---------------------------------------------------------------------------
+  apertura:
+    - { skp: "1",  ui: Izquierda, sg: G }
+    - { skp: "I",  ui: Izquierda, sg: G }
+    - { skp: "2",  ui: Derecha,   sg: D }
+    - { skp: "D",  ui: Derecha,   sg: D }
+    - { skp: "3",  ui: Lift,      sg: L }
+
+  # ---------------------------------------------------------------------------
+  # D_Gama → Opción 100 — Gama del frente
+  # ---------------------------------------------------------------------------
+  op_100:
+    - { skp: "1", ui: LACA,     sg: LAC }
+    - { skp: "2", ui: WOOD,     sg: WOD }
+    - { skp: "3", ui: LINOLEO,  sg: LNO }
+    - { skp: "4", ui: LAMINADO, sg: LMI }
+
+  # ---------------------------------------------------------------------------
+  # ColorFrente → Opción 101 — Acabado del frente
+  # El valor SKP incluye el sufijo de gama (ej. "Crema LACA").
+  # La etiqueta UI es el nombre sin sufijo (ej. "Crema").
+  # ---------------------------------------------------------------------------
+  op_101:
+    # LACA
+    - { skp: "Crema LACA",          ui: Crema,       sg: CR6 }
+    - { skp: "Seda LACA",           ui: Seda,        sg: SED }
+    - { skp: "Blanco LACA",         ui: Blanco,      sg: BAO }
+    - { skp: "Petal LACA",          ui: Petal,       sg: PEA }
+    - { skp: "Vela LACA",           ui: Vela,        sg: VL6 }
+    - { skp: "Marga LACA",          ui: Marga,       sg: MAA }
+    - { skp: "Zafiro LACA",         ui: Zafiro,      sg: ZAF }
+    - { skp: "Uva LACA",            ui: Uva,         sg: UVA }
+    - { skp: "Noche LACA",          ui: Noche,       sg: NOE }
+    - { skp: "Pino LACA",           ui: Pino,        sg: PI6 }
+    - { skp: "Halo LACA",           ui: Halo,        sg: HAL }
+    - { skp: "Grass LACA",          ui: Grass,       sg: GRS }
+    - { skp: "Laurel LACA",         ui: Laurel,      sg: LAU }
+    # WOOD
+    - { skp: "Nordic Oak WOOD",     ui: Nordic Oak,  sg: TCK }
+    - { skp: "Oak WOOD",            ui: Oak,         sg: TAK }
+    - { skp: "Smoked Oak WOOD",     ui: Smoked Oak,  sg: TNK }
+    # LINOLEO (sin tilde, así llega del CSV)
+    - { skp: "Mushroom LINOLEO",    ui: Mushroom,    sg: IMH }
+    - { skp: "Macadamia LINOLEO",   ui: Macadamia,   sg: IMD }
+    - { skp: "Clay LINOLEO",        ui: Clay,        sg: ICY }
+    - { skp: "Walnut LINOLEO",      ui: Walnut,      sg: IWL }
+    - { skp: "Espresso LINOLEO",    ui: Espresso,    sg: IES }
+    - { skp: "Pistachio LINOLEO",   ui: Pistachio,   sg: IPI }
+    - { skp: "Olive LINOLEO",       ui: Olive,       sg: IOL }
+    - { skp: "Conifer LINOLEO",     ui: Conifer,     sg: ICO }
+    - { skp: "Vapour LINOLEO",      ui: Vapour,      sg: IVA }
+    - { skp: "Blue Haze LINOLEO",   ui: Blue Haze,   sg: IBH }
+    - { skp: "Smokey Blue LINOLEO", ui: Smokey Blue, sg: IYB }
+    # LAMINADO
+    - { skp: "Sable LAMINADO",      ui: Sable,       sg: ASA }
+    - { skp: "Agave LAMINADO",      ui: Agave,       sg: AGV }
+    - { skp: "Sombra LAMINADO",     ui: Sombra,      sg: ASO }
+    - { skp: "Cloud LAMINADO",      ui: Cloud,       sg: ACU }
+    - { skp: "Polar LAMINADO",      ui: Polar,       sg: APA }
+    - { skp: "Mos LAMINADO",        ui: Mos,         sg: AMS }
+    - { skp: "Ash LAMINADO",        ui: Ash,         sg: AAS }
+    - { skp: "Saten LAMINADO",      ui: Saten,       sg: AST }
+    - { skp: "Lirio LAMINADO",      ui: Lirio,       sg: AII }
+    - { skp: "Carbon LAMINADO",     ui: Carbon,      sg: ACB }
+    - { skp: "Metal LAMINADO",      ui: Metal,       sg: AMT }
+
+  # ---------------------------------------------------------------------------
+  # Color del interior → Opción 200 — Color interior del mueble
+  # ---------------------------------------------------------------------------
+  op_200:
+    - { skp: "Blanco mueble", ui: Blanco, sg: 1CC }
+    - { skp: "Gris mueble",   ui: Gris,   sg: 2CC }
+    - { skp: "Negro mueble",  ui: Negro,  sg: 3CC }
+    - { skp: "Roble mueble",  ui: Roble,  sg: 4CC }
+
+  # ---------------------------------------------------------------------------
+  # Tirador → Opción 217 — Sistema de apertura sin tirador físico
+  # Solo aplica si el valor es 20 (Touch Latch) o 21 (Prise de main).
+  # ---------------------------------------------------------------------------
+  op_217:
+    - { skp: "20", ui: Touch Latch,   sg: TL1 }
+    - { skp: "21", ui: Prise de main, sg: PS1 }
+
+  # ---------------------------------------------------------------------------
+  # Tirador → Opción 300 — Tipo de tirador
+  # Solo aplica si el valor NO es 20 ni 21.
+  #
+  # ⚠️ Curve (4) y Line (5) tienen dos códigos según el tipo de mueble:
+  #   - sufijo H: puerta batiente
+  #   - sufijo C: cajón, bloque extraíble, coulissant, lift
+  # La lógica de selección H/C está en reglas.yaml.
+  # ---------------------------------------------------------------------------
+  op_300:
+    - { skp: "2",  ui: Round,         sg: ROU }
+    - { skp: "3",  ui: Square,        sg: SQU }
+    - { skp: "4",  ui: Curve,         sg: Q2H }  # o Q2C según reglas.yaml
+    - { skp: "5",  ui: Line,          sg: Q3H }  # o Q3C según reglas.yaml
+    - { skp: "7",  ui: Plantea,       sg: Q1C }
+    - { skp: "20", ui: Touch Latch,   sg: 499 }
+    - { skp: "21", ui: Prise de main, sg: 499 }
+
+  # ---------------------------------------------------------------------------
+  # Opción 301 — Color del tirador
+  #
+  # Dos inputs del CSV confluyen en esta misma opción:
+  #   - Trasera           → tirador integrado (Round, Square)
+  #   - Color tir. sup.   → tirador de superficie (Curve, Line, Plantea)
+  #   - Sin tirador (20/21) → vacío, no se envía
+  #
+  # Caso especial integrado: si Trasera = "Laca", el skp es el color del frente
+  # sin sufijo (ej. "Crema"), no la palabra "Laca".
+  # ---------------------------------------------------------------------------
+  op_301_integrado:
+    # Valores del campo "Trasera" — colores WOOD
+    - { skp: "Nordic Oak WOOD",  ui: Nordic Oak,  sg: NOK }
+    - { skp: "Oak WOOD",         ui: Oak,         sg: OAK }
+    - { skp: "Smoked Oak WOOD",  ui: Smoked Oak,  sg: SMK }
+    # Cuando Trasera = "Laca": skp = color del frente sin sufijo
+    - { skp: "Crema",   ui: Crema,  sg: CR6 }
+    - { skp: "Seda",    ui: Seda,   sg: SED }
+    - { skp: "Blanco",  ui: Blanco, sg: BAO }
+    - { skp: "Petal",   ui: Petal,  sg: PEA }
+    - { skp: "Vela",    ui: Vela,   sg: VL6 }
+    - { skp: "Marga",   ui: Marga,  sg: MAA }
+    - { skp: "Zafiro",  ui: Zafiro, sg: ZAF }
+    - { skp: "Uva",     ui: Uva,    sg: UVA }
+    - { skp: "Noche",   ui: Noche,  sg: NOE }
+    - { skp: "Pino",    ui: Pino,   sg: PI6 }
+    - { skp: "Halo",    ui: Halo,   sg: HAL }
+    - { skp: "Grass",   ui: Grass,  sg: GRS }
+    - { skp: "Laurel",  ui: Laurel, sg: LAU }
+
+  op_301_superficie:
+    # Valores del campo "Color tir. de superficie" — la ui coincide con el skp
+    - { skp: "Inox",   ui: Inox,   sg: IN7 }
+    - { skp: "Brass",  ui: Brass,  sg: BR6 }
+    - { skp: "Blanco", ui: Blanco, sg: LB6 }
+    - { skp: "Negro",  ui: Negro,  sg: NE6 }
+    - { skp: "Arena",  ui: Arena,  sg: AR6 }
+    - { skp: "Brown",  ui: Brown,  sg: BO6 }
+
+  # ---------------------------------------------------------------------------
+  # C_Rodapietext → Opción 402 — Altura de las patas
+  # ---------------------------------------------------------------------------
+  op_402:
+    - { skp: "70 mm",  ui: 70 mm,     sg: "70"  }
+    - { skp: "100 mm", ui: 100 mm,    sg: "100" }
+    - { skp: "0 mm",   ui: Sin patas, sg: SPI   }
+
+  # ---------------------------------------------------------------------------
+  # Ancho → Opción 231 — Reducción de ancho
+  # Si Ancho == "10000 mm" → se aplica reducción; el valor final va en p_param1.
+  # Reducción máxima: 299 mm · Ancho mínimo resultante: 300 mm.
+  # ---------------------------------------------------------------------------
+  op_231:
+    - { skp: "10000 mm", ui: Reducción de ancho, sg: RL3 }
+    # El valor reducido (campo "Ancho reducido" del CSV) se envía en p_param1.
+
+
+# =============================================================================
+# FORZADAS
+# Opciones calculadas automáticamente por el Módulo C.
+# No requieren input del CSV ni selección del usuario.
+# Las condiciones de aplicación están en reglas.yaml.
+# =============================================================================
+
+forzadas:
+
+  op_103:   # Sentido de la veta
+    sg: VER
+
+  op_104:   # Acabado canto del frente — varía según gama (ver reglas.yaml)
+    sg: HAK  # solo para LINOLEO; LACA copia op_101; WOOD y LAMINADO vacío
+
+  op_203:   # Espesor canto mueble
+    sg: E14
+
+  op_204:   # Acabado canto mueble — copia el código de op_200 del mismo mueble
+    sg: copia_op_200
+
+  op_206:   # Sistema de cierre
+    sg: FSP
+
+  op_207:   # Equipamiento fregadero (ver reglas.yaml)
+    sg: P42
+
+  op_208:   # Equipamiento esquinero Lemans
+    sg: CPA
+
+  op_209:   # Equipamiento cajón
+    sg: BES
+
+  op_700:   # Sin encolar (ver reglas.yaml)
+    sg: DEM
+
+
+# =============================================================================
+# NOMBRES
+# Traducción de la designación en español (designaciones.es del catalogo.json)
+# a la designación oficial en francés de Schmidt Groupe (p_item_label).
+# =============================================================================
+
+nombres:
+
+  # Muebles bajos — Almacenamiento
+  "Bajo 1 puerta":                                          "ELEMENT BAS 1 PORTE"
+  "Bajo 2 puertas":                                         "ELEMENT BAS 2 PORTES"
+  "Bajo 1 bloque + 2 cajones":                              "ELEMENT BAS 1 BLOC, 2 TIROIRS"
+  "Bajo 2 bloques":                                         "ELEMENT BAS 2 BLOCS"
+  "Extraíble":                                              "ELEMENT BAS 1 PORTE COULISSANTE"
+  "Banco, 1 bloque":                                        "ELEMENT BAS 1 BLOC"
+
+  # Muebles bajos — Cocción
+  "Bajo horno, 1 cajón, 1 fijo":                            "ELEMENT BAS CUISSON FOUR 1 TIROIR"
+  "Bajo cocción, 1 bloque + 2 cajones":                     "ELEMENT BAS CUISSON 1 BLOC 2 TIROIRS"
+  "Bajo para placa aspirante, 1 bloque + 2 cajones":        "ELEMENT POUR PLAQUE ASPIRANTE 1 BLOC 2 TIROIR"
+
+  # Muebles bajos — Fregadero
+  "Bajo para fregadero, 1 puerta":                          "ELEMENT BAS SOUS EVIER 1 PORTE"
+  "Bajo para fregadero, 2 puertas":                         "ELEMENT BAS SOUS EVIER 2 PORTES"
+  "Bajo para fregadero equipado, 2 puertas":                "ELEMENT BAS SOUS EVIER EQUIPE 2 PORTES"
+  "Bajo para fregadero, 2 bloques":                         "ELEMENT BAS SOUS EVIER 2 BLOCS"
+  "Bajo para fregadero, 1 bloque + 2 cajones":              "ELEMENT BAS SOUS EVIER 1 BLOC 2 TIROIRS"
+
+  # Muebles bajos — Lavavajillas / Lavadora
+  "Frente de lavavajillas / lavadora integrable":            "FACADE POUR LAVE-LINGE, LAVE-VAISSELLE OU REFRIGERATEUR INTEGRE"
+  "Frente de lavavajillas no integrable":                    "FACADE POUR LAVE-LINGE, LAVE-VAISSELLE NON INTEGRE"
+
+  # Muebles bajos — Esquinero
+  "Bajo esquinero, 2 baldas":                               "ELEMENT BAS D'ANGLE A ETAGERE"
+  "Bajo esquinero, 2 accesorios extraíbles Lemans":         "ELEMENT BAS D'ANGLE A PLATEAUX PIVOTANTS"
+
+  # Muebles de pared — Almacenamiento
+  "De pared, 1 puerta":                                     "ELEMENT HAUT 1 PORTE"
+  "De pared, 2 puertas":                                    "ELEMENT HAUT 2 PORTES"
+
+  # Muebles de pared — Campana
+  "De pared para campana integrada, 1 puerta":              "ELEMENT HAUT POUR HOTTE INTEGRE 1 PORTE"
+  "De pared para campana integrada, 2 puertas":             "ELEMENT HAUT POUR HOTTE INTEGRE 2 PORTES"
+
+  # Muebles de pared — Esquinero
+  "De pared esquinero, 1 puerta (45)":                      "ELEMENT HAUT D'ANGLE 1 PORTE"
+  "De pared esquinero, 1 puerta (60)":                      "ELEMENT HAUT D'ANGLE 1 PORTE"
+
+  # Muebles de pared — Altillos
+  "Altillo variable, puerta batiente":                      "REHAUSSE VARIABLE"
+  "Altillo lift variable para nevera americana":             "REHAUSSE VARIABLE"
+  "Mueble sobre encimera":                                  "ELEMENT HAUT A POSER"
+
+  # Columnas — Almacenamiento
+  "Columna con baldas, 2 puertas":                          "ARMOIRE DE RANGEMENT A ETAGERES 2 PORTES"
+  "Columna con baldas, 1 puerta":                           "ARMOIRE DE RANGEMENT A ETAGERES 1 PORTE"
+  "Columna con cajones, 2 puertas":                         "ARMOIRE DE RANGEMENT A TIROIRS 2 PORTES"
+  "Columna con cajones, 1 puerta":                          "ARMOIRE DE RANGEMENT A TIROIRS 1 PORTE"
+  "Armario escoba, 2 puertas":                              "ARMOIRE A BALAI 2 PORTES"
+
+  # Columnas — Horno y microondas
+  "Para horno o microondas, 1 puerta":                      "ARMOIRE SANS BANDEAU POUR ENCASTRER UN FOUR OU UN MICRO ONDES 1 PORTE"
+  "Para horno o microondas, 2 bloques":                     "ARMOIRE SANS BANDEAU POUR ENCASTRER UN FOUR OU UN MICRO ONDES 2 BLOCS"
+  "Para 2 hornos / horno+micro, 1 puerta":                  "ARMOIRE SANS BANDEAU POUR ENCASTRER 2 FOURS OU UN FOUR ET UN MICRO-ONDES 1 PORTE"
+  "Para 2 hornos / horno+micro, 1 bloque+1 cajón":          "ARMOIRE SANS BANDEAU POUR ENCASTRER 2 FOURS OU UN FOUR ET UN MICRO-ONDES 1 BLOC 1 TIROIR"
+
+  # Columnas — Frigorífico
+  "Para frigorífico, 2 puertas":                            "ARMOIRE POUR INTEGRER UN REFRIGERATEUR ET UN CONGELATEUR OU UN COMBINE 2 PORTES"
+  "Para frigorífico, 1 puerta":                             "ARMOIRE POUR INTEGRER UN REFRIGERATEUR ET UN CONGELATEUR OU UN COMBINE 1 PORTE"
+
+  # Columnas — Despensa
+  "Despensa, 4 puertas":                                    "ARMOIRE DE RANGEMENT 4 PORTES"
