@@ -1,945 +1,581 @@
 {
   "B308035": {
-    "name": "B308035",
-    "tipo": "B",
-    "familia": "Bajos",
-    "subfamilia": "Almacenamiento",
     "designaciones": {
       "es": "Bajo 1 puerta"
     },
     "ancho_mm": 300,
     "alto_mm": 800,
-    "fondo_mm": 350,
-    "diferenciador": "Mueble bajo con 1 o 2 puertas batientes y 2 baldas fijas. Mismo aspecto exterior que BETO y BETOQ — la posibilidad de fregadero los diferencia."
+    "fondo_mm": 350
   },
   "B458035": {
-    "name": "B458035",
-    "tipo": "B",
-    "familia": "Bajos",
-    "subfamilia": "Almacenamiento",
     "designaciones": {
       "es": "Bajo 1 puerta"
     },
     "ancho_mm": 450,
     "alto_mm": 800,
-    "fondo_mm": 350,
-    "diferenciador": "Mueble bajo con 1 o 2 puertas batientes y 2 baldas fijas. Mismo aspecto exterior que BETO y BETOQ — la posibilidad de fregadero los diferencia."
+    "fondo_mm": 350
   },
   "B608035": {
-    "name": "B608035",
-    "tipo": "B",
-    "familia": "Bajos",
-    "subfamilia": "Almacenamiento",
     "designaciones": {
       "es": "Bajo 1 puerta"
     },
     "ancho_mm": 600,
     "alto_mm": 800,
-    "fondo_mm": 350,
-    "diferenciador": "Mueble bajo con 1 o 2 puertas batientes y 2 baldas fijas. Mismo aspecto exterior que BETO y BETOQ — la posibilidad de fregadero los diferencia."
+    "fondo_mm": 350
   },
   "B908035": {
-    "name": "B908035",
-    "tipo": "B",
-    "familia": "Bajos",
-    "subfamilia": "Almacenamiento",
     "designaciones": {
       "es": "Bajo 2 puertas"
     },
     "ancho_mm": 900,
     "alto_mm": 800,
-    "fondo_mm": 350,
-    "diferenciador": "Mueble bajo con 1 o 2 puertas batientes y 2 baldas fijas. Mismo aspecto exterior que BETO y BETOQ — la posibilidad de fregadero los diferencia."
+    "fondo_mm": 350
   },
   "B308057": {
-    "name": "B308057",
-    "tipo": "B",
-    "familia": "Bajos",
-    "subfamilia": "Almacenamiento",
     "designaciones": {
       "es": "Bajo 1 puerta"
     },
     "ancho_mm": 300,
     "alto_mm": 800,
-    "fondo_mm": 570,
-    "diferenciador": "Mueble bajo con 1 o 2 puertas batientes y 2 baldas fijas. Mismo aspecto exterior que BETO y BETOQ — la posibilidad de fregadero los diferencia."
+    "fondo_mm": 570
   },
   "B458057": {
-    "name": "B458057",
-    "tipo": "B",
-    "familia": "Bajos",
-    "subfamilia": "Almacenamiento",
     "designaciones": {
       "es": "Bajo 1 puerta"
     },
     "ancho_mm": 450,
     "alto_mm": 800,
-    "fondo_mm": 570,
-    "diferenciador": "Mueble bajo con 1 o 2 puertas batientes y 2 baldas fijas. Mismo aspecto exterior que BETO y BETOQ — la posibilidad de fregadero los diferencia."
+    "fondo_mm": 570
   },
   "B608057": {
-    "name": "B608057",
-    "tipo": "B",
-    "familia": "Bajos",
-    "subfamilia": "Almacenamiento",
     "designaciones": {
       "es": "Bajo 1 puerta"
     },
     "ancho_mm": 600,
     "alto_mm": 800,
-    "fondo_mm": 570,
-    "diferenciador": "Mueble bajo con 1 o 2 puertas batientes y 2 baldas fijas. Mismo aspecto exterior que BETO y BETOQ — la posibilidad de fregadero los diferencia."
+    "fondo_mm": 570
   },
   "B908057": {
-    "name": "B908057",
-    "tipo": "B",
-    "familia": "Bajos",
-    "subfamilia": "Almacenamiento",
     "designaciones": {
       "es": "Bajo 2 puertas"
     },
     "ancho_mm": 900,
     "alto_mm": 800,
-    "fondo_mm": 570,
-    "diferenciador": "Mueble bajo con 1 o 2 puertas batientes y 2 baldas fijas. Mismo aspecto exterior que BETO y BETOQ — la posibilidad de fregadero los diferencia."
+    "fondo_mm": 570
   },
   "BB2T458035": {
-    "name": "BB2T458035",
-    "tipo": "BB2T",
-    "familia": "Bajos",
-    "subfamilia": "Almacenamiento",
     "designaciones": {
       "es": "Bajo 1 bloque + 2 cajones"
     },
     "ancho_mm": 450,
     "alto_mm": 800,
-    "fondo_mm": 350,
-    "diferenciador": "Mueble bajo con 1 bloque extraíble intermedio y 2 cajones superiores. Mismo aspecto exterior que BCUB2T, BIBTS y BEBTS — el uso previsto es el diferenciador."
+    "fondo_mm": 350
   },
   "BB2T608035": {
-    "name": "BB2T608035",
-    "tipo": "BB2T",
-    "familia": "Bajos",
-    "subfamilia": "Almacenamiento",
     "designaciones": {
       "es": "Bajo 1 bloque + 2 cajones"
     },
     "ancho_mm": 600,
     "alto_mm": 800,
-    "fondo_mm": 350,
-    "diferenciador": "Mueble bajo con 1 bloque extraíble intermedio y 2 cajones superiores. Mismo aspecto exterior que BCUB2T, BIBTS y BEBTS — el uso previsto es el diferenciador."
+    "fondo_mm": 350
   },
   "BB2T908035": {
-    "name": "BB2T908035",
-    "tipo": "BB2T",
-    "familia": "Bajos",
-    "subfamilia": "Almacenamiento",
     "designaciones": {
       "es": "Bajo 1 bloque + 2 cajones"
     },
     "ancho_mm": 900,
     "alto_mm": 800,
-    "fondo_mm": 350,
-    "diferenciador": "Mueble bajo con 1 bloque extraíble intermedio y 2 cajones superiores. Mismo aspecto exterior que BCUB2T, BIBTS y BEBTS — el uso previsto es el diferenciador."
+    "fondo_mm": 350
   },
   "BB2T458057": {
-    "name": "BB2T458057",
-    "tipo": "BB2T",
-    "familia": "Bajos",
-    "subfamilia": "Almacenamiento",
     "designaciones": {
       "es": "Bajo 1 bloque + 2 cajones"
     },
     "ancho_mm": 450,
     "alto_mm": 800,
-    "fondo_mm": 570,
-    "diferenciador": "Mueble bajo con 1 bloque extraíble intermedio y 2 cajones superiores. Mismo aspecto exterior que BCUB2T, BIBTS y BEBTS — el uso previsto es el diferenciador."
+    "fondo_mm": 570
   },
   "BB2T608057": {
-    "name": "BB2T608057",
-    "tipo": "BB2T",
-    "familia": "Bajos",
-    "subfamilia": "Almacenamiento",
     "designaciones": {
       "es": "Bajo 1 bloque + 2 cajones"
     },
     "ancho_mm": 600,
     "alto_mm": 800,
-    "fondo_mm": 570,
-    "diferenciador": "Mueble bajo con 1 bloque extraíble intermedio y 2 cajones superiores. Mismo aspecto exterior que BCUB2T, BIBTS y BEBTS — el uso previsto es el diferenciador."
+    "fondo_mm": 570
   },
   "BB2T908057": {
-    "name": "BB2T908057",
-    "tipo": "BB2T",
-    "familia": "Bajos",
-    "subfamilia": "Almacenamiento",
     "designaciones": {
       "es": "Bajo 1 bloque + 2 cajones"
     },
     "ancho_mm": 900,
     "alto_mm": 800,
-    "fondo_mm": 570,
-    "diferenciador": "Mueble bajo con 1 bloque extraíble intermedio y 2 cajones superiores. Mismo aspecto exterior que BCUB2T, BIBTS y BEBTS — el uso previsto es el diferenciador."
+    "fondo_mm": 570
   },
   "B2B458035": {
-    "name": "B2B458035",
-    "tipo": "B2B",
-    "familia": "Bajos",
-    "subfamilia": "Almacenamiento",
     "designaciones": {
       "es": "Bajo 2 bloques"
     },
     "ancho_mm": 450,
     "alto_mm": 800,
-    "fondo_mm": 350,
-    "diferenciador": "Mueble bajo con 2 bloques extraíbles intermedios. Mismo aspecto exterior que BE2B."
+    "fondo_mm": 350
   },
   "B2B608035": {
-    "name": "B2B608035",
-    "tipo": "B2B",
-    "familia": "Bajos",
-    "subfamilia": "Almacenamiento",
     "designaciones": {
       "es": "Bajo 2 bloques"
     },
     "ancho_mm": 600,
     "alto_mm": 800,
-    "fondo_mm": 350,
-    "diferenciador": "Mueble bajo con 2 bloques extraíbles intermedios. Mismo aspecto exterior que BE2B."
+    "fondo_mm": 350
   },
   "B2B908035": {
-    "name": "B2B908035",
-    "tipo": "B2B",
-    "familia": "Bajos",
-    "subfamilia": "Almacenamiento",
     "designaciones": {
       "es": "Bajo 2 bloques"
     },
     "ancho_mm": 900,
     "alto_mm": 800,
-    "fondo_mm": 350,
-    "diferenciador": "Mueble bajo con 2 bloques extraíbles intermedios. Mismo aspecto exterior que BE2B."
+    "fondo_mm": 350
   },
   "B2B458057": {
-    "name": "B2B458057",
-    "tipo": "B2B",
-    "familia": "Bajos",
-    "subfamilia": "Almacenamiento",
     "designaciones": {
       "es": "Bajo 2 bloques"
     },
     "ancho_mm": 450,
     "alto_mm": 800,
-    "fondo_mm": 570,
-    "diferenciador": "Mueble bajo con 2 bloques extraíbles intermedios. Mismo aspecto exterior que BE2B."
+    "fondo_mm": 570
   },
   "B2B608057": {
-    "name": "B2B608057",
-    "tipo": "B2B",
-    "familia": "Bajos",
-    "subfamilia": "Almacenamiento",
     "designaciones": {
       "es": "Bajo 2 bloques"
     },
     "ancho_mm": 600,
     "alto_mm": 800,
-    "fondo_mm": 570,
-    "diferenciador": "Mueble bajo con 2 bloques extraíbles intermedios. Mismo aspecto exterior que BE2B."
+    "fondo_mm": 570
   },
   "B2B908057": {
-    "name": "B2B908057",
-    "tipo": "B2B",
-    "familia": "Bajos",
-    "subfamilia": "Almacenamiento",
     "designaciones": {
       "es": "Bajo 2 bloques"
     },
     "ancho_mm": 900,
     "alto_mm": 800,
-    "fondo_mm": 570,
-    "diferenciador": "Mueble bajo con 2 bloques extraíbles intermedios. Mismo aspecto exterior que BE2B."
+    "fondo_mm": 570
   },
   "BC158057": {
-    "name": "BC158057",
-    "tipo": "BC15",
-    "familia": "Bajos",
-    "subfamilia": "Almacenamiento",
     "designaciones": {
       "es": "Extraíble"
     },
     "ancho_mm": 150,
     "alto_mm": 800,
-    "fondo_mm": 570,
-    "diferenciador": "Módulo extraíble de 150 mm de ancho. Organización vertical para botellas y especias."
+    "fondo_mm": 570
   },
   "BC604035": {
-    "name": "BC604035",
-    "tipo": "BC60",
-    "familia": "Bajos",
-    "subfamilia": "Almacenamiento",
     "designaciones": {
       "es": "Banco, 1 bloque"
     },
     "ancho_mm": 600,
     "alto_mm": 400,
-    "fondo_mm": 350,
-    "diferenciador": "Módulo bajo tipo banco (alto 400 mm) con 1 bloque extraíble. Lleva patas de 100 mm por defecto."
+    "fondo_mm": 350
   },
   "BC604057": {
-    "name": "BC604057",
-    "tipo": "BC60",
-    "familia": "Bajos",
-    "subfamilia": "Almacenamiento",
     "designaciones": {
       "es": "Banco, 1 bloque"
     },
     "ancho_mm": 600,
     "alto_mm": 400,
-    "fondo_mm": 570,
-    "diferenciador": "Módulo bajo tipo banco (alto 400 mm) con 1 bloque extraíble. Lleva patas de 100 mm por defecto."
+    "fondo_mm": 570
   },
   "BFT608057": {
-    "name": "BFT608057",
-    "tipo": "BFT",
-    "familia": "Bajos",
-    "subfamilia": "Cocción",
     "designaciones": {
       "es": "Bajo horno, 1 cajón, 1 fijo"
     },
     "ancho_mm": 600,
     "alto_mm": 800,
-    "fondo_mm": 570,
-    "diferenciador": "Mueble bajo de 600 mm para horno encastrado. Lleva 1 cajón de 126 mm sobre el horno y 1 frontal fijo superior. Admite placa de cocción encima."
+    "fondo_mm": 570
   },
   "BCUB2T458057": {
-    "name": "BCUB2T458057",
-    "tipo": "BCUB2T",
-    "familia": "Bajos",
-    "subfamilia": "Cocción",
     "designaciones": {
       "es": "Bajo cocción, 1 bloque + 2 cajones"
     },
     "ancho_mm": 450,
     "alto_mm": 800,
-    "fondo_mm": 570,
-    "diferenciador": "Mueble bajo para zona de placa de cocción. La posibilidad de colocar una placa encima es el diferenciador clave respecto al BB2T."
+    "fondo_mm": 570
   },
   "BCUB2T608057": {
-    "name": "BCUB2T608057",
-    "tipo": "BCUB2T",
-    "familia": "Bajos",
-    "subfamilia": "Cocción",
     "designaciones": {
       "es": "Bajo cocción, 1 bloque + 2 cajones"
     },
     "ancho_mm": 600,
     "alto_mm": 800,
-    "fondo_mm": 570,
-    "diferenciador": "Mueble bajo para zona de placa de cocción. La posibilidad de colocar una placa encima es el diferenciador clave respecto al BB2T."
+    "fondo_mm": 570
   },
   "BCUB2T908057": {
-    "name": "BCUB2T908057",
-    "tipo": "BCUB2T",
-    "familia": "Bajos",
-    "subfamilia": "Cocción",
     "designaciones": {
       "es": "Bajo cocción, 1 bloque + 2 cajones"
     },
     "ancho_mm": 900,
     "alto_mm": 800,
-    "fondo_mm": 570,
-    "diferenciador": "Mueble bajo para zona de placa de cocción. La posibilidad de colocar una placa encima es el diferenciador clave respecto al BB2T."
+    "fondo_mm": 570
   },
   "BIBTS608057": {
-    "name": "BIBTS608057",
-    "tipo": "BIBTS",
-    "familia": "Bajos",
-    "subfamilia": "Cocción",
     "designaciones": {
       "es": "Bajo para placa aspirante, 1 bloque + 2 cajones"
     },
     "ancho_mm": 600,
     "alto_mm": 800,
-    "fondo_mm": 570,
-    "diferenciador": "Mueble bajo para zona de placa aspirante. El frente superior es fijo (oculta el mecanismo de extracción). Los bloques inferiores sí son funcionales."
+    "fondo_mm": 570
   },
   "BIBTS908057": {
-    "name": "BIBTS908057",
-    "tipo": "BIBTS",
-    "familia": "Bajos",
-    "subfamilia": "Cocción",
     "designaciones": {
       "es": "Bajo para placa aspirante, 1 bloque + 2 cajones"
     },
     "ancho_mm": 900,
     "alto_mm": 800,
-    "fondo_mm": 570,
-    "diferenciador": "Mueble bajo para zona de placa aspirante. El frente superior es fijo (oculta el mecanismo de extracción). Los bloques inferiores sí son funcionales."
+    "fondo_mm": 570
   },
   "BETO458057": {
-    "name": "BETO458057",
-    "tipo": "BETO",
-    "familia": "Bajos",
-    "subfamilia": "Fregadero",
     "designaciones": {
       "es": "Bajo para fregadero, 1 puerta"
     },
     "ancho_mm": 450,
     "alto_mm": 800,
-    "fondo_mm": 570,
-    "diferenciador": "Mueble bajo para fregadero con interior libre para sifón y válvulas. Mismo aspecto exterior que B y BETOQ."
+    "fondo_mm": 570
   },
   "BETO608057": {
-    "name": "BETO608057",
-    "tipo": "BETO",
-    "familia": "Bajos",
-    "subfamilia": "Fregadero",
     "designaciones": {
       "es": "Bajo para fregadero, 1 puerta"
     },
     "ancho_mm": 600,
     "alto_mm": 800,
-    "fondo_mm": 570,
-    "diferenciador": "Mueble bajo para fregadero con interior libre para sifón y válvulas. Mismo aspecto exterior que B y BETOQ."
+    "fondo_mm": 570
   },
   "BETO908057": {
-    "name": "BETO908057",
-    "tipo": "BETO",
-    "familia": "Bajos",
-    "subfamilia": "Fregadero",
     "designaciones": {
       "es": "Bajo para fregadero, 2 puertas"
     },
     "ancho_mm": 900,
     "alto_mm": 800,
-    "fondo_mm": 570,
-    "diferenciador": "Mueble bajo para fregadero con interior libre para sifón y válvulas. Mismo aspecto exterior que B y BETOQ."
+    "fondo_mm": 570
   },
   "BETOQ908057": {
-    "name": "BETOQ908057",
-    "tipo": "BETOQ",
-    "familia": "Bajos",
-    "subfamilia": "Fregadero",
     "designaciones": {
       "es": "Bajo para fregadero equipado, 2 puertas"
     },
     "ancho_mm": 900,
     "alto_mm": 800,
-    "fondo_mm": 570,
-    "diferenciador": "Versión equipada del bajo de fregadero. Exclusivo en 900 mm. Incluye 2 cubos de basura de 21 L integrados de serie + 1 bloque adicional."
+    "fondo_mm": 570
   },
   "BE2B608057": {
-    "name": "BE2B608057",
-    "tipo": "BE2B",
-    "familia": "Bajos",
-    "subfamilia": "Fregadero",
     "designaciones": {
       "es": "Bajo para fregadero, 2 bloques"
     },
     "ancho_mm": 600,
     "alto_mm": 800,
-    "fondo_mm": 570,
-    "diferenciador": "Mueble de fregadero con 2 bloques extraíbles. El superior lleva recorte para el sifón. Mismo aspecto exterior que B2B."
+    "fondo_mm": 570
   },
   "BE2B908057": {
-    "name": "BE2B908057",
-    "tipo": "BE2B",
-    "familia": "Bajos",
-    "subfamilia": "Fregadero",
     "designaciones": {
       "es": "Bajo para fregadero, 2 bloques"
     },
     "ancho_mm": 900,
     "alto_mm": 800,
-    "fondo_mm": 570,
-    "diferenciador": "Mueble de fregadero con 2 bloques extraíbles. El superior lleva recorte para el sifón. Mismo aspecto exterior que B2B."
+    "fondo_mm": 570
   },
   "BEBTS608057": {
-    "name": "BEBTS608057",
-    "tipo": "BEBTS",
-    "familia": "Bajos",
-    "subfamilia": "Fregadero",
     "designaciones": {
       "es": "Bajo para fregadero, 1 bloque + 2 cajones"
     },
     "ancho_mm": 600,
     "alto_mm": 800,
-    "fondo_mm": 570,
-    "diferenciador": "Como BE2B pero con frente fijo no funcional en la parte superior. El segundo cajón lleva recorte para el sifón."
+    "fondo_mm": 570
   },
   "BEBTS908057": {
-    "name": "BEBTS908057",
-    "tipo": "BEBTS",
-    "familia": "Bajos",
-    "subfamilia": "Fregadero",
     "designaciones": {
       "es": "Bajo para fregadero, 1 bloque + 2 cajones"
     },
     "ancho_mm": 900,
     "alto_mm": 800,
-    "fondo_mm": 570,
-    "diferenciador": "Como BE2B pero con frente fijo no funcional en la parte superior. El segundo cajón lleva recorte para el sifón."
+    "fondo_mm": 570
   },
   "POBIF4580": {
-    "name": "POBIF4580",
-    "tipo": "POBIF",
-    "familia": "Bajos",
-    "subfamilia": "Lavavajillas / Lavadora",
     "designaciones": {
       "es": "Frente de lavavajillas / lavadora integrable"
     },
     "ancho_mm": 450,
     "alto_mm": 800,
-    "fondo_mm": null,
-    "diferenciador": "Frente para integrar lavavajillas o lavadora. Solo frente y herrajes, sin mueble."
+    "fondo_mm": null
   },
   "POBIF6080": {
-    "name": "POBIF6080",
-    "tipo": "POBIF",
-    "familia": "Bajos",
-    "subfamilia": "Lavavajillas / Lavadora",
     "designaciones": {
       "es": "Frente de lavavajillas / lavadora integrable"
     },
     "ancho_mm": 600,
     "alto_mm": 800,
-    "fondo_mm": null,
-    "diferenciador": "Frente para integrar lavavajillas o lavadora. Solo frente y herrajes, sin mueble."
+    "fondo_mm": null
   },
   "PO2BIF4580": {
-    "name": "PO2BIF4580",
-    "tipo": "PO2BIF",
-    "familia": "Bajos",
-    "subfamilia": "Lavavajillas / Lavadora",
     "designaciones": {
       "es": "Frente de lavavajillas / lavadora integrable"
     },
     "ancho_mm": 450,
     "alto_mm": 800,
-    "fondo_mm": null,
-    "diferenciador": "Como POBIF con diferente tipo de bisagra. Solo frentes y herrajes, sin mueble."
+    "fondo_mm": null
   },
   "PO2BIF6080": {
-    "name": "PO2BIF6080",
-    "tipo": "PO2BIF",
-    "familia": "Bajos",
-    "subfamilia": "Lavavajillas / Lavadora",
     "designaciones": {
       "es": "Frente de lavavajillas / lavadora integrable"
     },
     "ancho_mm": 600,
     "alto_mm": 800,
-    "fondo_mm": null,
-    "diferenciador": "Como POBIF con diferente tipo de bisagra. Solo frentes y herrajes, sin mueble."
+    "fondo_mm": null
   },
   "PO1BIF4580": {
-    "name": "PO1BIF4580",
-    "tipo": "PO1BIF",
-    "familia": "Bajos",
-    "subfamilia": "Lavavajillas / Lavadora",
     "designaciones": {
       "es": "Frente de lavavajillas / lavadora integrable"
     },
     "ancho_mm": 450,
     "alto_mm": 800,
-    "fondo_mm": null,
-    "diferenciador": "Frente para integrar lavavajillas o lavadora. Solo frente y herrajes, sin mueble."
+    "fondo_mm": null
   },
   "PO1BIF6080": {
-    "name": "PO1BIF6080",
-    "tipo": "PO1BIF",
-    "familia": "Bajos",
-    "subfamilia": "Lavavajillas / Lavadora",
     "designaciones": {
       "es": "Frente de lavavajillas / lavadora integrable"
     },
     "ancho_mm": 600,
     "alto_mm": 800,
-    "fondo_mm": null,
-    "diferenciador": "Frente para integrar lavavajillas o lavadora. Solo frente y herrajes, sin mueble."
+    "fondo_mm": null
   },
   "FHABS6580": {
-    "name": "FHABS6580",
-    "tipo": "FHABS",
-    "familia": "Bajos",
-    "subfamilia": "Lavavajillas / Lavadora",
     "designaciones": {
       "es": "Frente de lavavajillas no integrable"
     },
     "ancho_mm": 650,
     "alto_mm": 800,
-    "fondo_mm": null,
-    "diferenciador": "Frente específico para lavavajillas no integrable. Ancho especial de 650 mm. Solo frente y herrajes, sin mueble."
+    "fondo_mm": null
   },
   "BAV908057": {
-    "name": "BAV908057",
-    "tipo": "BAV",
-    "familia": "Bajos",
-    "subfamilia": "Esquinero",
     "designaciones": {
       "es": "Bajo esquinero, 2 baldas"
     },
     "ancho_mm": 900,
     "alto_mm": 800,
-    "fondo_mm": 570,
-    "diferenciador": "Mueble bajo de esquina con acceso por puerta batiente y 2 baldas fijas. Mismo aspecto exterior que BAV1P."
+    "fondo_mm": 570
   },
   "BAV1208057": {
-    "name": "BAV1208057",
-    "tipo": "BAV",
-    "familia": "Bajos",
-    "subfamilia": "Esquinero",
     "designaciones": {
       "es": "Bajo esquinero, 2 baldas"
     },
     "ancho_mm": 1200,
     "alto_mm": 800,
-    "fondo_mm": 570,
-    "diferenciador": "Mueble bajo de esquina con acceso por puerta batiente y 2 baldas fijas. Mismo aspecto exterior que BAV1P."
+    "fondo_mm": 570
   },
   "BAV1P908057": {
-    "name": "BAV1P908057",
-    "tipo": "BAV1P",
-    "familia": "Bajos",
-    "subfamilia": "Esquinero",
     "designaciones": {
       "es": "Bajo esquinero, 2 accesorios extraíbles Lemans"
     },
     "ancho_mm": 900,
     "alto_mm": 800,
-    "fondo_mm": 570,
-    "diferenciador": "Mueble bajo de esquina con 2 platos giratorios tipo Lemans que se despliegan al abrir la puerta. El interior Lemans es el diferenciador clave."
+    "fondo_mm": 570
   },
   "BAV1P1208057": {
-    "name": "BAV1P1208057",
-    "tipo": "BAV1P",
-    "familia": "Bajos",
-    "subfamilia": "Esquinero",
     "designaciones": {
       "es": "Bajo esquinero, 2 accesorios extraíbles Lemans"
     },
     "ancho_mm": 1200,
     "alto_mm": 800,
-    "fondo_mm": 570,
-    "diferenciador": "Mueble bajo de esquina con 2 platos giratorios tipo Lemans que se despliegan al abrir la puerta. El interior Lemans es el diferenciador clave."
+    "fondo_mm": 570
   },
   "H1306035": {
-    "name": "H1306035",
-    "tipo": "H1",
-    "familia": "Pared",
-    "subfamilia": "Almacenamiento",
     "designaciones": {
       "es": "De pared, 1 puerta"
     },
     "ancho_mm": 300,
     "alto_mm": 600,
-    "fondo_mm": 350,
-    "diferenciador": "Mueble de pared con 1 o 2 puertas batientes. Número de baldas según altura: H600→1, H800→2, H1000→3. Mismo aspecto exterior que HH1."
+    "fondo_mm": 350
   },
   "H1456035": {
-    "name": "H1456035",
-    "tipo": "H1",
-    "familia": "Pared",
-    "subfamilia": "Almacenamiento",
     "designaciones": {
       "es": "De pared, 1 puerta"
     },
     "ancho_mm": 450,
     "alto_mm": 600,
-    "fondo_mm": 350,
-    "diferenciador": "Mueble de pared con 1 o 2 puertas batientes. Número de baldas según altura: H600→1, H800→2, H1000→3. Mismo aspecto exterior que HH1."
+    "fondo_mm": 350
   },
   "H1606035": {
-    "name": "H1606035",
-    "tipo": "H1",
-    "familia": "Pared",
-    "subfamilia": "Almacenamiento",
     "designaciones": {
       "es": "De pared, 1 puerta"
     },
     "ancho_mm": 600,
     "alto_mm": 600,
-    "fondo_mm": 350,
-    "diferenciador": "Mueble de pared con 1 o 2 puertas batientes. Número de baldas según altura: H600→1, H800→2, H1000→3. Mismo aspecto exterior que HH1."
+    "fondo_mm": 350
   },
   "H1906035": {
-    "name": "H1906035",
-    "tipo": "H1",
-    "familia": "Pared",
-    "subfamilia": "Almacenamiento",
     "designaciones": {
       "es": "De pared, 2 puertas"
     },
     "ancho_mm": 900,
     "alto_mm": 600,
-    "fondo_mm": 350,
-    "diferenciador": "Mueble de pared con 1 o 2 puertas batientes. Número de baldas según altura: H600→1, H800→2, H1000→3. Mismo aspecto exterior que HH1."
+    "fondo_mm": 350
   },
   "H1308035": {
-    "name": "H1308035",
-    "tipo": "H1",
-    "familia": "Pared",
-    "subfamilia": "Almacenamiento",
     "designaciones": {
       "es": "De pared, 1 puerta"
     },
     "ancho_mm": 300,
     "alto_mm": 800,
-    "fondo_mm": 350,
-    "diferenciador": "Mueble de pared con 1 o 2 puertas batientes. Número de baldas según altura: H600→1, H800→2, H1000→3. Mismo aspecto exterior que HH1."
+    "fondo_mm": 350
   },
   "H1458035": {
-    "name": "H1458035",
-    "tipo": "H1",
-    "familia": "Pared",
-    "subfamilia": "Almacenamiento",
     "designaciones": {
       "es": "De pared, 1 puerta"
     },
     "ancho_mm": 450,
     "alto_mm": 800,
-    "fondo_mm": 350,
-    "diferenciador": "Mueble de pared con 1 o 2 puertas batientes. Número de baldas según altura: H600→1, H800→2, H1000→3. Mismo aspecto exterior que HH1."
+    "fondo_mm": 350
   },
   "H1608035": {
-    "name": "H1608035",
-    "tipo": "H1",
-    "familia": "Pared",
-    "subfamilia": "Almacenamiento",
     "designaciones": {
       "es": "De pared, 1 puerta"
     },
     "ancho_mm": 600,
     "alto_mm": 800,
-    "fondo_mm": 350,
-    "diferenciador": "Mueble de pared con 1 o 2 puertas batientes. Número de baldas según altura: H600→1, H800→2, H1000→3. Mismo aspecto exterior que HH1."
+    "fondo_mm": 350
   },
   "H1908035": {
-    "name": "H1908035",
-    "tipo": "H1",
-    "familia": "Pared",
-    "subfamilia": "Almacenamiento",
     "designaciones": {
       "es": "De pared, 2 puertas"
     },
     "ancho_mm": 900,
     "alto_mm": 800,
-    "fondo_mm": 350,
-    "diferenciador": "Mueble de pared con 1 o 2 puertas batientes. Número de baldas según altura: H600→1, H800→2, H1000→3. Mismo aspecto exterior que HH1."
+    "fondo_mm": 350
   },
   "H13010035": {
-    "name": "H13010035",
-    "tipo": "H1",
-    "familia": "Pared",
-    "subfamilia": "Almacenamiento",
     "designaciones": {
       "es": "De pared, 1 puerta"
     },
     "ancho_mm": 300,
     "alto_mm": 1000,
-    "fondo_mm": 350,
-    "diferenciador": "Mueble de pared con 1 o 2 puertas batientes. Número de baldas según altura: H600→1, H800→2, H1000→3. Mismo aspecto exterior que HH1."
+    "fondo_mm": 350
   },
   "H14510035": {
-    "name": "H14510035",
-    "tipo": "H1",
-    "familia": "Pared",
-    "subfamilia": "Almacenamiento",
     "designaciones": {
       "es": "De pared, 1 puerta"
     },
     "ancho_mm": 450,
     "alto_mm": 1000,
-    "fondo_mm": 350,
-    "diferenciador": "Mueble de pared con 1 o 2 puertas batientes. Número de baldas según altura: H600→1, H800→2, H1000→3. Mismo aspecto exterior que HH1."
+    "fondo_mm": 350
   },
   "H16010035": {
-    "name": "H16010035",
-    "tipo": "H1",
-    "familia": "Pared",
-    "subfamilia": "Almacenamiento",
     "designaciones": {
       "es": "De pared, 1 puerta"
     },
     "ancho_mm": 600,
     "alto_mm": 1000,
-    "fondo_mm": 350,
-    "diferenciador": "Mueble de pared con 1 o 2 puertas batientes. Número de baldas según altura: H600→1, H800→2, H1000→3. Mismo aspecto exterior que HH1."
+    "fondo_mm": 350
   },
   "H19010035": {
-    "name": "H19010035",
-    "tipo": "H1",
-    "familia": "Pared",
-    "subfamilia": "Almacenamiento",
     "designaciones": {
       "es": "De pared, 2 puertas"
     },
     "ancho_mm": 900,
     "alto_mm": 1000,
-    "fondo_mm": 350,
-    "diferenciador": "Mueble de pared con 1 o 2 puertas batientes. Número de baldas según altura: H600→1, H800→2, H1000→3. Mismo aspecto exterior que HH1."
+    "fondo_mm": 350
   },
   "HH1606035": {
-    "name": "HH1606035",
-    "tipo": "HH1",
-    "familia": "Pared",
-    "subfamilia": "Campana",
     "designaciones": {
       "es": "De pared para campana integrada, 1 puerta"
     },
     "ancho_mm": 600,
     "alto_mm": 600,
-    "fondo_mm": 350,
-    "diferenciador": "Mueble de pared para alojar campana extractora integrada. Interior sin baldas. No tiene base. Mismo aspecto exterior que H1 — el interior para campana es el diferenciador."
+    "fondo_mm": 350
   },
   "HH1906035": {
-    "name": "HH1906035",
-    "tipo": "HH1",
-    "familia": "Pared",
-    "subfamilia": "Campana",
     "designaciones": {
       "es": "De pared para campana integrada, 2 puertas"
     },
     "ancho_mm": 900,
     "alto_mm": 600,
-    "fondo_mm": 350,
-    "diferenciador": "Mueble de pared para alojar campana extractora integrada. Interior sin baldas. No tiene base. Mismo aspecto exterior que H1 — el interior para campana es el diferenciador."
+    "fondo_mm": 350
   },
   "HH1608035": {
-    "name": "HH1608035",
-    "tipo": "HH1",
-    "familia": "Pared",
-    "subfamilia": "Campana",
     "designaciones": {
       "es": "De pared para campana integrada, 1 puerta"
     },
     "ancho_mm": 600,
     "alto_mm": 800,
-    "fondo_mm": 350,
-    "diferenciador": "Mueble de pared para alojar campana extractora integrada. Interior sin baldas. No tiene base. Mismo aspecto exterior que H1 — el interior para campana es el diferenciador."
+    "fondo_mm": 350
   },
   "HH1908035": {
-    "name": "HH1908035",
-    "tipo": "HH1",
-    "familia": "Pared",
-    "subfamilia": "Campana",
     "designaciones": {
       "es": "De pared para campana integrada, 2 puertas"
     },
     "ancho_mm": 900,
     "alto_mm": 800,
-    "fondo_mm": 350,
-    "diferenciador": "Mueble de pared para alojar campana extractora integrada. Interior sin baldas. No tiene base. Mismo aspecto exterior que H1 — el interior para campana es el diferenciador."
+    "fondo_mm": 350
   },
   "HH16010035": {
-    "name": "HH16010035",
-    "tipo": "HH1",
-    "familia": "Pared",
-    "subfamilia": "Campana",
     "designaciones": {
       "es": "De pared para campana integrada, 1 puerta"
     },
     "ancho_mm": 600,
     "alto_mm": 1000,
-    "fondo_mm": 350,
-    "diferenciador": "Mueble de pared para alojar campana extractora integrada. Interior sin baldas. No tiene base. Mismo aspecto exterior que H1 — el interior para campana es el diferenciador."
+    "fondo_mm": 350
   },
   "HH19010035": {
-    "name": "HH19010035",
-    "tipo": "HH1",
-    "familia": "Pared",
-    "subfamilia": "Campana",
     "designaciones": {
       "es": "De pared para campana integrada, 2 puertas"
     },
     "ancho_mm": 900,
     "alto_mm": 1000,
-    "fondo_mm": 350,
-    "diferenciador": "Mueble de pared para alojar campana extractora integrada. Interior sin baldas. No tiene base. Mismo aspecto exterior que H1 — el interior para campana es el diferenciador."
+    "fondo_mm": 350
   },
   "HAV1906035": {
-    "name": "HAV1906035",
-    "tipo": "HAV1",
-    "familia": "Pared",
-    "subfamilia": "Esquinero",
     "designaciones": {
       "es": "De pared esquinero, 1 puerta (45)"
     },
     "ancho_mm": 900,
     "alto_mm": 600,
-    "fondo_mm": 350,
-    "diferenciador": "Mueble de pared para posición de esquina. 1 puerta batiente de 450 mm."
+    "fondo_mm": 350
   },
   "HAV1908035": {
-    "name": "HAV1908035",
-    "tipo": "HAV1",
-    "familia": "Pared",
-    "subfamilia": "Esquinero",
     "designaciones": {
       "es": "De pared esquinero, 1 puerta (45)"
     },
     "ancho_mm": 900,
     "alto_mm": 800,
-    "fondo_mm": 350,
-    "diferenciador": "Mueble de pared para posición de esquina. 1 puerta batiente de 450 mm."
+    "fondo_mm": 350
   },
   "HAV19010035": {
-    "name": "HAV19010035",
-    "tipo": "HAV1",
-    "familia": "Pared",
-    "subfamilia": "Esquinero",
     "designaciones": {
       "es": "De pared esquinero, 1 puerta (45)"
     },
     "ancho_mm": 900,
     "alto_mm": 1000,
-    "fondo_mm": 350,
-    "diferenciador": "Mueble de pared para posición de esquina. 1 puerta batiente de 450 mm."
+    "fondo_mm": 350
   },
   "HAV2906035": {
-    "name": "HAV2906035",
-    "tipo": "HAV2",
-    "familia": "Pared",
-    "subfamilia": "Esquinero",
     "designaciones": {
       "es": "De pared esquinero, 1 puerta (60)"
     },
     "ancho_mm": 900,
     "alto_mm": 600,
-    "fondo_mm": 350,
-    "diferenciador": "Mueble de pared para posición de esquina. 1 puerta batiente de 600 mm."
+    "fondo_mm": 350
   },
   "HAV2908035": {
-    "name": "HAV2908035",
-    "tipo": "HAV2",
-    "familia": "Pared",
-    "subfamilia": "Esquinero",
     "designaciones": {
       "es": "De pared esquinero, 1 puerta (60)"
     },
     "ancho_mm": 900,
     "alto_mm": 800,
-    "fondo_mm": 350,
-    "diferenciador": "Mueble de pared para posición de esquina. 1 puerta batiente de 600 mm."
+    "fondo_mm": 350
   },
   "HAV29010035": {
-    "name": "HAV29010035",
-    "tipo": "HAV2",
-    "familia": "Pared",
-    "subfamilia": "Esquinero",
     "designaciones": {
       "es": "De pared esquinero, 1 puerta (60)"
     },
     "ancho_mm": 900,
     "alto_mm": 1000,
-    "fondo_mm": 350,
-    "diferenciador": "Mueble de pared para posición de esquina. 1 puerta batiente de 600 mm."
+    "fondo_mm": 350
   },
   "HR45V35": {
-    "name": "HR45V35",
-    "tipo": "HR",
-    "familia": "Pared",
-    "subfamilia": "Altillos",
     "designaciones": {
       "es": "Altillo variable, puerta batiente"
     },
@@ -949,14 +585,9 @@
     "alto_variable": {
       "min": 200,
       "max": 1000
-    },
-    "diferenciador": "Módulo de altura variable (200–1000 mm) para completar el espacio hasta el techo."
+    }
   },
   "HR60V35": {
-    "name": "HR60V35",
-    "tipo": "HR",
-    "familia": "Pared",
-    "subfamilia": "Altillos",
     "designaciones": {
       "es": "Altillo variable, puerta batiente"
     },
@@ -966,14 +597,9 @@
     "alto_variable": {
       "min": 200,
       "max": 1000
-    },
-    "diferenciador": "Módulo de altura variable (200–1000 mm) para completar el espacio hasta el techo."
+    }
   },
   "HR45V57": {
-    "name": "HR45V57",
-    "tipo": "HR",
-    "familia": "Pared",
-    "subfamilia": "Altillos",
     "designaciones": {
       "es": "Altillo variable, puerta batiente"
     },
@@ -983,14 +609,9 @@
     "alto_variable": {
       "min": 200,
       "max": 1000
-    },
-    "diferenciador": "Módulo de altura variable (200–1000 mm) para completar el espacio hasta el techo."
+    }
   },
   "HR60V57": {
-    "name": "HR60V57",
-    "tipo": "HR",
-    "familia": "Pared",
-    "subfamilia": "Altillos",
     "designaciones": {
       "es": "Altillo variable, puerta batiente"
     },
@@ -1000,35 +621,25 @@
     "alto_variable": {
       "min": 200,
       "max": 1000
-    },
-    "diferenciador": "Módulo de altura variable (200–1000 mm) para completar el espacio hasta el techo."
+    }
   },
   "HLVV57": {
-    "name": "HLVV57",
-    "tipo": "HLVV",
-    "familia": "Pared",
-    "subfamilia": "Altillos",
     "designaciones": {
       "es": "Altillo lift variable para nevera americana"
     },
     "ancho_mm": null,
     "alto_mm": null,
     "fondo_mm": 570,
-    "alto_variable": {
-      "min": 200,
-      "max": 400
-    },
     "ancho_variable": {
       "min": 450,
       "max": 1200
     },
-    "diferenciador": "Módulo de altura variable con apertura lift (hacia arriba). Diseñado para aprovechar el espacio sobre una nevera americana. Ancho variable 450–1200 mm."
+    "alto_variable": {
+      "min": 200,
+      "max": 400
+    }
   },
   "HPT60V57": {
-    "name": "HPT60V57",
-    "tipo": "HPT",
-    "familia": "Pared",
-    "subfamilia": "Altillos",
     "designaciones": {
       "es": "Mueble sobre encimera"
     },
@@ -1038,566 +649,350 @@
     "alto_variable": {
       "min": 110,
       "max": 140
-    },
-    "diferenciador": "Módulo de 600 mm para colocar sobre la encimera alineado con columnas. Altura variable 110–140 mm. 1 puerta batiente."
+    }
   },
   "AVA4520035": {
-    "name": "AVA4520035",
-    "tipo": "AVA",
-    "familia": "Columnas",
-    "subfamilia": "Almacenamiento",
     "designaciones": {
       "es": "Columna con baldas, 2 puertas"
     },
     "ancho_mm": 450,
     "alto_mm": 2000,
-    "fondo_mm": 350,
-    "diferenciador": "Columna de almacenamiento con 2 puertas batientes y baldas interiores. Las 2 puertas van unidas y se abren simultáneamente."
+    "fondo_mm": 350
   },
   "AVA6020035": {
-    "name": "AVA6020035",
-    "tipo": "AVA",
-    "familia": "Columnas",
-    "subfamilia": "Almacenamiento",
     "designaciones": {
       "es": "Columna con baldas, 2 puertas"
     },
     "ancho_mm": 600,
     "alto_mm": 2000,
-    "fondo_mm": 350,
-    "diferenciador": "Columna de almacenamiento con 2 puertas batientes y baldas interiores. Las 2 puertas van unidas y se abren simultáneamente."
+    "fondo_mm": 350
   },
   "AVA4522035": {
-    "name": "AVA4522035",
-    "tipo": "AVA",
-    "familia": "Columnas",
-    "subfamilia": "Almacenamiento",
     "designaciones": {
       "es": "Columna con baldas, 2 puertas"
     },
     "ancho_mm": 450,
     "alto_mm": 2200,
-    "fondo_mm": 350,
-    "diferenciador": "Columna de almacenamiento con 2 puertas batientes y baldas interiores. Las 2 puertas van unidas y se abren simultáneamente."
+    "fondo_mm": 350
   },
   "AVA6022035": {
-    "name": "AVA6022035",
-    "tipo": "AVA",
-    "familia": "Columnas",
-    "subfamilia": "Almacenamiento",
     "designaciones": {
       "es": "Columna con baldas, 2 puertas"
     },
     "ancho_mm": 600,
     "alto_mm": 2200,
-    "fondo_mm": 350,
-    "diferenciador": "Columna de almacenamiento con 2 puertas batientes y baldas interiores. Las 2 puertas van unidas y se abren simultáneamente."
+    "fondo_mm": 350
   },
   "AVA4520057": {
-    "name": "AVA4520057",
-    "tipo": "AVA",
-    "familia": "Columnas",
-    "subfamilia": "Almacenamiento",
     "designaciones": {
       "es": "Columna con baldas, 2 puertas"
     },
     "ancho_mm": 450,
     "alto_mm": 2000,
-    "fondo_mm": 570,
-    "diferenciador": "Columna de almacenamiento con 2 puertas batientes y baldas interiores. Las 2 puertas van unidas y se abren simultáneamente."
+    "fondo_mm": 570
   },
   "AVA6020057": {
-    "name": "AVA6020057",
-    "tipo": "AVA",
-    "familia": "Columnas",
-    "subfamilia": "Almacenamiento",
     "designaciones": {
       "es": "Columna con baldas, 2 puertas"
     },
     "ancho_mm": 600,
     "alto_mm": 2000,
-    "fondo_mm": 570,
-    "diferenciador": "Columna de almacenamiento con 2 puertas batientes y baldas interiores. Las 2 puertas van unidas y se abren simultáneamente."
+    "fondo_mm": 570
   },
   "AVA4522057": {
-    "name": "AVA4522057",
-    "tipo": "AVA",
-    "familia": "Columnas",
-    "subfamilia": "Almacenamiento",
     "designaciones": {
       "es": "Columna con baldas, 2 puertas"
     },
     "ancho_mm": 450,
     "alto_mm": 2200,
-    "fondo_mm": 570,
-    "diferenciador": "Columna de almacenamiento con 2 puertas batientes y baldas interiores. Las 2 puertas van unidas y se abren simultáneamente."
+    "fondo_mm": 570
   },
   "AVA6022057": {
-    "name": "AVA6022057",
-    "tipo": "AVA",
-    "familia": "Columnas",
-    "subfamilia": "Almacenamiento",
     "designaciones": {
       "es": "Columna con baldas, 2 puertas"
     },
     "ancho_mm": 600,
     "alto_mm": 2200,
-    "fondo_mm": 570,
-    "diferenciador": "Columna de almacenamiento con 2 puertas batientes y baldas interiores. Las 2 puertas van unidas y se abren simultáneamente."
+    "fondo_mm": 570
   },
   "AVA1P4520035": {
-    "name": "AVA1P4520035",
-    "tipo": "AVA1P",
-    "familia": "Columnas",
-    "subfamilia": "Almacenamiento",
     "designaciones": {
       "es": "Columna con baldas, 1 puerta"
     },
     "ancho_mm": 450,
     "alto_mm": 2000,
-    "fondo_mm": 350,
-    "diferenciador": "Variante del AVA con 1 sola puerta. Añade el ancho 900 mm; en ese ancho lleva 2 puertas contiguas."
+    "fondo_mm": 350
   },
   "AVA1P6020035": {
-    "name": "AVA1P6020035",
-    "tipo": "AVA1P",
-    "familia": "Columnas",
-    "subfamilia": "Almacenamiento",
     "designaciones": {
       "es": "Columna con baldas, 1 puerta"
     },
     "ancho_mm": 600,
     "alto_mm": 2000,
-    "fondo_mm": 350,
-    "diferenciador": "Variante del AVA con 1 sola puerta. Añade el ancho 900 mm; en ese ancho lleva 2 puertas contiguas."
+    "fondo_mm": 350
   },
   "AVA1P9020035": {
-    "name": "AVA1P9020035",
-    "tipo": "AVA1P",
-    "familia": "Columnas",
-    "subfamilia": "Almacenamiento",
     "designaciones": {
       "es": "Columna con baldas, 2 puertas"
     },
     "ancho_mm": 900,
     "alto_mm": 2000,
-    "fondo_mm": 350,
-    "diferenciador": "Variante del AVA con 1 sola puerta. Añade el ancho 900 mm; en ese ancho lleva 2 puertas contiguas."
+    "fondo_mm": 350
   },
   "AVA1P4520057": {
-    "name": "AVA1P4520057",
-    "tipo": "AVA1P",
-    "familia": "Columnas",
-    "subfamilia": "Almacenamiento",
     "designaciones": {
       "es": "Columna con baldas, 1 puerta"
     },
     "ancho_mm": 450,
     "alto_mm": 2000,
-    "fondo_mm": 570,
-    "diferenciador": "Variante del AVA con 1 sola puerta. Añade el ancho 900 mm; en ese ancho lleva 2 puertas contiguas."
+    "fondo_mm": 570
   },
   "AVA1P6020057": {
-    "name": "AVA1P6020057",
-    "tipo": "AVA1P",
-    "familia": "Columnas",
-    "subfamilia": "Almacenamiento",
     "designaciones": {
       "es": "Columna con baldas, 1 puerta"
     },
     "ancho_mm": 600,
     "alto_mm": 2000,
-    "fondo_mm": 570,
-    "diferenciador": "Variante del AVA con 1 sola puerta. Añade el ancho 900 mm; en ese ancho lleva 2 puertas contiguas."
+    "fondo_mm": 570
   },
   "AVA1P4522035": {
-    "name": "AVA1P4522035",
-    "tipo": "AVA1P",
-    "familia": "Columnas",
-    "subfamilia": "Almacenamiento",
     "designaciones": {
       "es": "Columna con baldas, 1 puerta"
     },
     "ancho_mm": 450,
     "alto_mm": 2200,
-    "fondo_mm": 350,
-    "diferenciador": "Variante del AVA con 1 sola puerta. Añade el ancho 900 mm; en ese ancho lleva 2 puertas contiguas."
+    "fondo_mm": 350
   },
   "AVA1P6022035": {
-    "name": "AVA1P6022035",
-    "tipo": "AVA1P",
-    "familia": "Columnas",
-    "subfamilia": "Almacenamiento",
     "designaciones": {
       "es": "Columna con baldas, 1 puerta"
     },
     "ancho_mm": 600,
     "alto_mm": 2200,
-    "fondo_mm": 350,
-    "diferenciador": "Variante del AVA con 1 sola puerta. Añade el ancho 900 mm; en ese ancho lleva 2 puertas contiguas."
+    "fondo_mm": 350
   },
   "AVA1P9022035": {
-    "name": "AVA1P9022035",
-    "tipo": "AVA1P",
-    "familia": "Columnas",
-    "subfamilia": "Almacenamiento",
     "designaciones": {
       "es": "Columna con baldas, 2 puertas"
     },
     "ancho_mm": 900,
     "alto_mm": 2200,
-    "fondo_mm": 350,
-    "diferenciador": "Variante del AVA con 1 sola puerta. Añade el ancho 900 mm; en ese ancho lleva 2 puertas contiguas."
+    "fondo_mm": 350
   },
   "AVA1P4522057": {
-    "name": "AVA1P4522057",
-    "tipo": "AVA1P",
-    "familia": "Columnas",
-    "subfamilia": "Almacenamiento",
     "designaciones": {
       "es": "Columna con baldas, 1 puerta"
     },
     "ancho_mm": 450,
     "alto_mm": 2200,
-    "fondo_mm": 570,
-    "diferenciador": "Variante del AVA con 1 sola puerta. Añade el ancho 900 mm; en ese ancho lleva 2 puertas contiguas."
+    "fondo_mm": 570
   },
   "AVA1P6022057": {
-    "name": "AVA1P6022057",
-    "tipo": "AVA1P",
-    "familia": "Columnas",
-    "subfamilia": "Almacenamiento",
     "designaciones": {
       "es": "Columna con baldas, 1 puerta"
     },
     "ancho_mm": 600,
     "alto_mm": 2200,
-    "fondo_mm": 570,
-    "diferenciador": "Variante del AVA con 1 sola puerta. Añade el ancho 900 mm; en ese ancho lleva 2 puertas contiguas."
+    "fondo_mm": 570
   },
   "AQC34520057": {
-    "name": "AQC34520057",
-    "tipo": "AQC3",
-    "familia": "Columnas",
-    "subfamilia": "Almacenamiento",
     "designaciones": {
       "es": "Columna con cajones, 2 puertas"
     },
     "ancho_mm": 450,
     "alto_mm": 2000,
-    "fondo_mm": 570,
-    "diferenciador": "Columna con 5 cajones interiores de frente completo. Las 2 puertas van unidas y se abren simultáneamente."
+    "fondo_mm": 570
   },
   "AQC36020057": {
-    "name": "AQC36020057",
-    "tipo": "AQC3",
-    "familia": "Columnas",
-    "subfamilia": "Almacenamiento",
     "designaciones": {
       "es": "Columna con cajones, 2 puertas"
     },
     "ancho_mm": 600,
     "alto_mm": 2000,
-    "fondo_mm": 570,
-    "diferenciador": "Columna con 5 cajones interiores de frente completo. Las 2 puertas van unidas y se abren simultáneamente."
+    "fondo_mm": 570
   },
   "AQC34522057": {
-    "name": "AQC34522057",
-    "tipo": "AQC3",
-    "familia": "Columnas",
-    "subfamilia": "Almacenamiento",
     "designaciones": {
       "es": "Columna con cajones, 2 puertas"
     },
     "ancho_mm": 450,
     "alto_mm": 2200,
-    "fondo_mm": 570,
-    "diferenciador": "Columna con 5 cajones interiores de frente completo. Las 2 puertas van unidas y se abren simultáneamente."
+    "fondo_mm": 570
   },
   "AQC36022057": {
-    "name": "AQC36022057",
-    "tipo": "AQC3",
-    "familia": "Columnas",
-    "subfamilia": "Almacenamiento",
     "designaciones": {
       "es": "Columna con cajones, 2 puertas"
     },
     "ancho_mm": 600,
     "alto_mm": 2200,
-    "fondo_mm": 570,
-    "diferenciador": "Columna con 5 cajones interiores de frente completo. Las 2 puertas van unidas y se abren simultáneamente."
+    "fondo_mm": 570
   },
   "AQC31P4520057": {
-    "name": "AQC31P4520057",
-    "tipo": "AQC31P",
-    "familia": "Columnas",
-    "subfamilia": "Almacenamiento",
     "designaciones": {
       "es": "Columna con cajones, 1 puerta"
     },
     "ancho_mm": 450,
     "alto_mm": 2000,
-    "fondo_mm": 570,
-    "diferenciador": "Variante del AQC3 con 1 sola puerta. Mismos 5 cajones interiores."
+    "fondo_mm": 570
   },
   "AQC31P6020057": {
-    "name": "AQC31P6020057",
-    "tipo": "AQC31P",
-    "familia": "Columnas",
-    "subfamilia": "Almacenamiento",
     "designaciones": {
       "es": "Columna con cajones, 1 puerta"
     },
     "ancho_mm": 600,
     "alto_mm": 2000,
-    "fondo_mm": 570,
-    "diferenciador": "Variante del AQC3 con 1 sola puerta. Mismos 5 cajones interiores."
+    "fondo_mm": 570
   },
   "AQC31P4522057": {
-    "name": "AQC31P4522057",
-    "tipo": "AQC31P",
-    "familia": "Columnas",
-    "subfamilia": "Almacenamiento",
     "designaciones": {
       "es": "Columna con cajones, 1 puerta"
     },
     "ancho_mm": 450,
     "alto_mm": 2200,
-    "fondo_mm": 570,
-    "diferenciador": "Variante del AQC3 con 1 sola puerta. Mismos 5 cajones interiores."
+    "fondo_mm": 570
   },
   "AQC31P6022057": {
-    "name": "AQC31P6022057",
-    "tipo": "AQC31P",
-    "familia": "Columnas",
-    "subfamilia": "Almacenamiento",
     "designaciones": {
       "es": "Columna con cajones, 1 puerta"
     },
     "ancho_mm": 600,
     "alto_mm": 2200,
-    "fondo_mm": 570,
-    "diferenciador": "Variante del AQC3 con 1 sola puerta. Mismos 5 cajones interiores."
+    "fondo_mm": 570
   },
   "ABA6020057": {
-    "name": "ABA6020057",
-    "tipo": "ABA",
-    "familia": "Columnas",
-    "subfamilia": "Almacenamiento",
     "designaciones": {
       "es": "Armario escoba, 2 puertas"
     },
     "ancho_mm": 600,
     "alto_mm": 2000,
-    "fondo_mm": 570,
-    "diferenciador": "Columna con 2 puertas batientes y 1 balda fija estructural que divide el interior en compartimento superior (escoba/fregona) e inferior."
+    "fondo_mm": 570
   },
   "ABA6022057": {
-    "name": "ABA6022057",
-    "tipo": "ABA",
-    "familia": "Columnas",
-    "subfamilia": "Almacenamiento",
     "designaciones": {
       "es": "Armario escoba, 2 puertas"
     },
     "ancho_mm": 600,
     "alto_mm": 2200,
-    "fondo_mm": 570,
-    "diferenciador": "Columna con 2 puertas batientes y 1 balda fija estructural que divide el interior en compartimento superior (escoba/fregona) e inferior."
+    "fondo_mm": 570
   },
   "AFS6020057": {
-    "name": "AFS6020057",
-    "tipo": "AFS",
-    "familia": "Columnas",
-    "subfamilia": "Horno y microondas",
     "designaciones": {
       "es": "Para horno o microondas, 1 puerta"
     },
     "ancho_mm": 600,
     "alto_mm": 2000,
-    "fondo_mm": 570,
-    "diferenciador": "Columna para encastrar un horno o un microondas. El espacio restante se configura con baldas. La puerta inferior mide 800 mm de alto."
+    "fondo_mm": 570
   },
   "AFS6022057": {
-    "name": "AFS6022057",
-    "tipo": "AFS",
-    "familia": "Columnas",
-    "subfamilia": "Horno y microondas",
     "designaciones": {
       "es": "Para horno o microondas, 1 puerta"
     },
     "ancho_mm": 600,
     "alto_mm": 2200,
-    "fondo_mm": 570,
-    "diferenciador": "Columna para encastrar un horno o un microondas. El espacio restante se configura con baldas. La puerta inferior mide 800 mm de alto."
+    "fondo_mm": 570
   },
   "AFS2B6020057": {
-    "name": "AFS2B6020057",
-    "tipo": "AFS2B",
-    "familia": "Columnas",
-    "subfamilia": "Horno y microondas",
     "designaciones": {
       "es": "Para horno o microondas, 2 bloques"
     },
     "ancho_mm": 600,
     "alto_mm": 2000,
-    "fondo_mm": 570,
-    "diferenciador": "Columna para encastrar un horno o microondas con 2 bloques extraíbles en la parte inferior."
+    "fondo_mm": 570
   },
   "AFS2B6022057": {
-    "name": "AFS2B6022057",
-    "tipo": "AFS2B",
-    "familia": "Columnas",
-    "subfamilia": "Horno y microondas",
     "designaciones": {
       "es": "Para horno o microondas, 2 bloques"
     },
     "ancho_mm": 600,
     "alto_mm": 2200,
-    "fondo_mm": 570,
-    "diferenciador": "Columna para encastrar un horno o microondas con 2 bloques extraíbles en la parte inferior."
+    "fondo_mm": 570
   },
   "AFSMO6020057": {
-    "name": "AFSMO6020057",
-    "tipo": "AFSMO",
-    "familia": "Columnas",
-    "subfamilia": "Horno y microondas",
     "designaciones": {
       "es": "Para 2 hornos / horno+micro, 1 puerta"
     },
     "ancho_mm": 600,
     "alto_mm": 2000,
-    "fondo_mm": 570,
-    "diferenciador": "Columna para encastrar un horno y un microondas simultáneamente a alturas ergonómicas distintas. La puerta inferior mide 600 mm de alto."
+    "fondo_mm": 570
   },
   "AFSMO6022057": {
-    "name": "AFSMO6022057",
-    "tipo": "AFSMO",
-    "familia": "Columnas",
-    "subfamilia": "Horno y microondas",
     "designaciones": {
       "es": "Para 2 hornos / horno+micro, 1 puerta"
     },
     "ancho_mm": 600,
     "alto_mm": 2200,
-    "fondo_mm": 570,
-    "diferenciador": "Columna para encastrar un horno y un microondas simultáneamente a alturas ergonómicas distintas. La puerta inferior mide 600 mm de alto."
+    "fondo_mm": 570
   },
   "AFSMOBT6020057": {
-    "name": "AFSMOBT6020057",
-    "tipo": "AFSMOBT",
-    "familia": "Columnas",
-    "subfamilia": "Horno y microondas",
     "designaciones": {
       "es": "Para 2 hornos / horno+micro, 1 bloque+1 cajón"
     },
     "ancho_mm": 600,
     "alto_mm": 2000,
-    "fondo_mm": 570,
-    "diferenciador": "Como AFSMO pero con 1 bloque extraíble (400 mm) y 1 cajón (200 mm) en lugar de puerta inferior."
+    "fondo_mm": 570
   },
   "AFSMOBT6022057": {
-    "name": "AFSMOBT6022057",
-    "tipo": "AFSMOBT",
-    "familia": "Columnas",
-    "subfamilia": "Horno y microondas",
     "designaciones": {
       "es": "Para 2 hornos / horno+micro, 1 bloque+1 cajón"
     },
     "ancho_mm": 600,
     "alto_mm": 2200,
-    "fondo_mm": 570,
-    "diferenciador": "Como AFSMO pero con 1 bloque extraíble (400 mm) y 1 cajón (200 mm) en lugar de puerta inferior."
+    "fondo_mm": 570
   },
   "A2I6020057": {
-    "name": "A2I6020057",
-    "tipo": "A2I",
-    "familia": "Columnas",
-    "subfamilia": "Frigorífico",
     "designaciones": {
       "es": "Para frigorífico, 2 puertas"
     },
     "ancho_mm": 600,
     "alto_mm": 2000,
-    "fondo_mm": 570,
-    "diferenciador": "Columna para integrar un frigorífico de libre instalación. Las 2 puertas van unidas y se abren simultáneamente."
+    "fondo_mm": 570
   },
   "A2I6022057": {
-    "name": "A2I6022057",
-    "tipo": "A2I",
-    "familia": "Columnas",
-    "subfamilia": "Frigorífico",
     "designaciones": {
       "es": "Para frigorífico, 2 puertas"
     },
     "ancho_mm": 600,
     "alto_mm": 2200,
-    "fondo_mm": 570,
-    "diferenciador": "Columna para integrar un frigorífico de libre instalación. Las 2 puertas van unidas y se abren simultáneamente."
+    "fondo_mm": 570
   },
   "A2I7522057": {
-    "name": "A2I7522057",
-    "tipo": "A2I",
-    "familia": "Columnas",
-    "subfamilia": "Frigorífico",
     "designaciones": {
       "es": "Para frigorífico, 2 puertas"
     },
     "ancho_mm": 750,
     "alto_mm": 2200,
-    "fondo_mm": 570,
-    "diferenciador": "Columna para integrar un frigorífico de libre instalación. Las 2 puertas van unidas y se abren simultáneamente."
+    "fondo_mm": 570
   },
   "A2I1P6020057": {
-    "name": "A2I1P6020057",
-    "tipo": "A2I1P",
-    "familia": "Columnas",
-    "subfamilia": "Frigorífico",
     "designaciones": {
       "es": "Para frigorífico, 1 puerta"
     },
     "ancho_mm": 600,
     "alto_mm": 2000,
-    "fondo_mm": 570,
-    "diferenciador": "Variante de la columna de frigorífico con 1 sola puerta batiente."
+    "fondo_mm": 570
   },
   "A2I1P6022057": {
-    "name": "A2I1P6022057",
-    "tipo": "A2I1P",
-    "familia": "Columnas",
-    "subfamilia": "Frigorífico",
     "designaciones": {
       "es": "Para frigorífico, 1 puerta"
     },
     "ancho_mm": 600,
     "alto_mm": 2200,
-    "fondo_mm": 570,
-    "diferenciador": "Variante de la columna de frigorífico con 1 sola puerta batiente."
+    "fondo_mm": 570
   },
   "AGM9020057": {
-    "name": "AGM9020057",
-    "tipo": "AGM",
-    "familia": "Columnas",
-    "subfamilia": "Despensa",
     "designaciones": {
       "es": "Despensa, 4 puertas"
     },
     "ancho_mm": 900,
     "alto_mm": 2000,
-    "fondo_mm": 570,
-    "diferenciador": "Columna despensa de 900 mm. Interior con cestas, baldas y organizadores. Las 4 puertas se abren de forma independiente."
+    "fondo_mm": 570
   },
   "AGM9022057": {
-    "name": "AGM9022057",
-    "tipo": "AGM",
-    "familia": "Columnas",
-    "subfamilia": "Despensa",
     "designaciones": {
       "es": "Despensa, 4 puertas"
     },
     "ancho_mm": 900,
     "alto_mm": 2200,
-    "fondo_mm": 570,
-    "diferenciador": "Columna despensa de 900 mm. Interior con cestas, baldas y organizadores. Las 4 puertas se abren de forma independiente."
+    "fondo_mm": 570
   }
 }
