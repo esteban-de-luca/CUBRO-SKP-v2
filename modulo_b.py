@@ -84,8 +84,8 @@ def _cargar_catalogo() -> dict:
 def _cargar_interfaz() -> dict:
     """Construye el dict de interfaz desde mapeos_SKP_UI_SG.yaml y opciones_mueble.yaml.
 
-    El shape devuelto es idéntico al de la antigua sección interfaz de mapeos.yaml
-    (ya obsoleto). La fuente de verdad son mapeos_SKP_UI_SG.yaml y opciones_mueble.yaml.
+    El shape devuelto equivale a la antigua sección interfaz de mapeos.yaml.
+    La fuente de verdad son mapeos_SKP_UI_SG.yaml y opciones_mueble.yaml.
     cada key es un op_id con etiqueta, muebles/excluidos y subcampos según corresponda.
     Ningún control ni lógica de UI cambia — solo la fuente de los datos.
     """

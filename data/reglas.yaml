@@ -9,7 +9,7 @@
 #
 # Lógica de ejecución del Módulo C:
 #   1. Primero reglas_condicionales → determinan qué opciones calcular
-#   2. Después mapeos.yaml → convierten los valores a códigos SG
+#   2. Después mapeos_SKP_UI_SG.yaml → convierten los valores a códigos SG
 #
 # "auto" = valor calculado en modulo_c.py según lógica de mapeos o reglas
 #
@@ -94,13 +94,13 @@ reglas_condicionales:
 
   # ---------------------------------------------------------------------------
   # op_231 — Reducción de ancho
-  # Ver trigger y código en mapeos.yaml → del_csv → op_231
+  # Ver trigger y código en mapeos_SKP_UI_SG.yaml → del_csv → op_231
   # ---------------------------------------------------------------------------
   op_231: {}
 
   # ---------------------------------------------------------------------------
   # op_700 — DEM
-  # Ver listas en mapeos.yaml → forzadas → op_700_forzada
+  # Ver listas en opciones_mueble.yaml → op_700
   # ---------------------------------------------------------------------------
   op_700: {}
 
