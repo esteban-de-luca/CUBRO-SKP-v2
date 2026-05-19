@@ -250,10 +250,8 @@ forzadas:
   op_206:   # Sistema de cierre
     sg: FSP
 
-  op_207:   # Equipamiento fregadero / cubos de basura (ver opciones_mueble.yaml)
-    - { sg: P42, descripcion: "Fregadero equipado — forzado (BETOQ)" }
-    - { sg: P60, descripcion: "Cubos de basura 60 cm" }
-    - { sg: P90, descripcion: "Cubos de basura 90 cm" }
+  op_207:   # Equipamiento fregadero — forzado solo en BETOQ908057
+    sg: P42
 
   op_208:   # Equipamiento esquinero Lemans
     sg: CPA
@@ -273,21 +271,31 @@ forzadas:
 
 opcionales:
 
-  op_121:   # Sin mecanizado para tirador (SPF)
-    sg: SPF
+  op_121:
+    - { ui: Sin mecanizado para tirador, sg: SPF }
 
-  op_220:   # Recorte para perfil LED
-    sg: PRB
+  op_207_opcional:   # código determinado por el ancho del mueble (ver opciones_mueble.yaml)
+    - { ui: Cubos de basura, sg: P60 }   # BE2B608057, BEBTS608057
+    - { ui: Cubos de basura, sg: P90 }   # BE2B908057, BEBTS908057
 
-  op_222:   # Sensor para mando LED
-    - { sg: DTD, ui: Derecha }
-    - { sg: DTG, ui: Izquierda }
+  op_220:
+    - { ui: Recorte para perfil LED, sg: PRB }
 
-  op_223:   # Cajón interior
-    sg: TLH
+  op_222:
+    - { ui: "Sensor para mando LED (derecha)",   sg: DTD }
+    - { ui: "Sensor para mando LED (izquierda)", sg: DTG }
 
-  op_227:   # Mueble de caldera
-    sg: CCH
+  op_223:
+    - { ui: Cajón interior, sg: TLH }
+
+  op_227:
+    - { ui: Mueble de caldera, sg: CCH }
+
+  op_700_opcional:
+    - { ui: Mueble sin encolar, sg: DEM }
+
+  op_126:
+    - { ui: Electrodoméstico, sg: "" }   # bloque libre — sin código SG único (datos marca/ref/alt/tipo)
 
 
 # =============================================================================
