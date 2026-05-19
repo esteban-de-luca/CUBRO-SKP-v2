@@ -309,6 +309,37 @@ op_208:
 
 
 # -----------------------------------------------------------------------------
+# op_209 — Equipamiento cajón (muebles sin puerta batiente)
+# -----------------------------------------------------------------------------
+op_209:
+  - BB2T458035    # F
+  - BB2T608035    # F
+  - BB2T908035    # F
+  - BB2T458057    # F
+  - BB2T608057    # F
+  - BB2T908057    # F
+  - B2B458035     # F
+  - B2B608035     # F
+  - B2B908035     # F
+  - B2B458057     # F
+  - B2B608057     # F
+  - B2B908057     # F
+  - BC158057      # F
+  - BC604035      # F
+  - BC604057      # F
+  - BCUB2T458057  # F
+  - BCUB2T608057  # F
+  - BCUB2T908057  # F
+  - BIBTS608057   # F
+  - BIBTS908057   # F
+  - BE2B608057    # F
+  - BE2B908057    # F
+  - BEBTS608057   # F
+  - BEBTS908057   # F
+  - BFT608057     # F
+
+
+# -----------------------------------------------------------------------------
 # op_217 — Sistema de apertura sin tirador físico
 # TL1 (Touch Latch) y PS1 (Prise de main) NO son intercambiables.
 # Cada mueble solo admite uno de los dos valores — nunca ambos.
