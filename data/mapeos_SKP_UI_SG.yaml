@@ -250,8 +250,10 @@ forzadas:
   op_206:   # Sistema de cierre
     sg: FSP
 
-  op_207:   # Equipamiento fregadero (ver reglas.yaml)
-    sg: P42
+  op_207:   # Equipamiento fregadero / cubos de basura (ver opciones_mueble.yaml)
+    - { sg: P42, descripcion: "Fregadero equipado — forzado (BETOQ)" }
+    - { sg: P60, descripcion: "Cubos de basura 60 cm" }
+    - { sg: P90, descripcion: "Cubos de basura 90 cm" }
 
   op_208:   # Equipamiento esquinero Lemans
     sg: CPA
@@ -261,6 +263,31 @@ forzadas:
 
   op_700:   # Sin encolar (ver reglas.yaml)
     sg: DEM
+
+
+# =============================================================================
+# OPCIONALES
+# Códigos SG de las opciones que el usuario puede seleccionar en el Paso 1.
+# Las condiciones de aplicación por mueble están en opciones_mueble.yaml.
+# =============================================================================
+
+opcionales:
+
+  op_121:   # Sin mecanizado para tirador (SPF)
+    sg: SPF
+
+  op_220:   # Recorte para perfil LED
+    sg: PRB
+
+  op_222:   # Sensor para mando LED
+    - { sg: DTD, ui: Derecha }
+    - { sg: DTG, ui: Izquierda }
+
+  op_223:   # Cajón interior
+    sg: TLH
+
+  op_227:   # Mueble de caldera
+    sg: CCH
 
 
 # =============================================================================

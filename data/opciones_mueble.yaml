@@ -287,11 +287,17 @@ op_206:
 # op_207 — Equipamiento de fregadero / cubos de basura
 # -----------------------------------------------------------------------------
 op_207:
-  - BETOQ908057    # F — forzada (el usuario no escoge nada)
-  - BE2B608057     # P — cubos de basura (user selection)
-  - BE2B908057     # P
-  - BEBTS608057    # P
-  - BEBTS908057    # P
+
+  P42:             # F — forzado (fregadero equipado)
+    - BETOQ908057
+
+  P60:             # P — cubos de basura 60 cm
+    - BE2B608057
+    - BEBTS608057
+
+  P90:             # P — cubos de basura 90 cm
+    - BE2B908057
+    - BEBTS908057
 
 
 # -----------------------------------------------------------------------------
@@ -592,3 +598,18 @@ op_700:
     - HH19010035   # F
     - AGM9020057   # no aplica — único mueble sin DEM en el catálogo
     - AGM9022057   # no aplica
+
+
+# -----------------------------------------------------------------------------
+# op_126 — Referencia del electrodoméstico
+# -----------------------------------------------------------------------------
+op_126:
+  - BFT608057      # P
+  - AFS6020057     # P
+  - AFS6022057     # P
+  - AFSMO6020057   # P
+  - AFSMO6022057   # P
+  - AFS2B6020057   # P
+  - AFS2B6022057   # P
+  - AFSMOBT6020057 # P
+  - AFSMOBT6022057 # P
