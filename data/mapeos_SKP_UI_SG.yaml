@@ -1,0 +1,468 @@
+# =============================================================================
+# data/mapeos_SKP_UI_SG.yaml
+# Tablas de conversión: SketchUp CSV → Schmidt Groupe
+#
+# Lógica de ejecución (Módulo C):
+#   1. reglas.yaml  → determina qué opciones calcular y con qué valor
+#   2. este archivo → convierte los valores a códigos SG
+#
+# Secciones:
+#   del_csv   — campos del CSV de SketchUp → códigos SG
+#   forzadas  — opciones calculadas automáticamente por el Módulo C
+#   nombres   — designación en español (UI) → designación oficial en francés (SG)
+#               El campo p_item_label del JSON de salida usa la designación SG.
+# =============================================================================
+
+
+# =============================================================================
+# DEL CSV
+# Campos que vienen del archivo CSV exportado desde SketchUp.
+# =============================================================================
+
+del_csv:
+
+  # ---------------------------------------------------------------------------
+  # Apertura → Sentido de apertura de puerta
+  # Campo obligatorio. Códigos confirmados por el Índice A.
+  # G: Gauche (izquierda) · D: Droite (derecha) · L: Lift
+  # ---------------------------------------------------------------------------
+  apertura:
+    # valor_csv:  código_SG
+    "I": "G"
+    "1": "G"
+    "D": "D"
+    "2": "D"
+    "3": "L"
+
+  # ---------------------------------------------------------------------------
+  # D_Gama → Opción 100 — Gama del frente
+  # ---------------------------------------------------------------------------
+  op_100:
+    "1": "LAC"   # LACA
+    "2": "WOD"   # WOOD
+    "3": "LNO"   # LINOLEO
+    "4": "LMI"   # LAMINADO
+
+  # ---------------------------------------------------------------------------
+  # ColorFrente → Opción 101 — Acabado del frente
+  # El valor CSV incluye el sufijo de gama (ej. "Crema LACA").
+  # La etiqueta UI es el nombre sin sufijo (ej. "Crema").
+  # ---------------------------------------------------------------------------
+  op_101:
+    # LACA (LAC)
+    "Crema LACA":          "CR6"
+    "Seda LACA":           "SED"
+    "Blanco LACA":         "BAO"
+    "Petal LACA":          "PEA"
+    "Vela LACA":           "VL6"
+    "Marga LACA":          "MAA"
+    "Zafiro LACA":         "ZAF"
+    "Uva LACA":            "UVA"
+    "Noche LACA":          "NOE"
+    "Pino LACA":           "PI6"
+    "Halo LACA":           "HAL"
+    "Grass LACA":          "GRS"
+    "Laurel LACA":         "LAU"
+    # WOOD (WOD)
+    "Nordic Oak WOOD":     "TCK"
+    "Oak WOOD":            "TAK"
+    "Smoked Oak WOOD":     "TNK"
+    # LINOLEO (LNO) — sin tilde, así llega del CSV
+    "Mushroom LINOLEO":    "IMH"
+    "Macadamia LINOLEO":   "IMD"
+    "Clay LINOLEO":        "ICY"
+    "Walnut LINOLEO":      "IWL"
+    "Espresso LINOLEO":    "IES"
+    "Pistachio LINOLEO":   "IPI"
+    "Olive LINOLEO":       "IOL"
+    "Conifer LINOLEO":     "ICO"
+    "Vapour LINOLEO":      "IVA"
+    "Blue Haze LINOLEO":   "IBH"
+    "Smokey Blue LINOLEO": "IYB"
+    # LAMINADO (LMI)
+    "Sable LAMINADO":      "ASA"
+    "Agave LAMINADO":      "AGV"
+    "Sombra LAMINADO":     "ASO"
+    "Cloud LAMINADO":      "ACU"
+    "Polar LAMINADO":      "APA"
+    "Mos LAMINADO":        "AMS"
+    "Ash LAMINADO":        "AAS"
+    "Saten LAMINADO":      "AST"
+    "Lirio LAMINADO":      "AII"
+    "Carbon LAMINADO":     "ACB"
+    "Metal LAMINADO":      "AMT"
+
+  # ---------------------------------------------------------------------------
+  # Color del interior → Opción 200 — Color interior del mueble
+  # No aplica a POBIF, PO1BIF, PO2BIF — vendrá vacío desde el CSV.
+  # ---------------------------------------------------------------------------
+  op_200:
+    "Blanco mueble": "1CC"
+    "Gris mueble":   "2CC"
+    "Negro mueble":  "3CC"
+    "Roble mueble":  "4CC"
+
+  # ---------------------------------------------------------------------------
+  # Tirador → Opción 217 — Sistema de apertura sin tirador físico
+  # Solo aplica si el valor es 20 o 21. Resto → vacío.
+  # ---------------------------------------------------------------------------
+  op_217:
+    "20": "TL1"   # Touch Latch
+    "21": "PS1"   # Prise de main
+
+  # ---------------------------------------------------------------------------
+  # Tirador → Opción 300 — Tipo de tirador
+  # Solo aplica si el valor NO es 20 ni 21.
+  #
+  # ⚠️ Curve (4) y Line (5) tienen dos códigos según el tipo de mueble:
+  #   - sufijo H: puerta batiente
+  #   - sufijo C: cajón, bloque extraíble, coulissant, lift
+  # La lógica de selección H/C está en reglas.yaml.
+  # ---------------------------------------------------------------------------
+  op_300:
+    "2": "ROU"          # Round
+    "3": "SQU"          # Square
+    "4": "Q2H / Q2C"    # Curve  — ver reglas.yaml para lógica H/C
+    "5": "Q3H / Q3C"    # Line   — ver reglas.yaml para lógica H/C
+    "7": "Q1C"          # Plantea
+    "20": "499"         # Touch Latch (sin tirador físico)
+    "21": "499"         # Prise de main (sin tirador físico)
+
+  # ---------------------------------------------------------------------------
+  # Opción 301 — Color del tirador
+  #
+  # La tabla que aplica depende del tipo de tirador (op_300):
+  #   - Integrado (ROU, SQU)          → campo "Trasera" del CSV → op_301_integrado
+  #   - De superficie (Q2x, Q3x, Q1C) → campo "Color tir. sup"  → op_301_superficie
+  #   - Sin tirador (499)             → vacío, no se envía
+  #
+  # Caso especial integrado: si Trasera = "Laca", copiar ColorFrente
+  # y aplicar el mismo mapeo op_301_integrado con el nombre del color sin sufijo.
+  # ---------------------------------------------------------------------------
+  op_301_integrado:
+    # Campo "Trasera" del CSV
+    "Nordic Oak WOOD":  "NOK"
+    "Oak WOOD":         "OAK"
+    "Smoked Oak WOOD":  "SMK"
+    # Cuando Trasera = "Laca": se usa el nombre del color de ColorFrente sin sufijo
+    "Crema":   "CR6"
+    "Seda":    "SED"
+    "Blanco":  "BAO"
+    "Petal":   "PEA"
+    "Vela":    "VL6"
+    "Marga":   "MAA"
+    "Zafiro":  "ZAF"
+    "Uva":     "UVA"
+    "Noche":   "NOE"
+    "Pino":    "PI6"
+    "Halo":    "HAL"
+    "Grass":   "GRS"
+    "Laurel":  "LAU"
+
+  op_301_superficie:
+    # Campo "Color tir. de superficie" del CSV
+    "Inox":   "IN7"
+    "Brass":  "BR6"
+    "Blanco": "LB6"
+    "Negro":  "NE6"
+    "Arena":  "AR6"
+    "Brown":  "BO6"
+
+  # ---------------------------------------------------------------------------
+  # C_Rodapietext → Opción 402 — Altura de las patas
+  # ---------------------------------------------------------------------------
+  op_402:
+    "70 mm":  "70"
+    "100 mm": "100"
+    "0 mm":   "SPI"   # Sin patas
+
+  # ---------------------------------------------------------------------------
+  # Ancho + Ancho reducido → Opción 231 — Reducción de ancho
+  #
+  # Si Ancho == "10000 mm" → op_231 = RL3 y el valor final va en p_param1 del JSON.
+  # Si Ancho != "10000 mm" → op_231 vacío.
+  #
+  # Confirmado con SG: reducción máxima 299 mm, ancho mínimo resultante 300 mm.
+  # ---------------------------------------------------------------------------
+  op_231:
+    trigger_ancho: "10000 mm"
+    codigo: "RL3"
+    campo_salida: "p_param1"
+
+
+# =============================================================================
+# FORZADAS
+# Opciones calculadas automáticamente por el Módulo C.
+# No requieren input del CSV ni del Módulo B.
+# =============================================================================
+
+forzadas:
+
+  # ---------------------------------------------------------------------------
+  # Opción 103 — Sentido de la veta
+  # Aplica a todos los muebles con gama WOOD o color Metal LAMINADO (AMT).
+  # ---------------------------------------------------------------------------
+  op_103:
+    aplica_a_gamas:   ["WOD"]
+    aplica_a_colores: ["Metal LAMINADO"]
+    valor: "VER"
+
+  # ---------------------------------------------------------------------------
+  # Opción 104 — Acabado canto del frente
+  # ---------------------------------------------------------------------------
+  op_104:
+    por_gama:
+      "LAC": null    # mismo código que op_101 del mueble
+      "LNO": "HAK"
+      "WOD": ""      # vacío
+      "LMI": ""      # vacío
+
+  # ---------------------------------------------------------------------------
+  # Opción 203 — Espesor canto mueble
+  # Todos los muebles excepto frentes de lavavajillas (POBIF, PO1BIF, PO2BIF).
+  # ---------------------------------------------------------------------------
+  op_203:
+    valor: "E14"
+    excluidos: ["POBIF4580", "POBIF6080", "PO1BIF4580", "PO1BIF6080", "PO2BIF4580", "PO2BIF6080"]
+
+  # ---------------------------------------------------------------------------
+  # Opción 204 — Acabado canto mueble
+  # Mismo código que op_200 del mueble.
+  # Excluidos: mismos que op_203.
+  # ---------------------------------------------------------------------------
+  op_204:
+    copia_de: "op_200"
+    excluidos: ["POBIF4580", "POBIF6080", "PO1BIF4580", "PO1BIF6080", "PO2BIF4580", "PO2BIF6080"]
+
+  # ---------------------------------------------------------------------------
+  # Opción 206 — Sistema de cierre
+  # Aplica FSP a todos los muebles con puerta batiente.
+  # ---------------------------------------------------------------------------
+  op_206:
+    valor: "FSP"
+    muebles:
+      - "B308035"
+      - "B458035"
+      - "B608035"
+      - "B908035"
+      - "B308057"
+      - "B458057"
+      - "B608057"
+      - "B908057"
+      - "BETO458057"
+      - "BETO608057"
+      - "BETO908057"
+      - "BETOQ908057"
+      - "BAV908057"
+      - "BAV1208057"
+      - "BAV1P908057"
+      - "BAV1P1208057"
+      - "H1306035"
+      - "H1456035"
+      - "H1606035"
+      - "H1906035"
+      - "H1308035"
+      - "H1458035"
+      - "H1608035"
+      - "H1908035"
+      - "H13010035"
+      - "H14510035"
+      - "H16010035"
+      - "H19010035"
+      - "HH1606035"
+      - "HH1906035"
+      - "HH1608035"
+      - "HH1908035"
+      - "HH16010035"
+      - "HH19010035"
+      - "HAV1906035"
+      - "HAV1908035"
+      - "HAV19010035"
+      - "HAV2906035"
+      - "HAV2908035"
+      - "HAV29010035"
+      - "HR45V35"
+      - "HR60V35"
+      - "HR45V57"
+      - "HR60V57"
+      - "HPT60V57"
+      - "AQC34520057"
+      - "AQC36020057"
+      - "AQC34522057"
+      - "AQC36022057"
+      - "AQC31P4520057"
+      - "AQC31P6020057"
+      - "AQC31P4522057"
+      - "AQC31P6022057"
+      - "AVA4520035"
+      - "AVA6020035"
+      - "AVA4520057"
+      - "AVA6020057"
+      - "AVA4522035"
+      - "AVA6022035"
+      - "AVA4522057"
+      - "AVA6022057"
+      - "AVA1P4520035"
+      - "AVA1P6020035"
+      - "AVA1P9020035"
+      - "AVA1P4520057"
+      - "AVA1P6020057"
+      - "AVA1P4522035"
+      - "AVA1P6022035"
+      - "AVA1P9022035"
+      - "AVA1P4522057"
+      - "AVA1P6022057"
+      - "ABA6020057"
+      - "ABA6022057"
+      - "AFS6020057"
+      - "AFS6022057"
+      - "AFSMO6020057"
+      - "AFSMO6022057"
+      - "AFS2B6020057"
+      - "AFS2B6022057"
+      - "AFSMOBT6020057"
+      - "AFSMOBT6022057"
+      - "AGM9020057"
+      - "AGM9022057"
+
+  # ---------------------------------------------------------------------------
+  # Opción 207 — Equipamiento fregadero (forzado)
+  # ---------------------------------------------------------------------------
+  op_207_forzada:
+    "BETOQ908057": "P42"
+
+  # ---------------------------------------------------------------------------
+  # Opción 208 — Equipamiento esquinero (Lemans)
+  # ---------------------------------------------------------------------------
+  op_208:
+    valor: "CPA"
+    muebles:
+      - "BAV1P908057"
+      - "BAV1P1208057"
+
+  # ---------------------------------------------------------------------------
+  # Opción 209 — Equipamiento cajón
+  # ---------------------------------------------------------------------------
+  op_209:
+    valor: "BES"
+    muebles:
+      - "BB2T458035"
+      - "BB2T608035"
+      - "BB2T908035"
+      - "BB2T458057"
+      - "BB2T608057"
+      - "BB2T908057"
+      - "B2B458035"
+      - "B2B608035"
+      - "B2B908035"
+      - "B2B458057"
+      - "B2B608057"
+      - "B2B908057"
+      - "BC158057"
+      - "BC604035"
+      - "BC604057"
+      - "BCUB2T458057"
+      - "BCUB2T608057"
+      - "BCUB2T908057"
+      - "BIBTS608057"
+      - "BIBTS908057"
+      - "BE2B608057"
+      - "BE2B908057"
+      - "BEBTS608057"
+      - "BEBTS908057"
+      - "BFT608057"
+
+  # ---------------------------------------------------------------------------
+  # Opción 700 — Mueble sin encolar (DEM) — forzado
+  # HH1: DEM forzado siempre.
+  # AGM: no aplica nunca.
+  # Resto: depende del Módulo B (ver interfaz en mapeos.yaml).
+  # ---------------------------------------------------------------------------
+  op_700_forzada:
+    valor: "DEM"
+    forzado_en:
+      - "HH1606035"
+      - "HH1906035"
+      - "HH1608035"
+      - "HH1908035"
+      - "HH16010035"
+      - "HH19010035"
+    no_aplica:
+      - "AGM9020057"
+      - "AGM9022057"
+
+
+# =============================================================================
+# NOMBRES
+# Traducción de la designación en español (UI / catalogo.json → designaciones.es)
+# a la designación oficial en francés de Schmidt Groupe.
+# Se usa en el campo p_item_label del JSON de salida.
+# =============================================================================
+
+nombres:
+  # valor: designaciones.es del catalogo.json → designación SG en francés
+
+  # Muebles bajos — Almacenamiento
+  "Bajo 1 puerta":                          "ELEMENT BAS 1 PORTE"
+  "Bajo 2 puertas":                         "ELEMENT BAS 2 PORTES"
+  "Bajo 1 bloque + 2 cajones":              "ELEMENT BAS 1 BLOC, 2 TIROIRS"
+  "Bajo 2 bloques":                         "ELEMENT BAS 2 BLOCS"
+  "Extraíble":                              "ELEMENT BAS 1 PORTE COULISSANTE"
+  "Banco, 1 bloque":                        "ELEMENT BAS 1 BLOC"
+
+  # Muebles bajos — Cocción
+  "Bajo horno, 1 cajón, 1 fijo":            "ELEMENT BAS CUISSON FOUR 1 TIROIR"
+  "Bajo cocción, 1 bloque + 2 cajones":     "ELEMENT BAS CUISSON 1 BLOC 2 TIROIRS"
+  "Bajo para placa aspirante, 1 bloque + 2 cajones": "ELEMENT POUR PLAQUE ASPIRANTE 1 BLOC 2 TIROIR"
+
+  # Muebles bajos — Fregadero
+  "Bajo para fregadero, 1 puerta":          "ELEMENT BAS SOUS EVIER 1 PORTE"
+  "Bajo para fregadero, 2 puertas":         "ELEMENT BAS SOUS EVIER 2 PORTES"
+  "Bajo para fregadero equipado, 2 puertas": "ELEMENT BAS SOUS EVIER EQUIPE 2 PORTES"
+  "Bajo para fregadero, 2 bloques":         "ELEMENT BAS SOUS EVIER 2 BLOCS"
+  "Bajo para fregadero, 1 bloque + 2 cajones": "ELEMENT BAS SOUS EVIER 1 BLOC 2 TIROIRS"
+
+  # Muebles bajos — Lavavajillas / Lavadora
+  "Frente de lavavajillas / lavadora integrable": "FACADE POUR LAVE-LINGE, LAVE-VAISSELLE OU REFRIGERATEUR INTEGRE"
+  "Frente de lavavajillas no integrable":    "FACADE POUR LAVE-LINGE, LAVE-VAISSELLE NON INTEGRE"
+
+  # Muebles bajos — Esquinero
+  "Bajo esquinero, 2 baldas":               "ELEMENT BAS D'ANGLE A ETAGERE"
+  "Bajo esquinero, 2 accesorios extraíbles Lemans": "ELEMENT BAS D'ANGLE A PLATEAUX PIVOTANTS"
+
+  # Muebles de pared — Almacenamiento
+  "De pared, 1 puerta":                     "ELEMENT HAUT 1 PORTE"
+  "De pared, 2 puertas":                    "ELEMENT HAUT 2 PORTES"
+
+  # Muebles de pared — Campana
+  "De pared para campana integrada, 1 puerta": "ELEMENT HAUT POUR HOTTE INTEGRE 1 PORTE"
+  "De pared para campana integrada, 2 puertas": "ELEMENT HAUT POUR HOTTE INTEGRE 2 PORTES"
+
+  # Muebles de pared — Esquinero
+  "De pared esquinero, 1 puerta (45)":      "ELEMENT HAUT D'ANGLE 1 PORTE"
+  "De pared esquinero, 1 puerta (60)":      "ELEMENT HAUT D'ANGLE 1 PORTE"
+
+  # Muebles de pared — Altillos
+  "Altillo variable, puerta batiente":      "REHAUSSE VARIABLE"
+  "Altillo lift variable para nevera americana": "REHAUSSE VARIABLE"
+  "Mueble sobre encimera":                  "ELEMENT HAUT A POSER"
+
+  # Columnas — Almacenamiento
+  "Columna con baldas, 2 puertas":          "ARMOIRE DE RANGEMENT A ETAGERES 2 PORTES"
+  "Columna con baldas, 1 puerta":           "ARMOIRE DE RANGEMENT A ETAGERES 1 PORTE"
+  "Columna con cajones, 2 puertas":         "ARMOIRE DE RANGEMENT A TIROIRS 2 PORTES"
+  "Columna con cajones, 1 puerta":          "ARMOIRE DE RANGEMENT A TIROIRS 1 PORTE"
+  "Armario escoba, 2 puertas":              "ARMOIRE A BALAI 2 PORTES"
+
+  # Columnas — Horno y microondas
+  "Para horno o microondas, 1 puerta":      "ARMOIRE SANS BANDEAU POUR ENCASTRER UN FOUR OU UN MICRO ONDES 1 PORTE"
+  "Para horno o microondas, 2 bloques":     "ARMOIRE SANS BANDEAU POUR ENCASTRER UN FOUR OU UN MICRO ONDES 2 BLOCS"
+  "Para 2 hornos / horno+micro, 1 puerta":  "ARMOIRE SANS BANDEAU POUR ENCASTRER 2 FOURS OU UN FOUR ET UN MICRO-ONDES 1 PORTE"
+  "Para 2 hornos / horno+micro, 1 bloque+1 cajón": "ARMOIRE SANS BANDEAU POUR ENCASTRER 2 FOURS OU UN FOUR ET UN MICRO-ONDES 1 BLOC 1 TIROIR"
+
+  # Columnas — Frigorífico
+  "Para frigorífico, 2 puertas":            "ARMOIRE POUR INTEGRER UN REFRIGERATEUR ET UN CONGELATEUR OU UN COMBINE 2 PORTES"
+  "Para frigorífico, 1 puerta":             "ARMOIRE POUR INTEGRER UN REFRIGERATEUR ET UN CONGELATEUR OU UN COMBINE 1 PORTE"
+
+  # Columnas — Despensa
+  "Despensa, 4 puertas":                    "ARMOIRE DE RANGEMENT 4 PORTES"
