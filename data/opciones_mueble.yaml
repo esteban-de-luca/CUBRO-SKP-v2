@@ -286,7 +286,7 @@ op_206:
 # op_207 — Equipamiento de fregadero / cubos de basura
 # -----------------------------------------------------------------------------
 op_207:
-  - BETOQ908057    # P — equipamiento fregadero (user selection)
+  - BETOQ908057    # F — equipamiento fregadero (forzado)
   - BE2B608057     # P — cubos de basura (user selection)
   - BE2B908057     # P
   - BEBTS608057    # P
@@ -302,80 +302,87 @@ op_208:
 
 
 # -----------------------------------------------------------------------------
-# op_217 — Sistema de apertura sin tirador físico (Touch Latch / Prise de main)
-# ⚠️ HR y HPT60V57 solo admiten TL1 (Touch Latch). PS1 (Prise de main) no aplica.
+# op_217 — Sistema de apertura sin tirador físico
+# Un mueble nunca puede llevar TL1 y PS1 a la vez — son excluyentes.
+# El valor viene del campo Tirador del CSV: 20 = TL1, 21 = PS1.
+#   TL1_o_PS1 — el usuario puede escoger cualquiera de los dos
+#   solo_TL1  — PS1 no está disponible para estos muebles
 # -----------------------------------------------------------------------------
 op_217:
-  - B308035        # P
-  - B458035        # P
-  - B608035        # P
-  - B308057        # P
-  - B458057        # P
-  - B608057        # P
-  - BETO458057     # P
-  - BETO608057     # P
-  - BAV908057      # P
-  - BAV1208057     # P
-  - BAV1P908057    # P
-  - BAV1P1208057   # P
-  - H1306035       # P
-  - H1456035       # P
-  - H1606035       # P
-  - H1906035       # P
-  - H1308035       # P
-  - H1458035       # P
-  - H1608035       # P
-  - H1908035       # P
-  - H13010035      # P
-  - H14510035      # P
-  - H16010035      # P
-  - H19010035      # P
-  - HAV1906035     # P
-  - HAV1908035     # P
-  - HAV19010035    # P
-  - HAV2906035     # P
-  - HAV2908035     # P
-  - HAV29010035    # P
-  - HR45V35        # P — solo TL1
-  - HR60V35        # P — solo TL1
-  - HR45V57        # P — solo TL1
-  - HR60V57        # P — solo TL1
-  - HLVV57         # P
-  - HPT60V57       # P — solo TL1
-  - AQC34520057    # P
-  - AQC36020057    # P
-  - AQC34522057    # P
-  - AQC36022057    # P
-  - AQC31P4520057  # P
-  - AQC31P6020057  # P
-  - AQC31P4522057  # P
-  - AQC31P6022057  # P
-  - AVA4520035     # P
-  - AVA6020035     # P
-  - AVA4520057     # P
-  - AVA6020057     # P
-  - AVA4522035     # P
-  - AVA6022035     # P
-  - AVA4522057     # P
-  - AVA6022057     # P
-  - AVA1P4520035   # P
-  - AVA1P6020035   # P
-  - AVA1P4520057   # P
-  - AVA1P6020057   # P
-  - AVA1P4522035   # P
-  - AVA1P6022035   # P
-  - AVA1P4522057   # P
-  - AVA1P6022057   # P
-  - ABA6020057     # P
-  - ABA6022057     # P
-  - AFS6020057     # P
-  - AFS6022057     # P
-  - AFSMO6020057   # P
-  - AFSMO6022057   # P
-  - AFS2B6020057   # P
-  - AFS2B6022057   # P
-  - AFSMOBT6020057 # P
-  - AFSMOBT6022057 # P
+
+  TL1_o_PS1:
+    - B308035        # P
+    - B458035        # P
+    - B608035        # P
+    - B308057        # P
+    - B458057        # P
+    - B608057        # P
+    - BETO458057     # P
+    - BETO608057     # P
+    - BAV908057      # P
+    - BAV1208057     # P
+    - BAV1P908057    # P
+    - BAV1P1208057   # P
+    - H1306035       # P
+    - H1456035       # P
+    - H1606035       # P
+    - H1906035       # P
+    - H1308035       # P
+    - H1458035       # P
+    - H1608035       # P
+    - H1908035       # P
+    - H13010035      # P
+    - H14510035      # P
+    - H16010035      # P
+    - H19010035      # P
+    - HAV1906035     # P
+    - HAV1908035     # P
+    - HAV19010035    # P
+    - HAV2906035     # P
+    - HAV2908035     # P
+    - HAV29010035    # P
+    - HLVV57         # P
+    - AQC34520057    # P
+    - AQC36020057    # P
+    - AQC34522057    # P
+    - AQC36022057    # P
+    - AQC31P4520057  # P
+    - AQC31P6020057  # P
+    - AQC31P4522057  # P
+    - AQC31P6022057  # P
+    - AVA4520035     # P
+    - AVA6020035     # P
+    - AVA4520057     # P
+    - AVA6020057     # P
+    - AVA4522035     # P
+    - AVA6022035     # P
+    - AVA4522057     # P
+    - AVA6022057     # P
+    - AVA1P4520035   # P
+    - AVA1P6020035   # P
+    - AVA1P4520057   # P
+    - AVA1P6020057   # P
+    - AVA1P4522035   # P
+    - AVA1P6022035   # P
+    - AVA1P4522057   # P
+    - AVA1P6022057   # P
+    - ABA6020057     # P
+    - ABA6022057     # P
+    - AFS6020057     # P
+    - AFS6022057     # P
+    - AFSMO6020057   # P
+    - AFSMO6022057   # P
+    - AFS2B6020057   # P
+    - AFS2B6022057   # P
+    - AFSMOBT6020057 # P
+    - AFSMOBT6022057 # P
+
+  solo_TL1:          # PS1 (Prise de main) no disponible
+    - HR45V35        # P
+    - HR60V35        # P
+    - HR45V57        # P
+    - HR60V57        # P
+    - HPT60V57       # P
 
 
 # -----------------------------------------------------------------------------
