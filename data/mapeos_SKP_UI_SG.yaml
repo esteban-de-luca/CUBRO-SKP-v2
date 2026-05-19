@@ -313,66 +313,66 @@ opcionales:
 nombres:
 
   # Muebles bajos — Almacenamiento
-  "Bajo 1 puerta":                                          "ELEMENT BAS 1 PORTE"
-  "Bajo 2 puertas":                                         "ELEMENT BAS 2 PORTES"
-  "Bajo 1 bloque + 2 cajones":                              "ELEMENT BAS 1 BLOC, 2 TIROIRS"
-  "Bajo 2 bloques":                                         "ELEMENT BAS 2 BLOCS"
-  "Extraíble":                                              "ELEMENT BAS 1 PORTE COULISSANTE"
-  "Banco, 1 bloque":                                        "ELEMENT BAS 1 BLOC"
+  "Mueble bajo con baldas, 1 puerta":                                          "ELEMENT BAS 1 PORTE"
+  "Mueble bajo con baldas, 2 puertas":                                         "ELEMENT BAS 2 PORTES"
+  "Mueble bajo, 3 cajones":                                                    "ELEMENT BAS 1 BLOC, 2 TIROIRS"
+  "Mueble bajo, 2 cajones":                                                    "ELEMENT BAS 2 BLOCS"
+  "Mueble bajo extraíble":                                                     "ELEMENT BAS 1 PORTE COULISSANTE"
+  "Mueble de banco, 1 cajón":                                                  "ELEMENT BAS 1 BLOC"
 
   # Muebles bajos — Cocción
-  "Bajo horno, 1 cajón, 1 fijo":                            "ELEMENT BAS CUISSON FOUR 1 TIROIR"
-  "Bajo cocción, 1 bloque + 2 cajones":                     "ELEMENT BAS CUISSON 1 BLOC 2 TIROIRS"
-  "Bajo para placa aspirante, 1 bloque + 2 cajones":        "ELEMENT POUR PLAQUE ASPIRANTE 1 BLOC 2 TIROIR"
+  "Mueble bajo para horno":                                                    "ELEMENT BAS CUISSON FOUR 1 TIROIR"
+  "Mueble para placa, 3 cajones":                                              "ELEMENT BAS CUISSON 1 BLOC 2 TIROIRS"
+  "Mueble para placa aspirante, 2 cajones, 1 fijo":                            "ELEMENT POUR PLAQUE ASPIRANTE 1 BLOC 2 TIROIR"
 
   # Muebles bajos — Fregadero
-  "Bajo para fregadero, 1 puerta":                          "ELEMENT BAS SOUS EVIER 1 PORTE"
-  "Bajo para fregadero, 2 puertas":                         "ELEMENT BAS SOUS EVIER 2 PORTES"
-  "Bajo para fregadero equipado, 2 puertas":                "ELEMENT BAS SOUS EVIER EQUIPE 2 PORTES"
-  "Bajo para fregadero, 2 bloques":                         "ELEMENT BAS SOUS EVIER 2 BLOCS"
-  "Bajo para fregadero, 1 bloque + 2 cajones":              "ELEMENT BAS SOUS EVIER 1 BLOC 2 TIROIRS"
+  "Mueble para fregadero, 1 puerta":                                           "ELEMENT BAS SOUS EVIER 1 PORTE"
+  "Mueble para fregadero, 2 puertas":                                          "ELEMENT BAS SOUS EVIER 2 PORTES"
+  "Mueble para fregadero, 2 puertas (equipado con cubos de basura)":           "ELEMENT BAS SOUS EVIER EQUIPE 2 PORTES"
+  "Mueble para fregadero, 2 cajones":                                          "ELEMENT BAS SOUS EVIER 2 BLOCS"
+  "Mueble para fregadero, 3 cajones":                                          "ELEMENT BAS SOUS EVIER 1 BLOC 2 TIROIRS"
 
   # Muebles bajos — Lavavajillas / Lavadora
-  "Frente de lavavajillas / lavadora integrable":            "FACADE POUR LAVE-LINGE, LAVE-VAISSELLE OU REFRIGERATEUR INTEGRE"
-  "Frente de lavavajillas no integrable":                    "FACADE POUR LAVE-LINGE, LAVE-VAISSELLE NON INTEGRE"
+  "Puerta completa para LVV y LVD integrables":                                "FACADE POUR LAVE-LINGE, LAVE-VAISSELLE OU REFRIGERATEUR INTEGRE"
+  "Puerta para LVV y LVD no integrables":                                      "FACADE POUR LAVE-LINGE, LAVE-VAISSELLE NON INTEGRE"
 
   # Muebles bajos — Esquinero
-  "Bajo esquinero, 2 baldas":                               "ELEMENT BAS D'ANGLE A ETAGERE"
-  "Bajo esquinero, 2 accesorios extraíbles Lemans":         "ELEMENT BAS D'ANGLE A PLATEAUX PIVOTANTS"
+  "Mueble bajo esquinero con baldas, 1 puerta":                                "ELEMENT BAS D'ANGLE A ETAGERE"
+  "Mueble bajo esquinero con accesorio extraíble, 1 puerta":                   "ELEMENT BAS D'ANGLE A PLATEAUX PIVOTANTS"
 
   # Muebles de pared — Almacenamiento
-  "De pared, 1 puerta":                                     "ELEMENT HAUT 1 PORTE"
-  "De pared, 2 puertas":                                    "ELEMENT HAUT 2 PORTES"
+  "Mueble de pared con baldas, 1 puerta":                                      "ELEMENT HAUT 1 PORTE"
+  "Mueble de pared con baldas, 2 puertas":                                     "ELEMENT HAUT 2 PORTES"
 
   # Muebles de pared — Campana
-  "De pared para campana integrada, 1 puerta":              "ELEMENT HAUT POUR HOTTE INTEGRE 1 PORTE"
-  "De pared para campana integrada, 2 puertas":             "ELEMENT HAUT POUR HOTTE INTEGRE 2 PORTES"
+  "Mueble para campana, 1 puerta":                                             "ELEMENT HAUT POUR HOTTE INTEGRE 1 PORTE"
+  "Mueble para campana, 2 puertas":                                            "ELEMENT HAUT POUR HOTTE INTEGRE 2 PORTES"
 
   # Muebles de pared — Esquinero
-  "De pared esquinero, 1 puerta (45)":                      "ELEMENT HAUT D'ANGLE 1 PORTE"
-  "De pared esquinero, 1 puerta (60)":                      "ELEMENT HAUT D'ANGLE 1 PORTE"
+  "Mueble de pared esquinero con baldas, 1 puerta (45cm)":                     "ELEMENT HAUT D'ANGLE 1 PORTE"
+  "Mueble de pared esquinero con baldas, 1 puerta (60cm)":                     "ELEMENT HAUT D'ANGLE 1 PORTE"
 
   # Muebles de pared — Altillos
-  "Altillo variable, puerta batiente":                      "REHAUSSE VARIABLE"
-  "Altillo lift variable para nevera americana":             "REHAUSSE VARIABLE"
-  "Mueble sobre encimera":                                  "ELEMENT HAUT A POSER"
+  "Altillo de altura variable con baldas, 1 puerta":                           "REHAUSSE VARIABLE"
+  "Altillo de altura variable con baldas, 1 puerta (apertura lift)":           "REHAUSSE VARIABLE"
+  "Mueble sobre encimera de altura variable con baldas, 1 puerta":             "ELEMENT HAUT A POSER"
 
   # Columnas — Almacenamiento
-  "Columna con baldas, 2 puertas":                          "ARMOIRE DE RANGEMENT A ETAGERES 2 PORTES"
-  "Columna con baldas, 1 puerta":                           "ARMOIRE DE RANGEMENT A ETAGERES 1 PORTE"
-  "Columna con cajones, 2 puertas":                         "ARMOIRE DE RANGEMENT A TIROIRS 2 PORTES"
-  "Columna con cajones, 1 puerta":                          "ARMOIRE DE RANGEMENT A TIROIRS 1 PORTE"
-  "Armario escoba, 2 puertas":                              "ARMOIRE A BALAI 2 PORTES"
+  "Columna con baldas, 2 puertas":                                             "ARMOIRE DE RANGEMENT A ETAGERES 2 PORTES"
+  "Columna con baldas, 1 puerta":                                              "ARMOIRE DE RANGEMENT A ETAGERES 1 PORTE"
+  "Columna con 5 cajones interiores, 2 puertas":                               "ARMOIRE DE RANGEMENT A TIROIRS 2 PORTES"
+  "Columna con 5 cajones interiores, 1 puerta":                                "ARMOIRE DE RANGEMENT A TIROIRS 1 PORTE"
+  "Mueble escobero, 2 puertas":                                                "ARMOIRE A BALAI 2 PORTES"
 
   # Columnas — Horno y microondas
-  "Para horno o microondas, 1 puerta":                      "ARMOIRE SANS BANDEAU POUR ENCASTRER UN FOUR OU UN MICRO ONDES 1 PORTE"
-  "Para horno o microondas, 2 bloques":                     "ARMOIRE SANS BANDEAU POUR ENCASTRER UN FOUR OU UN MICRO ONDES 2 BLOCS"
-  "Para 2 hornos / horno+micro, 1 puerta":                  "ARMOIRE SANS BANDEAU POUR ENCASTRER 2 FOURS OU UN FOUR ET UN MICRO-ONDES 1 PORTE"
-  "Para 2 hornos / horno+micro, 1 bloque+1 cajón":          "ARMOIRE SANS BANDEAU POUR ENCASTRER 2 FOURS OU UN FOUR ET UN MICRO-ONDES 1 BLOC 1 TIROIR"
+  "Columna para horno o micro, 1 puerta":                                      "ARMOIRE SANS BANDEAU POUR ENCASTRER UN FOUR OU UN MICRO ONDES 1 PORTE"
+  "Columna para horno o micro, 1 puerta, 2 cajones":                           "ARMOIRE SANS BANDEAU POUR ENCASTRER UN FOUR OU UN MICRO ONDES 2 BLOCS"
+  "Columna para horno+micro, 1 puerta":                                        "ARMOIRE SANS BANDEAU POUR ENCASTRER 2 FOURS OU UN FOUR ET UN MICRO-ONDES 1 PORTE"
+  "Columna para horno+micro, 1 puerta, 2 cajones":                             "ARMOIRE SANS BANDEAU POUR ENCASTRER 2 FOURS OU UN FOUR ET UN MICRO-ONDES 1 BLOC 1 TIROIR"
 
   # Columnas — Frigorífico
-  "Para frigorífico, 2 puertas":                            "ARMOIRE POUR INTEGRER UN REFRIGERATEUR ET UN CONGELATEUR OU UN COMBINE 2 PORTES"
-  "Para frigorífico, 1 puerta":                             "ARMOIRE POUR INTEGRER UN REFRIGERATEUR ET UN CONGELATEUR OU UN COMBINE 1 PORTE"
+  "Columna para frigorífico integrable, 2 puertas":                            "ARMOIRE POUR INTEGRER UN REFRIGERATEUR ET UN CONGELATEUR OU UN COMBINE 2 PORTES"
+  "Columna para frigorífico integrable, 1 puerta":                             "ARMOIRE POUR INTEGRER UN REFRIGERATEUR ET UN CONGELATEUR OU UN COMBINE 1 PORTE"
 
   # Columnas — Despensa
-  "Despensa, 4 puertas":                                    "ARMOIRE DE RANGEMENT 4 PORTES"
+  "Mueble de despensa, 4 puertas":                                             "ARMOIRE DE RANGEMENT 4 PORTES"
