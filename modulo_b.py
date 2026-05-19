@@ -67,7 +67,8 @@ _APERTURA_UI = {
 _ANCHO_REDUCCION_RAW = "10000 mm"
 _RODAPIE_SIN_PATAS_RAW = "0 mm"
 _CATALOGO_PATH = pathlib.Path(__file__).parent / "data" / "catalogo.json"
-_MAPEOS_PATH = pathlib.Path(__file__).parent / "data" / "mapeos.yaml"
+_MAPEOS_SKP_UI_SG_PATH = pathlib.Path(__file__).parent / "data" / "mapeos_SKP_UI_SG.yaml"
+_OPCIONES_MUEBLE_PATH = pathlib.Path(__file__).parent / "data" / "opciones_mueble.yaml"
 _REGLAS_PATH = pathlib.Path(__file__).parent / "data" / "reglas.yaml"
 
 
@@ -81,11 +82,81 @@ def _cargar_catalogo() -> dict:
 
 @st.cache_data
 def _cargar_interfaz() -> dict:
-    """Sección `interfaz` de mapeos.yaml — metadatos UI de las 8 opcionales."""
-    if not _MAPEOS_PATH.exists():
+    """Construye el dict de interfaz desde mapeos_SKP_UI_SG.yaml y opciones_mueble.yaml.
+
+    El shape devuelto es idéntico al de la antigua sección interfaz de mapeos.yaml
+    (ya obsoleto). La fuente de verdad son mapeos_SKP_UI_SG.yaml y opciones_mueble.yaml.
+    cada key es un op_id con etiqueta, muebles/excluidos y subcampos según corresponda.
+    Ningún control ni lógica de UI cambia — solo la fuente de los datos.
+    """
+    if not _MAPEOS_SKP_UI_SG_PATH.exists() or not _OPCIONES_MUEBLE_PATH.exists():
         return {}
-    with _MAPEOS_PATH.open(encoding="utf-8") as f:
-        return (yaml.safe_load(f) or {}).get("interfaz", {}) or {}
+    with _MAPEOS_SKP_UI_SG_PATH.open(encoding="utf-8") as f:
+        mapeos = yaml.safe_load(f) or {}
+    with _OPCIONES_MUEBLE_PATH.open(encoding="utf-8") as f:
+        op_mueble = yaml.safe_load(f) or {}
+
+    opc = mapeos.get("opcionales") or {}
+    interfaz: dict = {}
+
+    # op_121 — solo etiqueta (los muebles los filtra reglas.yaml, no interfaz)
+    if "op_121" in opc:
+        entradas = opc["op_121"]
+        interfaz["op_121"] = {
+            "etiqueta": entradas[0].get("ui", "Sin mecanizado para tirador"),
+        }
+
+    # op_207_opcional — muebles como dict {mueble: código_sg} para P60 y P90
+    if "op_207_opcional" in opc:
+        entradas = opc["op_207_opcional"]
+        op207 = op_mueble.get("op_207") or {}
+        muebles_207: dict = {}
+        for codigo_sg, lista in op207.items():
+            if codigo_sg in ("P60", "P90") and isinstance(lista, list):
+                for mueble in lista:
+                    muebles_207[mueble] = codigo_sg
+        interfaz["op_207_opcional"] = {
+            "etiqueta": entradas[0].get("ui", "Cubos de basura"),
+            "muebles": muebles_207,
+        }
+
+    # op_220, op_223, op_227 — etiqueta + lista plana de muebles
+    for op_id in ("op_220", "op_223", "op_227"):
+        if op_id in opc:
+            entradas = opc[op_id]
+            interfaz[op_id] = {
+                "etiqueta": entradas[0].get("ui", op_id),
+                "muebles": op_mueble.get(op_id) or [],
+            }
+
+    # op_222 — dos etiquetas (derecha / izquierda) + lista plana de muebles
+    if "op_222" in opc:
+        entradas = opc["op_222"]
+        interfaz["op_222"] = {
+            "etiqueta_derecha":   entradas[0].get("ui", "Sensor derecha")   if len(entradas) > 0 else "Sensor derecha",
+            "etiqueta_izquierda": entradas[1].get("ui", "Sensor izquierda") if len(entradas) > 1 else "Sensor izquierda",
+            "muebles": op_mueble.get("op_222") or [],
+        }
+
+    # op_700_opcional — etiqueta + excluidos (= excepciones de op_700 en opciones_mueble)
+    if "op_700_opcional" in opc:
+        entradas = opc["op_700_opcional"]
+        op700 = op_mueble.get("op_700") or {}
+        interfaz["op_700_opcional"] = {
+            "etiqueta": entradas[0].get("ui", "Mueble sin encolar"),
+            "excluidos": op700.get("excepciones") or [],
+        }
+
+    # op_126 — etiqueta + subcampos + lista plana de muebles
+    if "op_126" in opc:
+        entrada_126 = opc["op_126"]
+        interfaz["op_126"] = {
+            "etiqueta":  entrada_126.get("ui", "Electrodoméstico"),
+            "subcampos": entrada_126.get("subcampos") or {},
+            "muebles":   op_mueble.get("op_126") or [],
+        }
+
+    return interfaz
 
 
 @st.cache_data
@@ -431,8 +502,8 @@ def _control_radio_op_222(
         st.rerun()
 
 
-# Subcampos obligatorios de op_126 cuando mapeos.yaml no provee `subcampos`.
-# La fuente de verdad es data/mapeos.yaml; esto es solo fallback defensivo.
+# Subcampos de op_126: fallback defensivo si mapeos_SKP_UI_SG.yaml no los provee.
+# La fuente de verdad es data/mapeos_SKP_UI_SG.yaml (sección opcionales/op_126/subcampos).
 _SUBCAMPOS_OP_126_DEFAULT = {
     "marca": "Marca",
     "referencia": "Referencia",
