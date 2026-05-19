@@ -616,4 +616,3 @@ def parsear_csv(archivo) -> dict:
             resultado["muebles"].append(mueble)
 
     return resultado
-feat: añadir modulo_a.py - validación CSV SketchUp
