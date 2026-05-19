@@ -538,8 +538,6 @@ op_301:
   todos: O   # Obligatoria en todos excepto BC158057 y FHABS6580
   excepciones:
     - BC158057     # no aplica — sin tirador físico (op_300 fijo en 499)
-    - FHABS6580    # no aplica
-
 
 # -----------------------------------------------------------------------------
 # op_402 — Altura de patas / rodapié
