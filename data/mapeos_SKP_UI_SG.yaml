@@ -295,7 +295,13 @@ opcionales:
     - { ui: Mueble sin encolar, sg: DEM }
 
   op_126:
-    - { ui: Electrodoméstico, sg: "" }   # bloque libre — sin código SG único (datos marca/ref/alt/tipo)
+    ui: Electrodoméstico
+    sg: ""   # sin código SG único — los datos se pasan tal cual al export
+    subcampos:
+      marca:      Marca
+      referencia: Referencia
+      altura:     Altura
+      tipo:       Tipo
 
 
 # =============================================================================
