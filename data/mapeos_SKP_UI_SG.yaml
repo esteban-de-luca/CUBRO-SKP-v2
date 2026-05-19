@@ -2,21 +2,63 @@
 # data/mapeos_SKP_UI_SG.yaml
 # Tablas de conversión: SketchUp CSV → Etiqueta UI → Código Schmidt Groupe
 #
-# Cada entrada tiene tres valores:
+# Cada entrada del bloque del_csv tiene tres valores:
 #   skp — valor tal como llega en el CSV de SketchUp
 #   ui  — etiqueta en español que se muestra al usuario
 #   sg  — código que se envía a Schmidt Groupe
 #
 # Secciones:
-#   del_csv  — campos del CSV de SketchUp
+#   opciones — índice de todas las opciones: campo SKP, etiqueta UI y opción SG
+#   del_csv  — tablas de conversión de valores concretos del CSV
 #   forzadas — opciones calculadas automáticamente por el Módulo C (solo código SG)
 #   nombres  — designación ES (catalogo.json) → designación oficial en francés (SG)
 # =============================================================================
 
 
 # =============================================================================
+# OPCIONES
+# Índice de todas las opciones del pedido.
+# Muestra de dónde viene cada dato (skp), cómo se llama en la UI y a qué
+# opción SG corresponde.
+# Las tablas de valores concretos están en la sección del_csv.
+# =============================================================================
+
+opciones:
+
+  # Del CSV de SketchUp
+  - { skp: Apertura,                           ui: Apertura,              sg: p_hinge }
+  - { skp: D_Gama,                             ui: Gama del frente,       sg: op_100  }
+  - { skp: ColorFrente,                        ui: Acabado del frente,    sg: op_101  }
+  - { skp: "Color del interior",               ui: Color interior,        sg: op_200  }
+  - { skp: Tirador,                            ui: Apertura sin tirador,  sg: op_217  }
+  - { skp: Tirador,                            ui: Tipo de tirador,       sg: op_300  }
+  - { skp: "Trasera / Color tir. de superficie", ui: Color tirador,       sg: op_301  }
+  - { skp: C_Rodapietext,                      ui: Rodapié,               sg: op_402  }
+  - { skp: Ancho,                              ui: Reducción de ancho,    sg: op_231  }
+
+  # Selección del usuario en el Paso 1
+  - { skp: "", ui: Sin mecanizado para tirador, sg: op_121 }
+  - { skp: "", ui: Cubos de basura,             sg: op_207 }
+  - { skp: "", ui: Recorte para perfil LED,     sg: op_220 }
+  - { skp: "", ui: Sensor para mando LED,       sg: op_222 }
+  - { skp: "", ui: Cajón interior,              sg: op_223 }
+  - { skp: "", ui: Mueble de caldera,           sg: op_227 }
+  - { skp: "", ui: Mueble sin encolar,          sg: op_700 }
+  - { skp: "", ui: Electrodoméstico,            sg: op_126 }
+
+  # Forzadas por el Módulo C (sin intervención del usuario)
+  - { skp: "", ui: "", sg: op_103 }
+  - { skp: "", ui: "", sg: op_104 }
+  - { skp: "", ui: "", sg: op_203 }
+  - { skp: "", ui: "", sg: op_204 }
+  - { skp: "", ui: "", sg: op_206 }
+  - { skp: "", ui: "", sg: op_208 }
+  - { skp: "", ui: "", sg: op_209 }
+
+
+# =============================================================================
 # DEL CSV
-# Campos que vienen del archivo CSV exportado desde SketchUp.
+# Tablas de conversión de valores concretos del CSV de SketchUp.
 # =============================================================================
 
 del_csv:
@@ -93,7 +135,6 @@ del_csv:
 
   # ---------------------------------------------------------------------------
   # Color del interior → Opción 200 — Color interior del mueble
-  # No aplica a POBIF, PO1BIF, PO2BIF.
   # ---------------------------------------------------------------------------
   op_200:
     - { skp: "Blanco mueble", ui: Blanco, sg: 1CC }
@@ -130,10 +171,10 @@ del_csv:
   # ---------------------------------------------------------------------------
   # Opción 301 — Color del tirador
   #
-  # La tabla que aplica depende del tipo de tirador (op_300):
-  #   - Integrado (ROU, SQU)          → campo "Trasera" del CSV → op_301_integrado
-  #   - De superficie (Q2x, Q3x, Q1C) → campo "Color tir. sup"  → op_301_superficie
-  #   - Sin tirador (499)             → vacío, no se envía
+  # Dos inputs del CSV confluyen en esta misma opción:
+  #   - Trasera           → tirador integrado (Round, Square)
+  #   - Color tir. sup.   → tirador de superficie (Curve, Line, Plantea)
+  #   - Sin tirador (20/21) → vacío, no se envía
   #
   # Caso especial integrado: si Trasera = "Laca", el skp es el color del frente
   # sin sufijo (ej. "Crema"), no la palabra "Laca".
@@ -182,43 +223,43 @@ del_csv:
   # ---------------------------------------------------------------------------
   op_231:
     - { skp: "10000 mm", ui: Reducción de ancho, sg: RL3 }
-    # El valor reducido (Ancho reducido del CSV) se envía en p_param1 del JSON.
+    # El valor reducido (campo "Ancho reducido" del CSV) se envía en p_param1.
 
 
 # =============================================================================
 # FORZADAS
 # Opciones calculadas automáticamente por el Módulo C.
 # No requieren input del CSV ni selección del usuario.
-# Las listas de muebles afectados y condiciones de aplicación están en reglas.yaml.
+# Las condiciones de aplicación están en reglas.yaml.
 # =============================================================================
 
 forzadas:
 
-  op_103:   # Sentido de la veta — gamas WOOD y color Metal LAMINADO
+  op_103:   # Sentido de la veta
     sg: VER
 
   op_104:   # Acabado canto del frente — varía según gama (ver reglas.yaml)
     sg: HAK  # solo para LINOLEO; LACA copia op_101; WOOD y LAMINADO vacío
 
-  op_203:   # Espesor canto mueble — todos excepto frentes de lavavajillas
+  op_203:   # Espesor canto mueble
     sg: E14
 
   op_204:   # Acabado canto mueble — copia el código de op_200 del mismo mueble
     sg: copia_op_200
 
-  op_206:   # Sistema de cierre — muebles con puerta batiente
+  op_206:   # Sistema de cierre
     sg: FSP
 
-  op_207_forzada:  # Equipamiento fregadero — solo BETOQ908057
+  op_207:   # Equipamiento fregadero (ver reglas.yaml)
     sg: P42
 
-  op_208:   # Equipamiento esquinero Lemans — BAV1P908057 y BAV1P1208057
+  op_208:   # Equipamiento esquinero Lemans
     sg: CPA
 
-  op_209:   # Equipamiento cajón — muebles con cajón (ver reglas.yaml)
+  op_209:   # Equipamiento cajón
     sg: BES
 
-  op_700_forzada:  # Sin encolar — forzado en HH1; no aplica en AGM (ver reglas.yaml)
+  op_700:   # Sin encolar (ver reglas.yaml)
     sg: DEM
 
 
