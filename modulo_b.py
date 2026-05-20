@@ -122,31 +122,36 @@ def _cargar_colores() -> dict:
 def _render_swatches_color(color_frente: str, color_interior: str) -> None:
     """Muestra miniaturas de color de frente e interior si las imágenes existen.
 
-    Cada swatch es un cuadrado de 80 px con el nombre del color como caption.
-    Los swatches se alinean en fila; se omiten los que no tienen imagen.
+    Cada swatch es un cuadrado de 50 px con etiqueta de contexto en el caption
+    ("Frente: Crema", "Interior: Blanco") para distinguir los dos colores.
+    Los swatches se alinean en fila compacta; se omiten los que no tienen imagen.
     """
     colores = _cargar_colores()
+    # Lista de (caption, path)
     items: list[tuple[str, pathlib.Path]] = []
 
     fn_frente = (colores.get("frente") or {}).get(color_frente)
     if fn_frente:
         p = _ASSETS_COLORES / fn_frente
         if p.exists():
-            items.append((color_frente, p))
+            items.append((f"Frente: {color_frente}", p))
 
     fn_interior = (colores.get("interior") or {}).get(color_interior)
     if fn_interior:
         p = _ASSETS_COLORES / fn_interior
         if p.exists():
-            items.append((color_interior, p))
+            items.append((f"Interior: {color_interior}", p))
 
     if not items:
         return
 
-    cols = st.columns(len(items))
-    for col, (nombre, path) in zip(cols, items):
+    # Columnas estrechas para swatches + espacio sobrante a la derecha
+    n = len(items)
+    col_widths = [1] * n + [4]
+    cols = st.columns(col_widths)
+    for col, (caption, path) in zip(cols, items):
         with col:
-            st.image(str(path), width=80, caption=nombre)
+            st.image(str(path), width=50, caption=caption)
 
 
 @st.cache_data
