@@ -38,42 +38,258 @@ COLOR_INTERIOR_VALIDOS = {"Blanco mueble", "Gris mueble", "Negro mueble", "Roble
 RODAPIE_VALIDOS = {"70 mm", "100 mm", "0 mm"}
 
 FAMILIAS_SUSPENSO = {"H", "HH", "HAV", "HR", "HLVV", "HPT"}
-CODIGOS_RODAPIE_OPCIONAL = {"BC158057"}
+CODIGOS_RODAPIE_OPCIONAL = {"BC158057", "FHABS6580", "POBIF4580", "POBIF6080", "PO1BIF4580", "PO1BIF6080", "PO2BIF4580", "PO2BIF6080"}
 
 CATALOGO_CODIGOS = {
-    "B308035","B458035","B608035","B908035","B308057","B458057","B608057","B908057",
-    "BB2T458035","BB2T608035","BB2T908035","BB2T458057","BB2T608057","BB2T908057",
-    "B2B458035","B2B608035","B2B908035","B2B458057","B2B608057","B2B908057",
-    "BC158057","BC604035","BC604057","BFT608057",
-    "BCUB2T458057","BCUB2T608057","BCUB2T908057",
-    "BIBTS608057","BIBTS908057",
-    "BETO458057","BETO608057","BETO908057","BETOQ908057",
-    "BE2B608057","BE2B908057","BEBTS608057","BEBTS908057",
-    "POBIF4580","POBIF6080","PO2BIF4580","PO2BIF6080","PO1BIF4580","PO1BIF6080",
+    "A2I1P6020057",
+    "A2I1P6022057",
+    "A2I6020057",
+    "A2I6022057",
+    "A2I7522057",
+    "ABA6020057",
+    "ABA6022057",
+    "AFS2B6020057",
+    "AFS2B6022057",
+    "AFS6020057",
+    "AFS6022057",
+    "AFSMO6020057",
+    "AFSMO6022057",
+    "AFSMOBT6020057",
+    "AFSMOBT6022057",
+    "AGM9020057",
+    "AGM9022057",
+    "AQC31P4520057",
+    "AQC31P4522057",
+    "AQC31P6020057",
+    "AQC31P6022057",
+    "AQC34520057",
+    "AQC34522057",
+    "AQC36020057",
+    "AQC36022057",
+    "AVA1P4520035",
+    "AVA1P4520057",
+    "AVA1P4522035",
+    "AVA1P4522057",
+    "AVA1P6020035",
+    "AVA1P6020057",
+    "AVA1P6022035",
+    "AVA1P6022057",
+    "AVA1P9020035",
+    "AVA1P9022035",
+    "AVA4520035",
+    "AVA4520057",
+    "AVA4522035",
+    "AVA4522057",
+    "AVA6020035",
+    "AVA6020057",
+    "AVA6022035",
+    "AVA6022057",
+    "B2B458035",
+    "B2B458057",
+    "B2B608035",
+    "B2B608057",
+    "B2B908035",
+    "B2B908057",
+    "B308035",
+    "B308057",
+    "B458035",
+    "B458057",
+    "B608035",
+    "B608057",
+    "B908035",
+    "B908057",
+    "BAV1208057",
+    "BAV1P1208057",
+    "BAV1P908057",
+    "BAV908057",
+    "BB2T458035",
+    "BB2T458057",
+    "BB2T608035",
+    "BB2T608057",
+    "BB2T908035",
+    "BB2T908057",
+    "BC158057",
+    "BC604035",
+    "BC604057",
+    "BCUB2T458057",
+    "BCUB2T608057",
+    "BCUB2T908057",
+    "BE2B608057",
+    "BE2B908057",
+    "BEBTS608057",
+    "BEBTS908057",
+    "BETO458057",
+    "BETO608057",
+    "BETO908057",
+    "BETOQ908057",
+    "BFT608057",
+    "BIBTS608057",
+    "BIBTS908057",
     "FHABS6580",
-    "BAV908057","BAV1208057","BAV1P908057","BAV1P1208057",
-    "H1306035","H1456035","H1606035","H1906035",
-    "H1308035","H1458035","H1608035","H1908035",
-    "H13010035","H14510035","H16010035","H19010035",
-    "HH1606035","HH1906035","HH1608035","HH1908035","HH16010035","HH19010035",
-    "HAV1906035","HAV1908035","HAV19010035","HAV2906035","HAV2908035","HAV29010035",
-    "HLVV57","HR45V35","HR60V35","HR45V57","HR60V57","HPT60V57",
-    "AQC34520057","AQC36020057","AQC34522057","AQC36022057",
-    "AQC31P4520057","AQC31P6020057","AQC31P4522057","AQC31P6022057",
-    "AVA4520035","AVA6020035","AVA4520057","AVA6020057",
-    "AVA4522035","AVA6022035","AVA4522057","AVA6022057",
-    "AVA1P4520035","AVA1P6020035","AVA1P9020035",
-    "AVA1P4520057","AVA1P6020057",
-    "AVA1P4522035","AVA1P6022035","AVA1P9022035",
-    "AVA1P4522057","AVA1P6022057",
-    "ABA6020057","ABA6022057",
-    "AFS6020057","AFS6022057",
-    "AFSMO6020057","AFSMO6022057",
-    "AFS2B6020057","AFS2B6022057",
-    "AFSMOBT6020057","AFSMOBT6022057",
-    "A2I6020057","A2I6022057","A2I7522057","A2I1P6020057","A2I1P6022057",
-    "AGM9020057","AGM9022057",
+    "H13010035",
+    "H1306035",
+    "H1308035",
+    "H14510035",
+    "H1456035",
+    "H1458035",
+    "H16010035",
+    "H1606035",
+    "H1608035",
+    "H19010035",
+    "H1906035",
+    "H1908035",
+    "HAV19010035",
+    "HAV1906035",
+    "HAV1908035",
+    "HAV29010035",
+    "HAV2906035",
+    "HAV2908035",
+    "HH16010035",
+    "HH1606035",
+    "HH1608035",
+    "HH19010035",
+    "HH1906035",
+    "HH1908035",
+    "HLVV57",
+    "HPT60V57",
+    "HR45V35",
+    "HR45V57",
+    "HR60V35",
+    "HR60V57",
+    "PO1BIF4580",
+    "PO1BIF6080",
+    "PO2BIF4580",
+    "PO2BIF6080",
+    "POBIF4580",
+    "POBIF6080",
 }
+
+# Catálogo JSON — dimensiones por código (fuente: catalogo.json)
+CATALOGO_JSON = {
+    "A2I1P6020057": {"ancho_mm": 600, "alto_mm": 2000, "fondo_mm": 570},
+    "A2I1P6022057": {"ancho_mm": 600, "alto_mm": 2200, "fondo_mm": 570},
+    "A2I6020057": {"ancho_mm": 600, "alto_mm": 2000, "fondo_mm": 570},
+    "A2I6022057": {"ancho_mm": 600, "alto_mm": 2200, "fondo_mm": 570},
+    "A2I7522057": {"ancho_mm": 750, "alto_mm": 2200, "fondo_mm": 570},
+    "ABA6020057": {"ancho_mm": 600, "alto_mm": 2000, "fondo_mm": 570},
+    "ABA6022057": {"ancho_mm": 600, "alto_mm": 2200, "fondo_mm": 570},
+    "AFS2B6020057": {"ancho_mm": 600, "alto_mm": 2000, "fondo_mm": 570},
+    "AFS2B6022057": {"ancho_mm": 600, "alto_mm": 2200, "fondo_mm": 570},
+    "AFS6020057": {"ancho_mm": 600, "alto_mm": 2000, "fondo_mm": 570},
+    "AFS6022057": {"ancho_mm": 600, "alto_mm": 2200, "fondo_mm": 570},
+    "AFSMO6020057": {"ancho_mm": 600, "alto_mm": 2000, "fondo_mm": 570},
+    "AFSMO6022057": {"ancho_mm": 600, "alto_mm": 2200, "fondo_mm": 570},
+    "AFSMOBT6020057": {"ancho_mm": 600, "alto_mm": 2000, "fondo_mm": 570},
+    "AFSMOBT6022057": {"ancho_mm": 600, "alto_mm": 2200, "fondo_mm": 570},
+    "AGM9020057": {"ancho_mm": 900, "alto_mm": 2000, "fondo_mm": 570},
+    "AGM9022057": {"ancho_mm": 900, "alto_mm": 2200, "fondo_mm": 570},
+    "AQC31P4520057": {"ancho_mm": 450, "alto_mm": 2000, "fondo_mm": 570},
+    "AQC31P4522057": {"ancho_mm": 450, "alto_mm": 2200, "fondo_mm": 570},
+    "AQC31P6020057": {"ancho_mm": 600, "alto_mm": 2000, "fondo_mm": 570},
+    "AQC31P6022057": {"ancho_mm": 600, "alto_mm": 2200, "fondo_mm": 570},
+    "AQC34520057": {"ancho_mm": 450, "alto_mm": 2000, "fondo_mm": 570},
+    "AQC34522057": {"ancho_mm": 450, "alto_mm": 2200, "fondo_mm": 570},
+    "AQC36020057": {"ancho_mm": 600, "alto_mm": 2000, "fondo_mm": 570},
+    "AQC36022057": {"ancho_mm": 600, "alto_mm": 2200, "fondo_mm": 570},
+    "AVA1P4520035": {"ancho_mm": 450, "alto_mm": 2000, "fondo_mm": 350},
+    "AVA1P4520057": {"ancho_mm": 450, "alto_mm": 2000, "fondo_mm": 570},
+    "AVA1P4522035": {"ancho_mm": 450, "alto_mm": 2200, "fondo_mm": 350},
+    "AVA1P4522057": {"ancho_mm": 450, "alto_mm": 2200, "fondo_mm": 570},
+    "AVA1P6020035": {"ancho_mm": 600, "alto_mm": 2000, "fondo_mm": 350},
+    "AVA1P6020057": {"ancho_mm": 600, "alto_mm": 2000, "fondo_mm": 570},
+    "AVA1P6022035": {"ancho_mm": 600, "alto_mm": 2200, "fondo_mm": 350},
+    "AVA1P6022057": {"ancho_mm": 600, "alto_mm": 2200, "fondo_mm": 570},
+    "AVA1P9020035": {"ancho_mm": 900, "alto_mm": 2000, "fondo_mm": 350},
+    "AVA1P9022035": {"ancho_mm": 900, "alto_mm": 2200, "fondo_mm": 350},
+    "AVA4520035": {"ancho_mm": 450, "alto_mm": 2000, "fondo_mm": 350},
+    "AVA4520057": {"ancho_mm": 450, "alto_mm": 2000, "fondo_mm": 570},
+    "AVA4522035": {"ancho_mm": 450, "alto_mm": 2200, "fondo_mm": 350},
+    "AVA4522057": {"ancho_mm": 450, "alto_mm": 2200, "fondo_mm": 570},
+    "AVA6020035": {"ancho_mm": 600, "alto_mm": 2000, "fondo_mm": 350},
+    "AVA6020057": {"ancho_mm": 600, "alto_mm": 2000, "fondo_mm": 570},
+    "AVA6022035": {"ancho_mm": 600, "alto_mm": 2200, "fondo_mm": 350},
+    "AVA6022057": {"ancho_mm": 600, "alto_mm": 2200, "fondo_mm": 570},
+    "B2B458035": {"ancho_mm": 450, "alto_mm": 800, "fondo_mm": 350},
+    "B2B458057": {"ancho_mm": 450, "alto_mm": 800, "fondo_mm": 570},
+    "B2B608035": {"ancho_mm": 600, "alto_mm": 800, "fondo_mm": 350},
+    "B2B608057": {"ancho_mm": 600, "alto_mm": 800, "fondo_mm": 570},
+    "B2B908035": {"ancho_mm": 900, "alto_mm": 800, "fondo_mm": 350},
+    "B2B908057": {"ancho_mm": 900, "alto_mm": 800, "fondo_mm": 570},
+    "B308035": {"ancho_mm": 300, "alto_mm": 800, "fondo_mm": 350},
+    "B308057": {"ancho_mm": 300, "alto_mm": 800, "fondo_mm": 570},
+    "B458035": {"ancho_mm": 450, "alto_mm": 800, "fondo_mm": 350},
+    "B458057": {"ancho_mm": 450, "alto_mm": 800, "fondo_mm": 570},
+    "B608035": {"ancho_mm": 600, "alto_mm": 800, "fondo_mm": 350},
+    "B608057": {"ancho_mm": 600, "alto_mm": 800, "fondo_mm": 570},
+    "B908035": {"ancho_mm": 900, "alto_mm": 800, "fondo_mm": 350},
+    "B908057": {"ancho_mm": 900, "alto_mm": 800, "fondo_mm": 570},
+    "BAV1208057": {"ancho_mm": 1200, "alto_mm": 800, "fondo_mm": 570},
+    "BAV1P1208057": {"ancho_mm": 1200, "alto_mm": 800, "fondo_mm": 570},
+    "BAV1P908057": {"ancho_mm": 900, "alto_mm": 800, "fondo_mm": 570},
+    "BAV908057": {"ancho_mm": 900, "alto_mm": 800, "fondo_mm": 570},
+    "BB2T458035": {"ancho_mm": 450, "alto_mm": 800, "fondo_mm": 350},
+    "BB2T458057": {"ancho_mm": 450, "alto_mm": 800, "fondo_mm": 570},
+    "BB2T608035": {"ancho_mm": 600, "alto_mm": 800, "fondo_mm": 350},
+    "BB2T608057": {"ancho_mm": 600, "alto_mm": 800, "fondo_mm": 570},
+    "BB2T908035": {"ancho_mm": 900, "alto_mm": 800, "fondo_mm": 350},
+    "BB2T908057": {"ancho_mm": 900, "alto_mm": 800, "fondo_mm": 570},
+    "BC158057": {"ancho_mm": 150, "alto_mm": 800, "fondo_mm": 570},
+    "BC604035": {"ancho_mm": 600, "alto_mm": 400, "fondo_mm": 350},
+    "BC604057": {"ancho_mm": 600, "alto_mm": 400, "fondo_mm": 570},
+    "BCUB2T458057": {"ancho_mm": 450, "alto_mm": 800, "fondo_mm": 570},
+    "BCUB2T608057": {"ancho_mm": 600, "alto_mm": 800, "fondo_mm": 570},
+    "BCUB2T908057": {"ancho_mm": 900, "alto_mm": 800, "fondo_mm": 570},
+    "BE2B608057": {"ancho_mm": 600, "alto_mm": 800, "fondo_mm": 570},
+    "BE2B908057": {"ancho_mm": 900, "alto_mm": 800, "fondo_mm": 570},
+    "BEBTS608057": {"ancho_mm": 600, "alto_mm": 800, "fondo_mm": 570},
+    "BEBTS908057": {"ancho_mm": 900, "alto_mm": 800, "fondo_mm": 570},
+    "BETO458057": {"ancho_mm": 450, "alto_mm": 800, "fondo_mm": 570},
+    "BETO608057": {"ancho_mm": 600, "alto_mm": 800, "fondo_mm": 570},
+    "BETO908057": {"ancho_mm": 900, "alto_mm": 800, "fondo_mm": 570},
+    "BETOQ908057": {"ancho_mm": 900, "alto_mm": 800, "fondo_mm": 570},
+    "BFT608057": {"ancho_mm": 600, "alto_mm": 800, "fondo_mm": 570},
+    "BIBTS608057": {"ancho_mm": 600, "alto_mm": 800, "fondo_mm": 570},
+    "BIBTS908057": {"ancho_mm": 900, "alto_mm": 800, "fondo_mm": 570},
+    "FHABS6580": {"ancho_mm": 650, "alto_mm": 800, "fondo_mm": None},
+    "H13010035": {"ancho_mm": 300, "alto_mm": 1000, "fondo_mm": 350},
+    "H1306035": {"ancho_mm": 300, "alto_mm": 600, "fondo_mm": 350},
+    "H1308035": {"ancho_mm": 300, "alto_mm": 800, "fondo_mm": 350},
+    "H14510035": {"ancho_mm": 450, "alto_mm": 1000, "fondo_mm": 350},
+    "H1456035": {"ancho_mm": 450, "alto_mm": 600, "fondo_mm": 350},
+    "H1458035": {"ancho_mm": 450, "alto_mm": 800, "fondo_mm": 350},
+    "H16010035": {"ancho_mm": 600, "alto_mm": 1000, "fondo_mm": 350},
+    "H1606035": {"ancho_mm": 600, "alto_mm": 600, "fondo_mm": 350},
+    "H1608035": {"ancho_mm": 600, "alto_mm": 800, "fondo_mm": 350},
+    "H19010035": {"ancho_mm": 900, "alto_mm": 1000, "fondo_mm": 350},
+    "H1906035": {"ancho_mm": 900, "alto_mm": 600, "fondo_mm": 350},
+    "H1908035": {"ancho_mm": 900, "alto_mm": 800, "fondo_mm": 350},
+    "HAV19010035": {"ancho_mm": 900, "alto_mm": 1000, "fondo_mm": 350},
+    "HAV1906035": {"ancho_mm": 900, "alto_mm": 600, "fondo_mm": 350},
+    "HAV1908035": {"ancho_mm": 900, "alto_mm": 800, "fondo_mm": 350},
+    "HAV29010035": {"ancho_mm": 900, "alto_mm": 1000, "fondo_mm": 350},
+    "HAV2906035": {"ancho_mm": 900, "alto_mm": 600, "fondo_mm": 350},
+    "HAV2908035": {"ancho_mm": 900, "alto_mm": 800, "fondo_mm": 350},
+    "HH16010035": {"ancho_mm": 600, "alto_mm": 1000, "fondo_mm": 350},
+    "HH1606035": {"ancho_mm": 600, "alto_mm": 600, "fondo_mm": 350},
+    "HH1608035": {"ancho_mm": 600, "alto_mm": 800, "fondo_mm": 350},
+    "HH19010035": {"ancho_mm": 900, "alto_mm": 1000, "fondo_mm": 350},
+    "HH1906035": {"ancho_mm": 900, "alto_mm": 600, "fondo_mm": 350},
+    "HH1908035": {"ancho_mm": 900, "alto_mm": 800, "fondo_mm": 350},
+    "HLVV57": {"ancho_mm": None, "alto_mm": None, "fondo_mm": 570},
+    "HPT60V57": {"ancho_mm": 600, "alto_mm": None, "fondo_mm": 570},
+    "HR45V35": {"ancho_mm": 450, "alto_mm": None, "fondo_mm": 350},
+    "HR45V57": {"ancho_mm": 450, "alto_mm": None, "fondo_mm": 570},
+    "HR60V35": {"ancho_mm": 600, "alto_mm": None, "fondo_mm": 350},
+    "HR60V57": {"ancho_mm": 600, "alto_mm": None, "fondo_mm": 570},
+    "PO1BIF4580": {"ancho_mm": 450, "alto_mm": 800, "fondo_mm": None},
+    "PO1BIF6080": {"ancho_mm": 600, "alto_mm": 800, "fondo_mm": None},
+    "PO2BIF4580": {"ancho_mm": 450, "alto_mm": 800, "fondo_mm": None},
+    "PO2BIF6080": {"ancho_mm": 600, "alto_mm": 800, "fondo_mm": None},
+    "POBIF4580": {"ancho_mm": 450, "alto_mm": 800, "fondo_mm": None},
+    "POBIF6080": {"ancho_mm": 600, "alto_mm": 800, "fondo_mm": None},
+}
+
+
 
 # ── Catálogo de anchos estándar por (familia, alto_cm, fondo_cm) ───────────────
 # Usado para corregir Names con reducción de ancho (op. 231)
@@ -201,7 +417,8 @@ def _corregir_name_reduccion(name_skp, ancho_reducido_mm):
         )
 
     ancho_correcto = min(anchos_mayores)
-    name_corregido = f"{family}{ancho_correcto:02d}{alto:03d}{fondo:02d}{suffix_sub}"
+    alto_str = f"{alto:03d}" if alto >= 100 else f"{alto:02d}"
+    name_corregido = f"{family}{ancho_correcto:02d}{alto_str}{fondo:02d}{suffix_sub}"
     return name_corregido, None
 
 
@@ -209,12 +426,18 @@ def _corregir_name_reduccion(name_skp, ancho_reducido_mm):
 # Usado para validar LenZ (A21)
 
 def _build_catalog_altos():
+    """Build alto lookup from catalogo.json data embedded here."""
+    import json as _json
+    _cat = _json.loads('''
+{"B308035": {"designaciones": {"es": "Mueble bajo con baldas, 1 puerta"}, "ancho_mm": 300, "alto_mm": 800, "fondo_mm": 350}, "B458035": {"designaciones": {"es": "Mueble bajo con baldas, 1 puerta"}, "ancho_mm": 450, "alto_mm": 800, "fondo_mm": 350}, "B608035": {"designaciones": {"es": "Mueble bajo con baldas, 1 puerta"}, "ancho_mm": 600, "alto_mm": 800, "fondo_mm": 350}, "B908035": {"designaciones": {"es": "Mueble bajo con baldas, 2 puertas"}, "ancho_mm": 900, "alto_mm": 800, "fondo_mm": 350}, "B308057": {"designaciones": {"es": "Mueble bajo con baldas, 1 puerta"}, "ancho_mm": 300, "alto_mm": 800, "fondo_mm": 570}, "B458057": {"designaciones": {"es": "Mueble bajo con baldas, 1 puerta"}, "ancho_mm": 450, "alto_mm": 800, "fondo_mm": 570}, "B608057": {"designaciones": {"es": "Mueble bajo con baldas, 1 puerta"}, "ancho_mm": 600, "alto_mm": 800, "fondo_mm": 570}, "B908057": {"designaciones": {"es": "Mueble bajo con baldas, 2 puertas"}, "ancho_mm": 900, "alto_mm": 800, "fondo_mm": 570}, "BB2T458035": {"designaciones": {"es": "Mueble bajo, 3 cajones"}, "ancho_mm": 450, "alto_mm": 800, "fondo_mm": 350}, "BB2T608035": {"designaciones": {"es": "Mueble bajo, 3 cajones"}, "ancho_mm": 600, "alto_mm": 800, "fondo_mm": 350}, "BB2T908035": {"designaciones": {"es": "Mueble bajo, 3 cajones"}, "ancho_mm": 900, "alto_mm": 800, "fondo_mm": 350}, "BB2T458057": {"designaciones": {"es": "Mueble bajo, 3 cajones"}, "ancho_mm": 450, "alto_mm": 800, "fondo_mm": 570}, "BB2T608057": {"designaciones": {"es": "Mueble bajo, 3 cajones"}, "ancho_mm": 600, "alto_mm": 800, "fondo_mm": 570}, "BB2T908057": {"designaciones": {"es": "Mueble bajo, 3 cajones"}, "ancho_mm": 900, "alto_mm": 800, "fondo_mm": 570}, "B2B458035": {"designaciones": {"es": "Mueble bajo, 2 cajones"}, "ancho_mm": 450, "alto_mm": 800, "fondo_mm": 350}, "B2B608035": {"designaciones": {"es": "Mueble bajo, 2 cajones"}, "ancho_mm": 600, "alto_mm": 800, "fondo_mm": 350}, "B2B908035": {"designaciones": {"es": "Mueble bajo, 2 cajones"}, "ancho_mm": 900, "alto_mm": 800, "fondo_mm": 350}, "B2B458057": {"designaciones": {"es": "Mueble bajo, 2 cajones"}, "ancho_mm": 450, "alto_mm": 800, "fondo_mm": 570}, "B2B608057": {"designaciones": {"es": "Mueble bajo, 2 cajones"}, "ancho_mm": 600, "alto_mm": 800, "fondo_mm": 570}, "B2B908057": {"designaciones": {"es": "Mueble bajo, 2 cajones"}, "ancho_mm": 900, "alto_mm": 800, "fondo_mm": 570}, "BC158057": {"designaciones": {"es": "Mueble bajo extra\u00edble"}, "ancho_mm": 150, "alto_mm": 800, "fondo_mm": 570}, "BC604035": {"designaciones": {"es": "Mueble de banco, 1 caj\u00f3n"}, "ancho_mm": 600, "alto_mm": 400, "fondo_mm": 350}, "BC604057": {"designaciones": {"es": "Mueble de banco, 1 caj\u00f3n"}, "ancho_mm": 600, "alto_mm": 400, "fondo_mm": 570}, "BFT608057": {"designaciones": {"es": "Mueble bajo para horno"}, "ancho_mm": 600, "alto_mm": 800, "fondo_mm": 570}, "BCUB2T458057": {"designaciones": {"es": "Mueble para placa, 3 cajones"}, "ancho_mm": 450, "alto_mm": 800, "fondo_mm": 570}, "BCUB2T608057": {"designaciones": {"es": "Mueble para placa, 3 cajones"}, "ancho_mm": 600, "alto_mm": 800, "fondo_mm": 570}, "BCUB2T908057": {"designaciones": {"es": "Mueble para placa, 3 cajones"}, "ancho_mm": 900, "alto_mm": 800, "fondo_mm": 570}, "BIBTS608057": {"designaciones": {"es": "Mueble para placa aspirante, 2 cajones, 1 fijo"}, "ancho_mm": 600, "alto_mm": 800, "fondo_mm": 570}, "BIBTS908057": {"designaciones": {"es": "Mueble para placa aspirante, 2 cajones, 1 fijo"}, "ancho_mm": 900, "alto_mm": 800, "fondo_mm": 570}, "BETO458057": {"designaciones": {"es": "Mueble para fregadero, 1 puerta"}, "ancho_mm": 450, "alto_mm": 800, "fondo_mm": 570}, "BETO608057": {"designaciones": {"es": "Mueble para fregadero, 1 puerta"}, "ancho_mm": 600, "alto_mm": 800, "fondo_mm": 570}, "BETO908057": {"designaciones": {"es": "Mueble para fregadero, 2 puertas"}, "ancho_mm": 900, "alto_mm": 800, "fondo_mm": 570}, "BETOQ908057": {"designaciones": {"es": "Mueble para fregadero, 2 puertas (equipado con cubos de basura)"}, "ancho_mm": 900, "alto_mm": 800, "fondo_mm": 570}, "BE2B608057": {"designaciones": {"es": "Mueble para fregadero, 2 cajones"}, "ancho_mm": 600, "alto_mm": 800, "fondo_mm": 570}, "BE2B908057": {"designaciones": {"es": "Mueble para fregadero, 2 cajones"}, "ancho_mm": 900, "alto_mm": 800, "fondo_mm": 570}, "BEBTS608057": {"designaciones": {"es": "Mueble para fregadero, 3 cajones"}, "ancho_mm": 600, "alto_mm": 800, "fondo_mm": 570}, "BEBTS908057": {"designaciones": {"es": "Mueble para fregadero, 3 cajones"}, "ancho_mm": 900, "alto_mm": 800, "fondo_mm": 570}, "POBIF4580": {"designaciones": {"es": "Puerta completa para LVV y LVD integrables"}, "ancho_mm": 450, "alto_mm": 800, "fondo_mm": null}, "POBIF6080": {"designaciones": {"es": "Puerta completa para LVV y LVD integrables"}, "ancho_mm": 600, "alto_mm": 800, "fondo_mm": null}, "PO2BIF4580": {"designaciones": {"es": "Puerta completa para LVV y LVD integrables"}, "ancho_mm": 450, "alto_mm": 800, "fondo_mm": null}, "PO2BIF6080": {"designaciones": {"es": "Puerta completa para LVV y LVD integrables"}, "ancho_mm": 600, "alto_mm": 800, "fondo_mm": null}, "PO1BIF4580": {"designaciones": {"es": "Puerta completa para LVV y LVD integrables"}, "ancho_mm": 450, "alto_mm": 800, "fondo_mm": null}, "PO1BIF6080": {"designaciones": {"es": "Puerta completa para LVV y LVD integrables"}, "ancho_mm": 600, "alto_mm": 800, "fondo_mm": null}, "FHABS6580": {"designaciones": {"es": "Puerta para LVV y LVD no integrables"}, "ancho_mm": 650, "alto_mm": 800, "fondo_mm": null}, "BAV908057": {"designaciones": {"es": "Mueble bajo esquinero con baldas, 1 puerta"}, "ancho_mm": 900, "alto_mm": 800, "fondo_mm": 570}, "BAV1208057": {"designaciones": {"es": "Mueble bajo esquinero con baldas, 1 puerta"}, "ancho_mm": 1200, "alto_mm": 800, "fondo_mm": 570}, "BAV1P908057": {"designaciones": {"es": "Mueble bajo esquinero con accesorio extra\u00edble, 1 puerta"}, "ancho_mm": 900, "alto_mm": 800, "fondo_mm": 570}, "BAV1P1208057": {"designaciones": {"es": "Mueble bajo esquinero con accesorio extra\u00edble, 1 puerta"}, "ancho_mm": 1200, "alto_mm": 800, "fondo_mm": 570}, "H1306035": {"designaciones": {"es": "Mueble de pared con baldas, 1 puerta"}, "ancho_mm": 300, "alto_mm": 600, "fondo_mm": 350}, "H1456035": {"designaciones": {"es": "Mueble de pared con baldas, 1 puerta"}, "ancho_mm": 450, "alto_mm": 600, "fondo_mm": 350}, "H1606035": {"designaciones": {"es": "Mueble de pared con baldas, 1 puerta"}, "ancho_mm": 600, "alto_mm": 600, "fondo_mm": 350}, "H1906035": {"designaciones": {"es": "Mueble de pared con baldas, 2 puertas"}, "ancho_mm": 900, "alto_mm": 600, "fondo_mm": 350}, "H1308035": {"designaciones": {"es": "Mueble de pared con baldas, 1 puerta"}, "ancho_mm": 300, "alto_mm": 800, "fondo_mm": 350}, "H1458035": {"designaciones": {"es": "Mueble de pared con baldas, 1 puerta"}, "ancho_mm": 450, "alto_mm": 800, "fondo_mm": 350}, "H1608035": {"designaciones": {"es": "Mueble de pared con baldas, 1 puerta"}, "ancho_mm": 600, "alto_mm": 800, "fondo_mm": 350}, "H1908035": {"designaciones": {"es": "Mueble de pared con baldas, 2 puertas"}, "ancho_mm": 900, "alto_mm": 800, "fondo_mm": 350}, "H13010035": {"designaciones": {"es": "Mueble de pared con baldas, 1 puerta"}, "ancho_mm": 300, "alto_mm": 1000, "fondo_mm": 350}, "H14510035": {"designaciones": {"es": "Mueble de pared con baldas, 1 puerta"}, "ancho_mm": 450, "alto_mm": 1000, "fondo_mm": 350}, "H16010035": {"designaciones": {"es": "Mueble de pared con baldas, 1 puerta"}, "ancho_mm": 600, "alto_mm": 1000, "fondo_mm": 350}, "H19010035": {"designaciones": {"es": "Mueble de pared con baldas, 2 puertas"}, "ancho_mm": 900, "alto_mm": 1000, "fondo_mm": 350}, "HH1606035": {"designaciones": {"es": "Mueble para campana, 1 puerta"}, "ancho_mm": 600, "alto_mm": 600, "fondo_mm": 350}, "HH1906035": {"designaciones": {"es": "Mueble para campana, 2 puertas"}, "ancho_mm": 900, "alto_mm": 600, "fondo_mm": 350}, "HH1608035": {"designaciones": {"es": "Mueble para campana, 1 puerta"}, "ancho_mm": 600, "alto_mm": 800, "fondo_mm": 350}, "HH1908035": {"designaciones": {"es": "Mueble para campana, 2 puertas"}, "ancho_mm": 900, "alto_mm": 800, "fondo_mm": 350}, "HH16010035": {"designaciones": {"es": "Mueble para campana, 1 puerta"}, "ancho_mm": 600, "alto_mm": 1000, "fondo_mm": 350}, "HH19010035": {"designaciones": {"es": "Mueble para campana, 2 puertas"}, "ancho_mm": 900, "alto_mm": 1000, "fondo_mm": 350}, "HAV1906035": {"designaciones": {"es": "Mueble de pared esquinero con baldas, 1 puerta (45cm)"}, "ancho_mm": 900, "alto_mm": 600, "fondo_mm": 350}, "HAV1908035": {"designaciones": {"es": "Mueble de pared esquinero con baldas, 1 puerta (45cm)"}, "ancho_mm": 900, "alto_mm": 800, "fondo_mm": 350}, "HAV19010035": {"designaciones": {"es": "Mueble de pared esquinero con baldas, 1 puerta (45cm)"}, "ancho_mm": 900, "alto_mm": 1000, "fondo_mm": 350}, "HAV2906035": {"designaciones": {"es": "Mueble de pared esquinero con baldas, 1 puerta (60cm)"}, "ancho_mm": 900, "alto_mm": 600, "fondo_mm": 350}, "HAV2908035": {"designaciones": {"es": "Mueble de pared esquinero con baldas, 1 puerta (60cm)"}, "ancho_mm": 900, "alto_mm": 800, "fondo_mm": 350}, "HAV29010035": {"designaciones": {"es": "Mueble de pared esquinero con baldas, 1 puerta (60cm)"}, "ancho_mm": 900, "alto_mm": 1000, "fondo_mm": 350}, "HR45V35": {"designaciones": {"es": "Altillo de altura variable con baldas, 1 puerta"}, "ancho_mm": 450, "alto_mm": null, "fondo_mm": 350, "alto_variable": {"min": 200, "max": 1000}}, "HR60V35": {"designaciones": {"es": "Altillo de altura variable con baldas, 1 puerta"}, "ancho_mm": 600, "alto_mm": null, "fondo_mm": 350, "alto_variable": {"min": 200, "max": 1000}}, "HR45V57": {"designaciones": {"es": "Altillo de altura variable con baldas, 1 puerta"}, "ancho_mm": 450, "alto_mm": null, "fondo_mm": 570, "alto_variable": {"min": 200, "max": 1000}}, "HR60V57": {"designaciones": {"es": "Altillo de altura variable con baldas, 1 puerta"}, "ancho_mm": 600, "alto_mm": null, "fondo_mm": 570, "alto_variable": {"min": 200, "max": 1000}}, "HLVV57": {"designaciones": {"es": "Altillo de altura variable con baldas, 1 puerta (apertura lift)"}, "ancho_mm": null, "alto_mm": null, "fondo_mm": 570, "ancho_variable": {"min": 450, "max": 1200}, "alto_variable": {"min": 200, "max": 400}}, "HPT60V57": {"designaciones": {"es": "Mueble sobre encimera de altura variable con baldas, 1 puerta"}, "ancho_mm": 600, "alto_mm": null, "fondo_mm": 570, "alto_variable": {"min": 110, "max": 140}}, "AVA4520035": {"designaciones": {"es": "Columna con baldas, 2 puertas"}, "ancho_mm": 450, "alto_mm": 2000, "fondo_mm": 350}, "AVA6020035": {"designaciones": {"es": "Columna con baldas, 2 puertas"}, "ancho_mm": 600, "alto_mm": 2000, "fondo_mm": 350}, "AVA4522035": {"designaciones": {"es": "Columna con baldas, 2 puertas"}, "ancho_mm": 450, "alto_mm": 2200, "fondo_mm": 350}, "AVA6022035": {"designaciones": {"es": "Columna con baldas, 2 puertas"}, "ancho_mm": 600, "alto_mm": 2200, "fondo_mm": 350}, "AVA4520057": {"designaciones": {"es": "Columna con baldas, 2 puertas"}, "ancho_mm": 450, "alto_mm": 2000, "fondo_mm": 570}, "AVA6020057": {"designaciones": {"es": "Columna con baldas, 2 puertas"}, "ancho_mm": 600, "alto_mm": 2000, "fondo_mm": 570}, "AVA4522057": {"designaciones": {"es": "Columna con baldas, 2 puertas"}, "ancho_mm": 450, "alto_mm": 2200, "fondo_mm": 570}, "AVA6022057": {"designaciones": {"es": "Columna con baldas, 2 puertas"}, "ancho_mm": 600, "alto_mm": 2200, "fondo_mm": 570}, "AVA1P4520035": {"designaciones": {"es": "Columna con baldas, 1 puerta"}, "ancho_mm": 450, "alto_mm": 2000, "fondo_mm": 350}, "AVA1P6020035": {"designaciones": {"es": "Columna con baldas, 1 puerta"}, "ancho_mm": 600, "alto_mm": 2000, "fondo_mm": 350}, "AVA1P9020035": {"designaciones": {"es": "Columna con baldas, 2 puertas"}, "ancho_mm": 900, "alto_mm": 2000, "fondo_mm": 350}, "AVA1P4520057": {"designaciones": {"es": "Columna con baldas, 1 puerta"}, "ancho_mm": 450, "alto_mm": 2000, "fondo_mm": 570}, "AVA1P6020057": {"designaciones": {"es": "Columna con baldas, 1 puerta"}, "ancho_mm": 600, "alto_mm": 2000, "fondo_mm": 570}, "AVA1P4522035": {"designaciones": {"es": "Columna con baldas, 1 puerta"}, "ancho_mm": 450, "alto_mm": 2200, "fondo_mm": 350}, "AVA1P6022035": {"designaciones": {"es": "Columna con baldas, 1 puerta"}, "ancho_mm": 600, "alto_mm": 2200, "fondo_mm": 350}, "AVA1P9022035": {"designaciones": {"es": "Columna con baldas, 2 puertas"}, "ancho_mm": 900, "alto_mm": 2200, "fondo_mm": 350}, "AVA1P4522057": {"designaciones": {"es": "Columna con baldas, 1 puerta"}, "ancho_mm": 450, "alto_mm": 2200, "fondo_mm": 570}, "AVA1P6022057": {"designaciones": {"es": "Columna con baldas, 1 puerta"}, "ancho_mm": 600, "alto_mm": 2200, "fondo_mm": 570}, "AQC34520057": {"designaciones": {"es": "Columna con 5 cajones interiores, 2 puertas"}, "ancho_mm": 450, "alto_mm": 2000, "fondo_mm": 570}, "AQC36020057": {"designaciones": {"es": "Columna con 5 cajones interiores, 2 puertas"}, "ancho_mm": 600, "alto_mm": 2000, "fondo_mm": 570}, "AQC34522057": {"designaciones": {"es": "Columna con 5 cajones interiores, 2 puertas"}, "ancho_mm": 450, "alto_mm": 2200, "fondo_mm": 570}, "AQC36022057": {"designaciones": {"es": "Columna con 5 cajones interiores, 2 puertas"}, "ancho_mm": 600, "alto_mm": 2200, "fondo_mm": 570}, "AQC31P4520057": {"designaciones": {"es": "Columna con 5 cajones interiores, 1 puerta"}, "ancho_mm": 450, "alto_mm": 2000, "fondo_mm": 570}, "AQC31P6020057": {"designaciones": {"es": "Columna con 5 cajones interiores, 1 puerta"}, "ancho_mm": 600, "alto_mm": 2000, "fondo_mm": 570}, "AQC31P4522057": {"designaciones": {"es": "Columna con 5 cajones interiores, 1 puerta"}, "ancho_mm": 450, "alto_mm": 2200, "fondo_mm": 570}, "AQC31P6022057": {"designaciones": {"es": "Columna con 5 cajones interiores, 1 puerta"}, "ancho_mm": 600, "alto_mm": 2200, "fondo_mm": 570}, "ABA6020057": {"designaciones": {"es": "Mueble escobero, 2 puertas"}, "ancho_mm": 600, "alto_mm": 2000, "fondo_mm": 570}, "ABA6022057": {"designaciones": {"es": "Mueble escobero, 2 puertas"}, "ancho_mm": 600, "alto_mm": 2200, "fondo_mm": 570}, "AFS6020057": {"designaciones": {"es": "Columna para horno o micro, 1 puerta"}, "ancho_mm": 600, "alto_mm": 2000, "fondo_mm": 570}, "AFS6022057": {"designaciones": {"es": "Columna para horno o micro, 1 puerta"}, "ancho_mm": 600, "alto_mm": 2200, "fondo_mm": 570}, "AFS2B6020057": {"designaciones": {"es": "Columna para horno o micro, 1 puerta, 2 cajones"}, "ancho_mm": 600, "alto_mm": 2000, "fondo_mm": 570}, "AFS2B6022057": {"designaciones": {"es": "Columna para horno o micro, 1 puerta, 2 cajones"}, "ancho_mm": 600, "alto_mm": 2200, "fondo_mm": 570}, "AFSMO6020057": {"designaciones": {"es": "Columna para horno+micro, 1 puerta"}, "ancho_mm": 600, "alto_mm": 2000, "fondo_mm": 570}, "AFSMO6022057": {"designaciones": {"es": "Columna para horno+micro, 1 puerta"}, "ancho_mm": 600, "alto_mm": 2200, "fondo_mm": 570}, "AFSMOBT6020057": {"designaciones": {"es": "Columna para horno+micro, 1 puerta, 2 cajones"}, "ancho_mm": 600, "alto_mm": 2000, "fondo_mm": 570}, "AFSMOBT6022057": {"designaciones": {"es": "Columna para horno+micro, 1 puerta, 2 cajones"}, "ancho_mm": 600, "alto_mm": 2200, "fondo_mm": 570}, "A2I6020057": {"designaciones": {"es": "Columna para frigor\u00edfico integrable, 2 puertas"}, "ancho_mm": 600, "alto_mm": 2000, "fondo_mm": 570}, "A2I6022057": {"designaciones": {"es": "Columna para frigor\u00edfico integrable, 2 puertas"}, "ancho_mm": 600, "alto_mm": 2200, "fondo_mm": 570}, "A2I7522057": {"designaciones": {"es": "Columna para frigor\u00edfico integrable, 2 puertas"}, "ancho_mm": 750, "alto_mm": 2200, "fondo_mm": 570}, "A2I1P6020057": {"designaciones": {"es": "Columna para frigor\u00edfico integrable, 1 puerta"}, "ancho_mm": 600, "alto_mm": 2000, "fondo_mm": 570}, "A2I1P6022057": {"designaciones": {"es": "Columna para frigor\u00edfico integrable, 1 puerta"}, "ancho_mm": 600, "alto_mm": 2200, "fondo_mm": 570}, "AGM9020057": {"designaciones": {"es": "Mueble de despensa, 4 puertas"}, "ancho_mm": 900, "alto_mm": 2000, "fondo_mm": 570}, "AGM9022057": {"designaciones": {"es": "Mueble de despensa, 4 puertas"}, "ancho_mm": 900, "alto_mm": 2200, "fondo_mm": 570}}
+    ''')
     altos = {}
-    for code in CATALOGO_CODIGOS:
-        result = _parse_catalog_code(code)
-        if result:
-            _, _, alto_cm, _ = result
-            altos[code] = alto_cm * 10  # mm
+    for code, data in _cat.items():
+        alto = data.get('alto_mm')
+        if alto is not None:
+            altos[code] = alto
+        elif data.get('alto_variable'):
+            altos[code] = 0  # variable — use range check
     return altos
 
 CATALOG_ALTOS = _build_catalog_altos()
@@ -228,44 +451,146 @@ RANGOS_VARIABLES = {
     'HPT':  {'ancho_min': 600, 'ancho_max': 600, 'alto_min': 1100, 'alto_max': 1400},
 }
 
-# Muebles sin apertura — columna Ouverture vacía o coulissant en catálogo (45 códigos)
-# Valores sin apertura: '' (vacío) y '- C: Coulissant'
-# HLVV tiene '- L: Lift' — apertura especial, se normaliza a "horizontal"
+# Muebles sin apertura — fuente: opciones_mueble.yaml p_hinge (nulo + coulissant)
 CODIGOS_SIN_APERTURA = {
-    # Vacío en catálogo — 2 puertas o sin puerta batiente
-    'B908035', 'B908057', 'BETO908057', 'BETOQ908057',
-    'H1906035', 'H1908035', 'H19010035',
-    'HH1906035', 'HH1908035', 'HH19010035',
-    'AVA1P9020035', 'AVA1P9022035',
-    'AGM9020057', 'AGM9022057',
-    'POBIF4580', 'POBIF6080', 'PO2BIF4580', 'PO2BIF6080',
-    'PO1BIF4580', 'PO1BIF6080',
-    # Coulissant — cajones, sin puerta batiente
-    'BC158057', 'BC604035', 'BC604057', 'BFT608057',
-    'BB2T458035', 'BB2T608035', 'BB2T908035',
-    'BB2T458057', 'BB2T608057', 'BB2T908057',
-    'B2B458035', 'B2B608035', 'B2B908035',
-    'B2B458057', 'B2B608057', 'B2B908057',
-    'BE2B608057', 'BE2B908057',
-    'BEBTS608057', 'BEBTS908057',
-    'BIBTS608057', 'BIBTS908057',
-    'BCUB2T458057', 'BCUB2T608057', 'BCUB2T908057',
+    'AGM9020057',
+    'AGM9022057',
+    'AVA1P9020035',
+    'AVA1P9022035',
+    'B2B458035',
+    'B2B458057',
+    'B2B608035',
+    'B2B608057',
+    'B2B908035',
+    'B2B908057',
+    'B908035',
+    'B908057',
+    'BB2T458035',
+    'BB2T458057',
+    'BB2T608035',
+    'BB2T608057',
+    'BB2T908035',
+    'BB2T908057',
+    'BC158057',
+    'BC604035',
+    'BC604057',
+    'BCUB2T458057',
+    'BCUB2T608057',
+    'BCUB2T908057',
+    'BE2B608057',
+    'BE2B908057',
+    'BEBTS608057',
+    'BEBTS908057',
+    'BETO908057',
+    'BETOQ908057',
+    'BFT608057',
+    'BIBTS608057',
+    'BIBTS908057',
+    'FHABS6580',
+    'H19010035',
+    'H1906035',
+    'H1908035',
+    'HH19010035',
+    'HH1906035',
+    'HH1908035',
+    'PO1BIF4580',
+    'PO1BIF6080',
+    'PO2BIF4580',
+    'PO2BIF6080',
+    'POBIF4580',
+    'POBIF6080',
 }
 
-# Muebles sin op. 231 — no admiten reducción de ancho
-# Incluye: muebles de ancho mínimo 300mm, variables (HR/HLVV/HPT), fachadas, banco BC158057
+# Muebles sin op. 231 — fuente: opciones_mueble.yaml op_231 (muebles que NO están en la lista)
 CODIGOS_SIN_OP231 = {
-    # Variables — sin reducción
-    'HLVV57', 'HR45V35', 'HR60V35', 'HR45V57', 'HR60V57', 'HPT60V57',
-    # Fachadas — sin reducción
-    'FHABS6580', 'POBIF4580', 'POBIF6080',
-    # Banco — sin reducción
+    'A2I1P6020057',
+    'A2I1P6022057',
+    'A2I6020057',
+    'A2I6022057',
+    'A2I7522057',
+    'AFS2B6020057',
+    'AFS2B6022057',
+    'AFS6020057',
+    'AFS6022057',
+    'AFSMO6020057',
+    'AFSMO6022057',
+    'AFSMOBT6020057',
+    'AFSMOBT6022057',
+    'AGM9020057',
+    'AGM9022057',
+    'AQC31P4520057',
+    'AQC31P4522057',
+    'AQC31P6020057',
+    'AQC31P6022057',
+    'AQC34520057',
+    'AQC34522057',
+    'AQC36020057',
+    'AQC36022057',
+    'AVA1P9020035',
+    'AVA1P9022035',
+    'B2B458035',
+    'B2B458057',
+    'B2B608035',
+    'B2B608057',
+    'B2B908035',
+    'B2B908057',
+    'B908035',
+    'B908057',
+    'BAV1208057',
+    'BAV1P1208057',
+    'BAV1P908057',
+    'BAV908057',
+    'BB2T458035',
+    'BB2T458057',
+    'BB2T608035',
+    'BB2T608057',
+    'BB2T908035',
+    'BB2T908057',
     'BC158057',
-    # Ancho 300mm — mínimo absoluto, no se puede reducir más
-    'B308035', 'B308057',
-    'H1306035', 'H1308035', 'H13010035',
-    # BFT — sin reducción
+    'BC604035',
+    'BC604057',
+    'BCUB2T458057',
+    'BCUB2T608057',
+    'BCUB2T908057',
+    'BE2B608057',
+    'BE2B908057',
+    'BEBTS608057',
+    'BEBTS908057',
+    'BETO458057',
+    'BETO608057',
+    'BETO908057',
+    'BETOQ908057',
     'BFT608057',
+    'BIBTS608057',
+    'BIBTS908057',
+    'FHABS6580',
+    'H19010035',
+    'H1906035',
+    'H1908035',
+    'HAV19010035',
+    'HAV1906035',
+    'HAV1908035',
+    'HAV29010035',
+    'HAV2906035',
+    'HAV2908035',
+    'HH16010035',
+    'HH1606035',
+    'HH1608035',
+    'HH19010035',
+    'HH1906035',
+    'HH1908035',
+    'HLVV57',
+    'HPT60V57',
+    'HR45V35',
+    'HR45V57',
+    'HR60V35',
+    'HR60V57',
+    'PO1BIF4580',
+    'PO1BIF6080',
+    'PO2BIF4580',
+    'PO2BIF6080',
+    'POBIF4580',
+    'POBIF6080',
 }
 
 # ── Helpers ────────────────────────────────────────────────────────────────────
@@ -450,17 +775,12 @@ def parsear_csv(archivo) -> dict:
                         avisos.append(
                             f"Ancho fuera de rango: el mueble mide {ancho_mm:.0f}mm, el rango válido es {rango['ancho_min']}–{rango['ancho_max']}mm"
                         )
-                else:
-                    parsed_raw = _parse_catalog_code(name_raw)
-                    if parsed_raw:
-                        family, _, alto, fondo = parsed_raw
-                        anchos_std = CATALOG_WIDTHS.get((family, alto, fondo))
-                        if anchos_std:
-                            anchos_std_mm = [a * 10 for a in anchos_std]
-                            if not any(abs(ancho_mm - a) <= 5 for a in anchos_std_mm):
-                                avisos.append(
-                                    f"Ancho incorrecto: el mueble mide {ancho_mm:.0f}mm, los anchos válidos son {anchos_std_mm}mm"
-                                )
+                elif name_raw in CATALOGO_JSON:
+                    ancho_std = CATALOGO_JSON[name_raw].get('ancho_mm')
+                    if ancho_std and abs(ancho_mm - ancho_std) > 5:
+                        avisos.append(
+                            f"Ancho incorrecto: el mueble mide {ancho_mm:.0f}mm, el catálogo indica {ancho_std}mm"
+                        )
             except ValueError:
                 pass
 
@@ -483,14 +803,15 @@ def parsear_csv(archivo) -> dict:
                 "Falta la gama del frente"
             )
 
-        # A05 · Color del interior
+        # A05 · Color del interior (no aplica a fachadas)
+        CODIGOS_SIN_INTERIOR = {'PO1BIF4580', 'PO1BIF6080', 'PO2BIF4580', 'PO2BIF6080', 'POBIF4580', 'POBIF6080'}
         color_interior = _str_or_none(fila.get("Color del interior", ""))
-        if color_interior is None:
+        if color_interior is None and name_raw not in CODIGOS_SIN_INTERIOR:
             avisos.append(
                 "Falta el color del interior"
             )
         # A13 · Color del interior no reconocido
-        elif color_interior not in COLOR_INTERIOR_VALIDOS:
+        elif color_interior not in COLOR_INTERIOR_VALIDOS and name_raw not in CODIGOS_SIN_INTERIOR:
             avisos.append(
                 f"Color del interior '{color_interior}' no reconocido"
             )
@@ -616,3 +937,52 @@ def parsear_csv(archivo) -> dict:
             resultado["muebles"].append(mueble)
 
     return resultado
+
+
+# ── Integración con Módulo B ───────────────────────────────────────────────────
+
+def _a_formato_b(m: dict) -> dict:
+    """Convierte el dict interno del Módulo A al formato de claves que espera el Módulo B.
+
+    Módulo A usa claves snake_case internas (name, d_gama, tirador como int...).
+    Módulo B espera las claves originales del CSV (Name, D_Gama, Tirador como str...).
+    """
+    tirador = m.get("tirador")
+    return {
+        "Name":                     m.get("name") or "",
+        "Name SKP":                 m.get("name_skp") or "",
+        "Estado":                   m.get("estado") or "",
+        "Apertura":                 m.get("apertura") or "",
+        "D_Gama":                   m.get("d_gama") or "",
+        "ColorFrente":              m.get("color_frente") or "",
+        "Color del interior":       m.get("color_interior") or "",
+        "Tirador":                  str(tirador) if tirador is not None else "",
+        "Trasera":                  m.get("trasera") or "",
+        "Color tir. de superficie": m.get("color_tirador") or "",
+        "C_Rodapietext":            m.get("rodapie") or "",
+        "Ancho":                    m.get("ancho") or "",
+        "Ancho reducido":           m.get("ancho_reducido") or "",
+        "LenZ":                     m.get("len_z") or "",
+        "Avisos":                   " | ".join(m.get("avisos") or []),
+    }
+
+
+def parsear_csv_para_modulo_b(archivo) -> dict:
+    """Como parsear_csv() pero los muebles usan las claves que espera el Módulo B.
+
+    Devuelve el mismo shape que parsear_csv():
+    {
+        "ok": bool,
+        "error_archivo": str | None,
+        "muebles": list[dict],   ← claves en formato Módulo B
+        "filas_descartadas": []
+    }
+
+    El app.py integrado llama a esta función en lugar de parsear_csv().
+    La app standalone de Javier sigue usando parsear_csv() sin cambios.
+    """
+    resultado = parsear_csv(archivo)
+    if resultado["ok"]:
+        resultado["muebles"] = [_a_formato_b(m) for m in resultado["muebles"]]
+    return resultado
+
