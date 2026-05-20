@@ -936,7 +936,7 @@ def _render_card_resumen(entrada: dict, catalogo: dict) -> None:
     with st.container(border=True):
         st.markdown(titulo)
 
-        col_img, col_config, col_dims = st.columns([1, 2, 2])
+        col_img, col_config, col_dims, col_opc = st.columns([1, 2, 1, 2])
 
         with col_img:
             if img_path:
@@ -955,17 +955,21 @@ def _render_card_resumen(entrada: dict, catalogo: dict) -> None:
                 st.markdown("**Dimensiones**")
                 _render_lista_items(dims)
 
-        opc_adic = entrada.get("opciones_adicionales") or []
-        if opc_adic:
-            st.markdown("**Opciones adicionales**")
-            for entry_adic in opc_adic:
-                marcador = " ⚙" if entry_adic.get("origen") == "automatico" else ""
-                st.markdown(
-                    f"- **{entry_adic.get('etiqueta', '')}:** "
-                    f"{entry_adic.get('valor', '')}{marcador}"
-                )
-            if any(e.get("origen") == "automatico" for e in opc_adic):
-                st.caption("⚙ Forzado automáticamente por reglas")
+        with col_opc:
+            opc_adic = entrada.get("opciones_adicionales") or []
+            if opc_adic:
+                st.markdown("**Opciones adicionales**")
+                for entry_adic in opc_adic:
+                    marcador = " ⚙" if entry_adic.get("origen") == "automatico" else ""
+                    st.markdown(
+                        f"- **{entry_adic.get('etiqueta', '')}:** "
+                        f"{entry_adic.get('valor', '')}{marcador}"
+                    )
+                if any(e.get("origen") == "automatico" for e in opc_adic):
+                    st.caption("⚙ Forzado automáticamente por reglas")
+
+        # Espaciador para dar margen inferior igual al superior dentro del borde
+        st.markdown('<div style="margin-bottom:8px"></div>', unsafe_allow_html=True)
 
 
 def _nombre_export_base() -> str:
