@@ -9,6 +9,7 @@ Interviene en dos momentos del flujo:
 Pantalla 0 (Validación) bloquea el avance si el CSV trae errores duros.
 """
 
+import base64
 import json
 import pathlib
 
@@ -122,9 +123,9 @@ def _cargar_colores() -> dict:
 def _render_swatches_color(color_frente: str, color_interior: str) -> None:
     """Muestra swatches de color apilados verticalmente (frente primero, interior debajo).
 
-    Cada fila: imagen cuadrada pequeña a la izquierda + etiqueta a la derecha
-    ("Frente: Crema", "Interior: Blanco"). Se omiten los colores sin imagen.
-    Diseñado para renderizarse dentro de col_img, debajo de la imagen del mueble.
+    Cada fila: imagen cuadrada 36 px a la izquierda + etiqueta a la derecha,
+    renderizado con HTML inline para evitar problemas de columnas anidadas en Streamlit.
+    Se omiten los colores sin imagen disponible.
     """
     colores = _cargar_colores()
     items: list[tuple[str, pathlib.Path]] = []
@@ -142,11 +143,15 @@ def _render_swatches_color(color_frente: str, color_interior: str) -> None:
             items.append((f"Interior: {color_interior}", p))
 
     for etiqueta, path in items:
-        col_sw, col_label = st.columns([1, 3])
-        with col_sw:
-            st.image(str(path), width=40)
-        with col_label:
-            st.caption(etiqueta)
+        b64 = base64.b64encode(path.read_bytes()).decode()
+        st.markdown(
+            f'<div style="display:flex;align-items:center;gap:8px;margin:4px 0">'
+            f'<img src="data:image/png;base64,{b64}"'
+            f' style="width:36px;height:36px;border-radius:3px;flex-shrink:0"/>'
+            f'<span style="font-size:0.82em">{etiqueta}</span>'
+            f'</div>',
+            unsafe_allow_html=True,
+        )
 
 
 @st.cache_data
