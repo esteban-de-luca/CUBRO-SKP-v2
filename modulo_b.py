@@ -68,6 +68,8 @@ _CATALOGO_PATH = pathlib.Path(__file__).parent / "data" / "catalogo.json"
 _MAPEOS_SKP_UI_SG_PATH = pathlib.Path(__file__).parent / "data" / "mapeos_SKP_UI_SG.yaml"
 _OPCIONES_MUEBLE_PATH = pathlib.Path(__file__).parent / "data" / "opciones_mueble.yaml"
 _REGLAS_PATH = pathlib.Path(__file__).parent / "data" / "reglas.yaml"
+_IMAGENES_PATH = pathlib.Path(__file__).parent / "data" / "imagenes_mueble.yaml"
+_ASSETS_MUEBLES = pathlib.Path(__file__).parent / "assets" / "muebles"
 
 
 @st.cache_data
@@ -76,6 +78,34 @@ def _cargar_catalogo() -> dict:
     if not _CATALOGO_PATH.exists():
         return {}
     return json.loads(_CATALOGO_PATH.read_text(encoding="utf-8"))
+
+
+@st.cache_data
+def _cargar_imagenes() -> list[tuple[str, str]]:
+    """Carga imagenes_mueble.yaml y devuelve lista de (prefijo, filename) ordenada
+    de mayor a menor longitud (longest-prefix-first matching)."""
+    if not _IMAGENES_PATH.exists():
+        return []
+    with _IMAGENES_PATH.open(encoding="utf-8") as f:
+        datos = yaml.safe_load(f) or {}
+    prefijos = datos.get("prefijos") or {}
+    return sorted(prefijos.items(), key=lambda x: len(x[0]), reverse=True)
+
+
+def _imagen_mueble(code: str) -> pathlib.Path | None:
+    """Devuelve la Path al PNG del mueble si existe, o None.
+
+    Usa longest-prefix-first: el primer prefijo (de mayor a menor longitud)
+    que coincida con el inicio del código de mueble determina la imagen.
+    """
+    if not code:
+        return None
+    for prefijo, filename in _cargar_imagenes():
+        if code.startswith(prefijo):
+            ruta = _ASSETS_MUEBLES / filename
+            if ruta.exists():
+                return ruta
+    return None
 
 
 @st.cache_data
@@ -640,21 +670,41 @@ def paso_1(muebles: list[dict]) -> None:
                 _cabecera_card(mueble, catalogo, revisado),
                 expanded=expanded,
             ):
-                _bloque_informativo(mueble)
-
-                if aplicables:
-                    _renderizar_opcionales(clave, aplicables, interfaz, selecciones)
-                    if "op_126" in aplicables:
-                        st.divider()
-                        _control_electrodomestico_op_126(
-                            clave, interfaz.get("op_126", {}),
-                            estado["opcionales"], selecciones,
-                        )
+                img_path = _imagen_mueble((mueble.get("Name") or "").strip())
+                if img_path:
+                    col_img, col_info = st.columns([1, 3])
+                    with col_img:
+                        st.image(str(img_path))
+                    with col_info:
+                        _bloque_informativo(mueble)
+                        if aplicables:
+                            _renderizar_opcionales(clave, aplicables, interfaz, selecciones)
+                            if "op_126" in aplicables:
+                                st.divider()
+                                _control_electrodomestico_op_126(
+                                    clave, interfaz.get("op_126", {}),
+                                    estado["opcionales"], selecciones,
+                                )
+                        else:
+                            st.caption(
+                                "Este mueble no tiene opciones opcionales aplicables. "
+                                "Pre-marcado como revisado."
+                            )
                 else:
-                    st.caption(
-                        "Este mueble no tiene opciones opcionales aplicables. "
-                        "Pre-marcado como revisado."
-                    )
+                    _bloque_informativo(mueble)
+                    if aplicables:
+                        _renderizar_opcionales(clave, aplicables, interfaz, selecciones)
+                        if "op_126" in aplicables:
+                            st.divider()
+                            _control_electrodomestico_op_126(
+                                clave, interfaz.get("op_126", {}),
+                                estado["opcionales"], selecciones,
+                            )
+                    else:
+                        st.caption(
+                            "Este mueble no tiene opciones opcionales aplicables. "
+                            "Pre-marcado como revisado."
+                        )
 
                 if "op_126" in aplicables and not _op_126_completo(
                     estado["opcionales"].get("op_126")
@@ -819,41 +869,52 @@ def _render_card_resumen(entrada: dict, catalogo: dict) -> None:
     if des:
         titulo += f"  ·  {des}"
 
+    img_path = _imagen_mueble(code)
+
     with st.container(border=True):
-        st.markdown(titulo)
+        if img_path:
+            col_img, col_content = st.columns([1, 3])
+            with col_img:
+                st.image(str(img_path))
+            content_ctx = col_content
+        else:
+            content_ctx = st.container()
 
-        config = _bloque_configuracion_c(entrada)
-        if config:
-            st.markdown("**Configuración**")
-            st.caption("Origen: CSV exportado desde SketchUp")
-            _render_lista_items(config)
+        with content_ctx:
+            st.markdown(titulo)
 
-        dims = _bloque_dimensiones_c(entrada, catalogo)
-        if dims:
-            st.markdown("**Dimensiones**")
-            st.caption("Origen: catálogo de muebles")
-            _render_lista_items(dims)
+            config = _bloque_configuracion_c(entrada)
+            if config:
+                st.markdown("**Configuración**")
+                st.caption("Origen: CSV exportado desde SketchUp")
+                _render_lista_items(config)
 
-        opc_adic = entrada.get("opciones_adicionales") or []
-        if opc_adic:
-            st.markdown("**Opciones adicionales**")
-            for entry_adic in opc_adic:
-                marcador = " ⚙" if entry_adic.get("origen") == "automatico" else ""
-                st.markdown(
-                    f"- **{entry_adic.get('etiqueta', '')}:** "
-                    f"{entry_adic.get('valor', '')}{marcador}"
-                )
-            if any(e.get("origen") == "automatico" for e in opc_adic):
-                st.caption("⚙ Forzado automáticamente por reglas")
+            dims = _bloque_dimensiones_c(entrada, catalogo)
+            if dims:
+                st.markdown("**Dimensiones**")
+                st.caption("Origen: catálogo de muebles")
+                _render_lista_items(dims)
 
-        if MOSTRAR_DETALLE_TECNICO:
-            with st.expander("Ver detalle técnico"):
-                codigos = entrada.get("codigos_sg") or {}
-                if codigos:
-                    for op_id, valor in sorted(codigos.items()):
-                        st.markdown(f"- `{op_id}`: `{valor}`")
-                else:
-                    st.caption("Sin códigos SG calculados.")
+            opc_adic = entrada.get("opciones_adicionales") or []
+            if opc_adic:
+                st.markdown("**Opciones adicionales**")
+                for entry_adic in opc_adic:
+                    marcador = " ⚙" if entry_adic.get("origen") == "automatico" else ""
+                    st.markdown(
+                        f"- **{entry_adic.get('etiqueta', '')}:** "
+                        f"{entry_adic.get('valor', '')}{marcador}"
+                    )
+                if any(e.get("origen") == "automatico" for e in opc_adic):
+                    st.caption("⚙ Forzado automáticamente por reglas")
+
+            if MOSTRAR_DETALLE_TECNICO:
+                with st.expander("Ver detalle técnico"):
+                    codigos = entrada.get("codigos_sg") or {}
+                    if codigos:
+                        for op_id, valor in sorted(codigos.items()):
+                            st.markdown(f"- `{op_id}`: `{valor}`")
+                    else:
+                        st.caption("Sin códigos SG calculados.")
 
 
 def _nombre_export_base() -> str:

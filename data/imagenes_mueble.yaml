@@ -1,0 +1,52 @@
+# =============================================================================
+# data/imagenes_mueble.yaml
+# Mapeo prefijo de código de mueble → archivo PNG en assets/muebles/
+# SOLO LECTURA — no modificar sin actualizar también la documentación en Notion
+#
+# Las claves se evalúan de MAYOR a MENOR longitud (longest-prefix-first).
+# Un código de mueble se asigna al primer prefijo que coincida.
+# Si ningún prefijo coincide, no se muestra imagen.
+#
+# Nota: el archivo ACQ31P.png corresponde al prefijo AQC31P (letras transpuestas
+# en el nombre de fichero respecto al código de mueble).
+# =============================================================================
+
+prefijos:
+  # ── Más largos primero para evitar capturas prematuras ───────────────────
+  HPT60V57: HPT60V57.png
+  AFSMOBT:  AFSMOBT.png
+  HLVV57:   HLVV57.png
+  AQC31P:   ACQ31P.png      # filename tiene letras transpuestas: ACQ31P.png
+  PO2BIF:   PO2BIF.png
+  PO1BIF:   PO1BIF.png
+  BCUB2T:   BCUB2T.png
+  BETOQ:    BETOQ.png
+  BEBTS:    BEBTS.png
+  AVA1P:    AVA1P.png
+  BAV1P:    BAV1P.png
+  A2I1P:    A2I1P.png
+  AFSMO:    AFSMO.png
+  FHABS:    FHABS.png
+  BIBTS:    BIBTS.png
+  BB2T:     BB2T.png
+  POBIF:    POBIF.png
+  AQC3:     AQC3.png
+  AFS2B:    AFS2B.png
+  B2B:      B2B.png
+  BE2B:     BE2B.png
+  BETO:     BETO.png
+  HAV1:     HAV1.png
+  HAV2:     HAV2.png
+  HH1:      HH1.png
+  AGM:      AGM.png
+  ABA:      ABA.png
+  AFS:      AFS.png
+  AVA:      AVA.png
+  BAV:      BAV.png
+  BFT:      BFT.png
+  BC15:     BC_15cm.png     # p. ej. BC158057
+  BC6:      BC_banco.png    # p. ej. BC604
+  A2I:      A2I.png
+  H1:       H1.png
+  HR:       HR.png
+  B:        B.png           # catch-all para muebles B no capturados antes
