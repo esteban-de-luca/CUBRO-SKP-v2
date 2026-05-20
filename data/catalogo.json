@@ -645,11 +645,7 @@
     },
     "ancho_mm": 600,
     "alto_mm": null,
-    "fondo_mm": 570,
-    "alto_variable": {
-      "min": 110,
-      "max": 140
-    }
+    "fondo_mm": 570
   },
   "AVA4520035": {
     "designaciones": {
