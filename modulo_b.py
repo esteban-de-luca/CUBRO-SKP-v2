@@ -957,8 +957,18 @@ def _render_card_resumen(entrada: dict, catalogo: dict) -> None:
 
         with col_opc:
             opc_adic = entrada.get("opciones_adicionales") or []
-            if opc_adic:
+
+            # Datos del electrodoméstico: modulo_c los pasa al JSON de export
+            # pero no los incluye en opciones_adicionales → los leemos de entrada.
+            marca     = (entrada.get("Marca electro")      or "").strip()
+            referencia = (entrada.get("Referencia electro") or "").strip()
+            altura    = (entrada.get("Altura electro")     or "").strip()
+            tipo      = (entrada.get("Tipo electro")       or "").strip()
+            tiene_electro = bool(marca)
+
+            if opc_adic or tiene_electro:
                 st.markdown("**Opciones adicionales**")
+
                 for entry_adic in opc_adic:
                     marcador = " ⚙" if entry_adic.get("origen") == "automatico" else ""
                     st.markdown(
@@ -967,6 +977,10 @@ def _render_card_resumen(entrada: dict, catalogo: dict) -> None:
                     )
                 if any(e.get("origen") == "automatico" for e in opc_adic):
                     st.caption("⚙ Forzado automáticamente por reglas")
+
+                if tiene_electro:
+                    partes = " · ".join(p for p in (marca, referencia, altura, tipo) if p)
+                    st.markdown(f"- **Electrodoméstico:** {partes}")
 
         # Espaciador para dar margen inferior igual al superior dentro del borde
         st.markdown('<div style="margin-bottom:8px"></div>', unsafe_allow_html=True)
