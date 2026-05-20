@@ -9,8 +9,6 @@ Interviene en dos momentos del flujo:
 Pantalla 0 (Validación) bloquea el avance si el CSV trae errores duros.
 """
 
-import csv
-import io
 import json
 import pathlib
 
@@ -695,7 +693,7 @@ def paso_1(muebles: list[dict]) -> None:
 
 
 def _bloque_configuracion(mueble: dict) -> list[tuple[str, str]]:
-    """Pares (etiqueta, valor) del bloque Configuración (origen CSV)."""
+    """Pares (etiqueta, valor) del bloque Configuración — Paso 1 (campos CSV brutos)."""
     items: list[tuple[str, str]] = []
     apertura = _ui_apertura(mueble.get("Apertura", ""))
     if apertura and apertura != "—":
@@ -718,8 +716,32 @@ def _bloque_configuracion(mueble: dict) -> list[tuple[str, str]]:
     return items
 
 
+def _bloque_configuracion_c(entrada: dict) -> list[tuple[str, str]]:
+    """Pares (etiqueta, valor) del bloque Configuración — Paso 2 (campos 23 columnas, ya en UI)."""
+    items: list[tuple[str, str]] = []
+    apertura = (entrada.get("Apertura") or "").strip()
+    if apertura:
+        items.append(("Apertura", apertura))
+    gama  = (entrada.get("Gama del frente")   or "").strip()
+    color = (entrada.get("Acabado del frente") or "").strip()
+    gama_color = " ".join(p for p in (gama, color) if p)
+    if gama_color:
+        items.append(("Gama y color frente", gama_color))
+    color_int = (entrada.get("Color interior") or "").strip()
+    if color_int:
+        items.append(("Color interior", color_int))
+    tirador = (entrada.get("Tirador") or "").strip()
+    if tirador:
+        col_t = (entrada.get("Color tirador") or "").strip()
+        items.append(("Tirador", " ".join(p for p in (tirador, col_t) if p)))
+    rodapie = (entrada.get("Rodapié") or "").strip()
+    if rodapie:
+        items.append(("Rodapié", rodapie))
+    return items
+
+
 def _bloque_dimensiones(mueble: dict, catalogo: dict) -> list[tuple[str, str]]:
-    """Pares (etiqueta, valor) del bloque Dimensiones (origen catálogo)."""
+    """Pares (etiqueta, valor) del bloque Dimensiones — Paso 1 (campos CSV brutos)."""
     items: list[tuple[str, str]] = []
     name = (mueble.get("Name") or "").strip()
     entry = catalogo.get(name) or {}
@@ -747,49 +769,86 @@ def _bloque_dimensiones(mueble: dict, catalogo: dict) -> list[tuple[str, str]]:
     return items
 
 
+def _bloque_dimensiones_c(entrada: dict, catalogo: dict) -> list[tuple[str, str]]:
+    """Pares (etiqueta, valor) del bloque Dimensiones — Paso 2 (campos 23 columnas)."""
+    items: list[tuple[str, str]] = []
+    code  = (entrada.get("Código mueble") or "").strip()
+    entry = catalogo.get(code) or {}
+
+    if str(entrada.get("Reducción de ancho", "False")).strip() == "True":
+        ancho_red = (entrada.get("Ancho reducido") or "").strip()
+        items.append(("Ancho", f"Reducción ({ancho_red})"))
+    elif entry.get("ancho_mm"):
+        items.append(("Ancho", f"{entry['ancho_mm']} mm"))
+    elif "ancho_variable" in entry:
+        av = entry["ancho_variable"]
+        items.append(("Ancho", f"variable ({av['min']}–{av['max']} mm)"))
+
+    alto = entry.get("alto_mm")
+    if alto:
+        items.append(("Alto", f"{alto} mm"))
+    elif "alto_variable" in entry:
+        av = entry["alto_variable"]
+        items.append(("Alto", f"variable ({av['min']}–{av['max']} mm)"))
+
+    fondo = entry.get("fondo_mm")
+    if fondo is not None:
+        items.append(("Fondo", f"{fondo} mm"))
+
+    return items
+
+
 def _render_lista_items(items: list[tuple[str, str]]) -> None:
     for etiqueta, valor in items:
         st.markdown(f"- **{etiqueta}:** {valor}")
 
 
-def _render_card_resumen(mueble: dict, catalogo: dict) -> None:
-    """Card-resumen NO plegable de un mueble (CLAUDE.md §7)."""
-    nombre = mueble.get("Name") or mueble.get("Name SKP") or "—"
-    designacion = _designacion(mueble, catalogo)
+def _render_card_resumen(entrada: dict, catalogo: dict) -> None:
+    """Card-resumen NO plegable de un mueble en el Paso 2 (CLAUDE.md §7).
+
+    `entrada` tiene el formato 23 columnas extendido por modulo_c (ya en UI):
+    'Código mueble', 'Gama del frente', 'Tirador'... + 'opciones_adicionales',
+    'codigos_sg', 'p_item', 'avisos_c'.
+    """
+    code      = (entrada.get("Código mueble") or "").strip()
+    cat_entry = catalogo.get(code) or {}
+    nombre    = code or "—"
+    des       = (cat_entry.get("designaciones") or {}).get("es", "")
+
     titulo = f"### {nombre}"
-    if designacion:
-        titulo += f"  ·  {designacion}"
+    if des:
+        titulo += f"  ·  {des}"
 
     with st.container(border=True):
         st.markdown(titulo)
 
-        configuracion = _bloque_configuracion(mueble)
-        if configuracion:
+        config = _bloque_configuracion_c(entrada)
+        if config:
             st.markdown("**Configuración**")
             st.caption("Origen: CSV exportado desde SketchUp")
-            _render_lista_items(configuracion)
+            _render_lista_items(config)
 
-        dimensiones = _bloque_dimensiones(mueble, catalogo)
-        if dimensiones:
+        dims = _bloque_dimensiones_c(entrada, catalogo)
+        if dims:
             st.markdown("**Dimensiones**")
             st.caption("Origen: catálogo de muebles")
-            _render_lista_items(dimensiones)
+            _render_lista_items(dims)
 
-        opciones_adicionales = mueble.get("opciones_adicionales") or []
-        if opciones_adicionales:
+        opc_adic = entrada.get("opciones_adicionales") or []
+        if opc_adic:
             st.markdown("**Opciones adicionales**")
-            for entry in opciones_adicionales:
-                marcador = " ⚙" if entry.get("origen") == "automatico" else ""
+            for entry_adic in opc_adic:
+                marcador = " ⚙" if entry_adic.get("origen") == "automatico" else ""
                 st.markdown(
-                    f"- **{entry.get('etiqueta', '')}:** "
-                    f"{entry.get('valor', '')}{marcador}"
+                    f"- **{entry_adic.get('etiqueta', '')}:** "
+                    f"{entry_adic.get('valor', '')}{marcador}"
                 )
-            if any(e.get("origen") == "automatico" for e in opciones_adicionales):
+            if any(e.get("origen") == "automatico" for e in opc_adic):
                 st.caption("⚙ Forzado automáticamente por reglas")
 
         if MOSTRAR_DETALLE_TECNICO:
             with st.expander("Ver detalle técnico"):
-                codigos = mueble.get("codigos_sg") or {}
+                codigos = entrada.get("codigos_sg") or {}
                 if codigos:
                     for op_id, valor in sorted(codigos.items()):
                         st.markdown(f"- `{op_id}`: `{valor}`")
@@ -797,48 +856,26 @@ def _render_card_resumen(mueble: dict, catalogo: dict) -> None:
                     st.caption("Sin códigos SG calculados.")
 
 
-def _csv_de_entrada(entrada: list[dict]) -> bytes:
-    # BOM UTF-8 al inicio para que Excel en Windows abra los acentos correctamente.
-    if not entrada:
-        return b""
-    buf = io.StringIO()
-    writer = csv.DictWriter(buf, fieldnames=list(entrada[0].keys()))
-    writer.writeheader()
-    writer.writerows(entrada)
-    return ("﻿" + buf.getvalue()).encode("utf-8")
-
-
-def _nombre_descarga_entrada() -> str:
+def _nombre_export_base() -> str:
+    """Nombre base para los archivos de exportación (sin extensión)."""
     csv_origen = (st.session_state.get("csv_filename") or "").strip()
     if csv_origen.lower().endswith(".csv"):
         csv_origen = csv_origen[:-4]
-    return (
-        f"entrada_modulo_c_{csv_origen}.csv" if csv_origen
-        else "entrada_modulo_c.csv"
-    )
+    return csv_origen or "pedido_cubro"
 
 
 def paso_2(pedido: list[dict] | None) -> None:
-    """Paso 2 — Revisión final del pedido y export a DealHub."""
+    """Paso 2 — Revisión final del pedido y exportación."""
     catalogo = _cargar_catalogo()
 
     st.header("Paso 2 — Revisión")
 
     if st.button("← Volver al Paso 1"):
         st.session_state.pantalla = PANTALLA_PASO_1
+        # Invalida el export guardado al volver atrás
+        st.session_state.pop("_export_excel", None)
+        st.session_state.pop("_export_json", None)
         st.rerun()
-
-    entrada = st.session_state.get("entrada_modulo_c")
-    if entrada:
-        st.download_button(
-            "Descargar entrada Módulo C (.csv)",
-            data=_csv_de_entrada(entrada),
-            file_name=_nombre_descarga_entrada(),
-            mime="text/csv",
-        )
-        st.caption(
-            "Temporal — para verificar la traducción a las 23 columnas."
-        )
 
     if not pedido:
         st.error("No hay pedido que revisar. Vuelve al Paso 1.")
@@ -846,16 +883,39 @@ def paso_2(pedido: list[dict] | None) -> None:
 
     st.success(f"Pedido listo: **{len(pedido)} muebles** configurados.")
 
-    for entrada in pedido:
-        _render_card_resumen(entrada, catalogo)
+    for item in pedido:
+        _render_card_resumen(item, catalogo)
 
     st.divider()
-    st.button(
-        "Exportar a DealHub",
-        type="primary",
-        disabled=True,
-        help=(
-            "Export a DealHub pendiente de implementar. El schema del archivo "
-            "de salida se cerrará con el equipo (CLAUDE.md §11)."
-        ),
-    )
+
+    # ── Exportar pedido ───────────────────────────────────────────────────────
+    # Al hacer clic se generan ambos archivos y se muestran los botones de descarga.
+    if st.button("📦 Exportar pedido", type="primary"):
+        import modulo_c as _mc  # importación local para mantener modulo_b autónomo
+        st.session_state["_export_excel"] = _mc.generar_excel_revision(pedido)
+        st.session_state["_export_json"] = json.dumps(
+            _mc.generar_json_pedido(pedido), ensure_ascii=False, indent=2
+        ).encode("utf-8")
+
+    if st.session_state.get("_export_excel"):
+        nombre = _nombre_export_base()
+        col_xlsx, col_json = st.columns(2)
+        with col_xlsx:
+            st.download_button(
+                "⬇ Excel de revisión",
+                data=st.session_state["_export_excel"],
+                file_name=f"{nombre}_revision.xlsx",
+                mime=(
+                    "application/vnd.openxmlformats-officedocument"
+                    ".spreadsheetml.sheet"
+                ),
+                use_container_width=True,
+            )
+        with col_json:
+            st.download_button(
+                "⬇ JSON de pedido",
+                data=st.session_state["_export_json"],
+                file_name=f"{nombre}_pedido.json",
+                mime="application/json",
+                use_container_width=True,
+            )

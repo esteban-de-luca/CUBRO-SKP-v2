@@ -18,10 +18,8 @@ from modulo_b import PANTALLA_VALIDACION, PANTALLA_PASO_1, PANTALLA_PASO_2
 # para poder desarrollar el Módulo B de forma aislada.
 USE_MOCK_DATA = True
 
-# Mientras el Módulo C esté en stub, sustituimos su output por un pedido mock
-# para poder desarrollar el Paso 2. El shape generado por _mock_pedido es
-# una propuesta de contrato pendiente de validar con Lucía.
-USE_MOCK_C = True
+# Módulo C implementado — ya no se usa el mock.
+USE_MOCK_C = False
 
 
 def _default_state() -> dict:
@@ -189,12 +187,15 @@ def _mock_pedido(muebles: list[dict], entrada: list[dict]) -> list[dict]:
 
 
 def _calcular_pedido_paso_2() -> list[dict]:
-    """Construye la entrada y la pasa al Módulo C (o a su mock)."""
+    """Construye la entrada del Módulo B y la procesa con el Módulo C."""
     muebles = st.session_state.muebles or []
     selecciones = st.session_state.selecciones_paso_1 or {}
     catalogo = modulo_b._cargar_catalogo()
     entrada = modulo_b.construir_entrada_modulo_c(muebles, selecciones, catalogo)
     st.session_state.entrada_modulo_c = entrada
+    # Invalidar export anterior: el pedido se recalcula, los archivos deben regenerarse
+    st.session_state.pop("_export_excel", None)
+    st.session_state.pop("_export_json", None)
     if USE_MOCK_C:
         return _mock_pedido(muebles, entrada)
     return modulo_c.calcular_opciones(entrada) or []

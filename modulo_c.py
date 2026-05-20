@@ -39,6 +39,7 @@ _CATALOGO_PATH   = _DATA_DIR / "catalogo.json"
 _MAPEOS_PATH     = _DATA_DIR / "mapeos_SKP_UI_SG.yaml"
 _OPCIONES_PATH   = _DATA_DIR / "opciones_mueble.yaml"
 _REGLAS_PATH     = _DATA_DIR / "reglas.yaml"
+_AVISOS_PATH     = _DATA_DIR / "avisos.yaml"
 
 
 # =============================================================================
@@ -46,7 +47,7 @@ _REGLAS_PATH     = _DATA_DIR / "reglas.yaml"
 # =============================================================================
 @functools.lru_cache(maxsize=1)
 def _cargar_datos() -> tuple[dict, dict, dict, dict]:
-    """Carga los cuatro archivos de datos. Se cachea tras la primera llamada."""
+    """Carga los cuatro archivos de datos principales. Se cachea tras la primera llamada."""
     with _CATALOGO_PATH.open(encoding="utf-8") as f:
         catalogo = json.load(f)
     with _MAPEOS_PATH.open(encoding="utf-8") as f:
@@ -58,6 +59,15 @@ def _cargar_datos() -> tuple[dict, dict, dict, dict]:
     return catalogo, mapeos, op_mueble, reglas
 
 
+@functools.lru_cache(maxsize=1)
+def _cargar_avisos() -> dict[str, str]:
+    """Carga data/avisos.yaml sección modulo_c. Se cachea tras la primera llamada."""
+    if not _AVISOS_PATH.exists():
+        return {}
+    with _AVISOS_PATH.open(encoding="utf-8") as f:
+        return (yaml.safe_load(f) or {}).get("modulo_c") or {}
+
+
 # =============================================================================
 # Constantes
 # =============================================================================
@@ -67,27 +77,9 @@ _TIRADORES_INTEGRADOS = frozenset({"Round", "Square"})
 _TIRADORES_SUPERFICIE = frozenset({"Curve", "Line", "Plantea"})
 _TIRADORES_SIN_COLOR  = frozenset({"Touch Latch", "Prise de main"})
 
-# op_700 — la distinción forzado / no-aplica no está modelada en
-# opciones_mueble.yaml (solo existe la clave genérica "excepciones").
-# TODO: añadir sub-claves "forzadas" y "no_aplica" a op_700 en
-#       opciones_mueble.yaml y eliminar estas constantes del código Python.
-_OP_700_FORZADOS = frozenset({
-    "HH1606035", "HH1906035", "HH1608035",
-    "HH1908035", "HH16010035", "HH19010035",
-})
-_OP_700_NO_APLICA = frozenset({"AGM9020057", "AGM9022057"})
-
-# Frases estándar de avisos.
-# TODO: trasladar a data/reglas.yaml (nueva sección "avisos") para mantener
-#       todos los textos orientados al usuario fuera del código Python.
-_AVISOS_FRASES: dict[str, str] = {
-    "AV01": (
-        "La selección de [parámetro] no está disponible para este mueble. "
-        "El mueble llevará el valor por defecto."
-    ),
-    "AV02": "Este mueble siempre se entrega sin encolar para facilitar el montaje.",
-    "AV03": "Este mueble no lleva mecanización para tirador.",
-}
+# (No hay constantes hardcodeadas aquí — todos los valores vienen de los YAMLs)
+# op_700 forzadas/no_aplica → data/opciones_mueble.yaml (op_700.forzadas / op_700.no_aplica)
+# Frases de avisos         → data/avisos.yaml (modulo_c.AV01 / AV02 / AV03)
 
 
 # =============================================================================
@@ -349,11 +341,14 @@ def _calcular_opciones_mueble(
             _sg("op_402", sg_402)
 
     # ── op_700 — Mueble sin encolar ────────────────────────────────────────────
-    if code in _OP_700_FORZADOS:
-        # HH*: DEM siempre obligatorio
+    datos_700   = op_mueble.get("op_700") or {}
+    forzados700 = datos_700.get("forzadas")  or []
+    no_aplica700 = datos_700.get("no_aplica") or []
+    if code in forzados700:
+        # HH*: DEM siempre obligatorio (muebles en escuadra, sin encolar para montaje)
         _sg("op_700", "DEM", origen="automatico", etiqueta="Mueble sin encolar")
         avisos.append("AV02")
-    elif code not in _OP_700_NO_APLICA and _es_true(fila.get("Sin encolar")):
+    elif code not in no_aplica700 and _es_true(fila.get("Sin encolar")):
         # Resto: opcional, solo si el usuario lo marcó
         _sg("op_700", "DEM", origen="usuario", etiqueta="Mueble sin encolar")
 
@@ -545,7 +540,7 @@ def _valor_excel(res: dict, key_entrada: str | None, key_salida: str | None) -> 
         "_manuf":        bid.get("p_manufacturer_code", "") or "",
         "_ref":          bid.get("p_appliance_reference", "") or "",
         "_type":         bid.get("p_appliance_type", "") or "",
-        "_avisos":       " | ".join(_AVISOS_FRASES.get(a, a) for a in avisos),
+        "_avisos":       " | ".join(_cargar_avisos().get(a, a) for a in avisos),
     }
     if key_salida in especiales:
         return str(especiales[key_salida])

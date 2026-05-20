@@ -619,16 +619,17 @@ op_402:
 # op_700 — Mueble sin encolar (DEM)
 # -----------------------------------------------------------------------------
 op_700:
-  todos: P   # Opcional en todos, excepto:
-  excepciones:
-    - HH1606035    # F — forzada (único caso donde DEM es obligatorio)
-    - HH1906035    # F
-    - HH1608035    # F
-    - HH1908035    # F
-    - HH16010035   # F
-    - HH19010035   # F
-    - AGM9020057   # no aplica — único mueble sin DEM en el catálogo
-    - AGM9022057   # no aplica
+  todos: P   # Opcional en todos, excepto los dos grupos siguientes:
+  forzadas:       # F — DEM obligatorio (muebles esquineros en L, van sin encolar)
+    - HH1606035
+    - HH1906035
+    - HH1608035
+    - HH1908035
+    - HH16010035
+    - HH19010035
+  no_aplica:      # no se envía DEM ni como opcional ni como forzado
+    - AGM9020057
+    - AGM9022057
 
 
 # -----------------------------------------------------------------------------
