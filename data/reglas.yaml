@@ -1,17 +1,14 @@
 # =============================================================================
 # data/reglas.yaml
-# Reglas y opciones por mueble — Módulo C — Mapeo y cálculo
+# Reglas de negocio — Módulo C — Mapeo y cálculo
 # SOLO LECTURA — no modificar sin actualizar también la documentación en Notion
 #
 # Estructura:
 #   reglas_condicionales: lógica de negocio que depende de condiciones
-#   muebles:             opciones forzadas por código de mueble
 #
 # Lógica de ejecución del Módulo C:
 #   1. Primero reglas_condicionales → determinan qué opciones calcular
 #   2. Después mapeos_SKP_UI_SG.yaml → convierten los valores a códigos SG
-#
-# "auto" = valor calculado en modulo_c.py según lógica de mapeos o reglas
 #
 # Las opcionales (facultativas) disponibles por mueble están en opciones_mueble.yaml.
 #
