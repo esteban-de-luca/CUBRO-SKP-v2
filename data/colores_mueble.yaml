@@ -1,0 +1,64 @@
+# =============================================================================
+# data/colores_mueble.yaml
+# Mapeo nombre UI de color → archivo PNG en assets/colores/
+# SOLO LECTURA — no modificar sin actualizar también la documentación en Notion
+#
+# Secciones:
+#   frente   — colores del acabado del frente (op_101): LACA, WOOD, LINOLEO, LAMINADO
+#   interior — colores del interior del mueble (op_200)
+#
+# Nota: "Metal LAMINADO" no tiene imagen disponible (falta en el pack de colores).
+# =============================================================================
+
+frente:
+  # LACA
+  Crema:      Crema.png
+  Seda:       Seda.png
+  Blanco:     Blanco.png
+  Petal:      Petal.png
+  Vela:       Vela.png
+  Marga:      Marga.png
+  Zafiro:     Zafiro.png
+  Uva:        Uva.png
+  Noche:      Noche.png
+  Pino:       Pino.png
+  Halo:       Halo.png
+  Grass:      Grass.png
+  Laurel:     Laurel.png
+
+  # WOOD
+  "Nordic Oak":   Nordic_Oak.png
+  Oak:            Oak.png
+  "Smoked Oak":   Smoked_Oak.png
+
+  # LINOLEO
+  Mushroom:       Lino_Mushroom.png
+  Macadamia:      Lino_Macadamia.png
+  Clay:           Lino_Clay.png
+  Walnut:         Lino_Walnut.png
+  Espresso:       Lino_Espresso.png
+  Pistachio:      Lino_Pistachio.png
+  Olive:          Lino_Olive.png
+  Conifer:        Lino_Conifer.png
+  Vapour:         Lino_Vapour.png
+  "Blue Haze":    Lino_Blue_Haze.png
+  "Smokey Blue":  Lino_Smokey_Blue.png
+
+  # LAMINADO
+  Sable:    Lam_Sable.png
+  Agave:    Lam_Agave.png
+  Sombra:   Lam_Sombra.png
+  Cloud:    Lam_Cloud.png
+  Polar:    Lam_Polar.png
+  Mos:      Lam_Mos.png
+  Ash:      Lam_Ash.png
+  Saten:    Lam_Saten.png
+  Lirio:    Lam_Lirio.png
+  Carbon:   Lam_Carbon.png
+  # Metal: sin imagen disponible
+
+interior:
+  Blanco: Interior_Blanco.png
+  Gris:   Interior_Gris.png
+  Negro:  Interior_Negro.png
+  Roble:  Interior_Roble.png

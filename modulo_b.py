@@ -70,6 +70,8 @@ _OPCIONES_MUEBLE_PATH = pathlib.Path(__file__).parent / "data" / "opciones_muebl
 _REGLAS_PATH = pathlib.Path(__file__).parent / "data" / "reglas.yaml"
 _IMAGENES_PATH = pathlib.Path(__file__).parent / "data" / "imagenes_mueble.yaml"
 _ASSETS_MUEBLES = pathlib.Path(__file__).parent / "assets" / "muebles"
+_COLORES_PATH = pathlib.Path(__file__).parent / "data" / "colores_mueble.yaml"
+_ASSETS_COLORES = pathlib.Path(__file__).parent / "assets" / "colores"
 
 
 @st.cache_data
@@ -106,6 +108,45 @@ def _imagen_mueble(code: str) -> pathlib.Path | None:
             if ruta.exists():
                 return ruta
     return None
+
+
+@st.cache_data
+def _cargar_colores() -> dict:
+    """Carga colores_mueble.yaml. Devuelve {'frente': {...}, 'interior': {...}}."""
+    if not _COLORES_PATH.exists():
+        return {}
+    with _COLORES_PATH.open(encoding="utf-8") as f:
+        return yaml.safe_load(f) or {}
+
+
+def _render_swatches_color(color_frente: str, color_interior: str) -> None:
+    """Muestra miniaturas de color de frente e interior si las imágenes existen.
+
+    Cada swatch es un cuadrado de 80 px con el nombre del color como caption.
+    Los swatches se alinean en fila; se omiten los que no tienen imagen.
+    """
+    colores = _cargar_colores()
+    items: list[tuple[str, pathlib.Path]] = []
+
+    fn_frente = (colores.get("frente") or {}).get(color_frente)
+    if fn_frente:
+        p = _ASSETS_COLORES / fn_frente
+        if p.exists():
+            items.append((color_frente, p))
+
+    fn_interior = (colores.get("interior") or {}).get(color_interior)
+    if fn_interior:
+        p = _ASSETS_COLORES / fn_interior
+        if p.exists():
+            items.append((color_interior, p))
+
+    if not items:
+        return
+
+    cols = st.columns(len(items))
+    for col, (nombre, path) in zip(cols, items):
+        with col:
+            st.image(str(path), width=80, caption=nombre)
 
 
 @st.cache_data
@@ -411,6 +452,8 @@ def _bloque_informativo(mueble: dict) -> None:
         f"**Color interior:** {color_interior}  ·  "
         f"**Rodapié:** {rodapie}"
     )
+    color_frente = _ui_color_frente(mueble.get("ColorFrente", ""))
+    _render_swatches_color(color_frente, color_interior)
 
 
 def _check_mueble(
@@ -888,6 +931,9 @@ def _render_card_resumen(entrada: dict, catalogo: dict) -> None:
                 st.markdown("**Configuración**")
                 st.caption("Origen: CSV exportado desde SketchUp")
                 _render_lista_items(config)
+                color_frente  = (entrada.get("Acabado del frente") or "").strip()
+                color_interior = (entrada.get("Color interior") or "").strip()
+                _render_swatches_color(color_frente, color_interior)
 
             dims = _bloque_dimensiones_c(entrada, catalogo)
             if dims:
