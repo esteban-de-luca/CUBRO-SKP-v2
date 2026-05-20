@@ -674,7 +674,7 @@ def paso_1(muebles: list[dict]) -> None:
                 if img_path:
                     col_img, col_info = st.columns([1, 3])
                     with col_img:
-                        st.image(str(img_path))
+                        st.image(str(img_path), width=229)
                     with col_info:
                         _bloque_informativo(mueble)
                         if aplicables:
@@ -875,7 +875,7 @@ def _render_card_resumen(entrada: dict, catalogo: dict) -> None:
         if img_path:
             col_img, col_content = st.columns([1, 3])
             with col_img:
-                st.image(str(img_path))
+                st.image(str(img_path), width=229)
             content_ctx = col_content
         else:
             content_ctx = st.container()
