@@ -120,14 +120,13 @@ def _cargar_colores() -> dict:
 
 
 def _render_swatches_color(color_frente: str, color_interior: str) -> None:
-    """Muestra miniaturas de color de frente e interior si las imágenes existen.
+    """Muestra swatches de color apilados verticalmente (frente primero, interior debajo).
 
-    Cada swatch es un cuadrado de 50 px con etiqueta de contexto en el caption
-    ("Frente: Crema", "Interior: Blanco") para distinguir los dos colores.
-    Los swatches se alinean en fila compacta; se omiten los que no tienen imagen.
+    Cada fila: imagen cuadrada pequeña a la izquierda + etiqueta a la derecha
+    ("Frente: Crema", "Interior: Blanco"). Se omiten los colores sin imagen.
+    Diseñado para renderizarse dentro de col_img, debajo de la imagen del mueble.
     """
     colores = _cargar_colores()
-    # Lista de (caption, path)
     items: list[tuple[str, pathlib.Path]] = []
 
     fn_frente = (colores.get("frente") or {}).get(color_frente)
@@ -142,16 +141,12 @@ def _render_swatches_color(color_frente: str, color_interior: str) -> None:
         if p.exists():
             items.append((f"Interior: {color_interior}", p))
 
-    if not items:
-        return
-
-    # Columnas estrechas para swatches + espacio sobrante a la derecha
-    n = len(items)
-    col_widths = [1] * n + [4]
-    cols = st.columns(col_widths)
-    for col, (caption, path) in zip(cols, items):
-        with col:
-            st.image(str(path), width=50, caption=caption)
+    for etiqueta, path in items:
+        col_sw, col_label = st.columns([1, 3])
+        with col_sw:
+            st.image(str(path), width=40)
+        with col_label:
+            st.caption(etiqueta)
 
 
 @st.cache_data
@@ -457,8 +452,6 @@ def _bloque_informativo(mueble: dict) -> None:
         f"**Color interior:** {color_interior}  ·  "
         f"**Rodapié:** {rodapie}"
     )
-    color_frente = _ui_color_frente(mueble.get("ColorFrente", ""))
-    _render_swatches_color(color_frente, color_interior)
 
 
 def _check_mueble(
@@ -723,6 +716,10 @@ def paso_1(muebles: list[dict]) -> None:
                     col_img, col_info = st.columns([1, 3])
                     with col_img:
                         st.image(str(img_path), width=229)
+                        _render_swatches_color(
+                            _ui_color_frente(mueble.get("ColorFrente", "")),
+                            _ui_color_interior(mueble.get("Color del interior", "")),
+                        )
                     with col_info:
                         _bloque_informativo(mueble)
                         if aplicables:
@@ -740,6 +737,10 @@ def paso_1(muebles: list[dict]) -> None:
                             )
                 else:
                     _bloque_informativo(mueble)
+                    _render_swatches_color(
+                        _ui_color_frente(mueble.get("ColorFrente", "")),
+                        _ui_color_interior(mueble.get("Color del interior", "")),
+                    )
                     if aplicables:
                         _renderizar_opcionales(clave, aplicables, interfaz, selecciones)
                         if "op_126" in aplicables:
@@ -919,11 +920,15 @@ def _render_card_resumen(entrada: dict, catalogo: dict) -> None:
 
     img_path = _imagen_mueble(code)
 
+    color_frente   = (entrada.get("Acabado del frente") or "").strip()
+    color_interior = (entrada.get("Color interior") or "").strip()
+
     with st.container(border=True):
         if img_path:
             col_img, col_content = st.columns([1, 3])
             with col_img:
                 st.image(str(img_path), width=229)
+                _render_swatches_color(color_frente, color_interior)
             content_ctx = col_content
         else:
             content_ctx = st.container()
@@ -936,9 +941,9 @@ def _render_card_resumen(entrada: dict, catalogo: dict) -> None:
                 st.markdown("**Configuración**")
                 st.caption("Origen: CSV exportado desde SketchUp")
                 _render_lista_items(config)
-                color_frente  = (entrada.get("Acabado del frente") or "").strip()
-                color_interior = (entrada.get("Color interior") or "").strip()
-                _render_swatches_color(color_frente, color_interior)
+                if not img_path:
+                    # Sin imagen de mueble: swatches aparecen aquí como fallback
+                    _render_swatches_color(color_frente, color_interior)
 
             dims = _bloque_dimensiones_c(entrada, catalogo)
             if dims:
