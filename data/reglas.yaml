@@ -5,13 +5,15 @@
 #
 # Estructura:
 #   reglas_condicionales: lógica de negocio que depende de condiciones
-#   muebles:             opciones forzadas y facultativas por código de mueble
+#   muebles:             opciones forzadas por código de mueble
 #
 # Lógica de ejecución del Módulo C:
 #   1. Primero reglas_condicionales → determinan qué opciones calcular
 #   2. Después mapeos_SKP_UI_SG.yaml → convierten los valores a códigos SG
 #
 # "auto" = valor calculado en modulo_c.py según lógica de mapeos o reglas
+#
+# Las opcionales (facultativas) disponibles por mueble están en opciones_mueble.yaml.
 #
 # Pendientes:
 #   - op_300: Confirmar qué son Q2H y Q3H
@@ -92,21 +94,11 @@ reglas_condicionales:
       "LNO": "HAK"
       "LMI": ""
 
-  # ---------------------------------------------------------------------------
-  # op_231 — Reducción de ancho
-  # Ver trigger y código en mapeos_SKP_UI_SG.yaml → del_csv → op_231
-  # ---------------------------------------------------------------------------
-  op_231: {}
-
-  # ---------------------------------------------------------------------------
-  # op_700 — DEM
-  # Ver listas en opciones_mueble.yaml → op_700
-  # ---------------------------------------------------------------------------
-  op_700: {}
-
 
 # =============================================================================
 # OPCIONES POR MUEBLE
+# Solo se listan las opciones forzadas (calculadas automáticamente por el
+# Módulo C). Las opcionales disponibles por mueble están en opciones_mueble.yaml.
 # =============================================================================
 
 muebles:
@@ -123,12 +115,6 @@ muebles:
       op_203: "E14"
       op_204: auto
       op_206: "FSP"
-    facultativas:
-      - op_121
-      - op_217
-      - op_223
-      - op_231
-      - op_700
 
   B458035: &base_B_1puerta
     forzadas:
@@ -138,12 +124,6 @@ muebles:
       op_203: "E14"
       op_204: auto
       op_206: "FSP"
-    facultativas:
-      - op_121
-      - op_217
-      - op_223
-      - op_231
-      - op_700
 
   B608035:
     <<: *base_B_1puerta
@@ -156,10 +136,6 @@ muebles:
       op_203: "E14"
       op_204: auto
       op_206: "FSP"
-    facultativas:
-      - op_121
-      - op_223
-      - op_700
 
   B308057:
     <<: *base_B_1puerta
@@ -178,9 +154,6 @@ muebles:
       op_203: "E14"
       op_204: auto
       op_209: "BES"
-    facultativas:
-      - op_121
-      - op_700
 
   BB2T608035:
     <<: *base_BB2T
@@ -201,10 +174,6 @@ muebles:
       op_203: "E14"
       op_204: auto
       op_209: "BES"
-    facultativas:
-      - op_121
-      - op_223
-      - op_700
 
   B2B608035:
     <<: *base_B2B
@@ -226,8 +195,6 @@ muebles:
       op_204: auto
       op_209: "BES"
       op_300: "499"
-    facultativas:
-      - op_700
 
   BC604035: &base_BC_banco
     forzadas:
@@ -237,9 +204,6 @@ muebles:
       op_203: "E14"
       op_204: auto
       op_209: "BES"
-    facultativas:
-      - op_121
-      - op_700
     # op_223 PENDIENTE confirmar con Jean
 
   BC604057:
@@ -258,9 +222,6 @@ muebles:
       op_203: "E14"
       op_204: auto
       op_209: "BES"
-    facultativas:
-      - op_121
-      - op_700
 
   BCUB2T458057: &base_BCUB2T
     forzadas:
@@ -270,9 +231,6 @@ muebles:
       op_203: "E14"
       op_204: auto
       op_209: "BES"
-    facultativas:
-      - op_121
-      - op_700
 
   BCUB2T608057:
     <<: *base_BCUB2T
@@ -295,10 +253,6 @@ muebles:
       op_203: "E14"
       op_204: auto
       op_206: "FSP"
-    facultativas:
-      - op_121
-      - op_217
-      - op_700
 
   BETO608057:
     <<: *base_BETO_1puerta
@@ -311,9 +265,6 @@ muebles:
       op_203: "E14"
       op_204: auto
       op_206: "FSP"
-    facultativas:
-      - op_121
-      - op_700
 
   BETOQ908057:
     forzadas:
@@ -324,9 +275,6 @@ muebles:
       op_204: auto
       op_206: "FSP"
       op_207: "P42"   # PENDIENTE confirmar con Jean si forzada u obligatoria
-    facultativas:
-      - op_121
-      - op_700
 
   BE2B608057: &base_BE2B
     forzadas:
@@ -336,10 +284,6 @@ muebles:
       op_203: "E14"
       op_204: auto
       op_209: "BES"
-    facultativas:
-      - op_121
-      - op_207
-      - op_700
 
   BE2B908057:
     <<: *base_BE2B
@@ -356,9 +300,6 @@ muebles:
     forzadas:
       op_103: auto
       op_104: auto
-    facultativas:
-      - op_121
-      - op_700
 
   POBIF6080:
     <<: *base_POBIF
@@ -377,9 +318,6 @@ muebles:
       op_104: auto
       op_200: auto
       op_206: "FSP"
-    facultativas:
-      - op_121
-      - op_700
 
   # -----------------------------------------------
   # MUEBLES BAJOS — ESQUINERO
@@ -393,10 +331,6 @@ muebles:
       op_203: "E14"
       op_204: auto
       op_206: "FSP"
-    facultativas:
-      - op_121
-      - op_217
-      - op_700
 
   BAV1208057:
     <<: *base_BAV
@@ -410,10 +344,6 @@ muebles:
       op_204: auto
       op_206: "FSP"
       op_208: "CPA"
-    facultativas:
-      - op_121
-      - op_217
-      - op_700
 
   BAV1P1208057:
     <<: *base_BAV1P
@@ -430,14 +360,6 @@ muebles:
       op_203: "E14"
       op_204: auto
       op_206: "FSP"
-    facultativas:
-      - op_121
-      - op_217
-      - op_220
-      - op_222
-      - op_227
-      - op_231
-      - op_700
 
   H1456035:
     <<: *base_H1_1puerta
@@ -464,12 +386,6 @@ muebles:
       op_203: "E14"
       op_204: auto
       op_206: "FSP"
-    facultativas:
-      - op_121
-      - op_217
-      - op_220
-      - op_222
-      - op_700
 
   H1908035:
     <<: *base_H1_2puertas
@@ -489,8 +405,6 @@ muebles:
       op_204: auto
       op_206: "FSP"
       op_700: "DEM"
-    facultativas:
-      - op_121
 
   HH1906035:
     <<: *base_HH1
@@ -515,10 +429,6 @@ muebles:
       op_203: "E14"
       op_204: auto
       op_206: "FSP"
-    facultativas:
-      - op_121
-      - op_217
-      - op_700
 
   HAV1908035:
     <<: *base_HAV
@@ -543,10 +453,6 @@ muebles:
       op_203: "E14"
       op_204: auto
       op_206: "FSP"
-    facultativas:
-      - op_121
-      - op_217
-      - op_700
 
   HR60V35:
     <<: *base_HR
@@ -562,10 +468,6 @@ muebles:
       op_200: auto
       op_203: "E14"
       op_204: auto
-    facultativas:
-      - op_121
-      - op_217
-      - op_700
 
   HPT60V57:
     forzadas:
@@ -575,11 +477,6 @@ muebles:
       op_203: "E14"
       op_204: auto
       op_206: "FSP"
-    facultativas:
-      - op_121
-      - op_217
-      - op_227
-      - op_700
 
   # -----------------------------------------------
   # COLUMNAS — ALMACENAMIENTO
@@ -593,10 +490,6 @@ muebles:
       op_203: "E14"
       op_204: auto
       op_206: "FSP"
-    facultativas:
-      - op_121
-      - op_217
-      - op_700
 
   AQC36020057:
     <<: *base_AQC3
@@ -621,12 +514,6 @@ muebles:
       op_203: "E14"
       op_204: auto
       op_206: "FSP"
-    facultativas:
-      - op_121
-      - op_217
-      - op_227
-      - op_231
-      - op_700
 
   AVA6020035:
     <<: *base_AVA
@@ -667,9 +554,6 @@ muebles:
       op_203: "E14"
       op_204: auto
       op_206: "FSP"
-    facultativas:
-      - op_121
-      - op_700
 
   AVA1P9022035:
     <<: *base_AVA1P_900
@@ -682,12 +566,6 @@ muebles:
       op_203: "E14"
       op_204: auto
       op_206: "FSP"
-    facultativas:
-      - op_121
-      - op_217
-      - op_227
-      - op_231
-      - op_700
 
   ABA6022057:
     <<: *base_ABA
@@ -705,11 +583,6 @@ muebles:
       op_203: "E14"
       op_204: auto
       op_206: "FSP"
-    facultativas:
-      - op_121
-      - op_217
-      - op_223
-      - op_700
 
   AFS6022057:
     <<: *base_AFS
@@ -731,10 +604,6 @@ muebles:
       op_203: "E14"
       op_204: auto
       op_206: "FSP"
-    facultativas:
-      - op_121
-      - op_217
-      - op_700
 
   AFSMOBT6022057:
     <<: *base_AFSMOBT
@@ -750,9 +619,6 @@ muebles:
       op_200: auto
       op_203: "E14"
       op_204: auto
-    facultativas:
-      - op_121
-      - op_700
 
   A2I6022057:
     <<: *base_A2I
@@ -775,8 +641,6 @@ muebles:
       op_203: "E14"
       op_204: auto
       op_206: "FSP"
-    facultativas:
-      - op_121
     # Sin op_700 — la despensa siempre se entrega encolada
 
   AGM9022057:
