@@ -99,7 +99,7 @@ def _cargar_interfaz() -> dict:
     opc = mapeos.get("opcionales") or {}
     interfaz: dict = {}
 
-    # op_121 — solo etiqueta (los muebles los filtra reglas.yaml, no interfaz)
+    # op_121 — solo etiqueta (los muebles los filtra opciones_mueble.yaml vía interfaz)
     if "op_121" in opc:
         entradas = opc["op_121"]
         interfaz["op_121"] = {
@@ -158,14 +158,6 @@ def _cargar_interfaz() -> dict:
 
     return interfaz
 
-
-@st.cache_data
-def _cargar_reglas_muebles() -> dict:
-    """Sección `muebles` de reglas.yaml — facultativas/forzadas por mueble."""
-    if not _REGLAS_PATH.exists():
-        return {}
-    with _REGLAS_PATH.open(encoding="utf-8") as f:
-        return (yaml.safe_load(f) or {}).get("muebles", {}) or {}
 
 
 def _ui_gama(d_gama: str) -> str:
@@ -420,30 +412,38 @@ def _check_mueble(
         st.rerun()
 
 
-def _opcionales_aplicables(mueble: dict, interfaz: dict, reglas_muebles: dict) -> list[str]:
-    """Lista de op_ids (en clave de `interfaz`) que aplican al mueble."""
+def _opcionales_aplicables(mueble: dict, interfaz: dict) -> list[str]:
+    """Lista de op_ids (en clave de `interfaz`) que aplican al mueble.
+
+    La fuente de verdad de qué muebles admiten cada opcional es
+    opciones_mueble.yaml, cargado en `interfaz` por _cargar_interfaz().
+    """
     name = (mueble.get("Name") or "").strip()
     if not name:
         return []
-    facultativas = set(reglas_muebles.get(name, {}).get("facultativas", []) or [])
     aplicables: list[str] = []
 
-    if "op_121" in facultativas:
+    # op_121 aplica a todos los muebles (el control se muestra/oculta en función
+    # del tirador, no del mueble — esa lógica está en _renderizar_opcionales).
+    if "op_121" in interfaz:
         aplicables.append("op_121")
-    if "op_207" in facultativas and name in (
-        interfaz.get("op_207_opcional", {}).get("muebles") or {}
-    ):
+
+    # op_207 — solo muebles del dict {mueble: codigo_sg} (BE2B y BEBTS)
+    if name in (interfaz.get("op_207_opcional", {}).get("muebles") or {}):
         aplicables.append("op_207_opcional")
+
+    # op_220, op_222, op_223, op_227 — lista plana de muebles por opción
     for op_id in ("op_220", "op_222", "op_223", "op_227"):
-        clave_facult = op_id
-        if clave_facult in facultativas and name in (
-            interfaz.get(op_id, {}).get("muebles") or []
-        ):
+        if name in (interfaz.get(op_id, {}).get("muebles") or []):
             aplicables.append(op_id)
-    if "op_700" in facultativas and name not in (
+
+    # op_700 — aplica a todos salvo los excluidos
+    if "op_700_opcional" in interfaz and name not in (
         interfaz.get("op_700_opcional", {}).get("excluidos") or []
     ):
         aplicables.append("op_700_opcional")
+
+    # op_126 — lista plana de muebles (BFT y AFS)
     if name in (interfaz.get("op_126", {}).get("muebles") or []):
         aplicables.append("op_126")
 
@@ -603,7 +603,6 @@ def paso_1(muebles: list[dict]) -> None:
     """Paso 1 — Cards plegables, una por mueble, en orden del CSV."""
     catalogo = _cargar_catalogo()
     interfaz = _cargar_interfaz()
-    reglas_muebles = _cargar_reglas_muebles()
     selecciones = st.session_state.selecciones_paso_1
     abiertos = st.session_state.setdefault("paso_1_abiertos", set())
 
@@ -611,7 +610,7 @@ def paso_1(muebles: list[dict]) -> None:
     # cabecera (los contadores deben verlos ya inicializados).
     for mueble in muebles:
         clave = _identificador_mueble(mueble)
-        aplicables = _opcionales_aplicables(mueble, interfaz, reglas_muebles)
+        aplicables = _opcionales_aplicables(mueble, interfaz)
         estado = selecciones.setdefault(clave, {})
         estado.setdefault("opcionales", {})
         if "check" not in estado:
@@ -634,7 +633,7 @@ def paso_1(muebles: list[dict]) -> None:
     if a_mostrar:
         for mueble in a_mostrar:
             clave = _identificador_mueble(mueble)
-            aplicables = _opcionales_aplicables(mueble, interfaz, reglas_muebles)
+            aplicables = _opcionales_aplicables(mueble, interfaz)
             estado = selecciones[clave]
             revisado = bool(estado["check"])
             expanded = clave in abiertos

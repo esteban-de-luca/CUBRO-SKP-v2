@@ -1,31 +1,104 @@
 # =============================================================================
 # data/reglas.yaml
-# Reglas de negocio — Módulo C — Mapeo y cálculo
+# Reglas de negocio entre opciones — CUBRO × Schmidt Groupe
 # SOLO LECTURA — no modificar sin actualizar también la documentación en Notion
 #
 # Estructura:
-#   reglas_condicionales: lógica de negocio que depende de condiciones
+#   modulo_b: reglas de comportamiento de la interfaz UI
+#   modulo_c: reglas de cálculo y mapeo a códigos SG
 #
-# Lógica de ejecución del Módulo C:
-#   1. Primero reglas_condicionales → determinan qué opciones calcular
-#   2. Después mapeos_SKP_UI_SG.yaml → convierten los valores a códigos SG
-#
-# Las opcionales (facultativas) disponibles por mueble están en opciones_mueble.yaml.
+# Referencias cruzadas:
+#   - Opciones disponibles por mueble → opciones_mueble.yaml
+#   - Mapeos SKP → UI → SG         → mapeos_SKP_UI_SG.yaml
 #
 # Pendientes:
-#   - op_300: Confirmar qué son Q2H y Q3H
 #   - op_231: Formato de entrega del valor final a SG pendiente IT SG
 # =============================================================================
 
 
 # =============================================================================
-# REGLAS CONDICIONALES
+# MÓDULO B — Interfaz UI
+# Reglas expresadas en términos de valores del CSV (campo Tirador) y
+# etiquetas UI. Nunca contienen códigos SG.
 # =============================================================================
 
-reglas_condicionales:
+modulo_b:
+
+  # ---------------------------------------------------------------------------
+  # op_121 — Mecanizado de frente (Sin mecanizado / SPF)
+  # ---------------------------------------------------------------------------
+  op_121:
+
+    # Visibilidad del control en la UI
+    # La opción "Sin mecanizado" solo se muestra cuando el tirador es de superficie.
+    visible_con_tiradores:
+      - "4"   # Curve
+      - "5"   # Line
+      - "7"   # Plantea
+    oculto_con_tiradores:
+      - "2"   # Round
+      - "3"   # Square
+      - "20"  # Touch Latch
+      - "21"  # Prise de main
+
+    # Forzado automático: se marca como seleccionada sin intervención del usuario
+    forzado_siempre:
+      - "7"   # Plantea — en cualquier mueble
+
+    forzado_en_monoporte:          # solo si el mueble está en la lista siguiente
+      tiradores:
+        - "4"   # Curve
+        - "5"   # Line
+      muebles:
+        - "AQC31P4520057"
+        - "AQC31P6020057"
+        - "AQC31P4522057"
+        - "AQC31P6022057"
+        - "AVA1P4520035"
+        - "AVA1P6020035"
+        - "AVA1P9020035"
+        - "AVA1P4520057"
+        - "AVA1P6020057"
+        - "AVA1P4522035"
+        - "AVA1P6022035"
+        - "AVA1P9022035"
+        - "AVA1P4522057"
+        - "AVA1P6022057"
+        - "A2I1P6020057"
+        - "A2I1P6022057"
+
+  # ---------------------------------------------------------------------------
+  # op_301 — Color del tirador
+  # La fuente del valor depende del tipo de tirador que llega del CSV.
+  # ---------------------------------------------------------------------------
+  op_301:
+    fuente_por_tipo_tirador:
+      integrado:                   # Round (2) o Square (3)
+        campo_csv: "Trasera"
+        nota: >
+          Si Trasera = "Laca", el valor a mapear es el nombre del frente
+          sin sufijo (ej. "Crema"), no la palabra "Laca".
+      superficie:                  # Curve (4), Line (5) o Plantea (7)
+        campo_csv: "Color tir. de superficie"
+      sin_tirador:                 # Touch Latch (20) o Prise de main (21)
+        valor: null                # no se muestra ni se envía
+
+
+# =============================================================================
+# MÓDULO C — Mapeo y cálculo
+# Reglas expresadas en códigos SG. Se aplican después de que el Módulo B
+# haya traducido los valores del CSV a etiquetas UI.
+#
+# Lógica de ejecución:
+#   1. Primero estas reglas → determinan qué opciones calcular y con qué valor
+#   2. Después mapeos_SKP_UI_SG.yaml → convierten los valores a códigos SG
+# =============================================================================
+
+modulo_c:
 
   # ---------------------------------------------------------------------------
   # op_121 — Mecanizado de frente (SPF)
+  # Lista de muebles afectados: ver modulo_b.op_121.forzado_en_monoporte.muebles
   # ---------------------------------------------------------------------------
   op_121:
     tiradores_sin_spf:
@@ -35,26 +108,45 @@ reglas_condicionales:
       - "21"  # Prise de main
     tirador_spf_siempre:
       - "7"   # Plantea
-    muebles_spf_forzado_line_curve:
-      - "AQC31P4520057"
-      - "AQC31P6020057"
-      - "AQC31P4522057"
-      - "AQC31P6022057"
-      - "AVA1P4520035"
-      - "AVA1P6020035"
-      - "AVA1P9020035"
-      - "AVA1P4520057"
-      - "AVA1P6020057"
-      - "AVA1P4522035"
-      - "AVA1P6022035"
-      - "AVA1P9022035"
-      - "AVA1P4522057"
-      - "AVA1P6022057"
-      - "A2I1P6020057"
-      - "A2I1P6022057"
     tiradores_spf_forzado_monoporte:
       - "4"   # Curve
       - "5"   # Line
+
+  # ---------------------------------------------------------------------------
+  # op_103 — Sentido de la veta
+  # ---------------------------------------------------------------------------
+  op_103:
+    gamas_con_veta:
+      - "WOD"
+    colores_con_veta:
+      - "Metal LAMINADO"
+
+  # ---------------------------------------------------------------------------
+  # op_104 — Acabado canto del frente
+  # El código SG depende de la gama del frente (op_100).
+  # ---------------------------------------------------------------------------
+  op_104:
+    por_gama:
+      "LAC": null   # copia el código de op_101 del mismo mueble
+      "WOD": ""     # vacío, no se envía
+      "LNO": "HAK"  # fijo
+      "LMI": ""     # vacío, no se envía
+
+  # ---------------------------------------------------------------------------
+  # op_204 — Acabado canto mueble
+  # Siempre copia el código de op_200 del mismo mueble.
+  # ---------------------------------------------------------------------------
+  op_204:
+    valor: copia_op_200
+
+  # ---------------------------------------------------------------------------
+  # op_300 — Tipo de tirador
+  # Curve y Line tienen dos códigos SG según el tipo de movimiento del mueble.
+  # ---------------------------------------------------------------------------
+  op_300:
+    sufijo_por_movimiento:
+      batiente: "H"      # puerta batiente → Q2H (Curve) o Q3H (Line)
+      no_batiente: "C"   # cajón, extraíble, coulissant, lift → Q2C (Curve) o Q3C (Line)
 
   # ---------------------------------------------------------------------------
   # op_301 — Color del tirador
@@ -70,23 +162,13 @@ reglas_condicionales:
       - "Q3H"
       - "Q1C"
     sin_tirador:
-      - "499"
+      - "499"   # vacío, no se envía
 
   # ---------------------------------------------------------------------------
-  # op_103 — Sentido de la veta
+  # op_231 — Reducción de ancho
+  # El valor numérico de la reducción se envía en p_param1.
   # ---------------------------------------------------------------------------
-  op_103:
-    gamas_con_veta:
-      - "WOD"
-    colores_con_veta:
-      - "Metal LAMINADO"
-
-  # ---------------------------------------------------------------------------
-  # op_104 — Acabado canto del frente
-  # ---------------------------------------------------------------------------
-  op_104:
-    por_gama:
-      "LAC": null   # mismo código que op_101
-      "WOD": ""
-      "LNO": "HAK"
-      "LMI": ""
+  op_231:
+    campo_valor: "p_param1"
+    reduccion_maxima_mm: 299    # con respecto al ancho original
+    ancho_minimo_resultante_mm: 300
