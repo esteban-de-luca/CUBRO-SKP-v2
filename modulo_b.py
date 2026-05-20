@@ -678,7 +678,12 @@ def paso_1(muebles: list[dict]) -> None:
     catalogo = _cargar_catalogo()
     interfaz = _cargar_interfaz()
     selecciones = st.session_state.selecciones_paso_1
-    abiertos = st.session_state.setdefault("paso_1_abiertos", set())
+    # Expandidos por defecto: inicializar con todas las claves si aún no existe.
+    if "paso_1_abiertos" not in st.session_state:
+        st.session_state["paso_1_abiertos"] = {
+            _identificador_mueble(m) for m in muebles
+        }
+    abiertos = st.session_state["paso_1_abiertos"]
 
     # Inicializa estado y pre-check para todos los muebles antes de pintar la
     # cabecera (los contadores deben verlos ya inicializados).
@@ -929,53 +934,38 @@ def _render_card_resumen(entrada: dict, catalogo: dict) -> None:
     color_interior = (entrada.get("Color interior") or "").strip()
 
     with st.container(border=True):
-        if img_path:
-            col_img, col_content = st.columns([1, 3])
-            with col_img:
+        st.markdown(titulo)
+
+        col_img, col_config, col_dims = st.columns([1, 2, 2])
+
+        with col_img:
+            if img_path:
                 st.image(str(img_path), width=229)
-                _render_swatches_color(color_frente, color_interior)
-            content_ctx = col_content
-        else:
-            content_ctx = st.container()
+            _render_swatches_color(color_frente, color_interior)
 
-        with content_ctx:
-            st.markdown(titulo)
-
+        with col_config:
             config = _bloque_configuracion_c(entrada)
             if config:
                 st.markdown("**Configuración**")
-                st.caption("Origen: CSV exportado desde SketchUp")
                 _render_lista_items(config)
-                if not img_path:
-                    # Sin imagen de mueble: swatches aparecen aquí como fallback
-                    _render_swatches_color(color_frente, color_interior)
 
+        with col_dims:
             dims = _bloque_dimensiones_c(entrada, catalogo)
             if dims:
                 st.markdown("**Dimensiones**")
-                st.caption("Origen: catálogo de muebles")
                 _render_lista_items(dims)
 
-            opc_adic = entrada.get("opciones_adicionales") or []
-            if opc_adic:
-                st.markdown("**Opciones adicionales**")
-                for entry_adic in opc_adic:
-                    marcador = " ⚙" if entry_adic.get("origen") == "automatico" else ""
-                    st.markdown(
-                        f"- **{entry_adic.get('etiqueta', '')}:** "
-                        f"{entry_adic.get('valor', '')}{marcador}"
-                    )
-                if any(e.get("origen") == "automatico" for e in opc_adic):
-                    st.caption("⚙ Forzado automáticamente por reglas")
-
-            if MOSTRAR_DETALLE_TECNICO:
-                with st.expander("Ver detalle técnico"):
-                    codigos = entrada.get("codigos_sg") or {}
-                    if codigos:
-                        for op_id, valor in sorted(codigos.items()):
-                            st.markdown(f"- `{op_id}`: `{valor}`")
-                    else:
-                        st.caption("Sin códigos SG calculados.")
+        opc_adic = entrada.get("opciones_adicionales") or []
+        if opc_adic:
+            st.markdown("**Opciones adicionales**")
+            for entry_adic in opc_adic:
+                marcador = " ⚙" if entry_adic.get("origen") == "automatico" else ""
+                st.markdown(
+                    f"- **{entry_adic.get('etiqueta', '')}:** "
+                    f"{entry_adic.get('valor', '')}{marcador}"
+                )
+            if any(e.get("origen") == "automatico" for e in opc_adic):
+                st.caption("⚙ Forzado automáticamente por reglas")
 
 
 def _nombre_export_base() -> str:
