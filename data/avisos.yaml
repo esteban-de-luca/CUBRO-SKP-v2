@@ -1,0 +1,28 @@
+# =============================================================================
+# data/avisos.yaml
+# Frases estándar de aviso para el usuario — CUBRO × Schmidt Groupe
+# SOLO LECTURA — no modificar sin actualizar también la documentación en Notion
+#
+# Secciones por módulo:
+#   modulo_c: avisos generados durante el mapeo de opciones SG
+# =============================================================================
+
+modulo_c:
+
+  # AV01 — Opción seleccionada no disponible para el mueble.
+  # Se genera cuando el usuario ha marcado una opción que no aplica al mueble
+  # (caso defensivo; el Módulo B debería haberlo filtrado en el Paso 1).
+  AV01: >-
+    La selección de [parámetro] no está disponible para este mueble.
+    El mueble llevará el valor por defecto.
+
+  # AV02 — Mueble con op_700 forzada a DEM (muebles HH*).
+  # Estos muebles siempre se entregan sin encolar para facilitar el montaje
+  # en esquina: el pegado lo hace el instalador en obra.
+  AV02: >-
+    Este mueble siempre se entrega sin encolar para facilitar el montaje.
+
+  # AV03 — SPF forzado (Plantea en cualquier mueble, o Curve/Line en monopuerta alto).
+  # El mecanizado estándar para tirador no es compatible con esta combinación.
+  AV03: >-
+    Este mueble no lleva mecanización para tirador.

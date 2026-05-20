@@ -9,8 +9,7 @@ Interviene en dos momentos del flujo:
 Pantalla 0 (Validación) bloquea el avance si el CSV trae errores duros.
 """
 
-import csv
-import io
+import base64
 import json
 import pathlib
 
@@ -67,8 +66,13 @@ _APERTURA_UI = {
 _ANCHO_REDUCCION_RAW = "10000 mm"
 _RODAPIE_SIN_PATAS_RAW = "0 mm"
 _CATALOGO_PATH = pathlib.Path(__file__).parent / "data" / "catalogo.json"
-_MAPEOS_PATH = pathlib.Path(__file__).parent / "data" / "mapeos.yaml"
+_MAPEOS_SKP_UI_SG_PATH = pathlib.Path(__file__).parent / "data" / "mapeos_SKP_UI_SG.yaml"
+_OPCIONES_MUEBLE_PATH = pathlib.Path(__file__).parent / "data" / "opciones_mueble.yaml"
 _REGLAS_PATH = pathlib.Path(__file__).parent / "data" / "reglas.yaml"
+_IMAGENES_PATH = pathlib.Path(__file__).parent / "data" / "imagenes_mueble.yaml"
+_ASSETS_MUEBLES = pathlib.Path(__file__).parent / "assets" / "muebles"
+_COLORES_PATH = pathlib.Path(__file__).parent / "data" / "colores_mueble.yaml"
+_ASSETS_COLORES = pathlib.Path(__file__).parent / "assets" / "colores"
 
 
 @st.cache_data
@@ -80,21 +84,154 @@ def _cargar_catalogo() -> dict:
 
 
 @st.cache_data
-def _cargar_interfaz() -> dict:
-    """Sección `interfaz` de mapeos.yaml — metadatos UI de las 8 opcionales."""
-    if not _MAPEOS_PATH.exists():
-        return {}
-    with _MAPEOS_PATH.open(encoding="utf-8") as f:
-        return (yaml.safe_load(f) or {}).get("interfaz", {}) or {}
+def _cargar_imagenes() -> list[tuple[str, str]]:
+    """Carga imagenes_mueble.yaml y devuelve lista de (prefijo, filename) ordenada
+    de mayor a menor longitud (longest-prefix-first matching)."""
+    if not _IMAGENES_PATH.exists():
+        return []
+    with _IMAGENES_PATH.open(encoding="utf-8") as f:
+        datos = yaml.safe_load(f) or {}
+    prefijos = datos.get("prefijos") or {}
+    return sorted(prefijos.items(), key=lambda x: len(x[0]), reverse=True)
+
+
+def _imagen_mueble(code: str) -> pathlib.Path | None:
+    """Devuelve la Path al PNG del mueble si existe, o None.
+
+    Usa longest-prefix-first: el primer prefijo (de mayor a menor longitud)
+    que coincida con el inicio del código de mueble determina la imagen.
+    """
+    if not code:
+        return None
+    for prefijo, filename in _cargar_imagenes():
+        if code.startswith(prefijo):
+            ruta = _ASSETS_MUEBLES / filename
+            if ruta.exists():
+                return ruta
+    return None
 
 
 @st.cache_data
-def _cargar_reglas_muebles() -> dict:
-    """Sección `muebles` de reglas.yaml — facultativas/forzadas por mueble."""
-    if not _REGLAS_PATH.exists():
+def _cargar_colores() -> dict:
+    """Carga colores_mueble.yaml. Devuelve {'frente': {...}, 'interior': {...}}."""
+    if not _COLORES_PATH.exists():
         return {}
-    with _REGLAS_PATH.open(encoding="utf-8") as f:
-        return (yaml.safe_load(f) or {}).get("muebles", {}) or {}
+    with _COLORES_PATH.open(encoding="utf-8") as f:
+        return yaml.safe_load(f) or {}
+
+
+def _render_swatches_color(color_frente: str, color_interior: str) -> None:
+    """Muestra swatches de color apilados verticalmente (frente primero, interior debajo).
+
+    Cada fila: imagen cuadrada 36 px a la izquierda + etiqueta a la derecha,
+    renderizado con HTML inline para evitar problemas de columnas anidadas en Streamlit.
+    Se omiten los colores sin imagen disponible.
+    """
+    colores = _cargar_colores()
+    items: list[tuple[str, pathlib.Path]] = []
+
+    fn_frente = (colores.get("frente") or {}).get(color_frente)
+    if fn_frente:
+        p = _ASSETS_COLORES / fn_frente
+        if p.exists():
+            items.append((f"Frente: {color_frente}", p))
+
+    fn_interior = (colores.get("interior") or {}).get(color_interior)
+    if fn_interior:
+        p = _ASSETS_COLORES / fn_interior
+        if p.exists():
+            items.append((f"Interior: {color_interior}", p))
+
+    for etiqueta, path in items:
+        b64 = base64.b64encode(path.read_bytes()).decode()
+        st.markdown(
+            f'<div style="display:flex;align-items:center;gap:8px;margin:4px 0">'
+            f'<img src="data:image/png;base64,{b64}"'
+            f' style="width:36px;height:36px;border-radius:3px;flex-shrink:0"/>'
+            f'<span style="font-size:0.82em">{etiqueta}</span>'
+            f'</div>',
+            unsafe_allow_html=True,
+        )
+
+
+@st.cache_data
+def _cargar_interfaz() -> dict:
+    """Construye el dict de interfaz desde mapeos_SKP_UI_SG.yaml y opciones_mueble.yaml.
+
+    El shape devuelto equivale a la antigua sección interfaz de mapeos.yaml.
+    La fuente de verdad son mapeos_SKP_UI_SG.yaml y opciones_mueble.yaml.
+    cada key es un op_id con etiqueta, muebles/excluidos y subcampos según corresponda.
+    Ningún control ni lógica de UI cambia — solo la fuente de los datos.
+    """
+    if not _MAPEOS_SKP_UI_SG_PATH.exists() or not _OPCIONES_MUEBLE_PATH.exists():
+        return {}
+    with _MAPEOS_SKP_UI_SG_PATH.open(encoding="utf-8") as f:
+        mapeos = yaml.safe_load(f) or {}
+    with _OPCIONES_MUEBLE_PATH.open(encoding="utf-8") as f:
+        op_mueble = yaml.safe_load(f) or {}
+
+    opc = mapeos.get("opcionales") or {}
+    interfaz: dict = {}
+
+    # op_121 — solo etiqueta (los muebles los filtra opciones_mueble.yaml vía interfaz)
+    if "op_121" in opc:
+        entradas = opc["op_121"]
+        interfaz["op_121"] = {
+            "etiqueta": entradas[0].get("ui", "Sin mecanizado para tirador"),
+        }
+
+    # op_207_opcional — muebles como dict {mueble: código_sg} para P60 y P90
+    if "op_207_opcional" in opc:
+        entradas = opc["op_207_opcional"]
+        op207 = op_mueble.get("op_207") or {}
+        muebles_207: dict = {}
+        for codigo_sg, lista in op207.items():
+            if codigo_sg in ("P60", "P90") and isinstance(lista, list):
+                for mueble in lista:
+                    muebles_207[mueble] = codigo_sg
+        interfaz["op_207_opcional"] = {
+            "etiqueta": entradas[0].get("ui", "Cubos de basura"),
+            "muebles": muebles_207,
+        }
+
+    # op_220, op_223, op_227 — etiqueta + lista plana de muebles
+    for op_id in ("op_220", "op_223", "op_227"):
+        if op_id in opc:
+            entradas = opc[op_id]
+            interfaz[op_id] = {
+                "etiqueta": entradas[0].get("ui", op_id),
+                "muebles": op_mueble.get(op_id) or [],
+            }
+
+    # op_222 — dos etiquetas (derecha / izquierda) + lista plana de muebles
+    if "op_222" in opc:
+        entradas = opc["op_222"]
+        interfaz["op_222"] = {
+            "etiqueta_derecha":   entradas[0].get("ui", "Sensor derecha")   if len(entradas) > 0 else "Sensor derecha",
+            "etiqueta_izquierda": entradas[1].get("ui", "Sensor izquierda") if len(entradas) > 1 else "Sensor izquierda",
+            "muebles": op_mueble.get("op_222") or [],
+        }
+
+    # op_700_opcional — etiqueta + excluidos (= excepciones de op_700 en opciones_mueble)
+    if "op_700_opcional" in opc:
+        entradas = opc["op_700_opcional"]
+        op700 = op_mueble.get("op_700") or {}
+        interfaz["op_700_opcional"] = {
+            "etiqueta": entradas[0].get("ui", "Mueble sin encolar"),
+            "excluidos": op700.get("excepciones") or [],
+        }
+
+    # op_126 — etiqueta + subcampos + lista plana de muebles
+    if "op_126" in opc:
+        entrada_126 = opc["op_126"]
+        interfaz["op_126"] = {
+            "etiqueta":  entrada_126.get("ui", "Electrodoméstico"),
+            "subcampos": entrada_126.get("subcampos") or {},
+            "muebles":   op_mueble.get("op_126") or [],
+        }
+
+    return interfaz
+
 
 
 def _ui_gama(d_gama: str) -> str:
@@ -349,30 +486,38 @@ def _check_mueble(
         st.rerun()
 
 
-def _opcionales_aplicables(mueble: dict, interfaz: dict, reglas_muebles: dict) -> list[str]:
-    """Lista de op_ids (en clave de `interfaz`) que aplican al mueble."""
+def _opcionales_aplicables(mueble: dict, interfaz: dict) -> list[str]:
+    """Lista de op_ids (en clave de `interfaz`) que aplican al mueble.
+
+    La fuente de verdad de qué muebles admiten cada opcional es
+    opciones_mueble.yaml, cargado en `interfaz` por _cargar_interfaz().
+    """
     name = (mueble.get("Name") or "").strip()
     if not name:
         return []
-    facultativas = set(reglas_muebles.get(name, {}).get("facultativas", []) or [])
     aplicables: list[str] = []
 
-    if "op_121" in facultativas:
+    # op_121 aplica a todos los muebles (el control se muestra/oculta en función
+    # del tirador, no del mueble — esa lógica está en _renderizar_opcionales).
+    if "op_121" in interfaz:
         aplicables.append("op_121")
-    if "op_207" in facultativas and name in (
-        interfaz.get("op_207_opcional", {}).get("muebles") or {}
-    ):
+
+    # op_207 — solo muebles del dict {mueble: codigo_sg} (BE2B y BEBTS)
+    if name in (interfaz.get("op_207_opcional", {}).get("muebles") or {}):
         aplicables.append("op_207_opcional")
+
+    # op_220, op_222, op_223, op_227 — lista plana de muebles por opción
     for op_id in ("op_220", "op_222", "op_223", "op_227"):
-        clave_facult = op_id
-        if clave_facult in facultativas and name in (
-            interfaz.get(op_id, {}).get("muebles") or []
-        ):
+        if name in (interfaz.get(op_id, {}).get("muebles") or []):
             aplicables.append(op_id)
-    if "op_700" in facultativas and name not in (
+
+    # op_700 — aplica a todos salvo los excluidos
+    if "op_700_opcional" in interfaz and name not in (
         interfaz.get("op_700_opcional", {}).get("excluidos") or []
     ):
         aplicables.append("op_700_opcional")
+
+    # op_126 — lista plana de muebles (BFT y AFS)
     if name in (interfaz.get("op_126", {}).get("muebles") or []):
         aplicables.append("op_126")
 
@@ -431,8 +576,8 @@ def _control_radio_op_222(
         st.rerun()
 
 
-# Subcampos obligatorios de op_126 cuando mapeos.yaml no provee `subcampos`.
-# La fuente de verdad es data/mapeos.yaml; esto es solo fallback defensivo.
+# Subcampos de op_126: fallback defensivo si mapeos_SKP_UI_SG.yaml no los provee.
+# La fuente de verdad es data/mapeos_SKP_UI_SG.yaml (sección opcionales/op_126/subcampos).
 _SUBCAMPOS_OP_126_DEFAULT = {
     "marca": "Marca",
     "referencia": "Referencia",
@@ -532,15 +677,19 @@ def paso_1(muebles: list[dict]) -> None:
     """Paso 1 — Cards plegables, una por mueble, en orden del CSV."""
     catalogo = _cargar_catalogo()
     interfaz = _cargar_interfaz()
-    reglas_muebles = _cargar_reglas_muebles()
     selecciones = st.session_state.selecciones_paso_1
-    abiertos = st.session_state.setdefault("paso_1_abiertos", set())
+    # Expandidos por defecto: inicializar con todas las claves si aún no existe.
+    if "paso_1_abiertos" not in st.session_state:
+        st.session_state["paso_1_abiertos"] = {
+            _identificador_mueble(m) for m in muebles
+        }
+    abiertos = st.session_state["paso_1_abiertos"]
 
     # Inicializa estado y pre-check para todos los muebles antes de pintar la
     # cabecera (los contadores deben verlos ya inicializados).
     for mueble in muebles:
         clave = _identificador_mueble(mueble)
-        aplicables = _opcionales_aplicables(mueble, interfaz, reglas_muebles)
+        aplicables = _opcionales_aplicables(mueble, interfaz)
         estado = selecciones.setdefault(clave, {})
         estado.setdefault("opcionales", {})
         if "check" not in estado:
@@ -563,7 +712,7 @@ def paso_1(muebles: list[dict]) -> None:
     if a_mostrar:
         for mueble in a_mostrar:
             clave = _identificador_mueble(mueble)
-            aplicables = _opcionales_aplicables(mueble, interfaz, reglas_muebles)
+            aplicables = _opcionales_aplicables(mueble, interfaz)
             estado = selecciones[clave]
             revisado = bool(estado["check"])
             expanded = clave in abiertos
@@ -572,21 +721,49 @@ def paso_1(muebles: list[dict]) -> None:
                 _cabecera_card(mueble, catalogo, revisado),
                 expanded=expanded,
             ):
-                _bloque_informativo(mueble)
-
-                if aplicables:
-                    _renderizar_opcionales(clave, aplicables, interfaz, selecciones)
-                    if "op_126" in aplicables:
-                        st.divider()
-                        _control_electrodomestico_op_126(
-                            clave, interfaz.get("op_126", {}),
-                            estado["opcionales"], selecciones,
+                img_path = _imagen_mueble((mueble.get("Name") or "").strip())
+                if img_path:
+                    col_img, col_info = st.columns([1, 3])
+                    with col_img:
+                        st.image(str(img_path), width=229)
+                        _render_swatches_color(
+                            _ui_color_frente(mueble.get("ColorFrente", "")),
+                            _ui_color_interior(mueble.get("Color del interior", "")),
                         )
+                    with col_info:
+                        _bloque_informativo(mueble)
+                        if aplicables:
+                            _renderizar_opcionales(clave, aplicables, interfaz, selecciones)
+                            if "op_126" in aplicables:
+                                st.divider()
+                                _control_electrodomestico_op_126(
+                                    clave, interfaz.get("op_126", {}),
+                                    estado["opcionales"], selecciones,
+                                )
+                        else:
+                            st.caption(
+                                "Este mueble no tiene opciones opcionales aplicables. "
+                                "Pre-marcado como revisado."
+                            )
                 else:
-                    st.caption(
-                        "Este mueble no tiene opciones opcionales aplicables. "
-                        "Pre-marcado como revisado."
+                    _bloque_informativo(mueble)
+                    _render_swatches_color(
+                        _ui_color_frente(mueble.get("ColorFrente", "")),
+                        _ui_color_interior(mueble.get("Color del interior", "")),
                     )
+                    if aplicables:
+                        _renderizar_opcionales(clave, aplicables, interfaz, selecciones)
+                        if "op_126" in aplicables:
+                            st.divider()
+                            _control_electrodomestico_op_126(
+                                clave, interfaz.get("op_126", {}),
+                                estado["opcionales"], selecciones,
+                            )
+                    else:
+                        st.caption(
+                            "Este mueble no tiene opciones opcionales aplicables. "
+                            "Pre-marcado como revisado."
+                        )
 
                 if "op_126" in aplicables and not _op_126_completo(
                     estado["opcionales"].get("op_126")
@@ -625,7 +802,7 @@ def paso_1(muebles: list[dict]) -> None:
 
 
 def _bloque_configuracion(mueble: dict) -> list[tuple[str, str]]:
-    """Pares (etiqueta, valor) del bloque Configuración (origen CSV)."""
+    """Pares (etiqueta, valor) del bloque Configuración — Paso 1 (campos CSV brutos)."""
     items: list[tuple[str, str]] = []
     apertura = _ui_apertura(mueble.get("Apertura", ""))
     if apertura and apertura != "—":
@@ -648,8 +825,32 @@ def _bloque_configuracion(mueble: dict) -> list[tuple[str, str]]:
     return items
 
 
+def _bloque_configuracion_c(entrada: dict) -> list[tuple[str, str]]:
+    """Pares (etiqueta, valor) del bloque Configuración — Paso 2 (campos 23 columnas, ya en UI)."""
+    items: list[tuple[str, str]] = []
+    apertura = (entrada.get("Apertura") or "").strip()
+    if apertura:
+        items.append(("Apertura", apertura))
+    gama  = (entrada.get("Gama del frente")   or "").strip()
+    color = (entrada.get("Acabado del frente") or "").strip()
+    gama_color = " ".join(p for p in (gama, color) if p)
+    if gama_color:
+        items.append(("Gama y color frente", gama_color))
+    color_int = (entrada.get("Color interior") or "").strip()
+    if color_int:
+        items.append(("Color interior", color_int))
+    tirador = (entrada.get("Tirador") or "").strip()
+    if tirador:
+        col_t = (entrada.get("Color tirador") or "").strip()
+        items.append(("Tirador", " ".join(p for p in (tirador, col_t) if p)))
+    rodapie = (entrada.get("Rodapié") or "").strip()
+    if rodapie:
+        items.append(("Rodapié", rodapie))
+    return items
+
+
 def _bloque_dimensiones(mueble: dict, catalogo: dict) -> list[tuple[str, str]]:
-    """Pares (etiqueta, valor) del bloque Dimensiones (origen catálogo)."""
+    """Pares (etiqueta, valor) del bloque Dimensiones — Paso 1 (campos CSV brutos)."""
     items: list[tuple[str, str]] = []
     name = (mueble.get("Name") or "").strip()
     entry = catalogo.get(name) or {}
@@ -677,98 +878,134 @@ def _bloque_dimensiones(mueble: dict, catalogo: dict) -> list[tuple[str, str]]:
     return items
 
 
+def _bloque_dimensiones_c(entrada: dict, catalogo: dict) -> list[tuple[str, str]]:
+    """Pares (etiqueta, valor) del bloque Dimensiones — Paso 2 (campos 23 columnas)."""
+    items: list[tuple[str, str]] = []
+    code  = (entrada.get("Código mueble") or "").strip()
+    entry = catalogo.get(code) or {}
+
+    if str(entrada.get("Reducción de ancho", "False")).strip() == "True":
+        ancho_red = (entrada.get("Ancho reducido") or "").strip()
+        items.append(("Ancho", f"Reducción ({ancho_red})"))
+    elif entry.get("ancho_mm"):
+        items.append(("Ancho", f"{entry['ancho_mm']} mm"))
+    elif "ancho_variable" in entry:
+        av = entry["ancho_variable"]
+        items.append(("Ancho", f"variable ({av['min']}–{av['max']} mm)"))
+
+    alto = entry.get("alto_mm")
+    if alto:
+        items.append(("Alto", f"{alto} mm"))
+    elif "alto_variable" in entry:
+        av = entry["alto_variable"]
+        items.append(("Alto", f"variable ({av['min']}–{av['max']} mm)"))
+
+    fondo = entry.get("fondo_mm")
+    if fondo is not None:
+        items.append(("Fondo", f"{fondo} mm"))
+
+    return items
+
+
 def _render_lista_items(items: list[tuple[str, str]]) -> None:
     for etiqueta, valor in items:
         st.markdown(f"- **{etiqueta}:** {valor}")
 
 
-def _render_card_resumen(mueble: dict, catalogo: dict) -> None:
-    """Card-resumen NO plegable de un mueble (CLAUDE.md §7)."""
-    nombre = mueble.get("Name") or mueble.get("Name SKP") or "—"
-    designacion = _designacion(mueble, catalogo)
+def _render_card_resumen(entrada: dict, catalogo: dict) -> None:
+    """Card-resumen NO plegable de un mueble en el Paso 2 (CLAUDE.md §7).
+
+    `entrada` tiene el formato 23 columnas extendido por modulo_c (ya en UI):
+    'Código mueble', 'Gama del frente', 'Tirador'... + 'opciones_adicionales',
+    'codigos_sg', 'p_item', 'avisos_c'.
+    """
+    code      = (entrada.get("Código mueble") or "").strip()
+    cat_entry = catalogo.get(code) or {}
+    nombre    = code or "—"
+    des       = (cat_entry.get("designaciones") or {}).get("es", "")
+
     titulo = f"### {nombre}"
-    if designacion:
-        titulo += f"  ·  {designacion}"
+    if des:
+        titulo += f"  ·  {des}"
+
+    img_path = _imagen_mueble(code)
+
+    color_frente   = (entrada.get("Acabado del frente") or "").strip()
+    color_interior = (entrada.get("Color interior") or "").strip()
 
     with st.container(border=True):
         st.markdown(titulo)
 
-        configuracion = _bloque_configuracion(mueble)
-        if configuracion:
-            st.markdown("**Configuración**")
-            st.caption("Origen: CSV exportado desde SketchUp")
-            _render_lista_items(configuracion)
+        col_img, col_config, col_dims, col_opc = st.columns([1, 2, 1, 2])
 
-        dimensiones = _bloque_dimensiones(mueble, catalogo)
-        if dimensiones:
-            st.markdown("**Dimensiones**")
-            st.caption("Origen: catálogo de muebles")
-            _render_lista_items(dimensiones)
+        with col_img:
+            if img_path:
+                st.image(str(img_path), width=229)
+            _render_swatches_color(color_frente, color_interior)
 
-        opciones_adicionales = mueble.get("opciones_adicionales") or []
-        if opciones_adicionales:
-            st.markdown("**Opciones adicionales**")
-            for entry in opciones_adicionales:
-                marcador = " ⚙" if entry.get("origen") == "automatico" else ""
-                st.markdown(
-                    f"- **{entry.get('etiqueta', '')}:** "
-                    f"{entry.get('valor', '')}{marcador}"
-                )
-            if any(e.get("origen") == "automatico" for e in opciones_adicionales):
-                st.caption("⚙ Forzado automáticamente por reglas")
+        with col_config:
+            config = _bloque_configuracion_c(entrada)
+            if config:
+                st.markdown("**Configuración**")
+                _render_lista_items(config)
 
-        if MOSTRAR_DETALLE_TECNICO:
-            with st.expander("Ver detalle técnico"):
-                codigos = mueble.get("codigos_sg") or {}
-                if codigos:
-                    for op_id, valor in sorted(codigos.items()):
-                        st.markdown(f"- `{op_id}`: `{valor}`")
-                else:
-                    st.caption("Sin códigos SG calculados.")
+        with col_dims:
+            dims = _bloque_dimensiones_c(entrada, catalogo)
+            if dims:
+                st.markdown("**Dimensiones**")
+                _render_lista_items(dims)
+
+        with col_opc:
+            opc_adic = entrada.get("opciones_adicionales") or []
+
+            # Datos del electrodoméstico: modulo_c los pasa al JSON de export
+            # pero no los incluye en opciones_adicionales → los leemos de entrada.
+            marca     = (entrada.get("Marca electro")      or "").strip()
+            referencia = (entrada.get("Referencia electro") or "").strip()
+            altura    = (entrada.get("Altura electro")     or "").strip()
+            tipo      = (entrada.get("Tipo electro")       or "").strip()
+            tiene_electro = bool(marca)
+
+            if opc_adic or tiene_electro:
+                st.markdown("**Opciones adicionales**")
+
+                for entry_adic in opc_adic:
+                    marcador = " ⚙" if entry_adic.get("origen") == "automatico" else ""
+                    st.markdown(
+                        f"- **{entry_adic.get('etiqueta', '')}:** "
+                        f"{entry_adic.get('valor', '')}{marcador}"
+                    )
+                if any(e.get("origen") == "automatico" for e in opc_adic):
+                    st.caption("⚙ Forzado automáticamente por reglas")
+
+                if tiene_electro:
+                    partes = " · ".join(p for p in (marca, referencia, altura, tipo) if p)
+                    st.markdown(f"- **Electrodoméstico:** {partes}")
+
+        # Espaciador para dar margen inferior igual al superior dentro del borde
+        st.markdown('<div style="margin-bottom:8px"></div>', unsafe_allow_html=True)
 
 
-def _csv_de_entrada(entrada: list[dict]) -> bytes:
-    # BOM UTF-8 al inicio para que Excel en Windows abra los acentos correctamente.
-    if not entrada:
-        return b""
-    buf = io.StringIO()
-    writer = csv.DictWriter(buf, fieldnames=list(entrada[0].keys()))
-    writer.writeheader()
-    writer.writerows(entrada)
-    return ("﻿" + buf.getvalue()).encode("utf-8")
-
-
-def _nombre_descarga_entrada() -> str:
+def _nombre_export_base() -> str:
+    """Nombre base para los archivos de exportación (sin extensión)."""
     csv_origen = (st.session_state.get("csv_filename") or "").strip()
     if csv_origen.lower().endswith(".csv"):
         csv_origen = csv_origen[:-4]
-    return (
-        f"entrada_modulo_c_{csv_origen}.csv" if csv_origen
-        else "entrada_modulo_c.csv"
-    )
+    return csv_origen or "pedido_cubro"
 
 
 def paso_2(pedido: list[dict] | None) -> None:
-    """Paso 2 — Revisión final del pedido y export a DealHub."""
+    """Paso 2 — Revisión final del pedido y exportación."""
     catalogo = _cargar_catalogo()
 
     st.header("Paso 2 — Revisión")
 
     if st.button("← Volver al Paso 1"):
         st.session_state.pantalla = PANTALLA_PASO_1
+        # Invalida el export guardado al volver atrás
+        st.session_state.pop("_export_excel", None)
+        st.session_state.pop("_export_json", None)
         st.rerun()
-
-    entrada = st.session_state.get("entrada_modulo_c")
-    if entrada:
-        st.download_button(
-            "Descargar entrada Módulo C (.csv)",
-            data=_csv_de_entrada(entrada),
-            file_name=_nombre_descarga_entrada(),
-            mime="text/csv",
-        )
-        st.caption(
-            "Temporal — para verificar la traducción a las 23 columnas."
-        )
 
     if not pedido:
         st.error("No hay pedido que revisar. Vuelve al Paso 1.")
@@ -776,16 +1013,39 @@ def paso_2(pedido: list[dict] | None) -> None:
 
     st.success(f"Pedido listo: **{len(pedido)} muebles** configurados.")
 
-    for entrada in pedido:
-        _render_card_resumen(entrada, catalogo)
+    for item in pedido:
+        _render_card_resumen(item, catalogo)
 
     st.divider()
-    st.button(
-        "Exportar a DealHub",
-        type="primary",
-        disabled=True,
-        help=(
-            "Export a DealHub pendiente de implementar. El schema del archivo "
-            "de salida se cerrará con el equipo (CLAUDE.md §11)."
-        ),
-    )
+
+    # ── Exportar pedido ───────────────────────────────────────────────────────
+    # Al hacer clic se generan ambos archivos y se muestran los botones de descarga.
+    if st.button("📦 Exportar pedido", type="primary"):
+        import modulo_c as _mc  # importación local para mantener modulo_b autónomo
+        st.session_state["_export_excel"] = _mc.generar_excel_revision(pedido)
+        st.session_state["_export_json"] = json.dumps(
+            _mc.generar_json_pedido(pedido), ensure_ascii=False, indent=2
+        ).encode("utf-8")
+
+    if st.session_state.get("_export_excel"):
+        nombre = _nombre_export_base()
+        col_xlsx, col_json = st.columns(2)
+        with col_xlsx:
+            st.download_button(
+                "⬇ Excel de revisión",
+                data=st.session_state["_export_excel"],
+                file_name=f"{nombre}_revision.xlsx",
+                mime=(
+                    "application/vnd.openxmlformats-officedocument"
+                    ".spreadsheetml.sheet"
+                ),
+                use_container_width=True,
+            )
+        with col_json:
+            st.download_button(
+                "⬇ JSON de pedido",
+                data=st.session_state["_export_json"],
+                file_name=f"{nombre}_pedido.json",
+                mime="application/json",
+                use_container_width=True,
+            )

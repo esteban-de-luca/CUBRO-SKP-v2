@@ -287,11 +287,17 @@ op_206:
 # op_207 — Equipamiento de fregadero / cubos de basura
 # -----------------------------------------------------------------------------
 op_207:
-  - BETOQ908057    # F — forzada (el usuario no escoge nada)
-  - BE2B608057     # P — cubos de basura (user selection)
-  - BE2B908057     # P
-  - BEBTS608057    # P
-  - BEBTS908057    # P
+
+  P42:             # F — forzado (fregadero equipado)
+    - BETOQ908057
+
+  P60:             # P — cubos de basura 60 cm
+    - BE2B608057
+    - BEBTS608057
+
+  P90:             # P — cubos de basura 90 cm
+    - BE2B908057
+    - BEBTS908057
 
 
 # -----------------------------------------------------------------------------
@@ -303,15 +309,46 @@ op_208:
 
 
 # -----------------------------------------------------------------------------
+# op_209 — Equipamiento cajón (muebles sin puerta batiente)
+# -----------------------------------------------------------------------------
+op_209:
+  - BB2T458035    # F
+  - BB2T608035    # F
+  - BB2T908035    # F
+  - BB2T458057    # F
+  - BB2T608057    # F
+  - BB2T908057    # F
+  - B2B458035     # F
+  - B2B608035     # F
+  - B2B908035     # F
+  - B2B458057     # F
+  - B2B608057     # F
+  - B2B908057     # F
+  - BC158057      # F
+  - BC604035      # F
+  - BC604057      # F
+  - BCUB2T458057  # F
+  - BCUB2T608057  # F
+  - BCUB2T908057  # F
+  - BIBTS608057   # F
+  - BIBTS908057   # F
+  - BE2B608057    # F
+  - BE2B908057    # F
+  - BEBTS608057   # F
+  - BEBTS908057   # F
+  - BFT608057     # F
+
+
+# -----------------------------------------------------------------------------
 # op_217 — Sistema de apertura sin tirador físico
-# Un mueble nunca puede llevar TL1 y PS1 a la vez — son excluyentes.
-# El valor viene del campo Tirador del CSV: 20 = TL1, 21 = PS1.
-#   TL1_o_PS1 — el usuario puede escoger cualquiera de los dos
-#   solo_TL1  — PS1 no está disponible para estos muebles
+# TL1 (Touch Latch) y PS1 (Prise de main) NO son intercambiables.
+# Cada mueble solo admite uno de los dos valores — nunca ambos.
+#   solo_TL1 — bajos y columnas (encastrado, push-to-open)
+#   solo_PS1 — muebles de pared y esquineros de pared (hueco en frente)
 # -----------------------------------------------------------------------------
 op_217:
 
-  TL1_o_PS1:
+  solo_TL1:
     - B308035        # P
     - B458035        # P
     - B608035        # P
@@ -324,33 +361,6 @@ op_217:
     - BAV1208057     # P
     - BAV1P908057    # P
     - BAV1P1208057   # P
-    - H1306035       # P
-    - H1456035       # P
-    - H1606035       # P
-    - H1906035       # P
-    - H1308035       # P
-    - H1458035       # P
-    - H1608035       # P
-    - H1908035       # P
-    - H13010035      # P
-    - H14510035      # P
-    - H16010035      # P
-    - H19010035      # P
-    - HAV1906035     # P
-    - HAV1908035     # P
-    - HAV19010035    # P
-    - HAV2906035     # P
-    - HAV2908035     # P
-    - HAV29010035    # P
-    - HLVV57         # P
-    - AQC34520057    # P
-    - AQC36020057    # P
-    - AQC34522057    # P
-    - AQC36022057    # P
-    - AQC31P4520057  # P
-    - AQC31P6020057  # P
-    - AQC31P4522057  # P
-    - AQC31P6022057  # P
     - AVA4520035     # P
     - AVA6020035     # P
     - AVA4520057     # P
@@ -369,21 +379,48 @@ op_217:
     - AVA1P6022057   # P
     - ABA6020057     # P
     - ABA6022057     # P
+    - AQC34520057    # P
+    - AQC36020057    # P
+    - AQC34522057    # P
+    - AQC36022057    # P
+    - AQC31P4520057  # P
+    - AQC31P6020057  # P
+    - AQC31P4522057  # P
+    - AQC31P6022057  # P
     - AFS6020057     # P
     - AFS6022057     # P
-    - AFSMO6020057   # P
-    - AFSMO6022057   # P
     - AFS2B6020057   # P
     - AFS2B6022057   # P
+    - AFSMO6020057   # P
+    - AFSMO6022057   # P
     - AFSMOBT6020057 # P
     - AFSMOBT6022057 # P
-
-  solo_TL1:          # PS1 (Prise de main) no disponible
     - HR45V35        # P
     - HR60V35        # P
     - HR45V57        # P
     - HR60V57        # P
+    - HLVV57         # P
     - HPT60V57       # P
+
+  solo_PS1:
+    - H1306035       # P
+    - H1456035       # P
+    - H1606035       # P
+    - H1906035       # P
+    - H1308035       # P
+    - H1458035       # P
+    - H1608035       # P
+    - H1908035       # P
+    - H13010035      # P
+    - H14510035      # P
+    - H16010035      # P
+    - H19010035      # P
+    - HAV1906035     # P
+    - HAV1908035     # P
+    - HAV19010035    # P
+    - HAV2906035     # P
+    - HAV2908035     # P
+    - HAV29010035    # P
 
 
 # -----------------------------------------------------------------------------
@@ -583,13 +620,29 @@ op_402:
 # op_700 — Mueble sin encolar (DEM)
 # -----------------------------------------------------------------------------
 op_700:
-  todos: P   # Opcional en todos, excepto:
-  excepciones:
-    - HH1606035    # F — forzada (único caso donde DEM es obligatorio)
-    - HH1906035    # F
-    - HH1608035    # F
-    - HH1908035    # F
-    - HH16010035   # F
-    - HH19010035   # F
-    - AGM9020057   # no aplica — único mueble sin DEM en el catálogo
-    - AGM9022057   # no aplica
+  todos: P   # Opcional en todos, excepto los dos grupos siguientes:
+  forzadas:       # F — DEM obligatorio (muebles esquineros en L, van sin encolar)
+    - HH1606035
+    - HH1906035
+    - HH1608035
+    - HH1908035
+    - HH16010035
+    - HH19010035
+  no_aplica:      # no se envía DEM ni como opcional ni como forzado
+    - AGM9020057
+    - AGM9022057
+
+
+# -----------------------------------------------------------------------------
+# op_126 — Referencia del electrodoméstico
+# -----------------------------------------------------------------------------
+op_126:
+  - BFT608057      # P
+  - AFS6020057     # P
+  - AFS6022057     # P
+  - AFSMO6020057   # P
+  - AFSMO6022057   # P
+  - AFS2B6020057   # P
+  - AFS2B6022057   # P
+  - AFSMOBT6020057 # P
+  - AFSMOBT6022057 # P
