@@ -297,13 +297,49 @@ opcionales:
     - { ui: Mueble sin encolar, sg: DEM }
 
   op_126:
-    ui: Electrodoméstico
-    sg: ""   # sin código SG único — los datos se pasan tal cual al export
+    ui: Electrodoméstico                 # BFT, AFS, AFSMO, AFS2B, AFSMOBT
+    sg: ""
     subcampos:
       marca:      Marca
       referencia: Referencia
       altura:     Altura
       tipo:       Tipo
+
+  op_126_placa:                          # añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026
+    ui: Referencia placa                 # BCUB2T — añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026
+    sg: ""                               # añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026
+    subcampos:                           # añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026
+      marca:      Marca                  # añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026
+      referencia: Referencia             # añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026
+
+  op_126_placa_aspirante:                # añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026
+    ui: Referencia placa aspirante       # BIBTS — añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026
+    sg: ""                               # añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026
+    subcampos:                           # añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026
+      marca:      Marca                  # añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026
+      referencia: Referencia             # añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026
+
+  op_126_frigorifico:                    # añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026
+    ui: Referencia frigorífico           # A2I — añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026
+    sg: ""                               # añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026
+    subcampos:                           # añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026
+      marca:      Marca                  # añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026
+      referencia: Referencia             # añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026
+      altura:     Altura                 # añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026
+
+  op_126_lvv_lvd:                        # añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026
+    ui: Referencia LVV/LVD               # POBIF, PO1BIF, PO2BIF — añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026
+    sg: ""                               # añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026
+    subcampos:                           # añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026
+      marca:      Marca                  # añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026
+      referencia: Referencia             # añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026
+
+  op_126_lvd:                            # añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026
+    ui: Referencia LVD                   # FHABS — añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026
+    sg: ""                               # añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026
+    subcampos:                           # añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026
+      marca:      Marca                  # añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026
+      referencia: Referencia             # añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026
 
 
 # =============================================================================
