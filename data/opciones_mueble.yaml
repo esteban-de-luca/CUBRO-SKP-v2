@@ -674,3 +674,58 @@ op_126:
   - HH1908035      # P — referencia campana — añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026
   - HH16010035     # P — referencia campana — añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026
   - HH19010035     # P — referencia campana — añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026
+
+
+# -----------------------------------------------------------------------------
+# variantes_op_126 — Muebles agrupados por variante de op_126
+# Cada variante tiene subcampos distintos en mapeos_SKP_UI_SG.yaml.
+# Fuente de verdad para modulo_b: determina qué meta (etiqueta, subcampos) aplica a cada mueble.
+# Añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026.
+# -----------------------------------------------------------------------------
+variantes_op_126:
+
+  op_126:                 # horno / micro / columnas AFS — añadido 21/05/2026
+    - BFT608057
+    - AFS6020057
+    - AFS6022057
+    - AFSMO6020057
+    - AFSMO6022057
+    - AFS2B6020057
+    - AFS2B6022057
+    - AFSMOBT6020057
+    - AFSMOBT6022057
+
+  op_126_placa:           # placa vitrocerámica BCUB2T — añadido 21/05/2026
+    - BCUB2T458057
+    - BCUB2T608057
+    - BCUB2T908057
+
+  op_126_placa_aspirante: # placa aspirante BIBTS — añadido 21/05/2026
+    - BIBTS608057
+    - BIBTS908057
+
+  op_126_frigorifico:     # frigorífico integrable A2I — añadido 21/05/2026
+    - A2I6020057
+    - A2I6022057
+    - A2I7522057
+    - A2I1P6020057
+    - A2I1P6022057
+
+  op_126_lvv_lvd:         # lavavajillas/lavadora integrable (frente completo) — añadido 21/05/2026
+    - POBIF4580
+    - POBIF6080
+    - PO1BIF4580
+    - PO1BIF6080
+    - PO2BIF4580
+    - PO2BIF6080
+
+  op_126_lvd:             # lavavajillas/lavadora no integrable (frente parcial) — añadido 21/05/2026
+    - FHABS6580
+
+  op_126_campana:         # campana integrada HH — añadido 21/05/2026
+    - HH1606035
+    - HH1906035
+    - HH1608035
+    - HH1908035
+    - HH16010035
+    - HH19010035

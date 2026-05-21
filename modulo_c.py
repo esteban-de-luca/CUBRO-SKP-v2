@@ -286,16 +286,22 @@ def _calcular_opciones_mueble(
         if es_forzado:
             avisos.append("AV03")
 
-    # ── op_207 — Equipamiento fregadero / cubos de basura ────────────────────
+    # ── op_207 — Equipamiento fregadero / cubos de basura / despensa ─────────
     datos_207 = op_mueble.get("op_207") or {}
     if code in (datos_207.get("P42") or []):
         # Forzado: fregadero equipado (BETOQ908057)
         _sg("op_207", "P42", origen="automatico", etiqueta="Equipamiento fregadero")
-    elif _es_true(fila.get("Cubos de basura")):
-        if code in (datos_207.get("P60") or []):
-            _sg("op_207", "P60", origen="usuario", etiqueta="Cubos de basura")
-        elif code in (datos_207.get("P90") or []):
-            _sg("op_207", "P90", origen="usuario", etiqueta="Cubos de basura")
+    else:
+        val_207 = (fila.get("Cubos de basura") or "").strip()
+        if val_207 in ("GM1", "GM2"):
+            # Despensa AGM: el usuario seleccionó tipo de almacenamiento
+            if code in (datos_207.get(val_207) or []):
+                _sg("op_207", val_207, origen="usuario", etiqueta="Tipo de almacenamiento")
+        elif _es_true(val_207):
+            if code in (datos_207.get("P60") or []):
+                _sg("op_207", "P60", origen="usuario", etiqueta="Cubos de basura")
+            elif code in (datos_207.get("P90") or []):
+                _sg("op_207", "P90", origen="usuario", etiqueta="Cubos de basura")
 
     # ── op_208 — Equipamiento esquinero Lemans (F) ───────────────────────────
     if code in (op_mueble.get("op_208") or []):

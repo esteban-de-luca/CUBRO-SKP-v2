@@ -48,7 +48,7 @@ _TOOLTIPS_OPCIONALES = {
     "op_223": "TODO: explicar la utilidad del cajón interior y a qué muebles aplica.",
     "op_227": "TODO: explicar la opción 'Mueble de caldera' y sus implicaciones constructivas.",
     "op_700_opcional": "TODO: explicar 'Mueble sin encolar' (DEM) y los muebles excluidos.",
-    "op_126": "Marca y Tipo son siempre obligatorios. Referencia y Altura son intercambiables: al menos una de las dos debe estar rellena.",
+    "op_126": "Rellena los datos del electrodoméstico. Los campos mostrados son obligatorios.",
 }
 
 _TIRADORES_SIN_COLOR = {"Touch Latch", "Prise de main"}
@@ -156,12 +156,11 @@ def _render_swatches_color(color_frente: str, color_interior: str) -> None:
 
 @st.cache_data
 def _cargar_interfaz() -> dict:
-    """Construye el dict de interfaz desde mapeos_SKP_UI_SG.yaml y opciones_mueble.yaml.
+    """Construye el dict de interfaz desde mapeos_SKP_UI_SG.yaml, opciones_mueble.yaml y reglas.yaml.
 
-    El shape devuelto equivale a la antigua sección interfaz de mapeos.yaml.
-    La fuente de verdad son mapeos_SKP_UI_SG.yaml y opciones_mueble.yaml.
-    cada key es un op_id con etiqueta, muebles/excluidos y subcampos según corresponda.
-    Ningún control ni lógica de UI cambia — solo la fuente de los datos.
+    La fuente de verdad son los tres YAMLs anteriores. Ningún control ni lógica
+    de UI cambia — solo la fuente de los datos.
+    Cada key es un op_id con etiqueta, muebles/excluidos y subcampos según corresponda.
     """
     if not _MAPEOS_SKP_UI_SG_PATH.exists() or not _OPCIONES_MUEBLE_PATH.exists():
         return {}
@@ -169,6 +168,11 @@ def _cargar_interfaz() -> dict:
         mapeos = yaml.safe_load(f) or {}
     with _OPCIONES_MUEBLE_PATH.open(encoding="utf-8") as f:
         op_mueble = yaml.safe_load(f) or {}
+    reglas: dict = {}
+    if _REGLAS_PATH.exists():
+        with _REGLAS_PATH.open(encoding="utf-8") as f:
+            reglas = yaml.safe_load(f) or {}
+    reglas_b = (reglas.get("modulo_b") or {})
 
     opc = mapeos.get("opcionales") or {}
     interfaz: dict = {}
@@ -180,18 +184,42 @@ def _cargar_interfaz() -> dict:
             "etiqueta": entradas[0].get("ui", "Sin mecanizado para tirador"),
         }
 
-    # op_207_opcional — muebles como dict {mueble: código_sg} para P60 y P90
+    # op_207_opcional — checkbox (P60/P90) para fregadero · radio (GM1/GM2) para despensa
     if "op_207_opcional" in opc:
-        entradas = opc["op_207_opcional"]
+        entradas_207 = opc["op_207_opcional"]
         op207 = op_mueble.get("op_207") or {}
-        muebles_207: dict = {}
+        reglas_207 = reglas_b.get("op_207") or {}
+
+        # muebles_checkbox: {mueble: codigo_sg} para P60/P90
+        muebles_checkbox: dict = {}
         for codigo_sg, lista in op207.items():
             if codigo_sg in ("P60", "P90") and isinstance(lista, list):
                 for mueble in lista:
-                    muebles_207[mueble] = codigo_sg
+                    muebles_checkbox[mueble] = codigo_sg
+
+        # muebles_seleccion: {mueble: [codigo_sg, ...]} para GM1/GM2
+        muebles_seleccion: dict = {}
+        for codigo_sg, lista in op207.items():
+            if codigo_sg in ("GM1", "GM2") and isinstance(lista, list):
+                for mueble in lista:
+                    muebles_seleccion.setdefault(mueble, [])
+                    if codigo_sg not in muebles_seleccion[mueble]:
+                        muebles_seleccion[mueble].append(codigo_sg)
+
+        etiqueta_por_sg: dict = {
+            e.get("sg", ""): e.get("ui", "")
+            for e in entradas_207
+            if e.get("sg")
+        }
+        etiquetas_ui = reglas_207.get("etiqueta_ui_por_mueble") or {}
+
         interfaz["op_207_opcional"] = {
-            "etiqueta": entradas[0].get("ui", "Cubos de basura"),
-            "muebles": muebles_207,
+            "etiqueta_fregadero": etiquetas_ui.get("fregadero", "Cubos de basura"),
+            "etiqueta_despensa":  etiquetas_ui.get("despensa", "Tipo de almacenamiento"),
+            "muebles_checkbox":   muebles_checkbox,
+            "muebles_seleccion":  muebles_seleccion,
+            "etiqueta_por_sg":    etiqueta_por_sg,
+            "obligatoria_en":     reglas_207.get("obligatoria_en") or [],
         }
 
     # op_220, op_223, op_227 — etiqueta + lista plana de muebles
@@ -221,13 +249,27 @@ def _cargar_interfaz() -> dict:
             "excluidos": op700.get("excepciones") or [],
         }
 
-    # op_126 — etiqueta + subcampos + lista plana de muebles
-    if "op_126" in opc:
-        entrada_126 = opc["op_126"]
+    # op_126 — variante por mueble (base, placa, placa aspirante, frigorífico, LVV/LVD, campana…)
+    # variantes_op_126 en opciones_mueble.yaml mapea variante_key → lista de muebles.
+    # Los subcampos y etiquetas de cada variante vienen de mapeos_SKP_UI_SG.yaml.
+    variantes_op_126 = op_mueble.get("variantes_op_126") or {}
+    if variantes_op_126 or any(k.startswith("op_126") for k in opc):
+        mueble_a_variante: dict = {}
+        variantes_meta: dict = {}
+
+        for variante_key, lista_muebles in variantes_op_126.items():
+            meta_opc = opc.get(variante_key) or {}
+            variantes_meta[variante_key] = {
+                "etiqueta":  meta_opc.get("ui", "Electrodoméstico"),
+                "subcampos": meta_opc.get("subcampos") or {},
+            }
+            for mueble in (lista_muebles or []):
+                mueble_a_variante[mueble] = variante_key
+
         interfaz["op_126"] = {
-            "etiqueta":  entrada_126.get("ui", "Electrodoméstico"),
-            "subcampos": entrada_126.get("subcampos") or {},
-            "muebles":   op_mueble.get("op_126") or [],
+            "mueble_a_variante": mueble_a_variante,
+            "variantes_meta":    variantes_meta,
+            "muebles":           list(mueble_a_variante.keys()),
         }
 
     return interfaz
@@ -313,6 +355,17 @@ def _identificador_mueble(mueble: dict) -> str:
 # los muebles aunque la opcional no aplique (en ese caso "False" / "").
 # ----------------------------------------------------------------------------
 
+def _export_op_207(valor) -> str:
+    """Exporta el valor de op_207_opcional al contrato con el Módulo C.
+
+    Muebles de fregadero (P60/P90): booleano → "True" / "False".
+    Muebles de despensa AGM (GM1/GM2): el código SG directamente.
+    """
+    if isinstance(valor, str) and valor in ("GM1", "GM2"):
+        return valor
+    return _bool_str(valor)
+
+
 def _normalizar_vacio(valor: str) -> str:
     # Los helpers _ui_* usan "—" como placeholder visual; el contrato con C
     # exige cadena vacía cuando el campo no aplica.
@@ -374,7 +427,7 @@ def construir_entrada_modulo_c(
             "Reducción de ancho": _bool_str(reduccion),
             "Ancho reducido": ancho_reducido,
             "Sin mecanizado": _bool_str(opcionales.get("op_121", False)),
-            "Cubos de basura": _bool_str(opcionales.get("op_207_opcional", False)),
+            "Cubos de basura": _export_op_207(opcionales.get("op_207_opcional", False)),
             "Recorte LED": _bool_str(opcionales.get("op_220", False)),
             "Sensor para mando LED": _sensor_led_export(opcionales.get("op_222")),
             "Cajón interior": _bool_str(opcionales.get("op_223", False)),
@@ -502,8 +555,10 @@ def _opcionales_aplicables(mueble: dict, interfaz: dict) -> list[str]:
     if "op_121" in interfaz:
         aplicables.append("op_121")
 
-    # op_207 — solo muebles del dict {mueble: codigo_sg} (BE2B y BEBTS)
-    if name in (interfaz.get("op_207_opcional", {}).get("muebles") or {}):
+    # op_207 — checkbox para fregadero (P60/P90) o radio para despensa (GM1/GM2)
+    meta_207 = interfaz.get("op_207_opcional") or {}
+    if (name in (meta_207.get("muebles_checkbox") or {})) or \
+       (name in (meta_207.get("muebles_seleccion") or {})):
         aplicables.append("op_207_opcional")
 
     # op_220, op_222, op_223, op_227 — lista plana de muebles por opción
@@ -586,18 +641,115 @@ _SUBCAMPOS_OP_126_DEFAULT = {
 }
 
 
-def _op_126_completo(valor) -> bool:
-    # Regla validada con Lucia (2026-05-11): Marca y Tipo siempre obligatorios;
-    # Referencia y Altura son intercambiables (al menos una de las dos).
+def _op_126_completo(valor, subcampos: dict | None = None) -> bool:
+    """Valida que el bloque op_126 esté completo según los subcampos de la variante.
+
+    Regla base (variante con marca+referencia+altura+tipo):
+        Marca y Tipo obligatorios; Referencia y Altura intercambiables (al menos una).
+    Para variantes sin Tipo (placa, campana, LVV/LVD…): Tipo no requerido.
+    Para variantes sin Altura (placa, campana, LVV/LVD…): solo Referencia requerida.
+    """
     if not isinstance(valor, dict):
         return False
+    if subcampos is None:
+        subcampos = _SUBCAMPOS_OP_126_DEFAULT
+
     marca = str(valor.get("marca", "")).strip()
-    tipo = str(valor.get("tipo", "")).strip()
-    if not marca or not tipo:
+    if not marca:
         return False
-    referencia = str(valor.get("referencia", "")).strip()
-    altura = str(valor.get("altura", "")).strip()
-    return bool(referencia or altura)
+
+    if "tipo" in subcampos:
+        if not str(valor.get("tipo", "")).strip():
+            return False
+
+    tiene_ref = "referencia" in subcampos
+    tiene_alt = "altura" in subcampos
+    if tiene_ref and tiene_alt:
+        if not (str(valor.get("referencia", "")).strip() or str(valor.get("altura", "")).strip()):
+            return False
+    elif tiene_ref:
+        if not str(valor.get("referencia", "")).strip():
+            return False
+    elif tiene_alt:
+        if not str(valor.get("altura", "")).strip():
+            return False
+
+    return True
+
+
+def _meta_op_126(name: str, interfaz: dict) -> dict:
+    """Devuelve {etiqueta, subcampos} para el mueble según su variante de op_126."""
+    op126 = interfaz.get("op_126") or {}
+    variante_key = (op126.get("mueble_a_variante") or {}).get(name)
+    if variante_key:
+        meta = (op126.get("variantes_meta") or {}).get(variante_key)
+        if meta:
+            return meta
+    # Fallback: variante base si existe
+    return (op126.get("variantes_meta") or {}).get("op_126") or {}
+
+
+def _control_checkbox_op_207(
+    clave: str, meta: dict, opcionales: dict, selecciones: dict
+) -> None:
+    """Checkbox de op_207 para muebles de fregadero (BE2B, BEBTS — P60/P90)."""
+    etiqueta = meta.get("etiqueta_fregadero", "Cubos de basura")
+    prev = bool(opcionales.get("op_207_opcional", False))
+    nuevo = st.checkbox(
+        etiqueta,
+        value=prev,
+        key=f"op_207_opcional_{clave}",
+        help=_TOOLTIPS_OPCIONALES.get("op_207_opcional"),
+    )
+    if nuevo != prev:
+        opcionales["op_207_opcional"] = nuevo
+        _registrar_edicion(clave, selecciones)
+        st.rerun()
+
+
+def _control_radio_op_207_seleccion(
+    clave: str, name: str, meta: dict, opcionales: dict, selecciones: dict
+) -> None:
+    """Radio de op_207 para muebles de despensa AGM (GM1/GM2). Siempre tiene valor seleccionado."""
+    muebles_seleccion = meta.get("muebles_seleccion") or {}
+    etiqueta_por_sg   = meta.get("etiqueta_por_sg")   or {}
+    etiqueta_label    = meta.get("etiqueta_despensa", "Tipo de almacenamiento")
+    # dedup preservando orden
+    opciones_sg = list(dict.fromkeys(muebles_seleccion.get(name) or []))
+
+    if not opciones_sg:
+        return
+
+    prev = opcionales.get("op_207_opcional")
+    if prev not in opciones_sg:
+        prev = opciones_sg[0]
+
+    nuevo = st.radio(
+        etiqueta_label,
+        options=opciones_sg,
+        index=opciones_sg.index(prev),
+        format_func=lambda v: etiqueta_por_sg.get(v, v),
+        horizontal=True,
+        key=f"op_207_opcional_{clave}",
+        help=_TOOLTIPS_OPCIONALES.get("op_207_opcional"),
+    )
+    if nuevo != prev:
+        opcionales["op_207_opcional"] = nuevo
+        _registrar_edicion(clave, selecciones)
+        st.rerun()
+    elif "op_207_opcional" not in opcionales or opcionales["op_207_opcional"] not in opciones_sg:
+        # Inicializar si aún no hay valor válido
+        opcionales["op_207_opcional"] = nuevo
+
+
+def _control_op_207(
+    clave: str, name: str, meta: dict, opcionales: dict, selecciones: dict
+) -> None:
+    """Dispatcher de op_207: checkbox (fregadero) o radio (despensa AGM)."""
+    if name in (meta.get("muebles_seleccion") or {}):
+        _control_radio_op_207_seleccion(clave, name, meta, opcionales, selecciones)
+    else:
+        _control_checkbox_op_207(clave, meta, opcionales, selecciones)
 
 
 def _control_electrodomestico_op_126(
@@ -626,7 +778,7 @@ def _control_electrodomestico_op_126(
 
 
 def _renderizar_opcionales(
-    clave: str, aplicables: list[str], interfaz: dict, selecciones: dict
+    clave: str, name: str, aplicables: list[str], interfaz: dict, selecciones: dict
 ) -> None:
     """Renderiza checkboxes y radio. op_126 (texto libre) va aparte tras divisor."""
     opcionales = selecciones[clave].setdefault("opcionales", {})
@@ -636,6 +788,8 @@ def _renderizar_opcionales(
         meta = interfaz.get(op_id, {})
         if op_id == "op_222":
             _control_radio_op_222(clave, meta, opcionales, selecciones)
+        elif op_id == "op_207_opcional":
+            _control_op_207(clave, name, meta, opcionales, selecciones)
         else:
             _control_checkbox_opcional(clave, op_id, meta, opcionales, selecciones)
 
@@ -689,12 +843,22 @@ def paso_1(muebles: list[dict]) -> None:
     # cabecera (los contadores deben verlos ya inicializados).
     for mueble in muebles:
         clave = _identificador_mueble(mueble)
+        name  = (mueble.get("Name") or "").strip()
         aplicables = _opcionales_aplicables(mueble, interfaz)
         estado = selecciones.setdefault(clave, {})
-        estado.setdefault("opcionales", {})
+        opcionales = estado.setdefault("opcionales", {})
         if "check" not in estado:
             # Pre-check para muebles sin opcionales aplicables (CLAUDE.md §7).
             estado["check"] = (len(aplicables) == 0)
+        # Inicializar selección de op_207 para muebles de despensa (radio obligatorio).
+        # Garantiza que siempre haya un valor válido antes de que el radio se pinte.
+        if "op_207_opcional" in aplicables:
+            meta_207    = interfaz.get("op_207_opcional") or {}
+            muebles_sel = meta_207.get("muebles_seleccion") or {}
+            if name in muebles_sel and "op_207_opcional" not in opcionales:
+                opciones_sg = list(dict.fromkeys(muebles_sel.get(name) or []))
+                if opciones_sg:
+                    opcionales["op_207_opcional"] = opciones_sg[0]
 
     st.header("Paso 1 — Selección de opciones")
     _render_cabecera_global(muebles, selecciones)
@@ -712,6 +876,7 @@ def paso_1(muebles: list[dict]) -> None:
     if a_mostrar:
         for mueble in a_mostrar:
             clave = _identificador_mueble(mueble)
+            name  = (mueble.get("Name") or "").strip()
             aplicables = _opcionales_aplicables(mueble, interfaz)
             estado = selecciones[clave]
             revisado = bool(estado["check"])
@@ -721,7 +886,8 @@ def paso_1(muebles: list[dict]) -> None:
                 _cabecera_card(mueble, catalogo, revisado),
                 expanded=expanded,
             ):
-                img_path = _imagen_mueble((mueble.get("Name") or "").strip())
+                img_path = _imagen_mueble(name)
+                meta_126 = _meta_op_126(name, interfaz)
                 if img_path:
                     col_img, col_info = st.columns([1, 3])
                     with col_img:
@@ -733,11 +899,11 @@ def paso_1(muebles: list[dict]) -> None:
                     with col_info:
                         _bloque_informativo(mueble)
                         if aplicables:
-                            _renderizar_opcionales(clave, aplicables, interfaz, selecciones)
+                            _renderizar_opcionales(clave, name, aplicables, interfaz, selecciones)
                             if "op_126" in aplicables:
                                 st.divider()
                                 _control_electrodomestico_op_126(
-                                    clave, interfaz.get("op_126", {}),
+                                    clave, meta_126,
                                     estado["opcionales"], selecciones,
                                 )
                         else:
@@ -752,11 +918,11 @@ def paso_1(muebles: list[dict]) -> None:
                         _ui_color_interior(mueble.get("Color del interior", "")),
                     )
                     if aplicables:
-                        _renderizar_opcionales(clave, aplicables, interfaz, selecciones)
+                        _renderizar_opcionales(clave, name, aplicables, interfaz, selecciones)
                         if "op_126" in aplicables:
                             st.divider()
                             _control_electrodomestico_op_126(
-                                clave, interfaz.get("op_126", {}),
+                                clave, meta_126,
                                 estado["opcionales"], selecciones,
                             )
                     else:
@@ -766,11 +932,12 @@ def paso_1(muebles: list[dict]) -> None:
                         )
 
                 if "op_126" in aplicables and not _op_126_completo(
-                    estado["opcionales"].get("op_126")
+                    estado["opcionales"].get("op_126"),
+                    subcampos=meta_126.get("subcampos"),
                 ):
                     razon_bloqueo = (
-                        "Completa los datos del electrodoméstico: "
-                        "Marca y Tipo siempre, y al menos uno de Referencia o Altura."
+                        "Completa todos los campos obligatorios del electrodoméstico "
+                        "antes de marcar como revisado."
                     )
                 else:
                     razon_bloqueo = None
