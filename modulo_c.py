@@ -449,16 +449,22 @@ def calcular_opciones(entrada: list[dict]) -> list[dict]:
 
         # ── Item JSON ─────────────────────────────────────────────────────────
         # Los campos estáticos (p_quantity, p_width/height/depth, p_delivery_date…)
-        # vienen de data/p_item_schema.yaml; los calculados se sobreescriben aquí.
+        # vienen de data/p_item_schema.yaml; los calculados se construyen aquí.
+        # El orden de claves sigue exactamente el contrato de Schmidt Groupe.
+        _d = _p_item_defaults()
         p_item: dict = {
-            **_p_item_defaults(),
             "p_ord_cat_code":          str(i + 1),
             "p_item_code":             code,
             "p_item_label":            label_fr,
             "p_item_origin_id":        None,
             "p_father_item_origin_id": None,
+            "p_quantity":              _d.get("p_quantity", 1),
             "p_hinge":                 p_hinge,
             "p_fastening":             p_fastening,
+            "p_width":                 _d.get("p_width", 0),
+            "p_height":                _d.get("p_height", 0),
+            "p_depth":                 _d.get("p_depth", 0),
+            "p_delivery_date":         _d.get("p_delivery_date"),
             "p_variant_options":       opciones_sg,
             **( {"p_built_in_detail": p_built_in} if p_built_in else {} ),
         }
