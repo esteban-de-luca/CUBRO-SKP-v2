@@ -684,12 +684,15 @@ op_126:
 # -----------------------------------------------------------------------------
 variantes_op_126:
 
-  op_126:                 # horno / micro / columnas AFS — añadido 21/05/2026
+  op_126_horno:           # solo horno — BFT — añadido 21/05/2026
     - BFT608057
+
+  op_126_horno_o_micro:   # horno o micro — AFS, AFSMO — añadido 21/05/2026
     - AFS6020057
     - AFS6022057
     - AFSMO6020057
     - AFSMO6022057
+    # AFS2B y AFSMOBT llevan horno+micro (referencia dual, diseño pendiente con Lucía)
     - AFS2B6020057
     - AFS2B6022057
     - AFSMOBT6020057

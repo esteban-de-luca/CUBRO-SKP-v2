@@ -260,8 +260,10 @@ def _cargar_interfaz() -> dict:
         for variante_key, lista_muebles in variantes_op_126.items():
             meta_opc = opc.get(variante_key) or {}
             variantes_meta[variante_key] = {
-                "etiqueta":  meta_opc.get("ui", "Electrodoméstico"),
-                "subcampos": meta_opc.get("subcampos") or {},
+                "etiqueta":      meta_opc.get("ui", "Electrodoméstico"),
+                "subcampos":     meta_opc.get("subcampos") or {},
+                "tipo_auto":     meta_opc.get("tipo_auto"),     # tipo fijo (p. ej. "Horno")
+                "tipo_opciones": meta_opc.get("tipo_opciones"), # lista para desplegable
             }
             for mueble in (lista_muebles or []):
                 mueble_a_variante[mueble] = variante_key
@@ -641,24 +643,33 @@ _SUBCAMPOS_OP_126_DEFAULT = {
 }
 
 
-def _op_126_completo(valor, subcampos: dict | None = None) -> bool:
-    """Valida que el bloque op_126 esté completo según los subcampos de la variante.
+def _op_126_completo(valor, meta: dict | None = None) -> bool:
+    """Valida que el bloque op_126 esté completo según la meta de la variante.
 
-    Regla base (variante con marca+referencia+altura+tipo):
-        Marca y Tipo obligatorios; Referencia y Altura intercambiables (al menos una).
-    Para variantes sin Tipo (placa, campana, LVV/LVD…): Tipo no requerido.
-    Para variantes sin Altura (placa, campana, LVV/LVD…): solo Referencia requerida.
+    - tipo_auto   → tipo siempre satisfecho (fijo por mueble, no editable).
+    - tipo_opciones → el usuario debe haber seleccionado una opción del desplegable.
+    - Subcampos   → marca siempre requerida; ref/altura según los presentes en la variante.
     """
     if not isinstance(valor, dict):
         return False
-    if subcampos is None:
-        subcampos = _SUBCAMPOS_OP_126_DEFAULT
+    if meta is None:
+        meta = {}
+
+    subcampos     = meta.get("subcampos") or _SUBCAMPOS_OP_126_DEFAULT
+    tipo_auto     = meta.get("tipo_auto")
+    tipo_opciones = meta.get("tipo_opciones")
 
     marca = str(valor.get("marca", "")).strip()
     if not marca:
         return False
 
-    if "tipo" in subcampos:
+    # Tipo: auto → siempre OK; opciones → debe estar en la lista; en subcampos → debe rellenarse
+    if tipo_auto:
+        pass  # satisfecho automáticamente
+    elif tipo_opciones:
+        if str(valor.get("tipo", "")).strip() not in tipo_opciones:
+            return False
+    elif "tipo" in subcampos:
         if not str(valor.get("tipo", "")).strip():
             return False
 
@@ -755,7 +766,10 @@ def _control_op_207(
 def _control_electrodomestico_op_126(
     clave: str, meta: dict, opcionales: dict, selecciones: dict
 ) -> None:
-    subcampos = meta.get("subcampos") or _SUBCAMPOS_OP_126_DEFAULT
+    subcampos     = meta.get("subcampos") or _SUBCAMPOS_OP_126_DEFAULT
+    tipo_auto     = meta.get("tipo_auto")
+    tipo_opciones = meta.get("tipo_opciones")
+
     prev_raw = opcionales.get("op_126")
     prev = prev_raw if isinstance(prev_raw, dict) else {}
 
@@ -764,6 +778,23 @@ def _control_electrodomestico_op_126(
         st.caption(_TOOLTIPS_OPCIONALES["op_126"])
 
     nuevo: dict[str, str] = {}
+
+    # ── Tipo: desplegable si hay opciones, oculto si es fijo ─────────────────
+    if tipo_auto:
+        # Tipo determinado por el mueble — no se muestra al usuario
+        nuevo["tipo"] = tipo_auto
+    elif tipo_opciones:
+        prev_tipo = prev.get("tipo", tipo_opciones[0])
+        if prev_tipo not in tipo_opciones:
+            prev_tipo = tipo_opciones[0]
+        nuevo["tipo"] = st.selectbox(
+            "Tipo de electrodoméstico",
+            options=tipo_opciones,
+            index=tipo_opciones.index(prev_tipo),
+            key=f"op_126_tipo_{clave}",
+        )
+
+    # ── Campos de referencia (marca, referencia, altura) ─────────────────────
     for sub_key, sub_label in subcampos.items():
         nuevo[sub_key] = st.text_input(
             sub_label,
@@ -859,6 +890,17 @@ def paso_1(muebles: list[dict]) -> None:
                 opciones_sg = list(dict.fromkeys(muebles_sel.get(name) or []))
                 if opciones_sg:
                     opcionales["op_207_opcional"] = opciones_sg[0]
+        # Inicializar tipo_auto en op_126 aunque el usuario no abra la card.
+        # Garantiza que "Tipo electro" llegue correctamente a construir_entrada_modulo_c.
+        if "op_126" in aplicables:
+            meta_126 = _meta_op_126(name, interfaz)
+            tipo_auto = meta_126.get("tipo_auto")
+            if tipo_auto:
+                op126_val = opcionales.get("op_126")
+                if not isinstance(op126_val, dict):
+                    opcionales["op_126"] = {"tipo": tipo_auto}
+                elif not op126_val.get("tipo"):
+                    op126_val["tipo"] = tipo_auto
 
     st.header("Paso 1 — Selección de opciones")
     _render_cabecera_global(muebles, selecciones)
@@ -933,7 +975,7 @@ def paso_1(muebles: list[dict]) -> None:
 
                 if "op_126" in aplicables and not _op_126_completo(
                     estado["opcionales"].get("op_126"),
-                    subcampos=meta_126.get("subcampos"),
+                    meta=meta_126,
                 ):
                     razon_bloqueo = (
                         "Completa todos los campos obligatorios del electrodoméstico "

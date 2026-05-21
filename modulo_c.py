@@ -462,6 +462,13 @@ def calcular_opciones(entrada: list[dict]) -> list[dict]:
                 for sg_key, col_key in bid_mapping.items()
             }
 
+        # ── Traducir p_appliance_type UI → SG (francés) ──────────────────────
+        tipo_ui_a_sg = mapeos.get("tipo_ui_a_sg") or {}
+        if p_built_in and p_built_in.get("p_appliance_type") and tipo_ui_a_sg:
+            tipo_ui = p_built_in["p_appliance_type"]
+            if tipo_ui in tipo_ui_a_sg:
+                p_built_in["p_appliance_type"] = tipo_ui_a_sg[tipo_ui]
+
         # ── Item JSON ─────────────────────────────────────────────────────────
         # Los campos estáticos (p_quantity, p_width/height/depth, p_delivery_date…)
         # vienen de data/p_item_schema.yaml; los calculados se construyen aquí.
