@@ -288,7 +288,7 @@ op_206:
 # -----------------------------------------------------------------------------
 op_207:
 
-  P42:             # F — forzado (fregadero equipado)
+  P42:             # F — forzado (fregadero equipado) | confirmado por Jean el 20/05/2025 | actualizado 21/05/2025
     - BETOQ908057
 
   P60:             # P — cubos de basura 60 cm
