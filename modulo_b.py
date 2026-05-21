@@ -639,7 +639,8 @@ _SUBCAMPOS_OP_126_DEFAULT = {
     "marca": "Marca",
     "referencia": "Referencia",
     "altura": "Altura",
-    "tipo": "Tipo",
+    # "tipo" NO está aquí: se gestiona siempre vía tipo_auto (oculto) o tipo_opciones (selectbox),
+    # nunca como campo de texto libre.
 }
 
 
@@ -795,7 +796,10 @@ def _control_electrodomestico_op_126(
         )
 
     # ── Campos de referencia (marca, referencia, altura) ─────────────────────
+    # "tipo" se gestiona SIEMPRE en el bloque de arriba (tipo_auto u opciones) — nunca aquí.
     for sub_key, sub_label in subcampos.items():
+        if sub_key == "tipo":
+            continue
         nuevo[sub_key] = st.text_input(
             sub_label,
             value=prev.get(sub_key, ""),
