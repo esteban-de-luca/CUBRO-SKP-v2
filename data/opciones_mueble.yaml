@@ -562,7 +562,6 @@ op_231:
 
 # -----------------------------------------------------------------------------
 # op_300 — Tipo de tirador
-# Nota: BC158057 tiene valor fijo 499 (sin tirador físico) pero sigue siendo O.
 # -----------------------------------------------------------------------------
 op_300:
   todos: O   # Obligatoria en los 121 muebles del catálogo
@@ -572,9 +571,8 @@ op_300:
 # op_301 — Color del tirador
 # -----------------------------------------------------------------------------
 op_301:
-  todos: O   # Obligatoria en todos excepto BC158057 y FHABS6580
-  excepciones:
-    - BC158057     # no aplica — sin tirador físico (op_300 fijo en 499)
+  todos: O   # Obligatoria en todos excepto FHABS6580
+  excepciones: []
 
 # -----------------------------------------------------------------------------
 # op_402 — Altura de patas / rodapié

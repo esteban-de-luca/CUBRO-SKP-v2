@@ -378,6 +378,10 @@ modulo_c:
     sufijo_por_movimiento:
       batiente: "H"      # puerta batiente → Q2H (Curve) o Q3H (Line)
       no_batiente: "C"   # cajón, extraíble, coulissant, lift → Q2C (Curve) o Q3C (Line)
+    tiradores_restringidos:
+      BC158057:
+        - "ROU"    # Round
+        - "Q1C"    # Plantea
 
   # ---------------------------------------------------------------------------
   # op_301 — Color del tirador
