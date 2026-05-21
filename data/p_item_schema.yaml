@@ -1,0 +1,73 @@
+# =============================================================================
+# data/p_item_schema.yaml
+# Contrato JSON con Schmidt Groupe — estructura y valores por defecto del p_item.
+# EDITAR AQUÍ cuando SG actualice el contrato (campos nuevos, tipos, defaults).
+#
+# Responsable de edición: Esteban (no requiere tocar modulo_c.py).
+#
+# Convenios de valor en este archivo:
+#   __computed__  →  modulo_c lo calcula en tiempo de ejecución (no configurable aquí)
+#   __today__     →  modulo_c sustituye por la fecha de generación del pedido (YYYY-MM-DD)
+# =============================================================================
+
+
+# ── Campos del p_item ────────────────────────────────────────────────────────
+# Un objeto por mueble en el array de salida del JSON.
+
+p_item_defaults:
+
+  p_ord_cat_code:           __computed__   # posición en el pedido — string ("1", "2"…)
+  p_item_code:              __computed__   # código del mueble (ej. "B2BT907257")
+  p_item_label:             __computed__   # designación oficial en francés (SG)
+  p_item_origin_id:         __computed__   # ID de origen — pendiente de confirmar con SG
+  p_father_item_origin_id:  __computed__   # ID padre — pendiente de confirmar con SG
+  p_quantity:               1              # siempre 1 (entero)
+  p_hinge:                  __computed__   # apertura: G / D / L / C según mueble
+  p_fastening:              __computed__   # calculado por reglas.yaml (ej. "C", "FSP")
+  p_width:                  0              # reservado — SG lo ignora actualmente (entero)
+  p_height:                 0              # reservado — SG lo ignora actualmente (entero)
+  p_depth:                  0              # reservado — SG lo ignora actualmente (entero)
+  p_delivery_date:          __today__      # fecha de generación del pedido (YYYY-MM-DD)
+
+
+# ── Estructura de cada entrada en p_variant_options ──────────────────────────
+# p_variant_options es una LISTA de objetos, uno por opción SG calculada.
+# IMPORTANTE: p_option va como string SIN prefijo "op_" (ej. "100", no "op_100").
+
+p_variant_option_defaults:
+
+  p_option:    __computed__   # número de opción SG como string (ej. "100", "206")
+  p_article:   __computed__   # código de artículo SG (ej. "LAC", "CR6", "FSP")
+  p_param1:    "0"            # reservado — siempre string "0"
+  p_param2:    "0"            # reservado — siempre string "0"
+  p_quantity:  "1"            # siempre string "1"
+
+
+# =============================================================================
+# NOTA PARA LUCÍA — cambios pendientes en modulo_c.py
+# (confirmados contra plantilla real de SG el 2026-05-21)
+#
+# El output actual de generar_json_pedido() NO coincide con el formato SG.
+# Cambios necesarios:
+#
+# 1. p_variant_options: cambiar de dict a list[dict].
+#    Formato actual:   {"op_100": "LAC", "op_101": "CR6", ...}
+#    Formato correcto: [
+#      {"p_option":"100","p_article":"LAC","p_param1":"0","p_param2":"0","p_quantity":"1"},
+#      {"p_option":"101","p_article":"CR6","p_param1":"0","p_param2":"0","p_quantity":"1"},
+#      ...
+#    ]
+#    Nota: el número de opción va SIN prefijo "op_" y siempre como string.
+#
+# 2. p_ord_cat_code: debe ser string, no entero.
+#    Actual: 1  →  Correcto: "1"
+#
+# 3. p_width, p_height, p_depth: deben ser 0 (entero), no null.
+#    Actual: null  →  Correcto: 0
+#
+# 4. p_delivery_date: debe ser la fecha de generación, no null.
+#    Correcto: datetime.today().strftime("%Y-%m-%d")
+#
+# 5. Leer los defaults de p_item_defaults y p_variant_option_defaults de este
+#    archivo en lugar de hardcodearlos en el código de modulo_c.py.
+# =============================================================================
