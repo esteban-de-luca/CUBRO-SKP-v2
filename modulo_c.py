@@ -25,6 +25,7 @@ from __future__ import annotations
 
 import functools
 import json
+from datetime import datetime
 from io import BytesIO
 from pathlib import Path
 
@@ -40,6 +41,7 @@ _MAPEOS_PATH     = _DATA_DIR / "mapeos_SKP_UI_SG.yaml"
 _OPCIONES_PATH   = _DATA_DIR / "opciones_mueble.yaml"
 _REGLAS_PATH     = _DATA_DIR / "reglas.yaml"
 _AVISOS_PATH     = _DATA_DIR / "avisos.yaml"
+_SCHEMA_PATH     = _DATA_DIR / "p_item_schema.yaml"
 
 
 # =============================================================================
@@ -66,6 +68,30 @@ def _cargar_avisos() -> dict[str, str]:
         return {}
     with _AVISOS_PATH.open(encoding="utf-8") as f:
         return (yaml.safe_load(f) or {}).get("modulo_c") or {}
+
+
+@functools.lru_cache(maxsize=1)
+def _cargar_p_item_schema() -> dict:
+    """Carga data/p_item_schema.yaml. Se cachea tras la primera llamada."""
+    if not _SCHEMA_PATH.exists():
+        return {}
+    with _SCHEMA_PATH.open(encoding="utf-8") as f:
+        return yaml.safe_load(f) or {}
+
+
+def _p_item_defaults() -> dict:
+    """Devuelve los valores estáticos del p_item definidos en p_item_schema.yaml.
+
+    Filtra los marcadores __computed__ (campos calculados en tiempo de ejecución)
+    y resuelve __today__ a la fecha actual en formato YYYY-MM-DD.
+    """
+    raw = (_cargar_p_item_schema().get("p_item_defaults") or {})
+    today = datetime.today().strftime("%Y-%m-%d")
+    return {
+        k: (today if v == "__today__" else v)
+        for k, v in raw.items()
+        if v != "__computed__"
+    }
 
 
 # =============================================================================
@@ -422,19 +448,17 @@ def calcular_opciones(entrada: list[dict]) -> list[dict]:
             }
 
         # ── Item JSON ─────────────────────────────────────────────────────────
+        # Los campos estáticos (p_quantity, p_width/height/depth, p_delivery_date…)
+        # vienen de data/p_item_schema.yaml; los calculados se sobreescriben aquí.
         p_item: dict = {
-            "p_ord_cat_code":          i + 1,
+            **_p_item_defaults(),
+            "p_ord_cat_code":          str(i + 1),
             "p_item_code":             code,
             "p_item_label":            label_fr,
             "p_item_origin_id":        None,
             "p_father_item_origin_id": None,
-            "p_quantity":              1,
             "p_hinge":                 p_hinge,
             "p_fastening":             p_fastening,
-            "p_width":                 None,
-            "p_height":                None,
-            "p_depth":                 None,
-            "p_delivery_date":         None,
             "p_built_in_detail":       p_built_in,
             "p_variant_options":       opciones_sg,
         }
