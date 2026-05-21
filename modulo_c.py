@@ -459,8 +459,8 @@ def calcular_opciones(entrada: list[dict]) -> list[dict]:
             "p_father_item_origin_id": None,
             "p_hinge":                 p_hinge,
             "p_fastening":             p_fastening,
-            "p_built_in_detail":       p_built_in,
             "p_variant_options":       opciones_sg,
+            **( {"p_built_in_detail": p_built_in} if p_built_in else {} ),
         }
 
         resultado.append({
