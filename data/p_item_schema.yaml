@@ -40,3 +40,15 @@ p_variant_option_defaults:
   p_param1:    "0"            # reservado — siempre string "0"
   p_param2:    "0"            # reservado — siempre string "0"
   p_quantity:  "1"            # siempre string "1"
+
+
+# ── Campos de p_built_in_detail y su columna de origen ───────────────────────
+# Mapeo: clave JSON (SG) → nombre de columna en la entrada del Módulo C.
+# Solo se incluye en el p_item cuando "Marca electro" está rellena.
+
+p_built_in_detail_mapping:
+
+  p_manufacturer_code:   "Marca electro"       # marca del electrodoméstico
+  p_appliance_reference: "Referencia electro"  # referencia del modelo
+  p_built_in_height:     "Altura electro"      # altura del hueco en mm
+  p_appliance_type:      "Tipo electro"        # tipo (horno, lavavajillas, etc.)

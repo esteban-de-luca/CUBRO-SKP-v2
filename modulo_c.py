@@ -94,6 +94,12 @@ def _p_item_defaults() -> dict:
     }
 
 
+def _p_variant_option_defaults() -> dict:
+    """Devuelve los valores estáticos de p_variant_option definidos en p_item_schema.yaml."""
+    raw = (_cargar_p_item_schema().get("p_variant_option_defaults") or {})
+    return {k: v for k, v in raw.items() if v != "__computed__"}
+
+
 # =============================================================================
 # Constantes
 # =============================================================================
@@ -137,13 +143,16 @@ def _build_indices(mapeos: dict) -> dict[str, dict[str, str]]:
 
 
 def _opt(numero: str | int, articulo: str, param1: str | int = "0") -> dict:
-    """Construye un dict de opción para p_variant_options."""
+    """Construye un dict de opción para p_variant_options.
+    Los valores reservados (p_param2, p_quantity) vienen de data/p_item_schema.yaml.
+    """
+    _vd = _p_variant_option_defaults()
     return {
         "p_option":   str(numero),
         "p_article":  str(articulo),
         "p_param1":   str(param1),
-        "p_param2":   "0",
-        "p_quantity": "1",
+        "p_param2":   _vd.get("p_param2", "0"),
+        "p_quantity": _vd.get("p_quantity", "1"),
     }
 
 
@@ -437,14 +446,14 @@ def calcular_opciones(entrada: list[dict]) -> list[dict]:
         )
 
         # ── p_built_in_detail ─────────────────────────────────────────────────
-        marca = (fila.get("Marca electro") or "").strip()
+        # Claves SG y columnas de origen vienen de data/p_item_schema.yaml.
+        bid_mapping    = (_cargar_p_item_schema().get("p_built_in_detail_mapping") or {})
+        marca          = (fila.get("Marca electro") or "").strip()
         p_built_in: dict | None = None
-        if marca:
+        if marca and bid_mapping:
             p_built_in = {
-                "p_manufacturer_code":   marca,
-                "p_appliance_reference": (fila.get("Referencia electro") or "").strip() or None,
-                "p_built_in_height":     (fila.get("Altura electro")     or "").strip() or None,
-                "p_appliance_type":      (fila.get("Tipo electro")       or "").strip() or None,
+                sg_key: ((fila.get(col_key) or "").strip() or None)
+                for sg_key, col_key in bid_mapping.items()
             }
 
         # ── Item JSON ─────────────────────────────────────────────────────────
