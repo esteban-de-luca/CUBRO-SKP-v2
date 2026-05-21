@@ -341,6 +341,13 @@ opcionales:
       marca:      Marca                  # añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026
       referencia: Referencia             # añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026
 
+  op_126_campana:                        # añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026
+    ui: Referencia campana               # HH — añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026
+    sg: ""                               # añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026
+    subcampos:                           # añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026
+      marca:      Marca                  # añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026
+      referencia: Referencia             # añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026
+
 
 # =============================================================================
 # NOMBRES
