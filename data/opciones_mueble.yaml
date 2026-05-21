@@ -554,15 +554,15 @@ op_231:
 # op_300 — Tipo de tirador
 # -----------------------------------------------------------------------------
 op_300:
-  todos: O   # Obligatoria en los 121 muebles del catálogo
+  todos: O   # Obligatoria en los 121 muebles del catálogo   # modificado 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026
 
 
 # -----------------------------------------------------------------------------
 # op_301 — Color del tirador
 # -----------------------------------------------------------------------------
 op_301:
-  todos: O   # Obligatoria en todos excepto FHABS6580
-  excepciones: []
+  todos: O   # Obligatoria en todos excepto FHABS6580   # modificado 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026
+  excepciones: []   # eliminado BC158057 — 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026
 
 # -----------------------------------------------------------------------------
 # op_402 — Altura de patas / rodapié
