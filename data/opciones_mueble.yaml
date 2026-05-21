@@ -101,7 +101,7 @@ p_hinge:
     - A2I1P6022057
 
 
-  nulo:              # 2 puertas en horizontal, sin apertura individual
+  nulo:              # 2 puertas en horizontal, sin apertura individual — JSON: enviar "D" provisional hasta confirmar con SG — modificado 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026
     - B908035
     - B908057
     - BETO908057
