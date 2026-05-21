@@ -38,7 +38,7 @@ opciones:
 
   # Selección del usuario en el Paso 1
   - { skp: "", ui: Sin mecanizado para tirador, sg: op_121 }
-  - { skp: "", ui: Cubos de basura,             sg: op_207 }
+  - { skp: "", ui: "Equipamiento",              sg: op_207 }   # modificado 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026 — UI varía: "Cubos de basura" (fregadero) o "Tipo de almacenamiento" (AGM)
   - { skp: "", ui: Recorte para perfil LED,     sg: op_220 }
   - { skp: "", ui: Sensor para mando LED,       sg: op_222 }
   - { skp: "", ui: Cajón interior,              sg: op_223 }
@@ -274,9 +274,11 @@ opcionales:
   op_121:
     - { ui: Sin mecanizado para tirador, sg: SPF }
 
-  op_207_opcional:   # código determinado por el ancho del mueble (ver opciones_mueble.yaml)
-    - { ui: Cubos de basura, sg: P60 }   # BE2B608057, BEBTS608057
-    - { ui: Cubos de basura, sg: P90 }   # BE2B908057, BEBTS908057
+  op_207_opcional:   # código determinado por el mueble (ver opciones_mueble.yaml)
+    - { ui: Cubos de basura,              sg: P60 }   # BE2B608057, BEBTS608057
+    - { ui: Cubos de basura,              sg: P90 }   # BE2B908057, BEBTS908057
+    - { ui: Almacenamiento estándar,      sg: GM1 }   # AGM9020057, AGM9022057 — añadido 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026
+    - { ui: Botellero,                    sg: GM2 }   # AGM9020057, AGM9022057 — añadido 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026
 
   op_220:
     - { ui: Recorte para perfil LED, sg: PRB }

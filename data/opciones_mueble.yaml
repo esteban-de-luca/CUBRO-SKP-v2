@@ -284,7 +284,8 @@ op_206:
 
 
 # -----------------------------------------------------------------------------
-# op_207 — Equipamiento de fregadero / cubos de basura
+# op_207 — Equipamiento
+# UI: "Cubos de basura" para muebles de fregadero · "Tipo de almacenamiento" para AGM
 # -----------------------------------------------------------------------------
 op_207:
 
@@ -298,6 +299,14 @@ op_207:
   P90:             # P — cubos de basura 90 cm
     - BE2B908057
     - BEBTS908057
+
+  GM1:             # O — almacenamiento estándar (despensa) — añadido 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026
+    - AGM9020057   # añadido 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026
+    - AGM9022057   # añadido 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026
+
+  GM2:             # O — botellero (despensa) — añadido 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026
+    - AGM9020057   # añadido 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026
+    - AGM9022057   # añadido 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026
 
 
 # -----------------------------------------------------------------------------

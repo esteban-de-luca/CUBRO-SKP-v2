@@ -314,6 +314,19 @@ modulo_b:
       sin_tirador:                 # Touch Latch (20) o Prise de main (21)
         valor: null                # no se muestra ni se envía
 
+  # ---------------------------------------------------------------------------
+  # op_207 — Equipamiento (etiqueta UI condicional)
+  # La etiqueta mostrada al usuario depende del mueble base.
+  # añadido 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026
+  # ---------------------------------------------------------------------------
+  op_207:   # añadido 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026
+    etiqueta_ui_por_mueble:   # añadido 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026
+      fregadero: "Cubos de basura"        # BE2B608057, BEBTS608057, BE2B908057, BEBTS908057 — añadido 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026
+      despensa:  "Tipo de almacenamiento"   # AGM9020057, AGM9022057 — añadido 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026
+    obligatoria_en:   # añadido 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026
+      - AGM9020057    # añadido 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026
+      - AGM9022057    # añadido 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026
+
 
 # =============================================================================
 # MÓDULO C — Mapeo y cálculo
