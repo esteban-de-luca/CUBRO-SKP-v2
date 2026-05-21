@@ -618,13 +618,13 @@ op_700:
   no_aplica:      # no se envía DEM ni como opcional ni como forzado
     - AGM9020057
     - AGM9022057
-    - FHABS6580
-    - POBIF4580
-    - POBIF6080
-    - PO1BIF4580
-    - PO1BIF6080
-    - PO2BIF4580
-    - PO2BIF6080
+    - FHABS6580    # añadido 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026
+    - POBIF4580    # añadido 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026
+    - POBIF6080    # añadido 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026
+    - PO1BIF4580   # añadido 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026
+    - PO1BIF6080   # añadido 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026
+    - PO2BIF4580   # añadido 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026
+    - PO2BIF6080   # añadido 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026
 
 
 # -----------------------------------------------------------------------------
