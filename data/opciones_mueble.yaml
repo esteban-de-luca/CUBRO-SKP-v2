@@ -467,15 +467,16 @@ op_223:
   - B458057        # P
   - B608057        # P
   - B908057        # P
-  - B2B458057      # P
-  - B2B608057      # P
-  - B2B908057      # P
+  - B2B458057      # P   # eliminado B2B458035 — 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026
+  - B2B608057      # P   # eliminado B2B608035 — 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026
+  - B2B908057      # P   # eliminado B2B908035 — 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026
   - AFS6020057     # P
   - AFS6022057     # P
   - AFSMO6020057   # P
   - AFSMO6022057   # P
   - AFS2B6020057   # P
   - AFS2B6022057   # P
+  # eliminados 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026: B308035, B458035, B608035, B908035, BC604035, BC604057
 
 
 # -----------------------------------------------------------------------------
