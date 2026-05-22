@@ -677,58 +677,110 @@ op_126:
 
 
 # -----------------------------------------------------------------------------
-# variantes_op_126 — Muebles agrupados por variante de op_126
-# Cada variante tiene subcampos distintos en mapeos_SKP_UI_SG.yaml.
-# Fuente de verdad para modulo_b: determina qué meta (etiqueta, subcampos) aplica a cada mueble.
+# variantes_op_126 — Configuración UI y muebles por variante de op_126
+# Fuente de verdad única: etiqueta UI, subcampos, tipo (auto u opciones) y muebles.
+# Antes: la meta (etiqueta, subcampos, tipo) vivía en mapeos_SKP_UI_SG.yaml y
+# la lista de muebles aquí. Consolidado en este archivo el 21/05/2026.
 # Añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026.
 # -----------------------------------------------------------------------------
 variantes_op_126:
 
-  op_126_horno:           # solo horno — BFT — añadido 21/05/2026
-    - BFT608057
+  op_126_horno:           # solo horno — BFT
+    ui:        Referencia horno
+    tipo_auto: Horno       # p_appliance_type → "Four" (ver tipo_ui_a_sg en mapeos_SKP_UI_SG.yaml)
+    subcampos:
+      marca:      Marca
+      referencia: Referencia
+      altura:     Altura
+    muebles:
+      - BFT608057
 
-  op_126_horno_o_micro:   # horno o micro — AFS, AFSMO — añadido 21/05/2026
-    - AFS6020057
-    - AFS6022057
-    - AFSMO6020057
-    - AFSMO6022057
-    # AFS2B y AFSMOBT llevan horno+micro (referencia dual, diseño pendiente con Lucía)
-    - AFS2B6020057
-    - AFS2B6022057
-    - AFSMOBT6020057
-    - AFSMOBT6022057
+  op_126_horno_o_micro:   # horno o micro — AFS, AFSMO, AFS2B*, AFSMOBT*
+    ui:            Referencia electrodoméstico
+    tipo_opciones: [Horno, Micro]   # desplegable en UI; traduce a Four/microondes en JSON
+    subcampos:
+      marca:      Marca
+      referencia: Referencia
+      altura:     Altura
+    muebles:
+      - AFS6020057
+      - AFS6022057
+      - AFSMO6020057
+      - AFSMO6022057
+      # AFS2B y AFSMOBT llevan horno+micro (referencia dual, diseño pendiente con Lucía)
+      - AFS2B6020057
+      - AFS2B6022057
+      - AFSMOBT6020057
+      - AFSMOBT6022057
 
-  op_126_placa:           # placa vitrocerámica BCUB2T — añadido 21/05/2026
-    - BCUB2T458057
-    - BCUB2T608057
-    - BCUB2T908057
+  op_126_placa:           # placa vitrocerámica — BCUB2T
+    ui:        Referencia placa
+    tipo_auto: Placa       # p_appliance_type → "plaque"
+    subcampos:
+      marca:      Marca
+      referencia: Referencia
+    muebles:
+      - BCUB2T458057
+      - BCUB2T608057
+      - BCUB2T908057
 
-  op_126_placa_aspirante: # placa aspirante BIBTS — añadido 21/05/2026
-    - BIBTS608057
-    - BIBTS908057
+  op_126_placa_aspirante: # placa aspirante — BIBTS
+    ui:        Referencia placa aspirante
+    tipo_auto: "Placa aspirante"   # p_appliance_type → "Plaque aspirante"
+    subcampos:
+      marca:      Marca
+      referencia: Referencia
+    muebles:
+      - BIBTS608057
+      - BIBTS908057
 
-  op_126_frigorifico:     # frigorífico integrable A2I — añadido 21/05/2026
-    - A2I6020057
-    - A2I6022057
-    - A2I7522057
-    - A2I1P6020057
-    - A2I1P6022057
+  op_126_frigorifico:     # frigorífico integrable — A2I
+    ui:        Referencia frigorífico
+    tipo_auto: Frigo       # p_appliance_type → "Réfrigérateur"
+    subcampos:
+      marca:      Marca
+      referencia: Referencia
+      altura:     Altura
+    muebles:
+      - A2I6020057
+      - A2I6022057
+      - A2I7522057
+      - A2I1P6020057
+      - A2I1P6022057
 
-  op_126_lvv_lvd:         # lavavajillas/lavadora integrable (frente completo) — añadido 21/05/2026
-    - POBIF4580
-    - POBIF6080
-    - PO1BIF4580
-    - PO1BIF6080
-    - PO2BIF4580
-    - PO2BIF6080
+  op_126_lvv_lvd:         # lavavajillas/lavadora integrable (frente completo) — POBIF
+    ui: Referencia LVV/LVD
+    # sin tipo — SG no requiere p_appliance_type para este electrodoméstico
+    subcampos:
+      marca:      Marca
+      referencia: Referencia
+    muebles:
+      - POBIF4580
+      - POBIF6080
+      - PO1BIF4580
+      - PO1BIF6080
+      - PO2BIF4580
+      - PO2BIF6080
 
-  op_126_lvd:             # lavavajillas/lavadora no integrable (frente parcial) — añadido 21/05/2026
-    - FHABS6580
+  op_126_lvd:             # lavavajillas/lavadora no integrable (frente parcial) — FHABS
+    ui: Referencia LVD
+    # sin tipo
+    subcampos:
+      marca:      Marca
+      referencia: Referencia
+    muebles:
+      - FHABS6580
 
-  op_126_campana:         # campana integrada HH — añadido 21/05/2026
-    - HH1606035
-    - HH1906035
-    - HH1608035
-    - HH1908035
-    - HH16010035
-    - HH19010035
+  op_126_campana:         # campana integrada — HH
+    ui: Referencia campana
+    # sin tipo
+    subcampos:
+      marca:      Marca
+      referencia: Referencia
+    muebles:
+      - HH1606035
+      - HH1906035
+      - HH1608035
+      - HH1908035
+      - HH16010035
+      - HH19010035

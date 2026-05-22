@@ -249,23 +249,22 @@ def _cargar_interfaz() -> dict:
             "excluidos": op700.get("excepciones") or [],
         }
 
-    # op_126 — variante por mueble (base, placa, placa aspirante, frigorífico, LVV/LVD, campana…)
-    # variantes_op_126 en opciones_mueble.yaml mapea variante_key → lista de muebles.
-    # Los subcampos y etiquetas de cada variante vienen de mapeos_SKP_UI_SG.yaml.
+    # op_126 — variante por mueble (horno, placa, frigorífico, LVV/LVD, campana…)
+    # Fuente de verdad única: opciones_mueble.yaml / variantes_op_126.
+    # Cada entrada tiene ui, subcampos, tipo_auto/tipo_opciones (meta UI) y muebles (lista).
     variantes_op_126 = op_mueble.get("variantes_op_126") or {}
-    if variantes_op_126 or any(k.startswith("op_126") for k in opc):
+    if variantes_op_126:
         mueble_a_variante: dict = {}
         variantes_meta: dict = {}
 
-        for variante_key, lista_muebles in variantes_op_126.items():
-            meta_opc = opc.get(variante_key) or {}
+        for variante_key, variante_data in variantes_op_126.items():
             variantes_meta[variante_key] = {
-                "etiqueta":      meta_opc.get("ui", "Electrodoméstico"),
-                "subcampos":     meta_opc.get("subcampos") or {},
-                "tipo_auto":     meta_opc.get("tipo_auto"),     # tipo fijo (p. ej. "Horno")
-                "tipo_opciones": meta_opc.get("tipo_opciones"), # lista para desplegable
+                "etiqueta":      variante_data.get("ui", "Electrodoméstico"),
+                "subcampos":     variante_data.get("subcampos") or {},
+                "tipo_auto":     variante_data.get("tipo_auto"),
+                "tipo_opciones": variante_data.get("tipo_opciones"),
             }
-            for mueble in (lista_muebles or []):
+            for mueble in (variante_data.get("muebles") or []):
                 mueble_a_variante[mueble] = variante_key
 
         interfaz["op_126"] = {

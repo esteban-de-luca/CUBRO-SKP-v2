@@ -296,73 +296,8 @@ opcionales:
   op_700_opcional:
     - { ui: Mueble sin encolar, sg: DEM }
 
-  op_126_horno:                          # BFT — solo horno, tipo fijo
-    ui: Referencia horno
-    sg: ""
-    tipo_auto: Horno                     # p_appliance_type siempre "Four" (ver tipo_ui_a_sg)
-    subcampos:
-      marca:      Marca
-      referencia: Referencia
-      altura:     Altura
-
-  op_126_horno_o_micro:                  # AFS, AFSMO, AFS2B*, AFSMOBT* — usuario elige
-    ui: Referencia electrodoméstico
-    sg: ""
-    tipo_opciones: [Horno, Micro]        # desplegable en UI; traduce a Four/microondes en JSON
-    subcampos:
-      marca:      Marca
-      referencia: Referencia
-      altura:     Altura
-    # * AFS2B y AFSMOBT llevan horno+micro (referencia dual, diseño pendiente con Lucía)
-
-  op_126_placa:                          # añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026
-    ui: Referencia placa                 # BCUB2T
-    sg: ""
-    tipo_auto: Placa                     # p_appliance_type siempre "plaque"
-    subcampos:
-      marca:      Marca
-      referencia: Referencia
-
-  op_126_placa_aspirante:                # añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026
-    ui: Referencia placa aspirante       # BIBTS
-    sg: ""
-    tipo_auto: "Placa aspirante"         # p_appliance_type siempre "Plaque aspirante"
-    subcampos:
-      marca:      Marca
-      referencia: Referencia
-
-  op_126_frigorifico:                    # añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026
-    ui: Referencia frigorífico           # A2I
-    sg: ""
-    tipo_auto: Frigo                     # p_appliance_type siempre "Réfrigérateur"
-    subcampos:
-      marca:      Marca
-      referencia: Referencia
-      altura:     Altura
-
-  op_126_lvv_lvd:                        # añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026
-    ui: Referencia LVV/LVD               # POBIF, PO1BIF, PO2BIF
-    sg: ""
-    # sin tipo — SG no requiere p_appliance_type para este electrodoméstico
-    subcampos:
-      marca:      Marca
-      referencia: Referencia
-
-  op_126_lvd:                            # añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026
-    ui: Referencia LVD                   # FHABS
-    sg: ""
-    # sin tipo
-    subcampos:
-      marca:      Marca
-      referencia: Referencia
-
-  op_126_campana:                        # añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026
-    ui: Referencia campana               # HH
-    sg: ""
-    # sin tipo
-    subcampos:
-      marca:      Marca
-      referencia: Referencia
+  # op_126 — la configuración de variantes (ui, subcampos, tipo_auto/tipo_opciones, muebles)
+  # está en opciones_mueble.yaml, sección variantes_op_126.
 
 
 # =============================================================================
