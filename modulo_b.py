@@ -186,7 +186,8 @@ def _cargar_interfaz() -> dict:
 
     # op_207_opcional — checkbox (P60/P90) para fregadero · radio (GM1/GM2) para despensa
     if "op_207_opcional" in opc:
-        entradas_207 = opc["op_207_opcional"]
+        bloque_207 = opc["op_207_opcional"] or {}
+        entradas_207 = bloque_207.get("valores") or []
         op207 = op_mueble.get("op_207") or {}
         reglas_207 = reglas_b.get("op_207") or {}
 
@@ -211,7 +212,7 @@ def _cargar_interfaz() -> dict:
             for e in entradas_207
             if e.get("sg")
         }
-        etiquetas_ui = reglas_207.get("etiqueta_ui_por_mueble") or {}
+        etiquetas_ui = bloque_207.get("etiquetas") or {}
 
         interfaz["op_207_opcional"] = {
             "etiqueta_fregadero": etiquetas_ui.get("fregadero", "Cubos de basura"),

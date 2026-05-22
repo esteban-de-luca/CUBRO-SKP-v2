@@ -275,10 +275,14 @@ opcionales:
     - { ui: Sin mecanizado para tirador, sg: SPF }
 
   op_207_opcional:   # código determinado por el mueble (ver opciones_mueble.yaml)
-    - { ui: Cubos de basura,              sg: P60 }   # BE2B608057, BEBTS608057
-    - { ui: Cubos de basura,              sg: P90 }   # BE2B908057, BEBTS908057
-    - { ui: Almacenamiento estándar,      sg: GM1 }   # AGM9020057, AGM9022057 — añadido 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026
-    - { ui: Botellero,                    sg: GM2 }   # AGM9020057, AGM9022057 — añadido 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026
+    etiquetas:
+      fregadero: "Cubos de basura"          # BE2B608057, BEBTS608057, BE2B908057, BEBTS908057
+      despensa:  "Tipo de almacenamiento"   # AGM9020057, AGM9022057
+    valores:
+      - { ui: Cubos de basura,         sg: P60 }   # BE2B608057, BEBTS608057
+      - { ui: Cubos de basura,         sg: P90 }   # BE2B908057, BEBTS908057
+      - { ui: Almacenamiento estándar, sg: GM1 }   # AGM9020057, AGM9022057 — añadido 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026
+      - { ui: Botellero,               sg: GM2 }   # AGM9020057, AGM9022057 — añadido 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026
 
   op_220:
     - { ui: Recorte para perfil LED, sg: PRB }

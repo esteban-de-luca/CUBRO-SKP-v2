@@ -320,9 +320,7 @@ modulo_b:
   # añadido 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026
   # ---------------------------------------------------------------------------
   op_207:   # añadido 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026
-    etiqueta_ui_por_mueble:   # añadido 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026
-      fregadero: "Cubos de basura"        # BE2B608057, BEBTS608057, BE2B908057, BEBTS908057 — añadido 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026
-      despensa:  "Tipo de almacenamiento"   # AGM9020057, AGM9022057 — añadido 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026
+    # etiqueta_ui_por_mueble → movido a mapeos_SKP_UI_SG.yaml / opcionales / op_207_opcional / etiquetas
     obligatoria_en:   # añadido 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026
       - AGM9020057    # añadido 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026
       - AGM9022057    # añadido 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026
@@ -366,17 +364,6 @@ modulo_c:
       - "Metal LAMINADO"
 
   # ---------------------------------------------------------------------------
-  # op_104 — Acabado canto del frente
-  # El código SG depende de la gama del frente (op_100).
-  # ---------------------------------------------------------------------------
-  op_104:
-    por_gama:
-      "LAC": null   # copia el código de op_101 del mismo mueble
-      "WOD": ""     # vacío, no se envía
-      "LNO": "HAK"  # fijo
-      "LMI": ""     # vacío, no se envía
-
-  # ---------------------------------------------------------------------------
   # op_204 — Acabado canto mueble
   # Siempre copia el código de op_200 del mismo mueble.
   # ---------------------------------------------------------------------------
@@ -395,22 +382,6 @@ modulo_c:
       BC158057:          # añadido 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026
         - "ROU"          # Round — añadido 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026
         - "Q1C"          # Plantea — añadido 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026
-
-  # ---------------------------------------------------------------------------
-  # op_301 — Color del tirador
-  # ---------------------------------------------------------------------------
-  op_301:
-    tiradores_integrados:
-      - "ROU"
-      - "SQU"
-    tiradores_superficie:
-      - "Q2C"
-      - "Q2H"
-      - "Q3C"
-      - "Q3H"
-      - "Q1C"
-    sin_tirador:
-      - "499"   # vacío, no se envía
 
   # ---------------------------------------------------------------------------
   # op_231 — Reducción de ancho
