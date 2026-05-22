@@ -10,7 +10,10 @@
 # Si un mueble no aparece en la lista de una opción → no aplica.
 #
 # Opciones excluidas (SG las calcula en AS400, no hace falta enviarlas):
-#   op_103, op_104, op_203, op_204, op_209, p_built_in_detail
+#   op_103, op_203, op_204, op_209, p_built_in_detail
+#
+# Opciones pendientes de confirmar si deben enviarse o no:
+#   op_104 — SG indica que la calcula en AS400, pero se conserva hasta confirmación
 # =============================================================================
 
 
@@ -167,6 +170,25 @@ op_100:
 # -----------------------------------------------------------------------------
 op_101:
   todos: O   # Obligatoria en los 121 muebles del catálogo
+
+
+# -----------------------------------------------------------------------------
+# op_104 — Acabado canto del frente
+# F — El código SG depende de la gama (op_100) del mueble, no del mueble concreto.
+# Nota: SG indica que calcula esta opción en AS400. Se conserva hasta confirmación
+# definitiva de si debe enviarse o no en el JSON del pedido.
+#
+#   LAC → copia el código de op_101 del mismo mueble (calculado por modulo_c)
+#   WOD → vacío, no se envía
+#   LNO → HAK (fijo para todos los muebles con gama LINOLEO)
+#   LMI → vacío, no se envía
+# -----------------------------------------------------------------------------
+op_104:
+  por_gama:
+    LAC: null   # F — copia el código de op_101 del mismo mueble
+    WOD: ""     # vacío, no se envía
+    LNO: HAK    # F — fijo para todos los muebles con gama LINOLEO
+    LMI: ""     # vacío, no se envía
 
 
 # -----------------------------------------------------------------------------

@@ -238,14 +238,11 @@ forzadas:
   op_103:   # Sentido de la veta
     sg: VER
 
-  op_104:   # Acabado canto del frente — varía según gama (ver reglas.yaml)
+  op_104:   # Acabado canto del frente — varía según gama (ver opciones_mueble.yaml)
     sg: HAK  # solo para LINOLEO; LACA copia op_101; WOOD y LAMINADO vacío
 
   op_203:   # Espesor canto mueble
     sg: E14
-
-  op_204:   # Acabado canto mueble — copia el código de op_200 del mismo mueble
-    sg: copia_op_200
 
   op_206:   # Sistema de cierre
     sg: FSP
@@ -259,7 +256,7 @@ forzadas:
   op_209:   # Equipamiento cajón
     sg: BES
 
-  op_700:   # Sin encolar (ver reglas.yaml)
+  op_700:   # Sin encolar (ver opciones_mueble.yaml)
     sg: DEM
 
 
