@@ -1,0 +1,811 @@
+# =============================================================================
+# data/opciones_mueble.yaml
+# Para cada opción/parámetro SG: lista de muebles y tipo de aplicación.
+#
+# Leyenda:
+#   O — Obligatoria: siempre se envía, requiere valor del CSV o catálogo
+#   F — Forzada: el Módulo C la calcula y aplica automáticamente
+#   P — Opcional: se incluye solo si el usuario la selecciona en el Paso 1
+#
+# Si un mueble no aparece en la lista de una opción → no aplica.
+#
+# Opciones excluidas (SG las calcula en AS400, no hace falta enviarlas):
+#   op_103, op_203, op_204, op_209
+#
+# Opciones pendientes de confirmar si deben enviarse o no:
+#   op_104 — SG indica que la calcula en AS400, pero se conserva hasta confirmación
+# =============================================================================
+
+
+# -----------------------------------------------------------------------------
+# p_hinge — Sentido de apertura de puerta
+# No sigue el esquema O/F/P: su valor depende del tipo de mueble.
+#   lee_csv   → D (Derecha) o G (Gauche/Izquierda) según campo Apertura del CSV
+#   nulo      → null — muebles con 2 puertas en horizontal (lado a lado, 90 cm)
+#   coulissant → C — muebles sin puerta batiente (bloques, extraíbles, frentes)
+#   lift      → pendiente de confirmar con SG (apertura lift)
+# -----------------------------------------------------------------------------
+p_hinge:
+
+  lee_csv:
+    - B308035
+    - B458035
+    - B608035
+    - B308057
+    - B458057
+    - B608057
+    - BETO458057
+    - BETO608057
+    - BAV908057
+    - BAV1208057
+    - BAV1P908057
+    - BAV1P1208057
+    - H1306035
+    - H1456035
+    - H1606035
+    - H1308035
+    - H1458035
+    - H1608035
+    - H13010035
+    - H14510035
+    - H16010035
+    - HH1606035
+    - HH1608035
+    - HH16010035
+    - HAV1906035
+    - HAV1908035
+    - HAV19010035
+    - HAV2906035
+    - HAV2908035
+    - HAV29010035
+    - HR45V35
+    - HR60V35
+    - HR45V57
+    - HR60V57
+    - HPT60V57
+    - AQC34520057
+    - AQC36020057
+    - AQC34522057
+    - AQC36022057
+    - AQC31P4520057
+    - AQC31P6020057
+    - AQC31P4522057
+    - AQC31P6022057
+    - AVA4520035
+    - AVA6020035
+    - AVA4520057
+    - AVA6020057
+    - AVA4522035
+    - AVA6022035
+    - AVA4522057
+    - AVA6022057
+    - AVA1P4520035
+    - AVA1P6020035
+    - AVA1P4520057
+    - AVA1P6020057
+    - AVA1P4522035
+    - AVA1P6022035
+    - AVA1P4522057
+    - AVA1P6022057
+    - ABA6020057
+    - ABA6022057
+    - AFS6020057
+    - AFS6022057
+    - AFSMO6020057
+    - AFSMO6022057
+    - AFS2B6020057
+    - AFS2B6022057
+    - AFSMOBT6020057
+    - AFSMOBT6022057
+    - A2I6020057      # puertas batientes normales — sí llevan D/G aunque sin op_206
+    - A2I6022057
+    - A2I7522057
+    - A2I1P6020057
+    - A2I1P6022057
+
+
+  nulo:              # 2 puertas en horizontal, sin apertura individual — JSON: enviar "D" provisional hasta confirmar con SG — modificado 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026
+    - B908035
+    - B908057
+    - BETO908057
+    - BETOQ908057
+    - H1906035
+    - H1908035
+    - H19010035
+    - HH1906035
+    - HH1908035
+    - HH19010035
+    - AVA1P9020035
+    - AVA1P9022035
+    - AGM9020057
+    - AGM9022057
+    - POBIF4580
+    - POBIF6080
+    - PO1BIF4580
+    - PO1BIF6080
+    - PO2BIF4580
+    - PO2BIF6080
+
+
+  coulissant:        # sin puerta batiente — bloques, extraíbles, frentes
+    - BB2T458035
+    - BB2T608035
+    - BB2T908035
+    - BB2T458057
+    - BB2T608057
+    - BB2T908057
+    - B2B458035
+    - B2B608035
+    - B2B908035
+    - B2B458057
+    - B2B608057
+    - B2B908057
+    - BC158057
+    - BC604035
+    - BC604057
+    - BFT608057
+    - BCUB2T458057
+    - BCUB2T608057
+    - BCUB2T908057
+    - BIBTS608057
+    - BIBTS908057
+    - BE2B608057
+    - BE2B908057
+    - BEBTS608057
+    - BEBTS908057
+    - FHABS6580
+
+  lift:              # apertura lift
+    - HLVV57
+
+# -----------------------------------------------------------------------------
+# op_100 — Gama del frente
+# -----------------------------------------------------------------------------
+op_100:
+  todos: O   # Obligatoria en los 121 muebles del catálogo
+
+
+# -----------------------------------------------------------------------------
+# op_101 — Acabado del frente
+# -----------------------------------------------------------------------------
+op_101:
+  todos: O   # Obligatoria en los 121 muebles del catálogo
+
+
+# -----------------------------------------------------------------------------
+# op_104 — Acabado canto del frente
+# F — El código SG depende de la gama (op_100) del mueble, no del mueble concreto.
+# Nota: SG indica que calcula esta opción en AS400. Se conserva hasta confirmación
+# definitiva de si debe enviarse o no en el JSON del pedido.
+#
+#   LAC → copia el código de op_101 del mismo mueble (calculado por modulo_c)
+#   WOD → vacío, no se envía
+#   LNO → HAK (fijo para todos los muebles con gama LINOLEO)
+#   LMI → vacío, no se envía
+# -----------------------------------------------------------------------------
+op_104:
+  por_gama:
+    LAC: null   # F — copia el código de op_101 del mismo mueble
+    WOD: ""     # vacío, no se envía
+    LNO: HAK    # F — fijo para todos los muebles con gama LINOLEO
+    LMI: ""     # vacío, no se envía
+
+
+# -----------------------------------------------------------------------------
+# op_121 — Sin mecanizado para tirador (SPF)
+# Opcional en todos. Forzado automáticamente en dos casos (ver nota):
+#   1. AVA1P, AQC31P o A2I1P + tirador Curve o Line → SPF forzado
+#   2. Cualquier mueble + tirador Plantea → SPF forzado siempre
+# Round y Square nunca llevan SPF.
+# -----------------------------------------------------------------------------
+op_121:
+  todos: P   # Opcional en los 121 muebles del catálogo
+
+
+# -----------------------------------------------------------------------------
+# op_200 — Color interior del mueble
+# -----------------------------------------------------------------------------
+op_200:
+  todos: O   # Obligatoria en todos excepto frentes sin mueble (POBIF/PO1BIF/PO2BIF)
+  excepciones:
+    - POBIF4580    # no aplica — frente sin mueble
+    - POBIF6080    # no aplica — frente sin mueble
+    - PO1BIF4580   # no aplica — frente sin mueble
+    - PO1BIF6080   # no aplica — frente sin mueble
+    - PO2BIF4580   # no aplica — frente sin mueble
+    - PO2BIF6080   # no aplica — frente sin mueble
+
+
+# -----------------------------------------------------------------------------
+# op_206 — Sistema de cierre FSP (puerta batiente)
+# -----------------------------------------------------------------------------
+op_206:
+  - B308035        # F
+  - B458035        # F
+  - B608035        # F
+  - B908035        # F
+  - B308057        # F
+  - B458057        # F
+  - B608057        # F
+  - B908057        # F
+  - BETO458057     # F
+  - BETO608057     # F
+  - BETO908057     # F
+  - BETOQ908057    # F
+  - BAV908057      # F
+  - BAV1208057     # F
+  - BAV1P908057    # F
+  - BAV1P1208057   # F
+  - H1306035       # F
+  - H1456035       # F
+  - H1606035       # F
+  - H1906035       # F
+  - H1308035       # F
+  - H1458035       # F
+  - H1608035       # F
+  - H1908035       # F
+  - H13010035      # F
+  - H14510035      # F
+  - H16010035      # F
+  - H19010035      # F
+  - HH1606035      # F
+  - HH1906035      # F
+  - HH1608035      # F
+  - HH1908035      # F
+  - HH16010035     # F
+  - HH19010035     # F
+  - HAV1906035     # F
+  - HAV1908035     # F
+  - HAV19010035    # F
+  - HAV2906035     # F
+  - HAV2908035     # F
+  - HAV29010035    # F
+  - HR45V35        # F
+  - HR60V35        # F
+  - HR45V57        # F
+  - HR60V57        # F
+  - HPT60V57       # F
+  - AQC34520057    # F
+  - AQC36020057    # F
+  - AQC34522057    # F
+  - AQC36022057    # F
+  - AQC31P4520057  # F
+  - AQC31P6020057  # F
+  - AQC31P4522057  # F
+  - AQC31P6022057  # F
+  - AVA4520035     # F
+  - AVA6020035     # F
+  - AVA4520057     # F
+  - AVA6020057     # F
+  - AVA4522035     # F
+  - AVA6022035     # F
+  - AVA4522057     # F
+  - AVA6022057     # F
+  - AVA1P4520035   # F
+  - AVA1P6020035   # F
+  - AVA1P9020035   # F
+  - AVA1P4520057   # F
+  - AVA1P6020057   # F
+  - AVA1P4522035   # F
+  - AVA1P6022035   # F
+  - AVA1P9022035   # F
+  - AVA1P4522057   # F
+  - AVA1P6022057   # F
+  - ABA6020057     # F
+  - ABA6022057     # F
+  - AFS6020057     # F
+  - AFS6022057     # F
+  - AFSMO6020057   # F
+  - AFSMO6022057   # F
+  - AFS2B6020057   # F
+  - AFS2B6022057   # F
+  - AFSMOBT6020057 # F
+  - AFSMOBT6022057 # F
+  - AGM9020057     # F
+  - AGM9022057     # F
+
+
+# -----------------------------------------------------------------------------
+# op_207 — Equipamiento
+# UI: "Cubos de basura" para muebles de fregadero · "Tipo de almacenamiento" para AGM
+# -----------------------------------------------------------------------------
+op_207:
+
+  P42:             # F — forzado (fregadero equipado) | confirmado por Jean el 20/05/2025 | actualizado 21/05/2025
+    - BETOQ908057
+
+  P60:             # P — cubos de basura 60 cm
+    - BE2B608057
+    - BEBTS608057
+
+  P90:             # P — cubos de basura 90 cm
+    - BE2B908057
+    - BEBTS908057
+
+  GM1:             # O — almacenamiento estándar (despensa) — añadido 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026
+    - AGM9020057   # añadido 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026
+    - AGM9022057   # añadido 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026
+
+  GM2:             # O — botellero (despensa) — añadido 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026
+    - AGM9020057   # añadido 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026
+    - AGM9022057   # añadido 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026
+
+
+# -----------------------------------------------------------------------------
+# op_208 — Equipamiento esquinero (Lemans)
+# -----------------------------------------------------------------------------
+op_208:
+  - BAV1P908057    # F
+  - BAV1P1208057   # F
+
+
+# -----------------------------------------------------------------------------
+# op_209 — Equipamiento cajón (muebles sin puerta batiente)
+# -----------------------------------------------------------------------------
+op_209:
+  - BB2T458035    # F
+  - BB2T608035    # F
+  - BB2T908035    # F
+  - BB2T458057    # F
+  - BB2T608057    # F
+  - BB2T908057    # F
+  - B2B458035     # F
+  - B2B608035     # F
+  - B2B908035     # F
+  - B2B458057     # F
+  - B2B608057     # F
+  - B2B908057     # F
+  - BC158057      # F
+  - BC604035      # F
+  - BC604057      # F
+  - BCUB2T458057  # F
+  - BCUB2T608057  # F
+  - BCUB2T908057  # F
+  - BIBTS608057   # F
+  - BIBTS908057   # F
+  - BE2B608057    # F
+  - BE2B908057    # F
+  - BEBTS608057   # F
+  - BEBTS908057   # F
+  - BFT608057     # F
+
+
+# -----------------------------------------------------------------------------
+# op_217 — Sistema de apertura sin tirador físico
+# TL1 (Touch Latch) y PS1 (Prise de main) NO son intercambiables.
+# Cada mueble solo admite uno de los dos valores — nunca ambos.
+#   solo_TL1 — bajos y columnas (encastrado, push-to-open)
+#   solo_PS1 — muebles de pared y esquineros de pared (hueco en frente)
+# -----------------------------------------------------------------------------
+op_217:
+
+  solo_TL1:
+    - B308035        # P
+    - B458035        # P
+    - B608035        # P
+    - B308057        # P
+    - B458057        # P
+    - B608057        # P
+    - BETO458057     # P
+    - BETO608057     # P
+    - BAV908057      # P
+    - BAV1208057     # P
+    - BAV1P908057    # P
+    - BAV1P1208057   # P
+    - AVA4520035     # P
+    - AVA6020035     # P
+    - AVA4520057     # P
+    - AVA6020057     # P
+    - AVA4522035     # P
+    - AVA6022035     # P
+    - AVA4522057     # P
+    - AVA6022057     # P
+    - AVA1P4520035   # P
+    - AVA1P6020035   # P
+    - AVA1P4520057   # P
+    - AVA1P6020057   # P
+    - AVA1P4522035   # P
+    - AVA1P6022035   # P
+    - AVA1P4522057   # P
+    - AVA1P6022057   # P
+    - ABA6020057     # P
+    - ABA6022057     # P
+    - AQC34520057    # P
+    - AQC36020057    # P
+    - AQC34522057    # P
+    - AQC36022057    # P
+    - AQC31P4520057  # P
+    - AQC31P6020057  # P
+    - AQC31P4522057  # P
+    - AQC31P6022057  # P
+    - AFS6020057     # P
+    - AFS6022057     # P
+    - AFS2B6020057   # P
+    - AFS2B6022057   # P
+    - AFSMO6020057   # P
+    - AFSMO6022057   # P
+    - AFSMOBT6020057 # P
+    - AFSMOBT6022057 # P
+    - HR45V35        # P
+    - HR60V35        # P
+    - HR45V57        # P
+    - HR60V57        # P
+    - HLVV57         # P
+    - HPT60V57       # P
+
+  solo_PS1:
+    - H1306035       # P
+    - H1456035       # P
+    - H1606035       # P
+    - H1906035       # P
+    - H1308035       # P
+    - H1458035       # P
+    - H1608035       # P
+    - H1908035       # P
+    - H13010035      # P
+    - H14510035      # P
+    - H16010035      # P
+    - H19010035      # P
+    - HAV1906035     # P
+    - HAV1908035     # P
+    - HAV19010035    # P
+    - HAV2906035     # P
+    - HAV2908035     # P
+    - HAV29010035    # P
+
+
+# -----------------------------------------------------------------------------
+# op_220 — Recorte para perfil LED
+# -----------------------------------------------------------------------------
+op_220:
+  - H1306035       # P
+  - H1456035       # P
+  - H1606035       # P
+  - H1906035       # P
+  - H1308035       # P
+  - H1458035       # P
+  - H1608035       # P
+  - H1908035       # P
+  - H13010035      # P
+  - H14510035      # P
+  - H16010035      # P
+  - H19010035      # P
+
+
+# -----------------------------------------------------------------------------
+# op_222 — Sensor para mando LED
+# -----------------------------------------------------------------------------
+op_222:
+  - H1306035       # P
+  - H1456035       # P
+  - H1606035       # P
+  - H1906035       # P
+  - H1308035       # P
+  - H1458035       # P
+  - H1608035       # P
+  - H1908035       # P
+  - H13010035      # P
+  - H14510035      # P
+  - H16010035      # P
+  - H19010035      # P
+
+
+# -----------------------------------------------------------------------------
+# op_223 — Cajón interior
+# -----------------------------------------------------------------------------
+op_223:
+  - B308057        # P
+  - B458057        # P
+  - B608057        # P
+  - B908057        # P
+  - B2B458057      # P   # eliminado B2B458035 — 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026
+  - B2B608057      # P   # eliminado B2B608035 — 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026
+  - B2B908057      # P   # eliminado B2B908035 — 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026
+  - AFS6020057     # P
+  - AFS6022057     # P
+  - AFSMO6020057   # P
+  - AFSMO6022057   # P
+  - AFS2B6020057   # P
+  - AFS2B6022057   # P
+  # eliminados 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026: B308035, B458035, B608035, B908035, BC604035, BC604057
+
+
+# -----------------------------------------------------------------------------
+# op_227 — Mueble de caldera
+# -----------------------------------------------------------------------------
+op_227:
+  - H1306035       # P
+  - H1456035       # P
+  - H1606035       # P
+  - H1308035       # P
+  - H1458035       # P
+  - H1608035       # P
+  - H13010035      # P
+  - H14510035      # P
+  - H16010035      # P
+  - HPT60V57       # P
+  - AVA4520035     # P
+  - AVA6020035     # P
+  - AVA4520057     # P
+  - AVA6020057     # P
+  - AVA4522035     # P
+  - AVA6022035     # P
+  - AVA4522057     # P
+  - AVA6022057     # P
+  - AVA1P4520035   # P
+  - AVA1P6020035   # P
+  - AVA1P4520057   # P
+  - AVA1P6020057   # P
+  - AVA1P4522035   # P
+  - AVA1P6022035   # P
+  - AVA1P4522057   # P
+  - AVA1P6022057   # P
+  - ABA6020057     # P
+  - ABA6022057     # P
+
+
+# -----------------------------------------------------------------------------
+# op_231 — Reducción de ancho
+# -----------------------------------------------------------------------------
+op_231:
+  - B458035        # P
+  - B608035        # P
+  - B458057        # P
+  - B608057        # P
+  - H1306035       # P
+  - H1456035       # P
+  - H1606035       # P
+  - H1308035       # P
+  - H1458035       # P
+  - H1608035       # P
+  - H13010035      # P
+  - H14510035      # P
+  - H16010035      # P
+  - AVA4520035     # P
+  - AVA6020035     # P
+  - AVA4520057     # P
+  - AVA6020057     # P
+  - AVA4522035     # P
+  - AVA6022035     # P
+  - AVA4522057     # P
+  - AVA6022057     # P
+  - AVA1P4520035   # P
+  - AVA1P6020035   # P
+  - AVA1P4520057   # P
+  - AVA1P6020057   # P
+  - AVA1P4522035   # P
+  - AVA1P6022035   # P
+  - AVA1P4522057   # P
+  - AVA1P6022057   # P
+  - ABA6020057     # P
+  - ABA6022057     # P
+  # eliminados 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026: B308035, B308057
+
+
+# -----------------------------------------------------------------------------
+# op_300 — Tipo de tirador
+# -----------------------------------------------------------------------------
+op_300:
+  todos: O   # Obligatoria en los 121 muebles del catálogo   # modificado 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026
+
+
+# -----------------------------------------------------------------------------
+# op_301 — Color del tirador
+# -----------------------------------------------------------------------------
+op_301:
+  todos: O   # Obligatoria en todos excepto FHABS6580   # modificado 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026
+  excepciones: []   # eliminado BC158057 — 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026
+
+# -----------------------------------------------------------------------------
+# op_402 — Altura de patas / rodapié
+# No aplica a muebles suspendidos (pared y altillos).
+# -----------------------------------------------------------------------------
+op_402:
+  todos: O   # Obligatoria en todos excepto muebles suspendidos
+  excepciones:
+    - H1306035     # no aplica — suspendido
+    - H1456035     # no aplica — suspendido
+    - H1606035     # no aplica — suspendido
+    - H1906035     # no aplica — suspendido
+    - H1308035     # no aplica — suspendido
+    - H1458035     # no aplica — suspendido
+    - H1608035     # no aplica — suspendido
+    - H1908035     # no aplica — suspendido
+    - H13010035    # no aplica — suspendido
+    - H14510035    # no aplica — suspendido
+    - H16010035    # no aplica — suspendido
+    - H19010035    # no aplica — suspendido
+    - HH1606035    # no aplica — suspendido
+    - HH1906035    # no aplica — suspendido
+    - HH1608035    # no aplica — suspendido
+    - HH1908035    # no aplica — suspendido
+    - HH16010035   # no aplica — suspendido
+    - HH19010035   # no aplica — suspendido
+    - HAV1906035   # no aplica — suspendido
+    - HAV1908035   # no aplica — suspendido
+    - HAV19010035  # no aplica — suspendido
+    - HAV2906035   # no aplica — suspendido
+    - HAV2908035   # no aplica — suspendido
+    - HAV29010035  # no aplica — suspendido
+    - HR45V35      # no aplica — suspendido
+    - HR60V35      # no aplica — suspendido
+    - HR45V57      # no aplica — suspendido
+    - HR60V57      # no aplica — suspendido
+    - HLVV57       # no aplica — suspendido
+    - HPT60V57     # no aplica — suspendido
+    - BC158057     # no aplica — extraíble sin patas propias
+
+
+# -----------------------------------------------------------------------------
+# op_700 — Mueble sin encolar (DEM)
+# -----------------------------------------------------------------------------
+op_700:
+  todos: P   # Opcional en todos, excepto los dos grupos siguientes:
+  forzadas:       # F — DEM obligatorio (muebles esquineros en L, van sin encolar)
+    - HH1606035
+    - HH1906035
+    - HH1608035
+    - HH1908035
+    - HH16010035
+    - HH19010035
+  no_aplica:      # no se envía DEM ni como opcional ni como forzado
+    - AGM9020057
+    - AGM9022057
+    - FHABS6580    # añadido 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026
+    - POBIF4580    # añadido 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026
+    - POBIF6080    # añadido 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026
+    - PO1BIF4580   # añadido 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026
+    - PO1BIF6080   # añadido 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026
+    - PO2BIF4580   # añadido 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026
+    - PO2BIF6080   # añadido 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026
+
+
+# -----------------------------------------------------------------------------
+# p_built_in_detail — Referencia del electrodoméstico
+# NO es una opción variante SG (no va en p_variant_options).
+# Se envía como campo separado p_built_in_detail en el JSON del pedido.
+# op_126 como opción SG no aplica a CUBRO.
+# -----------------------------------------------------------------------------
+p_built_in_detail:
+  - BFT608057      # P
+  - AFS6020057     # P
+  - AFS6022057     # P
+  - AFSMO6020057   # P
+  - AFSMO6022057   # P
+  - AFS2B6020057   # P
+  - AFS2B6022057   # P
+  - AFSMOBT6020057 # P
+  - AFSMOBT6022057 # P
+  - BCUB2T458057   # P — referencia placa — añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026
+  - BCUB2T608057   # P — referencia placa — añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026
+  - BCUB2T908057   # P — referencia placa — añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026
+  - BIBTS608057    # P — referencia placa aspirante — añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026
+  - BIBTS908057    # P — referencia placa aspirante — añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026
+  - A2I6020057     # P — referencia frigorífico — añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026
+  - A2I6022057     # P — referencia frigorífico — añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026
+  - A2I7522057     # P — referencia frigorífico — añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026
+  - A2I1P6020057   # P — referencia frigorífico — añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026
+  - A2I1P6022057   # P — referencia frigorífico — añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026
+  - POBIF4580      # P — referencia LVV/LVD — añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026
+  - POBIF6080      # P — referencia LVV/LVD — añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026
+  - PO1BIF4580     # P — referencia LVV/LVD — añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026
+  - PO1BIF6080     # P — referencia LVV/LVD — añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026
+  - PO2BIF4580     # P — referencia LVV/LVD — añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026
+  - PO2BIF6080     # P — referencia LVV/LVD — añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026
+  - FHABS6580      # P — referencia LVD — añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026
+  - HH1606035      # P — referencia campana — añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026
+  - HH1906035      # P — referencia campana — añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026
+  - HH1608035      # P — referencia campana — añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026
+  - HH1908035      # P — referencia campana — añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026
+  - HH16010035     # P — referencia campana — añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026
+  - HH19010035     # P — referencia campana — añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026
+
+
+# -----------------------------------------------------------------------------
+# variantes_p_built_in_detail — Configuración UI y muebles por variante de p_built_in_detail
+# Fuente de verdad única: etiqueta UI, subcampos, tipo (auto u opciones) y muebles.
+# Antes: la meta (etiqueta, subcampos, tipo) vivía en mapeos_SKP_UI_SG.yaml y
+# la lista de muebles aquí. Consolidado en este archivo el 21/05/2026.
+# Añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026.
+# -----------------------------------------------------------------------------
+variantes_p_built_in_detail:
+
+  op_126_horno:           # solo horno — BFT
+    ui:        Referencia horno
+    tipo_auto: Horno       # p_appliance_type → "Four" (ver tipo_ui_a_sg en mapeos_SKP_UI_SG.yaml)
+    subcampos:
+      marca:      Marca
+      referencia: Referencia
+      altura:     Altura
+    muebles:
+      - BFT608057
+
+  op_126_horno_o_micro:   # horno o micro — AFS, AFSMO, AFS2B*, AFSMOBT*
+    ui:            Referencia electrodoméstico
+    tipo_opciones: [Horno, Micro]   # desplegable en UI; traduce a Four/microondes en JSON
+    subcampos:
+      marca:      Marca
+      referencia: Referencia
+      altura:     Altura
+    muebles:
+      - AFS6020057
+      - AFS6022057
+      - AFSMO6020057
+      - AFSMO6022057
+      # AFS2B y AFSMOBT llevan horno+micro (referencia dual, diseño pendiente con Lucía)
+      - AFS2B6020057
+      - AFS2B6022057
+      - AFSMOBT6020057
+      - AFSMOBT6022057
+
+  op_126_placa:           # placa vitrocerámica — BCUB2T
+    ui:        Referencia placa
+    tipo_auto: Placa       # p_appliance_type → "plaque"
+    subcampos:
+      marca:      Marca
+      referencia: Referencia
+    muebles:
+      - BCUB2T458057
+      - BCUB2T608057
+      - BCUB2T908057
+
+  op_126_placa_aspirante: # placa aspirante — BIBTS
+    ui:        Referencia placa aspirante
+    tipo_auto: "Placa aspirante"   # p_appliance_type → "Plaque aspirante"
+    subcampos:
+      marca:      Marca
+      referencia: Referencia
+    muebles:
+      - BIBTS608057
+      - BIBTS908057
+
+  op_126_frigorifico:     # frigorífico integrable — A2I
+    ui:        Referencia frigorífico
+    tipo_auto: Frigo       # p_appliance_type → "Réfrigérateur"
+    subcampos:
+      marca:      Marca
+      referencia: Referencia
+      altura:     Altura
+    muebles:
+      - A2I6020057
+      - A2I6022057
+      - A2I7522057
+      - A2I1P6020057
+      - A2I1P6022057
+
+  op_126_lvv_lvd:         # lavavajillas/lavadora integrable (frente completo) — POBIF
+    ui: Referencia LVV/LVD
+    # sin tipo — SG no requiere p_appliance_type para este electrodoméstico
+    subcampos:
+      marca:      Marca
+      referencia: Referencia
+    muebles:
+      - POBIF4580
+      - POBIF6080
+      - PO1BIF4580
+      - PO1BIF6080
+      - PO2BIF4580
+      - PO2BIF6080
+
+  op_126_lvd:             # lavavajillas/lavadora no integrable (frente parcial) — FHABS
+    ui: Referencia LVD
+    # sin tipo
+    subcampos:
+      marca:      Marca
+      referencia: Referencia
+    muebles:
+      - FHABS6580
+
+  op_126_campana:         # campana integrada — HH
+    ui: Referencia campana
+    # sin tipo
+    subcampos:
+      marca:      Marca
+      referencia: Referencia
+    muebles:
+      - HH1606035
+      - HH1906035
+      - HH1608035
+      - HH1908035
+      - HH16010035
+      - HH19010035

@@ -1,0 +1,393 @@
+# =============================================================================
+# data/reglas.yaml
+# Reglas de negocio entre opciones — CUBRO × Schmidt Groupe
+# SOLO LECTURA — no modificar sin actualizar también la documentación en Notion
+#
+# Estructura:
+#   modulo_b: reglas de comportamiento de la interfaz UI
+#   modulo_c: reglas de cálculo y mapeo a códigos SG
+#
+# Referencias cruzadas:
+#   - Opciones disponibles por mueble → opciones_mueble.yaml
+#   - Mapeos SKP → UI → SG         → mapeos_SKP_UI_SG.yaml
+#
+# Pendientes:
+#   - op_231: Formato de entrega del valor final a SG pendiente IT SG
+# =============================================================================
+
+# =============================================================================
+# MÓDULO A — Validación y lectura del CSV
+# Reglas expresadas en términos de columnas CSV y valores de entrada.
+# No contiene códigos SG ni lógica de UI.
+#
+# Lógica de ejecución:
+#   1. Descartes silenciosos → filas eliminadas antes de cualquier validación
+#   2. Limpieza y normalización → valores brutos convertidos a tipos internos
+#   3. Avisos → la fila pasa pero queda marcada; el diseñador corrige en SKP
+#   4. Estado → CORRECTO si no hay avisos relevantes; REVISAR si los hay
+#
+# Filosofía: ninguna fila se descarta por error de datos. Solo se descartan
+# filas estructuralmente irrelevantes (sin Name, sin Ancho, instalaciones).
+# =============================================================================
+
+modulo_a:
+
+  # ---------------------------------------------------------------------------
+  # Descartes silenciosos
+  # Filas eliminadas antes de cualquier validación. No generan aviso.
+  # ---------------------------------------------------------------------------
+  descartes_silenciosos:
+
+    - id: "I01"
+      condicion: "Name vacío"
+      motivo: >
+        Filas sin Name son piezas internas del modelo 3D o filas de cabecera
+        secundarias exportadas por SketchUp.
+
+    - id: "I02"
+      condicion: "Name contiene instalación"
+      valores: ["DESAGÜE", "ENCHUFE", "TOMAS DE AGUA", "Enchufe estándar", "PLACA"]
+      motivo: >
+        Elementos de instalación exportados por SketchUp junto con los muebles.
+        No son muebles SG y se ignoran.
+
+    - id: "I03"
+      condicion: "Columna no reconocida"
+      motivo: >
+        SketchUp puede exportar columnas extra según el modelo. Solo se procesan
+        las columnas definidas en columnas_validas.
+
+    - id: "I05"
+      condicion: "Ancho vacío"
+      motivo: >
+        Subcomponentes y piezas del modelo (paneles, tableros) no tienen Ancho.
+        El mueble padre siempre tiene Ancho. Complementa I01 para subcomponentes
+        sin sufijo -C/-P que sí tienen Name pero no Ancho.
+
+  # ---------------------------------------------------------------------------
+  # Columnas válidas del CSV
+  # Solo estas columnas se procesan. El resto se descarta silenciosamente (I03).
+  # ---------------------------------------------------------------------------
+  columnas_validas:
+    - "Name"          # Código del mueble — match directo contra catálogo
+    - "Ancho"         # Ancho en mm. Trigger op_231: "10000 mm"
+    - "LenZ"          # Alto en mm. Validado contra catálogo (A21)
+    - "Apertura"      # Sentido de apertura. Normalizado a lenguaje natural
+    - "D_Gama"        # Tipo de gama: 1 LACA · 2 WOOD · 3 LINÓLEO · 4 LAMINADO
+    - "ColorFrente"   # Color de fachada
+    - "Color del interior"         # Acabado interior
+    - "Tirador"                    # Tipo de tirador (int)
+    - "Trasera"                    # Color trasera — solo tiradores integrados (2, 3)
+    - "Color tir. de superficie"   # Color tirador superficie — solo tiradores de superficie (4, 5, 7)
+    - "C_Rodapietext"              # Altura de patas: "70 mm" · "100 mm" · "0 mm"
+    - "Ancho reducido"             # Valor real reducido. Solo si Ancho = "10000 mm"
+
+  # ---------------------------------------------------------------------------
+  # Normalización de valores
+  # Conversiones que el parser aplica antes de cualquier validación.
+  # ---------------------------------------------------------------------------
+  normalizacion:
+
+    apertura:
+      "I": "izquierda"
+      "1": "izquierda"
+      "izquierda": "izquierda"
+      "D": "derecha"
+      "2": "derecha"
+      "derecha": "derecha"
+      "H": "horizontal"
+      "3": "horizontal"
+      "Horizontal": "horizontal"
+      nota: >
+        El Módulo B siempre recibe lenguaje natural. Nunca recibe códigos
+        numéricos ni letras clave.
+
+    tirador:
+      tipo: "int"
+      valores_validos: [2, 3, 4, 5, 7, 20, 21]
+      nota: >
+        Valores como "2.0" se convierten a 2 antes de validar.
+
+    ancho_y_lenz:
+      formato: "[número] mm"
+      separador_decimal: ","   # SketchUp puede exportar "731,8 mm"
+      nota: >
+        El valor numérico se extrae eliminando " mm" y reemplazando coma por punto.
+
+  # ---------------------------------------------------------------------------
+  # Lógica de tirador — fuente del color (op_301)
+  # Determina qué campo del CSV contiene el color del tirador.
+  # Ver también: modulo_b.op_301
+  # ---------------------------------------------------------------------------
+  logica_tirador:
+
+    integrado:                    # Round (2) o Square (3)
+      campo_color: "Trasera"
+      campo_ignorado: "Color tir. de superficie"   # se vacía silenciosamente
+      valores_trasera_validos:
+        - "Laca"
+        - "Nordic Oak WOOD"
+        - "Oak WOOD"
+        - "Smoked Oak WOOD"
+      nota: >
+        Si Trasera = "Laca", el Módulo B debe mapear el nombre del frente
+        sin sufijo (ej. "Crema"), no la cadena "Laca". Ver modulo_b.op_301.
+
+    superficie:                   # Curve (4), Line (5), Plantea (7)
+      campo_color: "Color tir. de superficie"
+      campo_ignorado: "Trasera"   # se vacía silenciosamente
+
+    sin_tirador:                  # Touch Latch (20), Prise de main (21)
+      campo_color: null           # no se envía op_301
+
+  # ---------------------------------------------------------------------------
+  # Lógica de reducción de ancho (op_231)
+  # Trigger: Ancho = "10000 mm"
+  # ---------------------------------------------------------------------------
+  reduccion_ancho:
+
+    trigger: "10000 mm"
+    campo_valor: "Ancho reducido"
+    ancho_minimo_mm: 300          # igual que modulo_c.op_231.ancho_minimo_resultante_mm
+    logica_correccion: >
+      El parser busca el ancho estándar más cercano por encima del valor
+      de "Ancho reducido" dentro de la misma familia, alto y fondo. El Name
+      se reemplaza por el código corregido. Name SKP conserva el original.
+
+    muebles_sin_reduccion:        # ver opciones_mueble.yaml op_231 (ausentes = sin reducción)
+      motivos:
+        variables: ["HLVV57", "HR45V35", "HR60V35", "HR45V57", "HR60V57", "HPT60V57"]
+        fachadas: ["FHABS6580", "POBIF4580", "POBIF6080"]
+        banco: ["BC158057"]
+        ancho_minimo_ya_300mm: []   # vacío — B308035/057 y H130* sí admiten reducción según opciones_mueble.yaml
+
+  # ---------------------------------------------------------------------------
+  # Validación de dimensiones
+  # ---------------------------------------------------------------------------
+  validacion_dimensiones:
+
+    alto_lenz:
+      fuente: "catalogo.json → alto_mm"
+      tolerancia_mm: 5
+      muebles_variables:
+        HLVV:
+          ancho_min_mm: 450
+          ancho_max_mm: 1200
+          alto_min_mm: 200
+          alto_max_mm: 400
+        HR:
+          alto_min_mm: 200
+          alto_max_mm: 1000
+          nota: "Ancho fijo por código — validado contra catálogo"
+        HPT:
+          ancho_mm: 600
+          alto_min_mm: 1100
+          alto_max_mm: 1400
+
+    ancho:
+      fuente: "catalogo.json → ancho_mm"
+      tolerancia_mm: 5
+      excepcion: >
+        Si Ancho = "10000 mm" → no se valida (es el trigger de reducción,
+        no el ancho real del mueble).
+
+  # ---------------------------------------------------------------------------
+  # Muebles sin apertura
+  # Fuente: opciones_mueble.yaml → p_hinge (nulo + coulissant)
+  # ---------------------------------------------------------------------------
+  apertura:
+
+    muebles_sin_apertura:
+      criterio: >
+        p_hinge = "nulo" (2 puertas, fachadas, AGM) o
+        p_hinge = "coulissant" (cajones, extraíbles, banco, placa).
+        Ver opciones_mueble.yaml para la lista completa.
+      comportamiento: >
+        Si un mueble sin apertura lleva valor en el campo → se ignora
+        silenciosamente y se genera aviso A23a.
+        Si un mueble con apertura no lleva valor → aviso A23b.
+
+    lift:
+      muebles: ["HLVV57"]
+      valor_normalizado: "horizontal"
+
+  # ---------------------------------------------------------------------------
+  # Muebles sin color de interior
+  # Fuente: opciones_mueble.yaml → op_200.excepciones
+  # ---------------------------------------------------------------------------
+  color_interior:
+    muebles_sin_interior:
+      - "POBIF4580"
+      - "POBIF6080"
+      - "PO1BIF4580"
+      - "PO1BIF6080"
+      - "PO2BIF4580"
+      - "PO2BIF6080"
+    nota: >
+      Fachadas sin cuerpo de mueble. No tienen interior que configurar.
+
+  # ---------------------------------------------------------------------------
+  # Estado del output
+  # ---------------------------------------------------------------------------
+  estado:
+
+    CORRECTO:
+      condicion: "Sin avisos, o únicamente aviso A18 (corrección de nombre informativa)"
+      significado: >
+        El mueble está correctamente configurado en SKP y puede avanzar
+        al Módulo B sin intervención del diseñador.
+
+    REVISAR:
+      condicion: "Uno o más avisos distintos de A18"
+      significado: >
+        El diseñador debe corregir el mueble en SKP, reexportar el CSV
+        y volver a validar. El mueble no debe avanzar al Módulo B.
+
+    nota: >
+      El aviso A18 es informativo — indica que el nombre fue corregido
+      automáticamente por reducción de ancho. No bloquea el avance.
+
+# =============================================================================
+# MÓDULO B — Interfaz UI
+# Reglas expresadas en términos de valores del CSV (campo Tirador) y
+# etiquetas UI. Nunca contienen códigos SG.
+# =============================================================================
+
+modulo_b:
+
+  # ---------------------------------------------------------------------------
+  # op_121 — Mecanizado de frente (Sin mecanizado / SPF)
+  # ---------------------------------------------------------------------------
+  op_121:
+
+    # Visibilidad del control en la UI
+    # La opción "Sin mecanizado" solo se muestra cuando el tirador es de superficie.
+    visible_con_tiradores:
+      - "4"   # Curve
+      - "5"   # Line
+      - "7"   # Plantea
+    oculto_con_tiradores:
+      - "2"   # Round
+      - "3"   # Square
+      - "20"  # Touch Latch
+      - "21"  # Prise de main
+
+    # Forzado automático: se marca como seleccionada sin intervención del usuario
+    forzado_siempre:
+      - "7"   # Plantea — en cualquier mueble
+
+    forzado_en_monoporte:          # solo si el mueble está en la lista siguiente
+      tiradores:
+        - "4"   # Curve
+        - "5"   # Line
+      muebles:
+        - "AQC31P4520057"
+        - "AQC31P6020057"
+        - "AQC31P4522057"
+        - "AQC31P6022057"
+        - "AVA1P4520035"
+        - "AVA1P6020035"
+        - "AVA1P9020035"
+        - "AVA1P4520057"
+        - "AVA1P6020057"
+        - "AVA1P4522035"
+        - "AVA1P6022035"
+        - "AVA1P9022035"
+        - "AVA1P4522057"
+        - "AVA1P6022057"
+        - "A2I1P6020057"
+        - "A2I1P6022057"
+
+  # ---------------------------------------------------------------------------
+  # op_301 — Color del tirador
+  # La fuente del valor depende del tipo de tirador que llega del CSV.
+  # ---------------------------------------------------------------------------
+  op_301:
+    fuente_por_tipo_tirador:
+      integrado:                   # Round (2) o Square (3)
+        campo_csv: "Trasera"
+        nota: >
+          Si Trasera = "Laca", el valor a mapear es el nombre del frente
+          sin sufijo (ej. "Crema"), no la palabra "Laca".
+      superficie:                  # Curve (4), Line (5) o Plantea (7)
+        campo_csv: "Color tir. de superficie"
+      sin_tirador:                 # Touch Latch (20) o Prise de main (21)
+        valor: null                # no se muestra ni se envía
+
+  # ---------------------------------------------------------------------------
+  # op_207 — Equipamiento (etiqueta UI condicional)
+  # La etiqueta mostrada al usuario depende del mueble base.
+  # añadido 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026
+  # ---------------------------------------------------------------------------
+  op_207:   # añadido 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026
+    # etiqueta_ui_por_mueble → movido a mapeos_SKP_UI_SG.yaml / opcionales / op_207_opcional / etiquetas
+    obligatoria_en:   # añadido 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026
+      - AGM9020057    # añadido 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026
+      - AGM9022057    # añadido 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026
+
+
+# =============================================================================
+# MÓDULO C — Mapeo y cálculo
+# Reglas expresadas en códigos SG. Se aplican después de que el Módulo B
+# haya traducido los valores del CSV a etiquetas UI.
+#
+# Lógica de ejecución:
+#   1. Primero estas reglas → determinan qué opciones calcular y con qué valor
+#   2. Después mapeos_SKP_UI_SG.yaml → convierten los valores a códigos SG
+# =============================================================================
+
+modulo_c:
+
+  # ---------------------------------------------------------------------------
+  # op_121 — Mecanizado de frente (SPF)
+  # Lista de muebles afectados: ver modulo_b.op_121.forzado_en_monoporte.muebles
+  # ---------------------------------------------------------------------------
+  op_121:
+    tiradores_sin_spf:
+      - "2"   # Round
+      - "3"   # Square
+      - "20"  # Touch Latch
+      - "21"  # Prise de main
+    tirador_spf_siempre:
+      - "7"   # Plantea
+    tiradores_spf_forzado_monoporte:
+      - "4"   # Curve
+      - "5"   # Line
+
+  # ---------------------------------------------------------------------------
+  # op_103 — Sentido de la veta
+  # ---------------------------------------------------------------------------
+  op_103:
+    gamas_con_veta:
+      - "WOD"
+    colores_con_veta:
+      - "Metal LAMINADO"
+
+  # ---------------------------------------------------------------------------
+  # op_204 — Acabado canto mueble
+  # Siempre copia el código de op_200 del mismo mueble.
+  # ---------------------------------------------------------------------------
+  op_204:
+    valor: copia_op_200
+
+  # ---------------------------------------------------------------------------
+  # op_300 — Tipo de tirador
+  # Curve y Line tienen dos códigos SG según el tipo de movimiento del mueble.
+  # ---------------------------------------------------------------------------
+  op_300:
+    sufijo_por_movimiento:
+      batiente: "H"      # puerta batiente → Q2H (Curve) o Q3H (Line)
+      no_batiente: "C"   # cajón, extraíble, coulissant, lift → Q2C (Curve) o Q3C (Line)
+    tiradores_restringidos:
+      BC158057:          # añadido 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026
+        - "ROU"          # Round — añadido 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026
+        - "Q1C"          # Plantea — añadido 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026
+
+  # ---------------------------------------------------------------------------
+  # op_231 — Reducción de ancho
+  # El valor numérico de la reducción se envía en p_param1.
+  # ---------------------------------------------------------------------------
+  op_231:
+    campo_valor: "p_param1"
+    reduccion_maxima_mm: 299    # con respecto al ancho original
+    ancho_minimo_resultante_mm: 300
