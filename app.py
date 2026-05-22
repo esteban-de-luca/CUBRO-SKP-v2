@@ -230,9 +230,30 @@ def _cargar_csv(file) -> None:
     st.session_state.csv_fallback_a_mock = False
 
     if not USE_MOCK_DATA:
+        # Detectar si es el CSV de validación ya procesado (output del Módulo A),
+        # no el CSV original de SketchUp. Columnas exclusivas del output: Estado, Name SKP, Avisos.
+        _COLUMNAS_OUTPUT_A = {"Estado", "Name SKP", "Avisos"}
+        try:
+            _contenido = file.read()
+            if isinstance(_contenido, bytes):
+                _contenido = _contenido.decode("utf-8-sig")
+            import io as _io
+            _cols = set(pd.read_csv(_io.StringIO(_contenido), nrows=0, dtype=str).columns)
+            file.seek(0)
+        except Exception:
+            _cols = set()
+            file.seek(0)
+
+        if _cols & _COLUMNAS_OUTPUT_A:
+            st.session_state.muebles = []
+            st.session_state["_error_csv"] = (
+                "El archivo subido es el CSV ya validado por el Módulo A, no el original de SketchUp. "
+                "Sube el archivo exportado directamente desde SketchUp con la plantilla CUBRO x SG.grt."
+            )
+            return
+
         resultado = modulo_a.parsear_csv_para_modulo_b(file)
         if not resultado["ok"]:
-            # Error de archivo (columnas faltantes, encoding incorrecto, etc.)
             st.session_state.muebles = []
             st.session_state["_error_csv"] = resultado["error_archivo"]
         else:
