@@ -14,9 +14,8 @@ import modulo_c
 from modulo_b import PANTALLA_VALIDACION, PANTALLA_PASO_1, PANTALLA_PASO_2
 
 
-# Mientras el Módulo A esté en stub, sustituimos su output por datos mock
-# para poder desarrollar el Módulo B de forma aislada.
-USE_MOCK_DATA = True
+# Módulo A ya implementado — lee catalogo.json y opciones_mueble.yaml en tiempo real.
+USE_MOCK_DATA = False
 
 # Módulo C implementado — ya no se usa el mock.
 USE_MOCK_C = False
@@ -231,7 +230,14 @@ def _cargar_csv(file) -> None:
     st.session_state.csv_fallback_a_mock = False
 
     if not USE_MOCK_DATA:
-        st.session_state.muebles = modulo_a.parsear_csv(file)
+        resultado = modulo_a.parsear_csv_para_modulo_b(file)
+        if not resultado["ok"]:
+            # Error de archivo (columnas faltantes, encoding incorrecto, etc.)
+            st.session_state.muebles = []
+            st.session_state["_error_csv"] = resultado["error_archivo"]
+        else:
+            st.session_state.muebles = resultado["muebles"]
+            st.session_state.pop("_error_csv", None)
         return
 
     muebles_reales = _parsear_csv_output_modulo_a(file)
@@ -343,6 +349,12 @@ def main() -> None:
             "El CSV no coincide con el output esperado del Módulo A — "
             "se están usando datos mock para que puedas seguir probando."
         )
+
+    # Error de archivo detectado por el Módulo A (columnas faltantes, etc.)
+    if st.session_state.get("_error_csv"):
+        st.error(f"❌ El archivo CSV no es válido: {st.session_state['_error_csv']}")
+        st.info("Comprueba que has exportado el CSV con la plantilla correcta (CUBRO x SG.grt).")
+        return
 
     pantalla = st.session_state.pantalla
     if pantalla == PANTALLA_VALIDACION:
