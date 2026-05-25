@@ -273,12 +273,12 @@ def _corregir_name_reduccion(name_skp: str, ancho_reducido_mm: float):
     for prefix in _FAMILY_PREFIXES:
         if name_clean.startswith(prefix):
             rest = name_clean[len(prefix):]
-            mp = re.match(r'^(\d+)(\d{3})(\d{2})$', rest)
+            mp = re.match(r'^(\d{2})(\d{2,3})(\d{2})$', rest)
             if mp:
                 parsed = (prefix, int(mp.group(1)), int(mp.group(2)), int(mp.group(3)))
                 break
     if not parsed:
-        mp = re.match(r'^([A-Z]+)(\d+)(\d{3})(\d{2})$', name_clean)
+        mp = re.match(r'^([A-Z]+)(\d{2})(\d{2,3})(\d{2})$', name_clean)
         if mp:
             parsed = (mp.group(1), int(mp.group(2)), int(mp.group(3)), int(mp.group(4)))
 
