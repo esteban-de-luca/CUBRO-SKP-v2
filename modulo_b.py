@@ -177,11 +177,22 @@ def _cargar_interfaz() -> dict:
     opc = mapeos.get("opcionales") or {}
     interfaz: dict = {}
 
-    # op_121 — solo etiqueta (los muebles los filtra opciones_mueble.yaml vía interfaz)
+    # op_121 — etiqueta + condiciones de visibilidad y forzado desde reglas.yaml
     if "op_121" in opc:
-        entradas = opc["op_121"]
+        entradas   = opc["op_121"]
+        r121_b     = reglas_b.get("op_121") or {}
+        mono_121   = r121_b.get("forzado_en_monoporte") or {}
         interfaz["op_121"] = {
             "etiqueta": entradas[0].get("ui", "Sin mecanizado para tirador"),
+            # Tiradores con los que el control se muestra (Curve=4, Line=5, Plantea=7)
+            "visible_con_tiradores": [str(t) for t in (r121_b.get("visible_con_tiradores") or [])],
+            # Tirador que fuerza SPF en cualquier mueble (Plantea=7)
+            "forzado_siempre": [str(t) for t in (r121_b.get("forzado_siempre") or [])],
+            # Tiradores + muebles donde SPF se fuerza por ser monopuerta alto
+            "forzado_en_monoporte": {
+                "tiradores": [str(t) for t in (mono_121.get("tiradores") or [])],
+                "muebles":   mono_121.get("muebles") or [],
+            },
         }
 
     # op_207_opcional — checkbox (P60/P90) para fregadero · radio (GM1/GM2) para despensa
@@ -554,10 +565,12 @@ def _opcionales_aplicables(mueble: dict, interfaz: dict) -> list[str]:
         return []
     aplicables: list[str] = []
 
-    # op_121 aplica a todos los muebles (el control se muestra/oculta en función
-    # del tirador, no del mueble — esa lógica está en _renderizar_opcionales).
+    # op_121 — solo visible cuando el tirador es de superficie (Curve=4, Line=5, Plantea=7)
     if "op_121" in interfaz:
-        aplicables.append("op_121")
+        tirador_code = str(mueble.get("Tirador") or "").strip()
+        visible_con  = interfaz["op_121"].get("visible_con_tiradores") or []
+        if tirador_code in visible_con:
+            aplicables.append("op_121")
 
     # op_207 — checkbox para fregadero (P60/P90) o radio para despensa (GM1/GM2)
     meta_207 = interfaz.get("op_207_opcional") or {}
@@ -604,6 +617,49 @@ def _control_checkbox_opcional(
         opcionales[op_id] = nuevo
         _registrar_edicion(clave, selecciones)
         st.rerun()
+
+
+def _es_forzado_op_121(tirador_code: str, name: str, meta: dict) -> bool:
+    """True si SPF debe marcarse automáticamente (Plantea siempre; Curve/Line en monoporte)."""
+    forzado_siempre = meta.get("forzado_siempre") or []
+    mono = meta.get("forzado_en_monoporte") or {}
+    return (
+        tirador_code in forzado_siempre
+        or (
+            tirador_code in (mono.get("tiradores") or [])
+            and name in (mono.get("muebles") or [])
+        )
+    )
+
+
+def _control_op_121(
+    clave: str, name: str, tirador_code: str, meta: dict, opcionales: dict, selecciones: dict
+) -> None:
+    """Checkbox de op_121. Deshabilitado+marcado si es forzado; editable si no."""
+    etiqueta   = meta.get("etiqueta", "Sin mecanizado para tirador")
+    es_forzado = _es_forzado_op_121(tirador_code, name, meta)
+
+    if es_forzado:
+        st.checkbox(
+            etiqueta,
+            value=True,
+            disabled=True,
+            key=f"op_121_{clave}",
+            help="Forzado automáticamente para este tipo de tirador.",
+        )
+        opcionales["op_121"] = True
+    else:
+        prev  = bool(opcionales.get("op_121", False))
+        nuevo = st.checkbox(
+            etiqueta,
+            value=prev,
+            key=f"op_121_{clave}",
+            help=_TOOLTIPS_OPCIONALES.get("op_121"),
+        )
+        if nuevo != prev:
+            opcionales["op_121"] = nuevo
+            _registrar_edicion(clave, selecciones)
+            st.rerun()
 
 
 _OP_222_OPCIONES = ("ninguno", "derecha", "izquierda")
@@ -815,7 +871,7 @@ def _control_electrodomestico_op_126(
 
 
 def _renderizar_opcionales(
-    clave: str, name: str, aplicables: list[str], interfaz: dict, selecciones: dict
+    clave: str, name: str, tirador_code: str, aplicables: list[str], interfaz: dict, selecciones: dict
 ) -> None:
     """Renderiza checkboxes y radio. op_126 (texto libre) va aparte tras divisor."""
     opcionales = selecciones[clave].setdefault("opcionales", {})
@@ -823,7 +879,9 @@ def _renderizar_opcionales(
         if op_id == "op_126":
             continue
         meta = interfaz.get(op_id, {})
-        if op_id == "op_222":
+        if op_id == "op_121":
+            _control_op_121(clave, name, tirador_code, meta, opcionales, selecciones)
+        elif op_id == "op_222":
             _control_radio_op_222(clave, meta, opcionales, selecciones)
         elif op_id == "op_207_opcional":
             _control_op_207(clave, name, meta, opcionales, selecciones)
@@ -896,6 +954,15 @@ def paso_1(muebles: list[dict]) -> None:
                 opciones_sg = list(dict.fromkeys(muebles_sel.get(name) or []))
                 if opciones_sg:
                     opcionales["op_207_opcional"] = opciones_sg[0]
+        # Inicializar op_121 a True si es forzado (Plantea siempre; Curve/Line en monoporte).
+        # Garantiza que "Sin mecanizado" llegue correctamente a construir_entrada_modulo_c
+        # aunque el usuario no abra la card.
+        if "op_121" in aplicables and "op_121" not in opcionales:
+            meta_121 = interfaz.get("op_121") or {}
+            tirador_code_init = str(mueble.get("Tirador") or "").strip()
+            if _es_forzado_op_121(tirador_code_init, name, meta_121):
+                opcionales["op_121"] = True
+
         # Inicializar tipo_auto en op_126 aunque el usuario no abra la card.
         # Garantiza que "Tipo electro" llegue correctamente a construir_entrada_modulo_c.
         if "op_126" in aplicables:
@@ -947,7 +1014,8 @@ def paso_1(muebles: list[dict]) -> None:
                     with col_info:
                         _bloque_informativo(mueble)
                         if aplicables:
-                            _renderizar_opcionales(clave, name, aplicables, interfaz, selecciones)
+                            tirador_code = str(mueble.get("Tirador") or "").strip()
+                            _renderizar_opcionales(clave, name, tirador_code, aplicables, interfaz, selecciones)
                             if "op_126" in aplicables:
                                 st.divider()
                                 _control_electrodomestico_op_126(
@@ -966,7 +1034,8 @@ def paso_1(muebles: list[dict]) -> None:
                         _ui_color_interior(mueble.get("Color del interior", "")),
                     )
                     if aplicables:
-                        _renderizar_opcionales(clave, name, aplicables, interfaz, selecciones)
+                        tirador_code = str(mueble.get("Tirador") or "").strip()
+                        _renderizar_opcionales(clave, name, tirador_code, aplicables, interfaz, selecciones)
                         if "op_126" in aplicables:
                             st.divider()
                             _control_electrodomestico_op_126(
