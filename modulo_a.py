@@ -483,15 +483,16 @@ def parsear_csv(archivo) -> dict:
                     if rango["alto_min"] is not None and rango["alto_max"] is not None:
                         if not (rango["alto_min"] <= len_z_mm <= rango["alto_max"]):
                             avisos.append(
-                                f"Alto fuera de rango: el mueble mide {len_z_mm:.0f}mm, "
-                                f"el rango válido es {rango['alto_min']}–{rango['alto_max']}mm"
+                                f"El informe de SketchUp indica alto {len_z_mm:.0f}mm, "
+                                f"pero según el catálogo debería estar entre "
+                                f"{rango['alto_min']}mm y {rango['alto_max']}mm"
                             )
                 elif name_raw in CATALOG_ALTOS:
                     alto_cat = CATALOG_ALTOS[name_raw]
                     if abs(len_z_mm - alto_cat) > LENZ_TOLERANCIA_MM:
                         avisos.append(
-                            f"Alto incorrecto: el mueble mide {len_z_mm:.0f}mm, "
-                            f"el catálogo indica {alto_cat}mm"
+                            f"El informe de SketchUp indica alto {len_z_mm:.0f}mm, "
+                            f"pero según el catálogo debería ser {alto_cat}mm"
                         )
             except ValueError:
                 pass
@@ -505,15 +506,16 @@ def parsear_csv(archivo) -> dict:
                 if rango.get("ancho_min") is not None and rango.get("ancho_max") is not None:
                     if not (rango["ancho_min"] <= ancho_mm <= rango["ancho_max"]):
                         avisos.append(
-                            f"Ancho fuera de rango: el mueble mide {ancho_mm:.0f}mm, "
-                            f"el rango válido es {rango['ancho_min']}–{rango['ancho_max']}mm"
+                            f"El informe de SketchUp indica ancho {ancho_mm:.0f}mm, "
+                            f"pero según el catálogo debería estar entre "
+                            f"{rango['ancho_min']}mm y {rango['ancho_max']}mm"
                         )
                 elif name_raw in CATALOG_ANCHOS:
                     ancho_std = CATALOG_ANCHOS[name_raw]
                     if abs(ancho_mm - ancho_std) > 5:
                         avisos.append(
-                            f"Ancho incorrecto: el mueble mide {ancho_mm:.0f}mm, "
-                            f"el catálogo indica {ancho_std}mm"
+                            f"El informe de SketchUp indica ancho {ancho_mm:.0f}mm, "
+                            f"pero según el catálogo debería ser {ancho_std}mm"
                         )
             except ValueError:
                 pass
