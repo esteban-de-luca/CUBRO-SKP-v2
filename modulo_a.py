@@ -98,7 +98,7 @@ TIRADORES_MECANISMO  = {20, 21}    # Touch Latch, Prise de main → sin color
 
 TRASERA_VALIDAS        = {"LACA", "NORDIC OAK WOOD", "OAK WOOD", "SMOKED OAK WOOD"}
 COLOR_INTERIOR_VALIDOS = {"Blanco mueble", "Gris mueble", "Negro mueble", "Roble mueble"}
-RODAPIE_VALIDOS        = {"70 mm", "100 mm", "0 mm"}
+RODAPIE_VALIDOS        = {"70 mm", "100 mm", "10 mm"}
 D_GAMA_LACA            = "1"
 GAMA_SUFIJOS = {
     "1": ["LACA"],

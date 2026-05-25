@@ -222,9 +222,9 @@ del_csv:
   # C_Rodapietext → Opción 402 — Altura de las patas
   # ---------------------------------------------------------------------------
   op_402:
-    - { skp: "70 mm",  ui: 70 mm,     sg: "70"  }
-    - { skp: "100 mm", ui: 100 mm,    sg: "100" }
-    - { skp: "0 mm",   ui: Sin patas, sg: SPI   }
+    - { skp: "70 mm",  ui: 70 mm,  sg: "70"  }
+    - { skp: "100 mm", ui: 100 mm, sg: "100" }
+    - { skp: "10 mm",  ui: 10 mm,  sg: SPI   }
 
   # ---------------------------------------------------------------------------
   # Ancho → Opción 231 — Reducción de ancho
