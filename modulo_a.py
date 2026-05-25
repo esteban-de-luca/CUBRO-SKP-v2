@@ -42,8 +42,33 @@ def _cargar_opciones() -> dict:
         return yaml.safe_load(f) or {}
 
 
+def _cargar_mapeos() -> dict:
+    path = _DATA_DIR / "mapeos_SKP_UI_SG.yaml"
+    if not path.exists():
+        raise FileNotFoundError(
+            f"No se encontró mapeos_SKP_UI_SG.yaml en {_DATA_DIR}. "
+            "Asegúrate de que el archivo está en data/mapeos_SKP_UI_SG.yaml."
+        )
+    with path.open(encoding="utf-8") as f:
+        return yaml.safe_load(f) or {}
+
+
 _CATALOGO = _cargar_catalogo()
 _OPCIONES = _cargar_opciones()
+_MAPEOS   = _cargar_mapeos()
+
+
+def _skp_a_ui(tabla: list) -> dict:
+    """Dict {skp: ui} para traducir valores internos del CSV a etiquetas de usuario."""
+    return {str(e["skp"]): str(e["ui"]) for e in (tabla or []) if "skp" in e and "ui" in e}
+
+
+_del_csv     = _MAPEOS.get("del_csv") or {}
+_UI_GAMA     = _skp_a_ui(_del_csv.get("op_100"))           # "1" → "LACA", "2" → "WOOD"…
+_UI_FRENTE   = _skp_a_ui(_del_csv.get("op_101"))           # "Crema LACA" → "Crema"…
+_UI_INTERIOR = _skp_a_ui(_del_csv.get("op_200"))           # "Blanco mueble" → "Blanco"…
+_UI_TIRADOR  = _skp_a_ui(_del_csv.get("op_300"))           # "2" → "Round", "7" → "Plantea"…
+_UI_TRASERA  = _skp_a_ui(_del_csv.get("op_301_integrado")) # "Oak WOOD" → "Oak"…
 
 
 # ── Constantes globales (valores fijos, no dependen del mueble) ────────────────
@@ -485,7 +510,7 @@ def parsear_csv(archivo) -> dict:
         if tirador is None:
             avisos.append("Falta el tipo de tirador")
         elif tirador not in TIRADORES_VALIDOS:
-            avisos.append(f"Tipo de tirador '{tirador}' no reconocido")
+            avisos.append(f"Tipo de tirador '{_UI_TIRADOR.get(str(tirador), str(tirador))}' no reconocido")
 
         # A11 — D_Gama vacío
         d_gama = _str_or_none(fila.get("D_Gama", ""))
@@ -498,7 +523,7 @@ def parsear_csv(archivo) -> dict:
             if color_interior is None:
                 avisos.append("Falta el color del interior")
             elif color_interior not in COLOR_INTERIOR_VALIDOS:
-                avisos.append(f"Color del interior '{color_interior}' no reconocido")
+                avisos.append(f"Color del interior '{_UI_INTERIOR.get(color_interior, color_interior)}' no reconocido")
 
         # A07 — D_Gama incompatible con ColorFrente
         color_frente_val = _str_or_none(fila.get("ColorFrente", ""))
@@ -506,7 +531,8 @@ def parsear_csv(archivo) -> dict:
             sufijos = GAMA_SUFIJOS.get(d_gama, [])
             if sufijos and not any(s in color_frente_val.upper() for s in sufijos):
                 avisos.append(
-                    f"La gama ({d_gama}) no coincide con el color de frente '{color_frente_val}'"
+                    f"La gama ({_UI_GAMA.get(d_gama, d_gama)}) no coincide con el color de frente "
+                    f"'{_UI_FRENTE.get(color_frente_val, color_frente_val)}'"
                 )
 
         # A23 — Apertura
@@ -534,7 +560,7 @@ def parsear_csv(archivo) -> dict:
             if trasera is None:
                 avisos.append("Falta el color de la trasera")
             elif trasera.upper() not in TRASERA_VALIDAS:
-                avisos.append(f"Color de trasera '{trasera}' no reconocido")
+                avisos.append(f"Color de trasera '{_UI_TRASERA.get(trasera, trasera)}' no reconocido")
 
         elif tirador in TIRADORES_SUPERFICIE:
             color_tirador = color_tir_raw
