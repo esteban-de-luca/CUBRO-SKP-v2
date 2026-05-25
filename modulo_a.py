@@ -606,10 +606,16 @@ def parsear_csv(archivo) -> dict:
                     "los valores válidos son 70 mm, 100 mm y 0 mm"
                 )
 
-        # Estado: CORRECTO si no hay avisos (excepto el informativo A18)
+        # Estado: CORRECTO si no hay avisos bloqueantes.
+        # Avisos informativos (no bloquean): A18 (reducción de ancho) y A23-info
+        # (apertura ignorada en muebles sin puerta batiente).
+        _AVISOS_INFORMATIVOS = (
+            "Nombre corregido por reducción",   # A18
+            "Este mueble no requiere apertura", # A23-info
+        )
         avisos_revisables = [
             a for a in avisos
-            if not a.startswith("Nombre corregido por reducción")
+            if not any(a.startswith(p) for p in _AVISOS_INFORMATIVOS)
         ]
         estado = "✅ CORRECTO" if not avisos_revisables else "⚠️ REVISAR"
 
