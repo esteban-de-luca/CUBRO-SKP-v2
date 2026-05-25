@@ -247,7 +247,9 @@ def _cargar_interfaz() -> dict:
         op700 = op_mueble.get("op_700") or {}
         interfaz["op_700_opcional"] = {
             "etiqueta": entradas[0].get("ui", "Mueble sin encolar"),
-            "excluidos": op700.get("excepciones") or [],
+            # Excluidos = muebles donde op_700 no aplica + muebles donde es automática
+            # (forzadas: HH*, siempre DEM sin intervención del usuario)
+            "excluidos": (op700.get("no_aplica") or []) + (op700.get("forzadas") or []),
         }
 
     # op_126 — variante por mueble (horno, placa, frigorífico, LVV/LVD, campana…)

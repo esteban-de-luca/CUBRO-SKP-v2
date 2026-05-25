@@ -16,9 +16,6 @@ Fuentes de verdad (no hardcodear valores aquí):
     data/opciones_mueble.yaml   — qué opciones aplican a cada mueble
     data/reglas.yaml            — reglas de negocio entre opciones
 
-Excepciones documentadas con TODO pendiente de YAML:
-    _OP_700_FORZADOS / _OP_700_NO_APLICA  — distinción forzado vs no-aplica
-    _AVISOS_FRASES                         — frases de aviso
 """
 
 from __future__ import annotations
@@ -344,20 +341,16 @@ def _calcular_opciones_mueble(
         _sg("op_231", "RL3", param1=valor_mm, origen="usuario", etiqueta="Reducción de ancho")
 
     # ── op_300 — Tipo de tirador (todos: O) ───────────────────────────────────
-    # Caso especial: BC158057 tiene siempre 499 (sin tirador físico)
-    if code == "BC158057":
-        _sg("op_300", "499")
-    else:
-        sg_300_base = indices.get("op_300", {}).get(tirador_ui, "")
-        if sg_300_base:
-            if tirador_ui in ("Curve", "Line"):
-                # Sufijo H (batiente) o C (coulissant/extraíble) según reglas.yaml
-                sufijo  = "H" if _es_batiente(code, op_mueble) else "C"
-                prefijo = "Q2" if tirador_ui == "Curve" else "Q3"
-                sg_300  = f"{prefijo}{sufijo}"
-            else:
-                sg_300 = sg_300_base
-            _sg("op_300", sg_300)
+    sg_300_base = indices.get("op_300", {}).get(tirador_ui, "")
+    if sg_300_base:
+        if tirador_ui in ("Curve", "Line"):
+            # Sufijo H (batiente) o C (coulissant/extraíble/banco)
+            sufijo  = "H" if _es_batiente(code, op_mueble) else "C"
+            prefijo = "Q2" if tirador_ui == "Curve" else "Q3"
+            sg_300  = f"{prefijo}{sufijo}"
+        else:
+            sg_300 = sg_300_base
+        _sg("op_300", sg_300)
 
     # ── op_301 — Color del tirador ────────────────────────────────────────────
     excl_301 = (op_mueble.get("op_301") or {}).get("excepciones") or []
@@ -435,7 +428,7 @@ def calcular_opciones(entrada: list[dict]) -> list[dict]:
         if cat_hinge == "lee_csv":
             p_hinge: str | None = indices.get("apertura", {}).get(apertura_ui)
         elif cat_hinge == "nulo":
-            p_hinge = None
+            p_hinge = "D"   # provisional hasta confirmar con SG (ver opciones_mueble.yaml)
         elif cat_hinge == "coulissant":
             p_hinge = "C"
         elif cat_hinge == "lift":
