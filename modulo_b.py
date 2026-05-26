@@ -943,8 +943,8 @@ def paso_1(muebles: list[dict]) -> None:
         estado = selecciones.setdefault(clave, {})
         opcionales = estado.setdefault("opcionales", {})
         if "check" not in estado:
-            # Pre-check para muebles sin opcionales aplicables (CLAUDE.md §7).
-            estado["check"] = (len(aplicables) == 0)
+            # El check siempre empieza desmarcado — el usuario debe marcarlo manualmente.
+            estado["check"] = False
         # Inicializar selección de op_207 para muebles de despensa (radio obligatorio).
         # Garantiza que siempre haya un valor válido antes de que el radio se pinte.
         if "op_207_opcional" in aplicables:
@@ -1024,8 +1024,7 @@ def paso_1(muebles: list[dict]) -> None:
                                 )
                         else:
                             st.caption(
-                                "Este mueble no tiene opciones opcionales aplicables. "
-                                "Pre-marcado como revisado."
+                                "Este mueble no tiene opciones adicionales configurables."
                             )
                 else:
                     _bloque_informativo(mueble)
