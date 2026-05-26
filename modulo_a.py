@@ -416,6 +416,7 @@ def parsear_csv(archivo) -> dict:
     # 4. Procesar fila a fila
     for _, fila in df.iterrows():
         avisos: list[str] = []
+        avisos_internos: list[str] = []
 
         # I01 — Name vacío → descarte silencioso
         name_raw = _str_or_none(fila.get("Name", ""))
@@ -498,7 +499,9 @@ def parsear_csv(archivo) -> dict:
                 pass
 
         # A22 — Ancho vs catálogo
-        if ancho_raw is not None and ancho_raw != "10000 mm":
+        # Se salta cuando la reducción de ancho está activa (ancho_raw == "10000 mm"
+        # y ancho_reducido_raw tiene valor): el ancho correcto ya viene del corrector.
+        if ancho_raw is not None and not (ancho_raw == "10000 mm" and ancho_reducido_raw is not None):
             try:
                 ancho_mm       = float(ancho_raw.replace(" mm", "").replace(",", ".").strip())
                 familia_ancho  = _get_familia(name_raw)
@@ -595,8 +598,8 @@ def parsear_csv(archivo) -> dict:
 
         if name_raw in CODIGOS_SIN_RODAPIE:
             if rodapie_raw is not None and name_raw in CODIGOS_SUSPENSO:
-                # Solo avisamos para suspendidos explícitos, no para frentes sin mueble
-                avisos.append(f"Mueble suspenso — el rodapié '{rodapie_raw}' se ignorará")
+                # Aviso interno: no se muestra al usuario ni afecta al estado del mueble
+                avisos_internos.append(f"Mueble suspenso — el rodapié '{rodapie_raw}' se ignorará")
             rodapie = None
         else:
             rodapie = rodapie_raw
@@ -609,34 +612,31 @@ def parsear_csv(archivo) -> dict:
                 )
 
         # Estado: CORRECTO si no hay avisos bloqueantes.
-        # Avisos informativos (no bloquean): A18 (reducción de ancho) y A23-info
-        # (apertura ignorada en muebles sin puerta batiente).
-        _AVISOS_INFORMATIVOS = (
-            "Nombre corregido por reducción",   # A18
-            "Este mueble no requiere apertura", # A23-info
-        )
+        # Único aviso no bloqueante: A18 (nombre corregido por reducción de ancho).
+        # El aviso de rodapié en suspendidos ya no llega a avisos (→ avisos_internos).
         avisos_revisables = [
             a for a in avisos
-            if not any(a.startswith(p) for p in _AVISOS_INFORMATIVOS)
+            if not a.startswith("Nombre corregido por reducción")
         ]
         estado = "✅ CORRECTO" if not avisos_revisables else "⚠️ REVISAR"
 
         resultado["muebles"].append({
-            "name":           name_raw,
-            "name_skp":       name_skp,
-            "estado":         estado,
-            "apertura":       apertura,
-            "d_gama":         d_gama,
-            "color_frente":   color_frente_val,
-            "color_interior": color_interior,
-            "tirador":        tirador,
-            "trasera":        trasera,
-            "color_tirador":  color_tirador,
-            "rodapie":        rodapie,
-            "ancho":          ancho_raw,
-            "ancho_reducido": ancho_reducido_raw,
-            "len_z":          len_z_raw,
-            "avisos":         avisos,
+            "name":            name_raw,
+            "name_skp":        name_skp,
+            "estado":          estado,
+            "apertura":        apertura,
+            "d_gama":          d_gama,
+            "color_frente":    color_frente_val,
+            "color_interior":  color_interior,
+            "tirador":         tirador,
+            "trasera":         trasera,
+            "color_tirador":   color_tirador,
+            "rodapie":         rodapie,
+            "ancho":           ancho_raw,
+            "ancho_reducido":  ancho_reducido_raw,
+            "len_z":           len_z_raw,
+            "avisos":          avisos,
+            "avisos_internos": avisos_internos,
         })
 
     return resultado
