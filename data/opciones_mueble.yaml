@@ -594,6 +594,13 @@ op_231:
 # -----------------------------------------------------------------------------
 op_300:
   todos: O   # Obligatoria en los 121 muebles del catálogo   # modificado 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026
+  sin_mecanismo:   # estos muebles no admiten Touch Latch (20) ni Prise de main (21)
+    - POBIF4580
+    - POBIF6080
+    - PO1BIF4580
+    - PO1BIF6080
+    - PO2BIF4580
+    - PO2BIF6080
 
 
 # -----------------------------------------------------------------------------

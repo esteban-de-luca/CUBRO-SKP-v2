@@ -129,6 +129,11 @@ CODIGOS_SIN_INTERIOR: set[str] = set(
     ((_OPCIONES.get("op_200") or {}).get("excepciones")) or []
 )
 
+# Muebles que no admiten tiradores de mecanismo (Touch Latch=20, Prise de main=21)
+CODIGOS_SIN_MECANISMO: set[str] = set(
+    ((_OPCIONES.get("op_300") or {}).get("sin_mecanismo")) or []
+)
+
 # Muebles suspendidos: no llevan rodapié (H, HH, HAV, HR, HLVV, HPT)
 CODIGOS_SUSPENSO: set[str] = set(
     ((_OPCIONES.get("op_402") or {}).get("excepciones")) or []
@@ -529,6 +534,11 @@ def parsear_csv(archivo) -> dict:
             avisos.append("Falta el tipo de tirador")
         elif tirador not in TIRADORES_VALIDOS:
             avisos.append(f"Tipo de tirador '{_ui_tirador.get(str(tirador), str(tirador))}' no reconocido")
+        elif tirador in TIRADORES_MECANISMO and name_raw in CODIGOS_SIN_MECANISMO:
+            avisos.append(
+                f"El tirador '{_ui_tirador.get(str(tirador), str(tirador))}' "
+                "no es compatible con este mueble"
+            )
 
         # A11 — D_Gama vacío
         d_gama = _str_or_none(fila.get("D_Gama", ""))
