@@ -42,8 +42,17 @@ def _cargar_opciones() -> dict:
         return yaml.safe_load(f) or {}
 
 
+def _cargar_mapeos() -> dict:
+    path = _DATA_DIR / "mapeos_SKP_UI_SG.yaml"
+    if not path.exists():
+        return {}
+    with path.open(encoding="utf-8") as f:
+        return yaml.safe_load(f) or {}
+
+
 _CATALOGO = _cargar_catalogo()
 _OPCIONES = _cargar_opciones()
+_MAPEOS   = _cargar_mapeos()
 
 
 def _cargar_ui_aviso() -> dict[str, dict]:
@@ -97,6 +106,13 @@ TIRADORES_SUPERFICIE = {4, 5, 7}   # Curve, Line, Plantea → color desde Color 
 TIRADORES_MECANISMO  = {20, 21}    # Touch Latch, Prise de main → sin color
 
 TRASERA_VALIDAS        = {"LACA", "NORDIC OAK WOOD", "OAK WOOD", "SMOKED OAK WOOD"}
+
+# Colores válidos para tiradores de superficie (Curve, Line, Plantea) — op_301_superficie
+COLORES_TIRADOR_SUPERFICIE_VALIDOS: set[str] = {
+    str(e["skp"])
+    for e in ((_MAPEOS.get("del_csv") or {}).get("op_301_superficie") or [])
+    if "skp" in e
+}
 COLOR_INTERIOR_VALIDOS = {"Blanco mueble", "Gris mueble", "Negro mueble", "Roble mueble"}
 RODAPIE_VALIDOS        = {"70 mm", "100 mm", "10 mm"}
 D_GAMA_LACA            = "1"
@@ -594,6 +610,11 @@ def parsear_csv(archivo) -> dict:
             color_tirador = color_tir_raw
             if color_tirador is None:
                 avisos.append("Falta el color del tirador de superficie")
+            elif color_tirador not in COLORES_TIRADOR_SUPERFICIE_VALIDOS:
+                avisos.append(
+                    f"Color de tirador '{color_tirador}' no reconocido — "
+                    f"los valores válidos son: {', '.join(sorted(COLORES_TIRADOR_SUPERFICIE_VALIDOS))}"
+                )
 
         # A09 — Frente no-LACA con Trasera Laca
         if (tirador in TIRADORES_TRASERA
