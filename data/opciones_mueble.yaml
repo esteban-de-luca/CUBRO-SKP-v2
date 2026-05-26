@@ -200,6 +200,13 @@ op_104:
 # -----------------------------------------------------------------------------
 op_121:
   todos: P   # Opcional en los 121 muebles del catálogo
+  excepciones:
+    - POBIF4580    # no aplica — frente sin mueble, no admite Touch Latch
+    - POBIF6080    # no aplica — frente sin mueble, no admite Touch Latch
+    - PO1BIF4580   # no aplica — frente sin mueble, no admite Touch Latch
+    - PO1BIF6080   # no aplica — frente sin mueble, no admite Touch Latch
+    - PO2BIF4580   # no aplica — frente sin mueble, no admite Touch Latch
+    - PO2BIF6080   # no aplica — frente sin mueble, no admite Touch Latch
 
 
 # -----------------------------------------------------------------------------
@@ -593,7 +600,7 @@ op_300:
 # op_301 — Color del tirador
 # -----------------------------------------------------------------------------
 op_301:
-  todos: O   # Obligatoria en todos excepto FHABS6580   # modificado 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026
+  todos: O   # Obligatoria en todos los muebles del catálogo   # modificado 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026
   excepciones: []   # eliminado BC158057 — 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026
 
 # -----------------------------------------------------------------------------
