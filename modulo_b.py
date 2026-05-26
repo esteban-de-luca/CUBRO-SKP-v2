@@ -513,15 +513,37 @@ def pantalla_validacion(muebles: list[dict]) -> None:
         st.rerun()
 
 
-def _bloque_informativo(mueble: dict) -> None:
-    """Línea inicial de la card abierta: Apertura · Ancho · Color interior · Rodapié."""
-    apertura = _ui_apertura(mueble.get("Apertura", ""))
-    ancho = _ui_ancho(mueble)
+def _bloque_informativo(mueble: dict, catalogo: dict) -> None:
+    """Línea inicial de la card abierta: Apertura · Ancho · Alto · Fondo · Color interior · Rodapié."""
+    apertura      = _ui_apertura(mueble.get("Apertura", ""))
+    ancho         = _ui_ancho(mueble)
     color_interior = _ui_color_interior(mueble.get("Color del interior", ""))
-    rodapie = _ui_rodapie(mueble.get("C_Rodapietext", ""))
+    rodapie       = _ui_rodapie(mueble.get("C_Rodapietext", ""))
+
+    name  = (mueble.get("Name") or "").strip()
+    entry = catalogo.get(name) or {}
+
+    # Alto: LenZ del CSV (altura real en SketchUp); fallback al catálogo
+    len_z_raw = (mueble.get("LenZ") or "").strip()
+    if len_z_raw:
+        try:
+            alto_str = f"{int(float(len_z_raw))} mm"
+        except ValueError:
+            alto_str = len_z_raw
+    elif entry.get("alto_mm") is not None:
+        alto_str = f"{entry['alto_mm']} mm"
+    else:
+        alto_str = "—"
+
+    # Fondo: del catálogo (null en frentes sin mueble)
+    fondo_mm  = entry.get("fondo_mm")
+    fondo_str = f"{fondo_mm} mm" if fondo_mm is not None else "—"
+
     st.markdown(
         f"**Apertura:** {apertura}  ·  "
         f"**Ancho:** {ancho}  ·  "
+        f"**Alto:** {alto_str}  ·  "
+        f"**Fondo:** {fondo_str}  ·  "
         f"**Color interior:** {color_interior}  ·  "
         f"**Rodapié:** {rodapie}"
     )
@@ -1012,7 +1034,7 @@ def paso_1(muebles: list[dict]) -> None:
                             _ui_color_interior(mueble.get("Color del interior", "")),
                         )
                     with col_info:
-                        _bloque_informativo(mueble)
+                        _bloque_informativo(mueble, catalogo)
                         if aplicables:
                             tirador_code = str(mueble.get("Tirador") or "").strip()
                             _renderizar_opcionales(clave, name, tirador_code, aplicables, interfaz, selecciones)
@@ -1027,7 +1049,7 @@ def paso_1(muebles: list[dict]) -> None:
                                 "Este mueble no tiene opciones adicionales configurables."
                             )
                 else:
-                    _bloque_informativo(mueble)
+                    _bloque_informativo(mueble, catalogo)
                     _render_swatches_color(
                         _ui_color_frente(mueble.get("ColorFrente", "")),
                         _ui_color_interior(mueble.get("Color del interior", "")),
