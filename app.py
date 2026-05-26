@@ -228,6 +228,7 @@ def _cargar_csv(file) -> None:
     st.session_state.pedido_paso_2 = None
     st.session_state.pantalla = PANTALLA_VALIDACION
     st.session_state.csv_fallback_a_mock = False
+    st.session_state.pop("paso_1_abiertos", None)  # forzar re-inicialización con todas las cards abiertas
 
     if not USE_MOCK_DATA:
         # Detectar si es el CSV de validación ya procesado (output del Módulo A),
