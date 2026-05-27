@@ -697,7 +697,7 @@ def parsear_csv(archivo) -> dict:
             elif rodapie not in RODAPIE_VALIDOS:
                 avisos.append(
                     f"Valor de rodapié '{rodapie}' no reconocido — "
-                    "los valores válidos son 70 mm, 100 mm y 0 mm"
+                    "los valores válidos son 70 mm, 100 mm y 10 mm"
                 )
 
         # Estado: CORRECTO si no hay avisos bloqueantes.
