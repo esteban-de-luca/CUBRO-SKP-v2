@@ -328,8 +328,8 @@ opcionales:
 
 tipo_ui_a_sg:
   Horno:             "Four"
-  Micro:             "microondes"
-  Placa:             "plaque"
+  Micro:             "Microondes"
+  Placa:             "Plaque"
   "Placa aspirante": "Plaque aspirante"
   Frigo:             "Réfrigérateur"
 
