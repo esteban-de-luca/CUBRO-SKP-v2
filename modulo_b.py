@@ -813,10 +813,12 @@ def _control_checkbox_op_207(
 def _control_radio_op_207_seleccion(
     clave: str, name: str, meta: dict, opcionales: dict, selecciones: dict
 ) -> None:
-    """Radio de op_207 para muebles de despensa AGM (GM1/GM2).
+    """Selector visual de op_207 para muebles de despensa AGM (GM1/GM2).
 
-    Arranca sin selección (index=None). El usuario debe elegir explícitamente.
-    Hasta que no lo haga, el check 'He revisado' permanece bloqueado.
+    Cada opción se presenta como una columna con su imagen encima y un botón
+    debajo, de forma que texto e imagen queden perfectamente alineados.
+    Arranca sin selección; el check 'He revisado' queda bloqueado hasta que
+    el usuario elija.
     """
     muebles_seleccion = meta.get("muebles_seleccion") or {}
     etiqueta_por_sg   = meta.get("etiqueta_por_sg")   or {}
@@ -828,32 +830,30 @@ def _control_radio_op_207_seleccion(
         return
 
     prev = opcionales.get("op_207_opcional")
-    idx  = opciones_sg.index(prev) if prev in opciones_sg else None  # None = sin selección
 
-    nuevo = st.radio(
-        etiqueta_label,
-        options=opciones_sg,
-        index=idx,
-        format_func=lambda v: etiqueta_por_sg.get(v, v),
-        horizontal=True,
-        key=f"op_207_opcional_{clave}",
-        help=_TOOLTIPS_OPCIONALES.get("op_207_opcional"),
-    )
-    if nuevo is not None and nuevo != prev:
-        opcionales["op_207_opcional"] = nuevo
-        _registrar_edicion(clave, selecciones)
-        st.rerun()
+    st.markdown(f"**{etiqueta_label}**")
 
-    # Imágenes de referencia visual alineadas con las opciones del radio.
-    # Se restringe a [1, 1, 2] para que no se extiendan por todo el ancho
-    # y queden bajo sus respectivas opciones.
-    imgs = [(sg, _imagen_opcion("op_207", sg)) for sg in opciones_sg]
-    if any(img for _, img in imgs):
-        img_cols = st.columns([1, 1, 2])
-        for col, (sg, img_path) in zip(img_cols, imgs):
-            with col:
-                if img_path:
-                    st.image(str(img_path), width=110)
+    # Columnas: una por opción + columna vacía a la derecha para no estirar
+    n = len(opciones_sg)
+    cols = st.columns([1] * n + [max(1, 4 - n)])
+
+    for col, sg in zip(cols, opciones_sg):
+        with col:
+            img_path = _imagen_opcion("op_207", sg)
+            if img_path:
+                st.image(str(img_path), use_container_width=True)
+            etiqueta  = etiqueta_por_sg.get(sg, sg)
+            is_selected = (prev == sg)
+            if st.button(
+                etiqueta,
+                key=f"op_207_btn_{sg}_{clave}",
+                type="primary" if is_selected else "secondary",
+                use_container_width=True,
+            ):
+                if not is_selected:
+                    opcionales["op_207_opcional"] = sg
+                    _registrar_edicion(clave, selecciones)
+                    st.rerun()
 
 
 def _control_op_207(
