@@ -201,7 +201,7 @@ def _render_swatches_color(color_frente: str, color_interior: str) -> None:
 
 
 @st.cache_data
-def _cargar_interfaz(_v: int = 2) -> dict:
+def _cargar_interfaz(_v: int = 3) -> dict:
     """Construye el dict de interfaz desde mapeos_SKP_UI_SG.yaml, opciones_mueble.yaml y reglas.yaml.
 
     La fuente de verdad son los tres YAMLs anteriores. Ningún control ni lógica
