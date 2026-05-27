@@ -416,16 +416,16 @@ def _identificador_mueble(mueble: dict) -> str:
 # los muebles aunque la opcional no aplique (en ese caso "False" / "").
 # ----------------------------------------------------------------------------
 
-def _export_op_207(valor, etiqueta_por_sg: dict | None = None) -> str:
+def _export_op_207(valor) -> str:
     """Exporta el valor de op_207_opcional al contrato con el Módulo C.
 
     Muebles de fregadero (P60/P90): booleano → "True" / "False".
-    Muebles de despensa AGM (GM1/GM2): etiqueta UI ("Almacenamiento estándar" /
-    "Botellero"), NO el código SG. El mapeo UI → código SG lo hace el Módulo C
-    igual que con el resto de opciones.
+    Muebles de despensa AGM (GM1/GM2): código SG directo (GM1 / GM2).
+    El Módulo C necesita el código SG para resolver la opción; la traducción
+    a etiqueta UI solo ocurre en el render del Paso 2 (_cargar_sg_a_ui).
     """
-    if isinstance(valor, str) and etiqueta_por_sg and valor in etiqueta_por_sg:
-        return etiqueta_por_sg[valor]
+    if isinstance(valor, str) and valor not in ("True", "False", ""):
+        return valor   # GM1 / GM2 → pasa directo; modulo_c lo resuelve
     return _bool_str(valor)
 
 
@@ -456,13 +456,6 @@ def construir_entrada_modulo_c(
     Trasera=Laca → color del frente (igual que en la cabecera de cards).
     Las opcionales no marcadas o no aplicables se exportan como "False" / "".
     """
-    # Mapeo SG → etiqueta UI para op_207 (GM1/GM2). Se usa para exportar la
-    # etiqueta legible ("Almacenamiento estándar" / "Botellero") en lugar del
-    # código SG, de modo que el Módulo C realice el mapeo a código igual que
-    # con el resto de opciones.
-    _meta_207 = (_cargar_interfaz().get("op_207_opcional") or {})
-    _sg_a_ui_207: dict = _meta_207.get("etiqueta_por_sg") or {}
-
     entrada: list[dict] = []
     for mueble in muebles:
         clave = _identificador_mueble(mueble)
@@ -497,7 +490,7 @@ def construir_entrada_modulo_c(
             "Reducción de ancho": _bool_str(reduccion),
             "Ancho reducido": ancho_reducido,
             "Sin mecanizado": _bool_str(opcionales.get("op_121", False)),
-            "Cubos de basura": _export_op_207(opcionales.get("op_207_opcional", False), _sg_a_ui_207),
+            "Cubos de basura": _export_op_207(opcionales.get("op_207_opcional", False)),
             "Recorte LED": _bool_str(opcionales.get("op_220", False)),
             "Sensor para mando LED": _sensor_led_export(opcionales.get("op_222")),
             "Cajón interior": _bool_str(opcionales.get("op_223", False)),
