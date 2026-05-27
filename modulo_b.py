@@ -263,15 +263,16 @@ def _cargar_interfaz() -> dict:
             "muebles": op_mueble.get("op_222") or [],
         }
 
-    # op_700_opcional — etiqueta + excluidos (= excepciones de op_700 en opciones_mueble)
+    # op_700_opcional — etiqueta + excluidos (no_aplica) + forzadas (DEM automático)
     if "op_700_opcional" in opc:
         entradas = opc["op_700_opcional"]
         op700 = op_mueble.get("op_700") or {}
         interfaz["op_700_opcional"] = {
-            "etiqueta": entradas[0].get("ui", "Mueble sin encolar"),
-            # Excluidos = muebles donde op_700 no aplica + muebles donde es automática
-            # (forzadas: HH*, siempre DEM sin intervención del usuario)
-            "excluidos": (op700.get("no_aplica") or []) + (op700.get("forzadas") or []),
+            "etiqueta":  entradas[0].get("ui", "Mueble sin encolar"),
+            # Excluidos: muebles donde op_700 no aplica en absoluto (no se muestra).
+            "excluidos": op700.get("no_aplica") or [],
+            # Forzadas: muebles donde DEM es automático — se muestra desactivado y marcado.
+            "forzadas":  op700.get("forzadas") or [],
         }
 
     # op_126 — variante por mueble (horno, placa, frigorífico, LVV/LVD, campana…)
@@ -616,10 +617,10 @@ def _opcionales_aplicables(mueble: dict, interfaz: dict) -> list[str]:
         if name in (interfaz.get(op_id, {}).get("muebles") or []):
             aplicables.append(op_id)
 
-    # op_700 — aplica a todos salvo los excluidos
-    if "op_700_opcional" in interfaz and name not in (
-        interfaz.get("op_700_opcional", {}).get("excluidos") or []
-    ):
+    # op_700 — aplica a todos salvo los no_aplica.
+    # Los forzadas (campanas HH*) también se incluyen: se muestran desactivados y marcados.
+    meta_700 = interfaz.get("op_700_opcional") or {}
+    if "op_700_opcional" in interfaz and name not in (meta_700.get("excluidos") or []):
         aplicables.append("op_700_opcional")
 
     # op_126 — lista plana de muebles (BFT y AFS)
@@ -691,6 +692,40 @@ def _control_op_121(
         )
         if nuevo != prev:
             opcionales["op_121"] = nuevo
+            _registrar_edicion(clave, selecciones)
+            st.rerun()
+
+
+def _control_op_700(
+    clave: str, name: str, meta: dict, opcionales: dict, selecciones: dict
+) -> None:
+    """Checkbox de op_700 (Sin encolar / DEM).
+
+    Si el mueble está en 'forzadas' → aparece desactivado y marcado
+    (igual que op_121 forzado). En el resto → checkbox editable normal.
+    """
+    etiqueta   = meta.get("etiqueta", "Mueble sin encolar")
+    es_forzado = name in (meta.get("forzadas") or [])
+
+    if es_forzado:
+        st.checkbox(
+            etiqueta,
+            value=True,
+            disabled=True,
+            key=f"op_700_opcional_{clave}",
+            help="Forzado automáticamente: este mueble siempre se fabrica sin encolar.",
+        )
+        opcionales["op_700_opcional"] = True
+    else:
+        prev  = bool(opcionales.get("op_700_opcional", False))
+        nuevo = st.checkbox(
+            etiqueta,
+            value=prev,
+            key=f"op_700_opcional_{clave}",
+            help=_TOOLTIPS_OPCIONALES.get("op_700_opcional"),
+        )
+        if nuevo != prev:
+            opcionales["op_700_opcional"] = nuevo
             _registrar_edicion(clave, selecciones)
             st.rerun()
 
@@ -947,6 +982,8 @@ def _renderizar_opcionales(
                     opcionales["op_222"] = "ninguno"
         elif op_id == "op_207_opcional":
             _control_op_207(clave, name, meta, opcionales, selecciones)
+        elif op_id == "op_700_opcional":
+            _control_op_700(clave, name, meta, opcionales, selecciones)
         else:
             _control_checkbox_opcional(clave, op_id, meta, opcionales, selecciones)
 
@@ -1009,6 +1046,12 @@ def paso_1(muebles: list[dict]) -> None:
             estado["check"] = False
         # op_207 para muebles de despensa AGM: NO se pre-inicializa.
         # El usuario debe elegir explícitamente; hasta que lo haga el check queda bloqueado.
+
+        # op_700 forzadas (campanas HH*): inicializar a True aunque el usuario no abra la card.
+        if "op_700_opcional" in aplicables and "op_700_opcional" not in opcionales:
+            meta_700 = interfaz.get("op_700_opcional") or {}
+            if name in (meta_700.get("forzadas") or []):
+                opcionales["op_700_opcional"] = True
         # Inicializar op_121 a True si es forzado (Plantea siempre; Curve/Line en monoporte).
         # Garantiza que "Sin mecanizado" llegue correctamente a construir_entrada_modulo_c
         # aunque el usuario no abra la card.
