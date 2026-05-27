@@ -159,6 +159,16 @@ CODIGOS_SIN_MECANISMO: set[str] = set(
     ((_OPCIONES.get("op_300") or {}).get("sin_mecanismo")) or []
 )
 
+# Muebles que solo admiten Touch Latch (TL1) — fuente: opciones_mueble.yaml op_217.solo_TL1
+CODIGOS_SOLO_TL1: set[str] = set(
+    ((_OPCIONES.get("op_217") or {}).get("solo_TL1")) or []
+)
+
+# Muebles que solo admiten Prise de main (PS1) — fuente: opciones_mueble.yaml op_217.solo_PS1
+CODIGOS_SOLO_PS1: set[str] = set(
+    ((_OPCIONES.get("op_217") or {}).get("solo_PS1")) or []
+)
+
 # Muebles con lista blanca de tiradores (op_300 SG codes) — fuente: reglas.yaml modulo_c.op_300.tiradores_restringidos
 TIRADORES_RESTRINGIDOS: dict[str, list[str]] = (
     (_REGLAS.get("modulo_c") or {}).get("op_300", {}).get("tiradores_restringidos") or {}
@@ -581,6 +591,16 @@ def parsear_csv(archivo) -> dict:
             avisos.append(
                 f"El tirador '{_ui_tirador.get(str(tirador), str(tirador))}' "
                 "no es compatible con este mueble"
+            )
+        elif tirador == 21 and name_raw in CODIGOS_SOLO_TL1:
+            # A25a — Prise de main en mueble que solo admite Touch Latch
+            avisos.append(
+                "Este mueble solo admite Touch Latch — Prise de main no es compatible"
+            )
+        elif tirador == 20 and name_raw in CODIGOS_SOLO_PS1:
+            # A25b — Touch Latch en mueble que solo admite Prise de main
+            avisos.append(
+                "Este mueble solo admite Prise de main — Touch Latch no es compatible"
             )
         elif name_raw in TIRADORES_RESTRINGIDOS and tirador is not None:
             # A24 — tirador no permitido para este mueble (lista blanca en reglas.yaml)
