@@ -123,7 +123,8 @@ COLORES_TIRADOR_SUPERFICIE_VALIDOS: set[str] = {
     if "skp" in e
 }
 COLOR_INTERIOR_VALIDOS = {"Blanco mueble", "Gris mueble", "Negro mueble", "Roble mueble"}
-RODAPIE_VALIDOS        = {"70 mm", "100 mm", "10 mm"}
+RODAPIE_VALIDOS_DEFAULT = {"70 mm", "100 mm"}   # válido para la mayoría de muebles
+# "10 mm" (SPI) solo aplica a muebles de banco — se lee por mueble desde catalogo.json
 D_GAMA_LACA            = "1"
 GAMA_SUFIJOS = {
     "1": ["LACA"],
@@ -694,11 +695,27 @@ def parsear_csv(archivo) -> dict:
             rodapie = rodapie_raw
             if rodapie is None:
                 avisos.append("Falta el valor de rodapié")
-            elif rodapie not in RODAPIE_VALIDOS:
-                avisos.append(
-                    f"Valor de rodapié '{rodapie}' no reconocido — "
-                    "los valores válidos son 70 mm, 100 mm y 10 mm"
+            else:
+                # Obtener valores válidos para este mueble desde catalogo.json;
+                # si el mueble no tiene "rodapie_validos" explícito, usar el default.
+                _cat_entry = _CATALOGO.get(name_raw) or {}
+                _rodapie_validos = (
+                    set(_cat_entry["rodapie_validos"])
+                    if _cat_entry.get("rodapie_validos")
+                    else RODAPIE_VALIDOS_DEFAULT
                 )
+                if rodapie not in _rodapie_validos:
+                    _ordenados = sorted(_rodapie_validos)
+                    if len(_ordenados) == 1:
+                        _lista = _ordenados[0]
+                    elif len(_ordenados) == 2:
+                        _lista = f"{_ordenados[0]} y {_ordenados[1]}"
+                    else:
+                        _lista = ", ".join(_ordenados[:-1]) + f" y {_ordenados[-1]}"
+                    avisos.append(
+                        f"Valor de rodapié '{rodapie}' no permitido para este mueble — "
+                        f"los valores aceptados son {_lista}"
+                    )
 
         # Estado: CORRECTO si no hay avisos bloqueantes.
         # Único aviso no bloqueante: A18 (nombre corregido por reducción de ancho).
