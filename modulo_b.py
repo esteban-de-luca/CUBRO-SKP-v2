@@ -633,7 +633,9 @@ def _opcionales_aplicables(mueble: dict, interfaz: dict) -> list[str]:
 def _registrar_edicion(clave: str, selecciones: dict) -> None:
     """Reset del check al editar y mantiene la card abierta tras el rerun."""
     selecciones[clave]["check"] = False
-    st.session_state.pop(f"check_{clave}", None)
+    # Asignación explícita en lugar de pop: garantiza que el widget de Streamlit
+    # muestre la casilla desmarcada visualmente en el siguiente rerun.
+    st.session_state[f"check_{clave}"] = False
     st.session_state.setdefault("paso_1_abiertos", set()).add(clave)
 
 
