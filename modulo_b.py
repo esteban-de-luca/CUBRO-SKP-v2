@@ -1407,7 +1407,9 @@ def _render_card_resumen(entrada: dict, catalogo: dict) -> None:
                     # RL3 = reducción de ancho; mostrar el valor real en mm
                     if valor_raw == "RL3":
                         ancho_r = (entrada.get("Ancho reducido") or "").strip()
-                        valor_ui = f"{ancho_r} mm" if ancho_r else "Reducción de ancho"
+                        # Normalizar: quitar " mm" si ya viene en el valor
+                        ancho_r_num = ancho_r.replace("mm", "").strip()
+                        valor_ui = f"{ancho_r_num} mm" if ancho_r_num else "Reducción de ancho"
                     else:
                         valor_ui = _sg_ui.get(valor_raw, valor_raw)
                     st.markdown(
