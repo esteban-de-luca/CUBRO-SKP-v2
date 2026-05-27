@@ -605,8 +605,9 @@ def parsear_csv(archivo) -> dict:
                 avisos.append(
                     "Este mueble no es compatible con el tirador Prise de main"
                 )
-        elif name_raw in TIRADORES_RESTRINGIDOS and tirador is not None:
+        elif name_raw in TIRADORES_RESTRINGIDOS and tirador is not None and tirador != 0:
             # A24 — tirador no permitido para este mueble (lista blanca en reglas.yaml)
+            # Tirador 0 (Sin tirador) queda excluido: aplica a todos los muebles sin restricción.
             _sg_codes_tirador = _TIRADOR_INT_TO_SG_OP300.get(tirador, [])
             _permitidos = TIRADORES_RESTRINGIDOS[name_raw]
             if not any(sg in _permitidos for sg in _sg_codes_tirador):
