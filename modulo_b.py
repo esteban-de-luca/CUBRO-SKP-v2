@@ -813,7 +813,11 @@ def _control_checkbox_op_207(
 def _control_radio_op_207_seleccion(
     clave: str, name: str, meta: dict, opcionales: dict, selecciones: dict
 ) -> None:
-    """Radio de op_207 para muebles de despensa AGM (GM1/GM2). Siempre tiene valor seleccionado."""
+    """Radio de op_207 para muebles de despensa AGM (GM1/GM2).
+
+    Arranca sin selección (index=None). El usuario debe elegir explícitamente.
+    Hasta que no lo haga, el check 'He revisado' permanece bloqueado.
+    """
     muebles_seleccion = meta.get("muebles_seleccion") or {}
     etiqueta_por_sg   = meta.get("etiqueta_por_sg")   or {}
     etiqueta_label    = meta.get("etiqueta_despensa", "Tipo de almacenamiento")
@@ -824,34 +828,32 @@ def _control_radio_op_207_seleccion(
         return
 
     prev = opcionales.get("op_207_opcional")
-    if prev not in opciones_sg:
-        prev = opciones_sg[0]
+    idx  = opciones_sg.index(prev) if prev in opciones_sg else None  # None = sin selección
 
     nuevo = st.radio(
         etiqueta_label,
         options=opciones_sg,
-        index=opciones_sg.index(prev),
+        index=idx,
         format_func=lambda v: etiqueta_por_sg.get(v, v),
         horizontal=True,
         key=f"op_207_opcional_{clave}",
         help=_TOOLTIPS_OPCIONALES.get("op_207_opcional"),
     )
-    if nuevo != prev:
+    if nuevo is not None and nuevo != prev:
         opcionales["op_207_opcional"] = nuevo
         _registrar_edicion(clave, selecciones)
         st.rerun()
-    elif "op_207_opcional" not in opcionales or opcionales["op_207_opcional"] not in opciones_sg:
-        # Inicializar si aún no hay valor válido
-        opcionales["op_207_opcional"] = nuevo
 
-    # Imágenes de referencia visual, una por opción, en columnas alineadas con el radio
+    # Imágenes de referencia visual alineadas con las opciones del radio.
+    # Se restringe a [1, 1, 2] para que no se extiendan por todo el ancho
+    # y queden bajo sus respectivas opciones.
     imgs = [(sg, _imagen_opcion("op_207", sg)) for sg in opciones_sg]
     if any(img for _, img in imgs):
-        cols = st.columns(len(opciones_sg))
-        for col, (sg, img_path) in zip(cols, imgs):
+        img_cols = st.columns([1, 1, 2])
+        for col, (sg, img_path) in zip(img_cols, imgs):
             with col:
                 if img_path:
-                    st.image(str(img_path), caption=etiqueta_por_sg.get(sg, sg), width=120)
+                    st.image(str(img_path), width=110)
 
 
 def _control_op_207(
@@ -987,15 +989,8 @@ def paso_1(muebles: list[dict]) -> None:
         if "check" not in estado:
             # El check siempre empieza desmarcado — el usuario debe marcarlo manualmente.
             estado["check"] = False
-        # Inicializar selección de op_207 para muebles de despensa (radio obligatorio).
-        # Garantiza que siempre haya un valor válido antes de que el radio se pinte.
-        if "op_207_opcional" in aplicables:
-            meta_207    = interfaz.get("op_207_opcional") or {}
-            muebles_sel = meta_207.get("muebles_seleccion") or {}
-            if name in muebles_sel and "op_207_opcional" not in opcionales:
-                opciones_sg = list(dict.fromkeys(muebles_sel.get(name) or []))
-                if opciones_sg:
-                    opcionales["op_207_opcional"] = opciones_sg[0]
+        # op_207 para muebles de despensa AGM: NO se pre-inicializa.
+        # El usuario debe elegir explícitamente; hasta que lo haga el check queda bloqueado.
         # Inicializar op_121 a True si es forzado (Plantea siempre; Curve/Line en monoporte).
         # Garantiza que "Sin mecanizado" llegue correctamente a construir_entrada_modulo_c
         # aunque el usuario no abra la card.
@@ -1089,6 +1084,7 @@ def paso_1(muebles: list[dict]) -> None:
                             "Pre-marcado como revisado."
                         )
 
+                razon_bloqueo = None
                 if "op_126" in aplicables and not _op_126_completo(
                     estado["opcionales"].get("op_126"),
                     meta=meta_126,
@@ -1097,8 +1093,16 @@ def paso_1(muebles: list[dict]) -> None:
                         "Completa todos los campos obligatorios del electrodoméstico "
                         "antes de marcar como revisado."
                     )
-                else:
-                    razon_bloqueo = None
+                elif "op_207_opcional" in aplicables:
+                    _meta_207 = interfaz.get("op_207_opcional") or {}
+                    _muebles_sel = _meta_207.get("muebles_seleccion") or {}
+                    if name in _muebles_sel:
+                        _ops_sg = list(dict.fromkeys(_muebles_sel.get(name) or []))
+                        if estado["opcionales"].get("op_207_opcional") not in _ops_sg:
+                            razon_bloqueo = (
+                                "Selecciona el tipo de almacenamiento "
+                                "antes de marcar como revisado."
+                            )
 
                 st.divider()
                 _check_mueble(clave, selecciones, razon_bloqueo=razon_bloqueo)
