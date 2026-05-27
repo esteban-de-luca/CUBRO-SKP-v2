@@ -22,18 +22,10 @@ modulo_a:
   # Se genera cuando el CSV asigna uno de los dos mecanismos al tipo de mueble
   # que solo admite el contrario.
   # Fuente: data/opciones_mueble.yaml → op_217.solo_TL1 / solo_PS1.
-  #   A25a: Prise de main (21) en mueble solo_TL1 (bajos y columnas).
-  #   A25b: Touch Latch (20) en mueble solo_PS1 (muebles de pared).
-  #   A25c: Touch Latch (20) en mueble que no admite ningún mecanismo de apertura.
-  #   A25d: Prise de main (21) en mueble que no admite ningún mecanismo de apertura.
-  A25a: >-
-    Este mueble solo admite Touch Latch — Prise de main no es compatible.
-  A25b: >-
-    Este mueble solo admite Prise de main — Touch Latch no es compatible.
-  A25c: >-
-    Este mueble no admite Touch Latch.
-  A25d: >-
-    Este mueble no admite Prise de main.
+  # Cubre todos los casos: mueble sin mecanismo, TL en mueble solo_PS1 o sin lista,
+  # PS en mueble solo_TL1 o sin lista.
+  A25: >-
+    Este mueble no es compatible con el tirador [nombre_tirador].
 
 modulo_c:
 
