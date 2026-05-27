@@ -729,7 +729,7 @@ variantes_op_126:
     subcampos:
       marca:      Marca
       referencia: Referencia
-      altura:     Altura
+      altura:     Altura (mm)
     muebles:
       - BFT608057
 
@@ -739,7 +739,7 @@ variantes_op_126:
     subcampos:
       marca:      Marca
       referencia: Referencia
-      altura:     Altura
+      altura:     Altura (mm)
     muebles:
       - AFS6020057
       - AFS6022057
@@ -778,7 +778,7 @@ variantes_op_126:
     subcampos:
       marca:      Marca
       referencia: Referencia
-      altura:     Altura
+      altura:     Altura (mm)
     muebles:
       - A2I6020057
       - A2I6022057

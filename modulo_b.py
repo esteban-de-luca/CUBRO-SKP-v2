@@ -809,7 +809,7 @@ def _control_radio_op_222(
 _SUBCAMPOS_OP_126_DEFAULT = {
     "marca": "Marca",
     "referencia": "Referencia",
-    "altura": "Altura",
+    "altura": "Altura (mm)",
     # "tipo" NO está aquí: se gestiona siempre vía tipo_auto (oculto) o tipo_opciones (selectbox),
     # nunca como campo de texto libre.
 }
