@@ -102,6 +102,7 @@ p_hinge:
     - A2I7522057
     - A2I1P6020057
     - A2I1P6022057
+    - FHABS6580
 
 
   nulo:              # 2 puertas en horizontal, sin apertura individual — JSON: enviar "D" provisional hasta confirmar con SG — modificado 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026
@@ -153,7 +154,6 @@ p_hinge:
     - BE2B908057
     - BEBTS608057
     - BEBTS908057
-    - FHABS6580
 
   lift:              # apertura lift
     - HLVV57
