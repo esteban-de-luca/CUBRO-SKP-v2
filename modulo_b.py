@@ -1404,7 +1404,12 @@ def _render_card_resumen(entrada: dict, catalogo: dict) -> None:
                     valor_raw = entry_adic.get("valor") or ""
                     # Traducir código SG a etiqueta UI si modulo_c lo pasa sin traducir
                     etiqueta_ui = _sg_ui.get(etiqueta, etiqueta)
-                    valor_ui    = _sg_ui.get(valor_raw, valor_raw)
+                    # RL3 = reducción de ancho; mostrar el valor real en mm
+                    if valor_raw == "RL3":
+                        ancho_r = (entrada.get("Ancho reducido") or "").strip()
+                        valor_ui = f"{ancho_r} mm" if ancho_r else "Reducción de ancho"
+                    else:
+                        valor_ui = _sg_ui.get(valor_raw, valor_raw)
                     st.markdown(
                         f"- **{etiqueta_ui}:** {valor_ui}{marcador}"
                     )
