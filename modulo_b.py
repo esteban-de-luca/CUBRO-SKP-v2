@@ -52,7 +52,7 @@ _TOOLTIPS_OPCIONALES = {
     "op_126": "Rellena los datos del electrodoméstico. Los campos mostrados son obligatorios.",
 }
 
-_TIRADORES_SIN_COLOR = {"Touch Latch", "Prise de main"}
+_TIRADORES_SIN_COLOR = {"Touch Latch", "Prise de main", "Sin tirador"}
 _GAMA_SUFIJOS = (" LACA", " WOOD", " LINOLEO", " LAMINADO")
 _APERTURA_UI = {
     "1": "Izquierda",

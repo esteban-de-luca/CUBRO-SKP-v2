@@ -109,7 +109,7 @@ PREFIJOS_INSTALACION = [
     "Enchufe estándar", "PLACA",
 ]
 
-TIRADORES_VALIDOS    = {2, 3, 4, 5, 7, 20, 21}
+TIRADORES_VALIDOS    = {0, 2, 3, 4, 5, 7, 20, 21}
 TIRADORES_TRASERA    = {2, 3}      # Round, Square → color desde Trasera
 TIRADORES_SUPERFICIE = {4, 5, 7}   # Curve, Line, Plantea → color desde Color tir. de superficie
 TIRADORES_MECANISMO  = {20, 21}    # Touch Latch, Prise de main → sin color
@@ -179,6 +179,7 @@ TIRADORES_RESTRINGIDOS: dict[str, list[str]] = (
 # Curve (4) y Line (5) tienen variante H (batiente) y C (cajón/coulissant): se listan ambas
 # para que la lista blanca pueda usar cualquiera de las dos.
 _TIRADOR_INT_TO_SG_OP300: dict[int, list[str]] = {
+    0:  ["499"],          # Sin tirador
     2:  ["ROU"],
     3:  ["SQU"],
     4:  ["Q2H", "Q2C"],  # Curve

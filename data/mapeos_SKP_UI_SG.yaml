@@ -170,6 +170,7 @@ del_csv:
   # La lógica de selección H/C está en reglas.yaml.
   # ---------------------------------------------------------------------------
   op_300:
+    - { skp: "0",  ui: Sin tirador,   sg: 499 }
     - { skp: "2",  ui: Round,         sg: ROU }
     - { skp: "3",  ui: Square,        sg: SQU }
     - { skp: "4",  ui: Curve,         sg: Q2H }  # o Q2C según reglas.yaml
