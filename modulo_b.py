@@ -414,8 +414,14 @@ def _designacion(mueble: dict, catalogo: dict) -> str:
 
 
 def _identificador_mueble(mueble: dict) -> str:
-    """Clave única para st.session_state. Name SKP es siempre el original de SketchUp."""
-    return (mueble.get("Name SKP") or mueble.get("Name") or "").strip()
+    """Clave única para st.session_state.
+    Usa Name SKP + posición en lista (_pos) para garantizar unicidad
+    incluso cuando dos filas del CSV tienen el mismo código de mueble
+    (ej. reducción de ancho que deja el Name igual al original).
+    """
+    base = (mueble.get("Name SKP") or mueble.get("Name") or "").strip()
+    pos  = mueble.get("_pos")
+    return f"{base}_{pos}" if pos is not None else base
 
 
 # ----------------------------------------------------------------------------

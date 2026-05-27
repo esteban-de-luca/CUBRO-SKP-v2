@@ -258,7 +258,10 @@ def _cargar_csv(file) -> None:
             st.session_state.muebles = []
             st.session_state["_error_csv"] = resultado["error_archivo"]
         else:
-            st.session_state.muebles = resultado["muebles"]
+            muebles = resultado["muebles"]
+            for i, m in enumerate(muebles):
+                m["_pos"] = i   # índice de posición fijo — garantiza keys únicas incluso si dos muebles tienen el mismo Name
+            st.session_state.muebles = muebles
             st.session_state.pop("_error_csv", None)
         return
 
