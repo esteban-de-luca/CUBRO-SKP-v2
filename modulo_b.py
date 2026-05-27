@@ -12,6 +12,7 @@ Pantalla 0 (Validación) bloquea el avance si el CSV trae errores duros.
 import base64
 import json
 import pathlib
+import re
 
 import streamlit as st
 import yaml
@@ -813,6 +814,28 @@ _SUBCAMPOS_OP_126_DEFAULT = {
     # nunca como campo de texto libre.
 }
 
+# Validación de formato por subcampo de op_126.
+# marca      → solo letras (incluye acentos y espacio para nombres de marca compuestos)
+# referencia → alfanumérico + separadores habituales en referencias de producto
+# altura     → solo dígitos (valor en mm)
+_VALIDACION_OP_126: dict[str, dict] = {
+    "marca": {
+        "patron":  re.compile(r"^[A-Za-zÀ-ÿ\s\-]+$"),
+        "error":   "Solo se admiten letras",
+        "ejemplo": "ej. Siemens, De Dietrich",
+    },
+    "referencia": {
+        "patron":  re.compile(r"^[A-Za-z0-9\s\-\.\/\_]+$"),
+        "error":   "Solo se admiten caracteres alfanuméricos",
+        "ejemplo": "ej. HB678G5S0",
+    },
+    "altura": {
+        "patron":  re.compile(r"^\d+$"),
+        "error":   "Solo se admiten números enteros (en mm)",
+        "ejemplo": "ej. 595",
+    },
+}
+
 
 def _op_126_completo(valor, meta: dict | None = None) -> bool:
     """Valida que el bloque op_126 esté completo según la meta de la variante.
@@ -854,6 +877,12 @@ def _op_126_completo(valor, meta: dict | None = None) -> bool:
             return False
     elif tiene_alt:
         if not str(valor.get("altura", "")).strip():
+            return False
+
+    # Validación de formato: ningún campo relleno puede tener formato inválido.
+    for sub_key, regla in _VALIDACION_OP_126.items():
+        v = str(valor.get(sub_key, "")).strip()
+        if v and not regla["patron"].match(v):
             return False
 
     return True
@@ -993,11 +1022,18 @@ def _control_electrodomestico_op_126(
     for sub_key, sub_label in subcampos.items():
         if sub_key == "tipo":
             continue
-        nuevo[sub_key] = st.text_input(
+        regla    = _VALIDACION_OP_126.get(sub_key)
+        help_txt = regla["ejemplo"] if regla else None
+        valor_campo = st.text_input(
             sub_label,
             value=prev.get(sub_key, ""),
             key=f"op_126_{sub_key}_{clave}",
+            help=help_txt,
         )
+        # Feedback inline si el valor relleno tiene formato inválido
+        if regla and valor_campo.strip() and not regla["patron"].match(valor_campo.strip()):
+            st.caption(f"⚠️ {regla['error']} ({regla['ejemplo']})")
+        nuevo[sub_key] = valor_campo
 
     if nuevo != prev:
         opcionales["op_126"] = nuevo
