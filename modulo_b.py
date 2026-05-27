@@ -73,6 +73,7 @@ _IMAGENES_PATH = pathlib.Path(__file__).parent / "data" / "imagenes_mueble.yaml"
 _ASSETS_MUEBLES = pathlib.Path(__file__).parent / "assets" / "muebles"
 _COLORES_PATH = pathlib.Path(__file__).parent / "data" / "colores_mueble.yaml"
 _ASSETS_COLORES = pathlib.Path(__file__).parent / "assets" / "colores"
+_ASSETS_OPCIONES = pathlib.Path(__file__).parent / "assets" / "opciones"
 
 
 @st.cache_data
@@ -109,6 +110,16 @@ def _imagen_mueble(code: str) -> pathlib.Path | None:
             if ruta.exists():
                 return ruta
     return None
+
+
+def _imagen_opcion(op_id: str, codigo_sg: str) -> pathlib.Path | None:
+    """Devuelve la Path al PNG de una opción concreta si existe, o None.
+
+    Convención de nombre: assets/opciones/{op_id}_{codigo_sg}.png
+    Ejemplo: assets/opciones/op_207_GM1.png
+    """
+    ruta = _ASSETS_OPCIONES / f"{op_id}_{codigo_sg}.png"
+    return ruta if ruta.exists() else None
 
 
 @st.cache_data
@@ -832,6 +843,15 @@ def _control_radio_op_207_seleccion(
     elif "op_207_opcional" not in opcionales or opcionales["op_207_opcional"] not in opciones_sg:
         # Inicializar si aún no hay valor válido
         opcionales["op_207_opcional"] = nuevo
+
+    # Imágenes de referencia visual, una por opción, en columnas alineadas con el radio
+    imgs = [(sg, _imagen_opcion("op_207", sg)) for sg in opciones_sg]
+    if any(img for _, img in imgs):
+        cols = st.columns(len(opciones_sg))
+        for col, (sg, img_path) in zip(cols, imgs):
+            with col:
+                if img_path:
+                    st.image(str(img_path), caption=etiqueta_por_sg.get(sg, sg), width=120)
 
 
 def _control_op_207(
