@@ -50,9 +50,18 @@ def _cargar_mapeos() -> dict:
         return yaml.safe_load(f) or {}
 
 
+def _cargar_reglas() -> dict:
+    path = _DATA_DIR / "reglas.yaml"
+    if not path.exists():
+        return {}
+    with path.open(encoding="utf-8") as f:
+        return yaml.safe_load(f) or {}
+
+
 _CATALOGO = _cargar_catalogo()
 _OPCIONES = _cargar_opciones()
 _MAPEOS   = _cargar_mapeos()
+_REGLAS   = _cargar_reglas()
 
 
 def _cargar_ui_aviso() -> dict[str, dict]:
@@ -149,6 +158,24 @@ CODIGOS_SIN_INTERIOR: set[str] = set(
 CODIGOS_SIN_MECANISMO: set[str] = set(
     ((_OPCIONES.get("op_300") or {}).get("sin_mecanismo")) or []
 )
+
+# Muebles con lista blanca de tiradores (op_300 SG codes) — fuente: reglas.yaml modulo_c.op_300.tiradores_restringidos
+TIRADORES_RESTRINGIDOS: dict[str, list[str]] = (
+    (_REGLAS.get("modulo_c") or {}).get("op_300", {}).get("tiradores_restringidos") or {}
+)
+
+# Mapeo tirador int → posibles códigos SG en op_300
+# Curve (4) y Line (5) tienen variante H (batiente) y C (cajón/coulissant): se listan ambas
+# para que la lista blanca pueda usar cualquiera de las dos.
+_TIRADOR_INT_TO_SG_OP300: dict[int, list[str]] = {
+    2:  ["ROU"],
+    3:  ["SQU"],
+    4:  ["Q2H", "Q2C"],  # Curve
+    5:  ["Q3H", "Q3C"],  # Line
+    7:  ["Q1C"],
+    20: ["499"],          # Touch Latch
+    21: ["499"],          # Prise de main
+}
 
 # Muebles suspendidos: no llevan rodapié (H, HH, HAV, HR, HLVV, HPT)
 CODIGOS_SUSPENSO: set[str] = set(
@@ -555,6 +582,16 @@ def parsear_csv(archivo) -> dict:
                 f"El tirador '{_ui_tirador.get(str(tirador), str(tirador))}' "
                 "no es compatible con este mueble"
             )
+        elif name_raw in TIRADORES_RESTRINGIDOS and tirador is not None:
+            # A24 — tirador no permitido para este mueble (lista blanca en reglas.yaml)
+            _sg_codes_tirador = _TIRADOR_INT_TO_SG_OP300.get(tirador, [])
+            _permitidos = TIRADORES_RESTRINGIDOS[name_raw]
+            if not any(sg in _permitidos for sg in _sg_codes_tirador):
+                _nombre_tirador_ui = _ui_tirador.get(str(tirador), str(tirador))
+                avisos.append(
+                    f"El tirador '{_nombre_tirador_ui}' no está permitido para este mueble — "
+                    f"solo se admiten: {', '.join(_permitidos)}"
+                )
 
         # A11 — D_Gama vacío
         d_gama = _str_or_none(fila.get("D_Gama", ""))

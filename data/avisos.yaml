@@ -1,11 +1,22 @@
 # =============================================================================
 # data/avisos.yaml
-# Frases estándar de aviso para el usuario — CUBRO × Schmidt Groupe
+# Frases estándar de aviso para el usuario — CUBRO × Schmidt Gruppe
 # SOLO LECTURA — no modificar sin actualizar también la documentación en Notion
 #
 # Secciones por módulo:
+#   modulo_a: avisos generados durante la validación del CSV
 #   modulo_c: avisos generados durante el mapeo de opciones SG
 # =============================================================================
+
+modulo_a:
+
+  # A24 — Tirador no permitido para el mueble (lista blanca reglas.yaml).
+  # Se genera cuando el CSV incluye un tirador cuyo código SG no figura en la
+  # lista tiradores_restringidos definida para ese mueble en modulo_c.op_300.
+  # Fuente de la lista: data/reglas.yaml → modulo_c.op_300.tiradores_restringidos.
+  A24: >-
+    El tirador '[tirador]' no está permitido para este mueble —
+    solo se admiten: [lista_sg].
 
 modulo_c:
 
