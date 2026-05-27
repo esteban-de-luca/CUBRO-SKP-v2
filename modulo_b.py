@@ -938,7 +938,13 @@ def _renderizar_opcionales(
         if op_id == "op_121":
             _control_op_121(clave, name, tirador_code, meta, opcionales, selecciones)
         elif op_id == "op_222":
-            _control_radio_op_222(clave, meta, opcionales, selecciones)
+            # Solo visible si "Recorte para perfil LED" (op_220) está activo.
+            if bool(opcionales.get("op_220", False)):
+                _control_radio_op_222(clave, meta, opcionales, selecciones)
+            else:
+                # Resetear selección de sensor al desactivar el recorte LED.
+                if opcionales.get("op_222") not in (None, "ninguno"):
+                    opcionales["op_222"] = "ninguno"
         elif op_id == "op_207_opcional":
             _control_op_207(clave, name, meta, opcionales, selecciones)
         else:
