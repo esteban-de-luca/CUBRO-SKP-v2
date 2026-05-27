@@ -506,7 +506,11 @@ def construir_entrada_modulo_c(
             "Sin encolar": _bool_str(opcionales.get("op_700_opcional", False)),
             "Marca electro": str(op_126.get("marca", "")).strip(),
             "Referencia electro": str(op_126.get("referencia", "")).strip(),
-            "Altura electro": str(op_126.get("altura", "")).strip(),
+            "Altura electro": (
+                f"{str(op_126.get('altura', '')).strip()} mm"
+                if str(op_126.get("altura", "")).strip()
+                else ""
+            ),
             "Tipo electro": str(op_126.get("tipo", "")).strip(),
         }
         entrada.append(fila)
