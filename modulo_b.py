@@ -200,12 +200,13 @@ def _render_swatches_color(color_frente: str, color_interior: str) -> None:
 
 
 @st.cache_data
-def _cargar_interfaz() -> dict:
+def _cargar_interfaz(_v: int = 2) -> dict:
     """Construye el dict de interfaz desde mapeos_SKP_UI_SG.yaml, opciones_mueble.yaml y reglas.yaml.
 
     La fuente de verdad son los tres YAMLs anteriores. Ningún control ni lógica
     de UI cambia — solo la fuente de los datos.
     Cada key es un op_id con etiqueta, muebles/excluidos y subcampos según corresponda.
+    El parámetro _v fuerza la invalidación del caché al cambiar su valor.
     """
     if not _MAPEOS_SKP_UI_SG_PATH.exists() or not _OPCIONES_MUEBLE_PATH.exists():
         return {}
@@ -312,7 +313,12 @@ def _cargar_interfaz() -> dict:
     # op_126 — variante por mueble (horno, placa, frigorífico, LVV/LVD, campana…)
     # Fuente de verdad única: opciones_mueble.yaml / variantes_op_126.
     # Cada entrada tiene ui, subcampos, tipo_auto/tipo_opciones (meta UI) y muebles (lista).
-    variantes_op_126 = op_mueble.get("variantes_op_126") or {}
+    # Fallback a "variantes_p_built_in_detail" por compatibilidad con versiones anteriores del YAML.
+    variantes_op_126 = (
+        op_mueble.get("variantes_op_126")
+        or op_mueble.get("variantes_p_built_in_detail")
+        or {}
+    )
     if variantes_op_126:
         mueble_a_variante: dict = {}
         variantes_meta: dict = {}
