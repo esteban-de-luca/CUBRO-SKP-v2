@@ -24,10 +24,16 @@ modulo_a:
   # Fuente: data/opciones_mueble.yaml → op_217.solo_TL1 / solo_PS1.
   #   A25a: Prise de main (21) en mueble solo_TL1 (bajos y columnas).
   #   A25b: Touch Latch (20) en mueble solo_PS1 (muebles de pared).
+  #   A25c: Touch Latch (20) en mueble que no admite ningún mecanismo de apertura.
+  #   A25d: Prise de main (21) en mueble que no admite ningún mecanismo de apertura.
   A25a: >-
     Este mueble solo admite Touch Latch — Prise de main no es compatible.
   A25b: >-
     Este mueble solo admite Prise de main — Touch Latch no es compatible.
+  A25c: >-
+    Este mueble no admite Touch Latch.
+  A25d: >-
+    Este mueble no admite Prise de main.
 
 modulo_c:
 

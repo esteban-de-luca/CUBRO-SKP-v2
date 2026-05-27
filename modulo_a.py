@@ -587,21 +587,34 @@ def parsear_csv(archivo) -> dict:
             avisos.append("Falta el tipo de tirador")
         elif tirador not in TIRADORES_VALIDOS:
             avisos.append(f"Tipo de tirador '{_ui_tirador.get(str(tirador), str(tirador))}' no reconocido")
-        elif tirador in TIRADORES_MECANISMO and name_raw in CODIGOS_SIN_MECANISMO:
-            avisos.append(
-                f"El tirador '{_ui_tirador.get(str(tirador), str(tirador))}' "
-                "no es compatible con este mueble"
-            )
-        elif tirador == 21 and name_raw in CODIGOS_SOLO_TL1:
-            # A25a — Prise de main en mueble que solo admite Touch Latch
-            avisos.append(
-                "Este mueble solo admite Touch Latch — Prise de main no es compatible"
-            )
-        elif tirador == 20 and name_raw in CODIGOS_SOLO_PS1:
-            # A25b — Touch Latch en mueble que solo admite Prise de main
-            avisos.append(
-                "Este mueble solo admite Prise de main — Touch Latch no es compatible"
-            )
+        elif tirador in TIRADORES_MECANISMO:
+            # Touch Latch (20) o Prise de main (21) — validar compatibilidad con el mueble
+            _nombre_tir = _ui_tirador.get(str(tirador), str(tirador))
+            if name_raw in CODIGOS_SIN_MECANISMO:
+                # Frentes sin mueble: ningún mecanismo es válido
+                avisos.append(
+                    f"El tirador '{_nombre_tir}' no es compatible con este mueble"
+                )
+            elif tirador == 20 and name_raw not in CODIGOS_SOLO_TL1:
+                # Touch Latch en mueble que no lo admite
+                if name_raw in CODIGOS_SOLO_PS1:
+                    avisos.append(
+                        "Este mueble solo admite Prise de main — Touch Latch no es compatible"
+                    )
+                else:
+                    avisos.append(
+                        "Este mueble no admite Touch Latch"
+                    )
+            elif tirador == 21 and name_raw not in CODIGOS_SOLO_PS1:
+                # Prise de main en mueble que no lo admite
+                if name_raw in CODIGOS_SOLO_TL1:
+                    avisos.append(
+                        "Este mueble solo admite Touch Latch — Prise de main no es compatible"
+                    )
+                else:
+                    avisos.append(
+                        "Este mueble no admite Prise de main"
+                    )
         elif name_raw in TIRADORES_RESTRINGIDOS and tirador is not None:
             # A24 — tirador no permitido para este mueble (lista blanca en reglas.yaml)
             _sg_codes_tirador = _TIRADOR_INT_TO_SG_OP300.get(tirador, [])
