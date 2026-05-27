@@ -519,8 +519,8 @@ def parsear_csv(archivo) -> dict:
                     if aviso_231:
                         avisos.append(aviso_231)   # A17 u otros errores de corrección
                     else:
-                        # A18 — informativo, no bloquea estado CORRECTO
-                        avisos.append(
+                        # A18 — informativo, no bloquea ni aparece en UI
+                        avisos_internos.append(
                             f"Nombre corregido por reducción de ancho: "
                             f"'{name_skp}' → '{name_corregido}' ({ancho_reducido_mm:.0f}mm)"
                         )
@@ -643,7 +643,7 @@ def parsear_csv(archivo) -> dict:
 
         if name_raw in CODIGOS_SIN_APERTURA:
             if apertura is not None:
-                avisos.append("Este mueble no requiere apertura — el valor se ignorará")
+                avisos_internos.append("Este mueble no requiere apertura — el valor se ignorará")
             apertura = None
         elif name_raw in CATALOGO_CODIGOS:
             if apertura is None:
@@ -717,14 +717,9 @@ def parsear_csv(archivo) -> dict:
                         f"los valores aceptados son {_lista}"
                     )
 
-        # Estado: CORRECTO si no hay avisos bloqueantes.
-        # Único aviso no bloqueante: A18 (nombre corregido por reducción de ancho).
-        # El aviso de rodapié en suspendidos ya no llega a avisos (→ avisos_internos).
-        avisos_revisables = [
-            a for a in avisos
-            if not a.startswith("Nombre corregido por reducción")
-        ]
-        estado = "✅ CORRECTO" if not avisos_revisables else "⚠️ REVISAR"
+        # Estado: CORRECTO si no hay avisos en la lista.
+        # Todos los avisos informativos/no bloqueantes van a avisos_internos.
+        estado = "✅ CORRECTO" if not avisos else "⚠️ REVISAR"
 
         resultado["muebles"].append({
             "name":            name_raw,
