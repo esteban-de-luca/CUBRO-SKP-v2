@@ -715,13 +715,13 @@ p_built_in_detail:
 
 
 # -----------------------------------------------------------------------------
-# variantes_p_built_in_detail — Configuración UI y muebles por variante de p_built_in_detail
+# variantes_op_126 — Configuración UI y muebles por variante de p_built_in_detail
 # Fuente de verdad única: etiqueta UI, subcampos, tipo (auto u opciones) y muebles.
 # Antes: la meta (etiqueta, subcampos, tipo) vivía en mapeos_SKP_UI_SG.yaml y
 # la lista de muebles aquí. Consolidado en este archivo el 21/05/2026.
 # Añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026.
 # -----------------------------------------------------------------------------
-variantes_p_built_in_detail:
+variantes_op_126:
 
   op_126_horno:           # solo horno — BFT
     ui:        Referencia horno
