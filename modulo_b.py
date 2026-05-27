@@ -810,50 +810,62 @@ def _control_checkbox_op_207(
         st.rerun()
 
 
+_OP207_IMG_W = 80   # px — ancho fijo igual para todas las imágenes de op_207
+_OP207_IMG_H = 65   # px — alto fijo igual para todas las imágenes de op_207
+
+
 def _control_radio_op_207_seleccion(
     clave: str, name: str, meta: dict, opcionales: dict, selecciones: dict
 ) -> None:
-    """Selector visual de op_207 para muebles de despensa AGM (GM1/GM2).
+    """Radio de op_207 para muebles de despensa AGM (GM1/GM2).
 
-    Cada opción se presenta como una columna con su imagen encima y un botón
-    debajo, de forma que texto e imagen queden perfectamente alineados.
-    Arranca sin selección; el check 'He revisado' queda bloqueado hasta que
-    el usuario elija.
+    Las imágenes se renderizan con HTML a dimensiones fijas e iguales para
+    que ambas opciones queden a la misma altura. El radio es horizontal y
+    arranca sin selección (index=None).
     """
     muebles_seleccion = meta.get("muebles_seleccion") or {}
     etiqueta_por_sg   = meta.get("etiqueta_por_sg")   or {}
     etiqueta_label    = meta.get("etiqueta_despensa", "Tipo de almacenamiento")
-    # dedup preservando orden
     opciones_sg = list(dict.fromkeys(muebles_seleccion.get(name) or []))
 
     if not opciones_sg:
         return
 
     prev = opcionales.get("op_207_opcional")
+    idx  = opciones_sg.index(prev) if prev in opciones_sg else None
 
-    st.markdown(f"**{etiqueta_label}**")
+    # Imágenes a tamaño idéntico en columnas [1,1,2] (la 3ª columna vacía
+    # evita que las imágenes se estiren por todo el ancho).
+    imgs = [(sg, _imagen_opcion("op_207", sg)) for sg in opciones_sg]
+    if any(p for _, p in imgs):
+        img_cols = st.columns([1, 1, 2])
+        for col, (sg, img_path) in zip(img_cols, imgs):
+            with col:
+                if img_path:
+                    b64 = base64.b64encode(img_path.read_bytes()).decode()
+                    st.markdown(
+                        f'<img src="data:image/png;base64,{b64}" '
+                        f'style="width:{_OP207_IMG_W}px;height:{_OP207_IMG_H}px;'
+                        f'object-fit:contain;display:block;margin-bottom:2px"/>',
+                        unsafe_allow_html=True,
+                    )
 
-    # Columnas: una por opción + columna vacía a la derecha para no estirar
-    n = len(opciones_sg)
-    cols = st.columns([1] * n + [max(1, 4 - n)])
-
-    for col, sg in zip(cols, opciones_sg):
-        with col:
-            img_path = _imagen_opcion("op_207", sg)
-            if img_path:
-                st.image(str(img_path), use_container_width=True)
-            etiqueta  = etiqueta_por_sg.get(sg, sg)
-            is_selected = (prev == sg)
-            if st.button(
-                etiqueta,
-                key=f"op_207_btn_{sg}_{clave}",
-                type="primary" if is_selected else "secondary",
-                use_container_width=True,
-            ):
-                if not is_selected:
-                    opcionales["op_207_opcional"] = sg
-                    _registrar_edicion(clave, selecciones)
-                    st.rerun()
+    # Radio horizontal bajo las imágenes (etiqueta oculta — ya se muestra
+    # en el propio widget con label_visibility="visible" pero el texto de
+    # sección lo pone el radio para mantener el tooltip (?)).
+    nuevo = st.radio(
+        etiqueta_label,
+        options=opciones_sg,
+        index=idx,
+        format_func=lambda v: etiqueta_por_sg.get(v, v),
+        horizontal=True,
+        key=f"op_207_opcional_{clave}",
+        help=_TOOLTIPS_OPCIONALES.get("op_207_opcional"),
+    )
+    if nuevo is not None and nuevo != prev:
+        opcionales["op_207_opcional"] = nuevo
+        _registrar_edicion(clave, selecciones)
+        st.rerun()
 
 
 def _control_op_207(
