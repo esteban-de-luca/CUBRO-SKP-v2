@@ -247,27 +247,35 @@ forzadas:
 
   op_103:   # Sentido de la veta
     sg: VER
+    ui: "Veta vertical"
 
   op_104:   # Acabado canto del frente — varía según gama (ver opciones_mueble.yaml)
     sg: HAK  # solo para LINOLEO; LACA copia op_101; WOOD y LAMINADO vacío
+    ui: "Canto frente"
 
   op_203:   # Espesor canto mueble
     sg: E14
+    ui: "Canto"
 
   op_206:   # Sistema de cierre
     sg: FSP
+    ui: "Sistema de cierre"
 
   op_207:   # Equipamiento fregadero — forzado solo en BETOQ908057
     sg: P42
+    ui: "Cubos de basura"
 
   op_208:   # Equipamiento esquinero Lemans
     sg: CPA
+    ui: "Lemans"
 
   op_209:   # Equipamiento cajón
     sg: BES
+    ui: "Equipamiento cajón"
 
   op_700:   # Sin encolar (ver opciones_mueble.yaml)
     sg: DEM
+    ui: "Sin encolar"
 
 
 # =============================================================================

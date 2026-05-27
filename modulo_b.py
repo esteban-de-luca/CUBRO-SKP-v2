@@ -77,6 +77,40 @@ _ASSETS_OPCIONES = pathlib.Path(__file__).parent / "assets" / "opciones"
 
 
 @st.cache_data
+def _cargar_sg_a_ui() -> dict[str, str]:
+    """Diccionario inverso {código_SG → etiqueta_UI} para traducir valores en opciones_adicionales.
+
+    Construido leyendo mapeos_SKP_UI_SG.yaml: secciones 'forzadas' y 'opcionales'.
+    Si modulo_c pone un código SG en el campo 'valor' de una entrada de
+    opciones_adicionales, este dict permite sustituirlo por la etiqueta legible.
+    """
+    if not _MAPEOS_SKP_UI_SG_PATH.exists():
+        return {}
+    with _MAPEOS_SKP_UI_SG_PATH.open(encoding="utf-8") as f:
+        mapeos = yaml.safe_load(f) or {}
+
+    sg_a_ui: dict[str, str] = {}
+
+    # Sección forzadas: cada entrada tiene {sg: CODE, ui: "Etiqueta"}
+    for _op_data in (mapeos.get("forzadas") or {}).values():
+        if isinstance(_op_data, dict) and _op_data.get("sg") and _op_data.get("ui"):
+            sg_a_ui[_op_data["sg"]] = _op_data["ui"]
+
+    # Sección opcionales: listas de {sg: CODE, ui: "Etiqueta"}
+    for _op_data in (mapeos.get("opcionales") or {}).values():
+        if isinstance(_op_data, list):
+            for entry in _op_data:
+                if entry.get("sg") and entry.get("ui"):
+                    sg_a_ui[entry["sg"]] = entry["ui"]
+        elif isinstance(_op_data, dict):
+            for entry in (_op_data.get("valores") or []):
+                if entry.get("sg") and entry.get("ui"):
+                    sg_a_ui[entry["sg"]] = entry["ui"]
+
+    return sg_a_ui
+
+
+@st.cache_data
 def _cargar_catalogo() -> dict:
     """Carga data/catalogo.json. Si todavía no se ha subido, devuelve {}."""
     if not _CATALOGO_PATH.exists():
@@ -1370,11 +1404,16 @@ def _render_card_resumen(entrada: dict, catalogo: dict) -> None:
             if opc_adic or tiene_electro:
                 st.markdown("**Opciones adicionales**")
 
+                _sg_ui = _cargar_sg_a_ui()
                 for entry_adic in opc_adic:
-                    marcador = " ⚙" if entry_adic.get("origen") == "automatico" else ""
+                    marcador  = " ⚙" if entry_adic.get("origen") == "automatico" else ""
+                    etiqueta  = entry_adic.get("etiqueta") or ""
+                    valor_raw = entry_adic.get("valor") or ""
+                    # Traducir código SG a etiqueta UI si modulo_c lo pasa sin traducir
+                    etiqueta_ui = _sg_ui.get(etiqueta, etiqueta)
+                    valor_ui    = _sg_ui.get(valor_raw, valor_raw)
                     st.markdown(
-                        f"- **{entry_adic.get('etiqueta', '')}:** "
-                        f"{entry_adic.get('valor', '')}{marcador}"
+                        f"- **{etiqueta_ui}:** {valor_ui}{marcador}"
                     )
                 if any(e.get("origen") == "automatico" for e in opc_adic):
                     st.caption("⚙ Forzado automáticamente por reglas")
