@@ -834,8 +834,10 @@ def _control_radio_op_207_seleccion(
     prev = opcionales.get("op_207_opcional")
     idx  = opciones_sg.index(prev) if prev in opciones_sg else None
 
-    # Imágenes a tamaño idéntico en columnas [1,1,2] (la 3ª columna vacía
-    # evita que las imágenes se estiren por todo el ancho).
+    # 1. Etiqueta de sección — siempre encima de todo
+    st.markdown(f"**{etiqueta_label}**")
+
+    # 2. Imágenes a tamaño idéntico, en columnas [1,1,2]
     imgs = [(sg, _imagen_opcion("op_207", sg)) for sg in opciones_sg]
     if any(p for _, p in imgs):
         img_cols = st.columns([1, 1, 2])
@@ -846,21 +848,19 @@ def _control_radio_op_207_seleccion(
                     st.markdown(
                         f'<img src="data:image/png;base64,{b64}" '
                         f'style="width:{_OP207_IMG_W}px;height:{_OP207_IMG_H}px;'
-                        f'object-fit:contain;display:block;margin-bottom:2px"/>',
+                        f'object-fit:contain;display:block"/>',
                         unsafe_allow_html=True,
                     )
 
-    # Radio horizontal bajo las imágenes (etiqueta oculta — ya se muestra
-    # en el propio widget con label_visibility="visible" pero el texto de
-    # sección lo pone el radio para mantener el tooltip (?)).
+    # 3. Radio horizontal sin etiqueta (ya se mostró arriba)
     nuevo = st.radio(
         etiqueta_label,
         options=opciones_sg,
         index=idx,
         format_func=lambda v: etiqueta_por_sg.get(v, v),
         horizontal=True,
+        label_visibility="collapsed",
         key=f"op_207_opcional_{clave}",
-        help=_TOOLTIPS_OPCIONALES.get("op_207_opcional"),
     )
     if nuevo is not None and nuevo != prev:
         opcionales["op_207_opcional"] = nuevo
