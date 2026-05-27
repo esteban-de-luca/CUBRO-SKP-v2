@@ -339,6 +339,9 @@ def _render_modal_reemplazo() -> None:
     with col_cancel:
         if st.button("Cancelar"):
             st.session_state.pending_csv = None
+            # Reiniciar el uploader para que olvide el fichero seleccionado.
+            # Sin esto, la sidebar vuelve a detectar el nuevo CSV y reabre el modal.
+            st.session_state.uploader_nonce = st.session_state.get("uploader_nonce", 0) + 1
             st.rerun()
 
 
