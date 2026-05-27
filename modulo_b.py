@@ -31,6 +31,7 @@ MOSTRAR_DETALLE_TECNICO = True
 # técnicos al usuario final.
 _GAMA_UI = {"1": "LACA", "2": "WOOD", "3": "LINOLEO", "4": "LAMINADO"}
 _TIRADOR_UI = {
+    "0": "Sin tirador",
     "2": "Round",
     "3": "Square",
     "4": "Curve",
