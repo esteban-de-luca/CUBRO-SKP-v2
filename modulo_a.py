@@ -124,7 +124,13 @@ COLORES_TIRADOR_SUPERFICIE_VALIDOS: set[str] = {
 }
 COLOR_INTERIOR_VALIDOS = {"Blanco mueble", "Gris mueble", "Negro mueble", "Roble mueble"}
 RODAPIE_VALIDOS_DEFAULT = {"70 mm", "100 mm"}   # válido para la mayoría de muebles
-# "10 mm" (SPI) solo aplica a muebles de banco — se lee por mueble desde catalogo.json
+# Restricciones por mueble leídas de opciones_mueble.yaml → op_402.restricciones_valores
+_RODAPIE_RESTRICCIONES: dict[str, set[str]] = {
+    k: set(v)
+    for k, v in (
+        ((_OPCIONES.get("op_402") or {}).get("restricciones_valores")) or {}
+    ).items()
+}
 D_GAMA_LACA            = "1"
 GAMA_SUFIJOS = {
     "1": ["LACA"],
@@ -698,13 +704,11 @@ def parsear_csv(archivo) -> dict:
             if rodapie is None:
                 avisos.append("Falta el valor de rodapié")
             else:
-                # Obtener valores válidos para este mueble desde catalogo.json;
-                # si el mueble no tiene "rodapie_validos" explícito, usar el default.
-                _cat_entry = _CATALOGO.get(name_raw) or {}
+                # Obtener valores válidos para este mueble desde opciones_mueble.yaml;
+                # si el mueble no tiene restricción explícita, usar el default.
                 _rodapie_validos = (
-                    set(_cat_entry["rodapie_validos"])
-                    if _cat_entry.get("rodapie_validos")
-                    else RODAPIE_VALIDOS_DEFAULT
+                    _RODAPIE_RESTRICCIONES.get(name_raw)
+                    or RODAPIE_VALIDOS_DEFAULT
                 )
                 if rodapie not in _rodapie_validos:
                     _ordenados = sorted(_rodapie_validos)

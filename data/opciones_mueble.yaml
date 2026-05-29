@@ -318,7 +318,7 @@ op_206:
 # -----------------------------------------------------------------------------
 op_207:
 
-  P42:             # F — forzado (fregadero equipado) | confirmado por Jean el 20/05/2025 | actualizado 21/05/2025
+  P42:             # F — forzado (fregadero equipado) | confirmado por Jean el 20/05/2026 | actualizado 21/05/2026
     - BETOQ908057
 
   P60:             # P — cubos de basura 60 cm
@@ -642,6 +642,11 @@ op_402:
     - HR60V57      # no aplica — suspendido
     - HLVV57       # no aplica — suspendido
     - HPT60V57     # no aplica — suspendido
+  restricciones_valores:
+    # Muebles de banco: admiten además el rodapié de 10 mm (SPI)
+    BC604035: ["10 mm", "70 mm", "100 mm"]
+    BC604057: ["10 mm", "70 mm", "100 mm"]
+    # BC158057 no tiene restricción especial — acepta los valores por defecto (70 mm y 100 mm)
 
 
 # -----------------------------------------------------------------------------

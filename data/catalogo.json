@@ -165,8 +165,7 @@
     },
     "ancho_mm": 150,
     "alto_mm": 800,
-    "fondo_mm": 570,
-    "rodapie_validos": ["70 mm", "100 mm"]
+    "fondo_mm": 570
   },
   "BC604035": {
     "designaciones": {
@@ -174,8 +173,7 @@
     },
     "ancho_mm": 600,
     "alto_mm": 400,
-    "fondo_mm": 350,
-    "rodapie_validos": ["10 mm", "70 mm", "100 mm"]
+    "fondo_mm": 350
   },
   "BC604057": {
     "designaciones": {
@@ -183,8 +181,7 @@
     },
     "ancho_mm": 600,
     "alto_mm": 400,
-    "fondo_mm": 570,
-    "rodapie_validos": ["10 mm", "70 mm", "100 mm"]
+    "fondo_mm": 570
   },
   "BFT608057": {
     "designaciones": {
@@ -648,6 +645,7 @@
     },
     "ancho_mm": 600,
     "alto_mm": null,
+    "alto_variable": {"min": 1100, "max": 1400},
     "fondo_mm": 570
   },
   "AVA4520035": {

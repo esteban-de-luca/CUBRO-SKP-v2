@@ -79,7 +79,7 @@ modulo_a:
     - "Tirador"                    # Tipo de tirador (int)
     - "Trasera"                    # Color trasera — solo tiradores integrados (2, 3)
     - "Color tir. de superficie"   # Color tirador superficie — solo tiradores de superficie (4, 5, 7)
-    - "C_Rodapietext"              # Altura de patas: "70 mm" · "100 mm" · "0 mm"
+    - "C_Rodapietext"              # Altura de patas: "70 mm" · "100 mm" · "10 mm"
     - "Ancho reducido"             # Valor real reducido. Solo si Ancho = "10000 mm"
 
   # ---------------------------------------------------------------------------
@@ -104,9 +104,10 @@ modulo_a:
 
     tirador:
       tipo: "int"
-      valores_validos: [2, 3, 4, 5, 7, 20, 21]
+      valores_validos: [0, 2, 3, 4, 5, 7, 20, 21]
       nota: >
         Valores como "2.0" se convierten a 2 antes de validar.
+        El tirador 0 (Sin tirador) es válido para todos los muebles del catálogo.
 
     ancho_y_lenz:
       formato: "[número] mm"
@@ -137,7 +138,7 @@ modulo_a:
       campo_color: "Color tir. de superficie"
       campo_ignorado: "Trasera"   # se vacía silenciosamente
 
-    sin_tirador:                  # Touch Latch (20), Prise de main (21)
+    sin_tirador:                  # Sin tirador (0), Touch Latch (20), Prise de main (21)
       campo_color: null           # no se envía op_301
 
   # ---------------------------------------------------------------------------
@@ -267,6 +268,7 @@ modulo_b:
       - "5"   # Line
       - "7"   # Plantea
     oculto_con_tiradores:
+      - "0"   # Sin tirador
       - "2"   # Round
       - "3"   # Square
       - "20"  # Touch Latch
@@ -311,7 +313,7 @@ modulo_b:
           sin sufijo (ej. "Crema"), no la palabra "Laca".
       superficie:                  # Curve (4), Line (5) o Plantea (7)
         campo_csv: "Color tir. de superficie"
-      sin_tirador:                 # Touch Latch (20) o Prise de main (21)
+      sin_tirador:                 # Sin tirador (0), Touch Latch (20) o Prise de main (21)
         valor: null                # no se muestra ni se envía
 
   # ---------------------------------------------------------------------------
@@ -344,6 +346,7 @@ modulo_c:
   # ---------------------------------------------------------------------------
   op_121:
     tiradores_sin_spf:
+      - "0"   # Sin tirador
       - "2"   # Round
       - "3"   # Square
       - "20"  # Touch Latch

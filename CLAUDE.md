@@ -115,8 +115,7 @@ Avisar al equipo si el cambio afecta a otros módulos
 Estás interactuando con **Esteban**, responsable del Módulo B. Por tanto:
 
 - Solo se modifica `modulo_b.py` y `app.py` (la orquestación general también es responsabilidad del Módulo B, ya que B es la UI).
-- **NO se modifican** `modulo_a.py`, `modulo_c.py`, `data/reglas.yaml` ni `data/catalogo.json` sin coordinación explícita.
-- Los archivos `data/mapeos_SKP_UI_SG.yaml` y `data/opciones_mueble.yaml` son compartidos — avisar al equipo antes de hacer push si se modifican.
+- **NO se modifican** `modulo_a.py`, `modulo_c.py`, `data/mapeos_SKP_UI_SG.yaml`, `data/reglas.yaml` ni `data/catalogo.json` sin coordinación explícita.
 - Si una decisión arquitectónica afecta a A o C, hay que documentarla y avisar a Javier/Lucía — no modificar sus archivos.
 
 ---
@@ -126,8 +125,7 @@ Estás interactuando con **Esteban**, responsable del Módulo B. Por tanto:
 **Python contiene lógica. YAML/JSON contienen datos.**
 
 - Si cambia una regla de negocio → se edita `data/reglas.yaml`, no `modulo_c.py`.
-- Si cambia un código SG, un mapeo de valores o una etiqueta UI → se edita `data/mapeos_SKP_UI_SG.yaml`.
-- Si cambia qué muebles admiten una opción → se edita `data/opciones_mueble.yaml`.
+- Si cambia un código SG, un mapeo de colores o una etiqueta UI → se edita `data/mapeos_SKP_UI_SG.yaml`.
 - Si cambia el catálogo de muebles → se edita `data/catalogo.json`.
 
 El código Python debería ser estable; los YAML/JSON evolucionan.
@@ -152,20 +150,24 @@ streamlit run app.py
 
 ```
 CUBRO-skp/
-├── app.py                  # Orquestación Streamlit (A → B → C → B). Lo gestiona Esteban.
-├── modulo_a.py             # Javier
-├── modulo_b.py             # Esteban
-├── modulo_c.py             # Lucía
+├── app.py                      # Orquestación Streamlit (A → B → C → B). Lo gestiona Esteban.
+├── modulo_a.py                 # Javier
+├── modulo_b.py                 # Esteban
+├── modulo_c.py                 # Lucía
 ├── data/
-│   ├── catalogo.json           # 121 muebles. Generado 10/05/2026.
-│   ├── mapeos_SKP_UI_SG.yaml   # SKP CSV → etiqueta UI → código SG.
-│   ├── opciones_mueble.yaml    # Por opción: lista de muebles que la admiten (O/F/P).
-│   └── reglas.yaml             # Opciones forzadas y facultativas por mueble.
-├── assets/                 # (pendiente de crear)
-│   └── logo_cubro.png      # (pendiente de subir)
+│   ├── catalogo.json           # 121 muebles (descripciones y dimensiones). Generado 10/05/2026.
+│   ├── mapeos_SKP_UI_SG.yaml   # Conversiones CSV → UI → SG (colores, tiradores, rodapié, etc.)
+│   ├── opciones_mueble.yaml    # Qué opciones aplican a qué muebles (obligatorias, opcionales, excepciones).
+│   ├── reglas.yaml             # Reglas de negocio entre opciones (módulos B y C).
+│   ├── p_item_schema.yaml      # Contrato JSON con Schmidt Groupe — estructura del p_item.
+│   ├── avisos.yaml             # Textos de los avisos de validación del Módulo A.
+│   ├── colores_mueble.yaml     # Paleta de colores de frente por gama.
+│   └── imagenes_mueble.yaml    # Rutas de imagen por mueble (para UI).
+├── assets/
+│   └── Logo CUBRO_positivo.png
 ├── requirements.txt
 ├── README.md
-└── CLAUDE.md               # este archivo
+└── CLAUDE.md                   # este archivo
 ```
 
 ---
@@ -319,18 +321,25 @@ Contrato confirmado con Lucía el 2026-05-11 (hipótesis B). `list[dict]` plana,
 - Campos opcionales `alto_variable: {min, max}` y `ancho_variable: {min, max}` cuando aplican (HR, HLVV, HPT).
 - `fondo_mm: null` para frentes sin mueble (POBIF, FHABS).
 
-### `data/mapeos_SKP_UI_SG.yaml`
+### `data/mapeos.yaml`
 
-Cuatro secciones:
-- `opciones` — índice de todos los campos SKP y su opción SG correspondiente
-- `del_csv` — tablas de conversión de valores del CSV: `D_Gama` → op_100, `ColorFrente` → op_101, `Color del interior` → op_200, `Tirador` → op_217/op_300, `Trasera`/`Color tir. de superficie` → op_301, `C_Rodapietext` → op_402, `Ancho` → op_231
-- `forzadas` — código SG de cada opción que el Módulo C aplica automáticamente (op_103, op_104, op_203, op_204, op_206, op_207, op_208, op_209, op_700)
-- `opcionales` — etiqueta UI y código SG de las 8 opciones que el usuario selecciona en el Paso 1: op_121, op_207_opcional, op_220, op_222, op_223, op_227, op_700_opcional, op_126 (esta última incluye los subcampos Marca/Referencia/Altura/Tipo)
-- `nombres` — designación ES del catálogo → designación oficial FR para Schmidt Groupe
+Tablas de conversión:
+- `D_Gama` → op. 100 (gama del frente)
+- `ColorFrente` → op. 101 (acabado del frente)
+- `Color del interior` → op. 200 (color interior)
+- `Tirador` → op. 217 (apertura) y op. 300 (tipo de tirador)
+- `Color tirador` / `Trasera` → op. 301 (color del tirador)
+- `C_Rodapietext` → op. 402 (altura de patas)
 
-### `data/opciones_mueble.yaml`
-
-Por cada opción (p_hinge, op_206, op_207, op_208, op_209, op_217, op_220, op_222, op_223, op_227, op_231, op_126, op_700…): lista de muebles que la admiten, con indicador O/F/P en comentario. Es la vista inversa de `reglas.yaml` (que es por mueble). Fuente de verdad para saber qué opciones aplican a qué muebles.
+Sección `interfaz` lista las 8 opciones opcionales que B debe presentar al usuario:
+- `op_121` Sin mecanizado para tirador (checkbox, sujeto a reglas condicionales)
+- `op_207_opcional` Cubos de basura (checkbox, solo BE2B y BEBTS)
+- `op_220` Recorte para perfil LED (checkbox, solo H1)
+- `op_222` Sensor para mando LED (radio: ninguno/derecha/izquierda, solo H1)
+- `op_223` Cajón interior (checkbox)
+- `op_227` Mueble de caldera (checkbox)
+- `op_700_opcional` Mueble sin encolar (checkbox)
+- `op_126` Electrodoméstico (bloque de 4 textos libres: marca, referencia, altura, tipo; solo BFT y AFS). El valor en `opcionales["op_126"]` es un `dict[str, str]` con las 4 keys. **Validación para marcar revisado** (confirmada con Lucía el 2026-05-11): Marca y Tipo siempre obligatorios; Referencia y Altura son intercambiables, al menos una de las dos debe estar rellena.
 
 ### `data/reglas.yaml`
 
