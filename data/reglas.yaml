@@ -359,6 +359,9 @@ modulo_c:
 
   # ---------------------------------------------------------------------------
   # op_103 — Sentido de la veta
+  # NOTA: op_103, op_203, op_204, op_209 son calculadas automáticamente por AS400
+  # (sistema interno de SG). CUBRO no las envía en el JSON del pedido.
+  # Se documentan aquí como referencia por si el contrato cambiase en el futuro.
   # ---------------------------------------------------------------------------
   op_103:
     gamas_con_veta:
@@ -369,6 +372,7 @@ modulo_c:
   # ---------------------------------------------------------------------------
   # op_204 — Acabado canto mueble
   # Siempre copia el código de op_200 del mismo mueble.
+  # NOTA: calculada por AS400 — CUBRO no la envía. Ver nota op_103.
   # ---------------------------------------------------------------------------
   op_204:
     valor: copia_op_200
@@ -385,6 +389,15 @@ modulo_c:
       BC158057:          # añadido 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026
         - "ROU"          # Round — añadido 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026
         - "Q1C"          # Plantea — añadido 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026
+
+  # ---------------------------------------------------------------------------
+  # p_fastening — Tipo de fijación del mueble al soporte
+  # Campo del p_item (no es una opción variante SG).
+  # Dos valores posibles: "S" (suspendido = fijado a pared) · "P" (con patas).
+  # Se calcula automáticamente en modulo_c a partir de la lista de muebles
+  # suspendidos → fuente: opciones_mueble.yaml → op_402.excepciones.
+  # No requiere ninguna configuración adicional aquí.
+  # ---------------------------------------------------------------------------
 
   # ---------------------------------------------------------------------------
   # op_231 — Reducción de ancho
