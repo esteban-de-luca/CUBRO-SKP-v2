@@ -200,14 +200,7 @@ op_104:
 # -----------------------------------------------------------------------------
 op_121:
   todos: P   # Opcional en los 121 muebles del catálogo
-  excepciones:
-    - POBIF4580    # no aplica — frente sin mueble (puerta para LVV/LVD integrable)
-    - POBIF6080    # no aplica — frente sin mueble (puerta para LVV/LVD integrable)
-    - PO1BIF4580   # no aplica — frente sin mueble (puerta para LVV/LVD integrable)
-    - PO1BIF6080   # no aplica — frente sin mueble (puerta para LVV/LVD integrable)
-    - PO2BIF4580   # no aplica — frente sin mueble (puerta para LVV/LVD integrable)
-    - PO2BIF6080   # no aplica — frente sin mueble (puerta para LVV/LVD integrable)
-    - FHABS6580    # no aplica — puerta para LVV/LVD no integrable
+  excepciones: []
 
 
 # -----------------------------------------------------------------------------
