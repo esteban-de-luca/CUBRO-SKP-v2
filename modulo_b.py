@@ -570,13 +570,8 @@ def pantalla_validacion(muebles: list[dict]) -> None:
             st.rerun()
         return
 
-    st.header("CSV validado correctamente")
-    st.success(
-        f"Los **{len(muebles)}** muebles han pasado las validaciones."
-    )
-    if st.button("Continuar al Paso 1", type="primary"):
-        st.session_state.pantalla = PANTALLA_PASO_1
-        st.rerun()
+    st.session_state.pantalla = PANTALLA_PASO_1
+    st.rerun()
 
 
 def _bloque_informativo(mueble: dict, catalogo: dict) -> None:
