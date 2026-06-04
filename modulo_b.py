@@ -976,6 +976,7 @@ def _control_radio_op_207_seleccion(
         horizontal=True,
         label_visibility="collapsed",
         key=f"op_207_opcional_{clave}",
+        help=_TOOLTIPS_OPCIONALES.get("op_207_almacenamiento"),
     )
     if nuevo is not None and nuevo != prev:
         opcionales["op_207_opcional"] = nuevo
