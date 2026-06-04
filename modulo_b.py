@@ -43,14 +43,15 @@ _TIRADOR_UI = {
 # Placeholders de tooltips de los controles opcionales del Paso 1.
 # Pendientes de redactar con la app delante (CLAUDE.md §11, hito 6).
 _TOOLTIPS_OPCIONALES = {
-    "op_121": "TODO: explicar cuándo seleccionar 'Sin mecanizado para tirador' (SPF).",
-    "op_207_opcional": "TODO: explicar el sistema de cubos de basura integrado.",
-    "op_220": "TODO: explicar el recorte para perfil LED y la diferencia respecto al sensor (op_222).",
-    "op_222": "TODO: explicar el sensor para mando LED y cuándo conviene Derecha vs Izquierda.",
-    "op_223": "TODO: explicar la utilidad del cajón interior y a qué muebles aplica.",
-    "op_227": "TODO: explicar la opción 'Mueble de caldera' y sus implicaciones constructivas.",
-    "op_700_opcional": "TODO: explicar 'Mueble sin encolar' (DEM) y los muebles excluidos.",
-    "op_126": "Rellena los datos del electrodoméstico. Los campos mostrados son obligatorios.",
+    "op_121":                "El frente se fabrica sin taladro para tirador. Solo disponible con Curve, Line y Plantea. Se activa automáticamente con Plantea, y con Curve/Line en muebles monopuerta.",
+    "op_207_opcional":       "Añade cubos de basura integrados bajo el fregadero. Disponible en muebles BE2B y BEBTS.",
+    "op_207_almacenamiento": "Elige cómo se organiza el interior de la despensa: estándar (baldas) o botellero.",
+    "op_220":                "Mecaniza la base del mueble para alojar un perfil LED. Al activarlo aparece la opción de sensor.",
+    "op_222":                "Añade un sensor para activar el perfil LED con mando a distancia. No es obligatorio aunque el mueble lleve LED. Elige el lado más accesible según el diseño.",
+    "op_223":                "Añade un cajón interior dentro del mueble.",
+    "op_227":                "El mueble se vacía de baldas para alojar una caldera.",
+    "op_700_opcional":       "El mueble se entrega sin pegar. Las campanas HH siempre lo llevan para facilitar el ajuste en obra.",
+    "op_126":                "Datos del electrodoméstico encastrado. Marca y Tipo son obligatorios; rellena Referencia o Altura (al menos uno de los dos).",
 }
 
 _TIRADORES_SIN_COLOR = {"Touch Latch", "Prise de main", "Sin tirador"}
@@ -730,7 +731,7 @@ def _control_op_121(
             value=True,
             disabled=True,
             key=f"op_121_{clave}",
-            help="Forzado automáticamente para este tipo de tirador.",
+            help="Aplicado automáticamente por una de estas razones: el tirador no requiere taladro en el frente, o este mueble de columna monopuerta no lleva mecanizado para que la posición del tirador se ajuste en obra.",
         )
         opcionales["op_121"] = True
     else:
@@ -764,7 +765,7 @@ def _control_op_700(
             value=True,
             disabled=True,
             key=f"op_700_opcional_{clave}",
-            help="Forzado automáticamente: este mueble siempre se fabrica sin encolar.",
+            help="Las campanas HH siempre van sin encolar para facilitar el ajuste en obra.",
         )
         opcionales["op_700_opcional"] = True
     else:
@@ -833,12 +834,12 @@ _VALIDACION_OP_126: dict[str, dict] = {
     "referencia": {
         "patron":  re.compile(r"^[A-Za-z0-9\s\-\.\/\_]+$"),
         "error":   "Solo se admiten caracteres alfanuméricos",
-        "ejemplo": "ej. HB678G5S0",
+        "ejemplo": "Código de modelo del fabricante. Suele aparecer en la ficha técnica. Si no lo conoces, indica la Altura.",
     },
     "altura": {
         "patron":  re.compile(r"^\d+$"),
         "error":   "Solo se admiten números enteros (en mm)",
-        "ejemplo": "ej. 595",
+        "ejemplo": "Altura del hueco del electrodoméstico en mm. Si no la sabes, rellena la Referencia.",
     },
 }
 
@@ -1021,6 +1022,7 @@ def _control_electrodomestico_op_126(
             options=tipo_opciones,
             index=tipo_opciones.index(prev_tipo),
             key=f"op_126_tipo_{clave}",
+            help="ej. Horno, Microondas, Placa, Frigorífico",
         )
 
     # ── Campos de referencia (marca, referencia, altura) ─────────────────────
