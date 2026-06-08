@@ -1408,8 +1408,10 @@ def _render_card_resumen(entrada: dict, catalogo: dict) -> None:
     cat_entry = catalogo.get(code) or {}
     nombre    = code or "—"
     des       = (cat_entry.get("designaciones") or {}).get("es", "")
+    summary   = (entrada.get("Summary") or "").strip()
 
-    titulo = f"### {nombre}"
+    prefijo = f"**{summary}** · " if summary else ""
+    titulo = f"### {prefijo}{nombre}"
     if des:
         titulo += f"  ·  {des}"
 
