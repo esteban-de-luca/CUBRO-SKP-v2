@@ -696,13 +696,7 @@ p_built_in_detail:
   - A2I7522057     # P — referencia frigorífico — añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026
   - A2I1P6020057   # P — referencia frigorífico — añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026
   - A2I1P6022057   # P — referencia frigorífico — añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026
-  - POBIF4580      # P — referencia LVV/LVD — añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026
-  - POBIF6080      # P — referencia LVV/LVD — añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026
-  - PO1BIF4580     # P — referencia LVV/LVD — añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026
-  - PO1BIF6080     # P — referencia LVV/LVD — añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026
-  - PO2BIF4580     # P — referencia LVV/LVD — añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026
-  - PO2BIF6080     # P — referencia LVV/LVD — añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026
-  - FHABS6580      # P — referencia LVD — añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026
+  # POBIF*/FHABS excluidos: LVV/LVD no envían referencia de electro a SG (08/06/2026)
   - HH1606035      # P — referencia campana — añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026
   - HH1906035      # P — referencia campana — añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026
   - HH1608035      # P — referencia campana — añadido 21/05/2026, confirmado por Lucía Rodríguez-Bermejo el 21/05/2026
@@ -730,21 +724,22 @@ variantes_op_126:
     muebles:
       - BFT608057
 
-  op_126_horno_o_micro:   # horno o micro — AFS, AFSMO, AFS2B*, AFSMOBT*
+  op_126_horno_o_micro:   # horno o micro — AFS, AFS2B
     ui:            Referencia electrodoméstico
-    tipo_opciones: [Horno, Micro]   # desplegable en UI; traduce a Four/microondes en JSON
-    subcampos:
-      marca:      Marca
-      referencia: Referencia
-      altura:     Altura (mm)
+    tipo_opciones: [Horno, Micro]
     muebles:
       - AFS6020057
       - AFS6022057
-      - AFSMO6020057
-      - AFSMO6022057
-      # AFS2B y AFSMOBT llevan horno+micro (referencia dual, diseño pendiente con Lucía)
       - AFS2B6020057
       - AFS2B6022057
+
+  op_126_doble:           # dos electros (inferior + superior) — AFSMO, AFSMOBT
+    ui:            Electrodomésticos
+    doble: true            # electro 1 = inferior, electro 2 = superior
+    tipo_opciones: [Horno, Micro, Combi]   # independiente para cada slot
+    muebles:
+      - AFSMO6020057
+      - AFSMO6022057
       - AFSMOBT6020057
       - AFSMOBT6022057
 
@@ -783,28 +778,8 @@ variantes_op_126:
       - A2I1P6020057
       - A2I1P6022057
 
-  op_126_lvv_lvd:         # lavavajillas/lavadora integrable (frente completo) — POBIF
-    ui: Referencia LVV/LVD
-    # sin tipo — SG no requiere p_appliance_type para este electrodoméstico
-    subcampos:
-      marca:      Marca
-      referencia: Referencia
-    muebles:
-      - POBIF4580
-      - POBIF6080
-      - PO1BIF4580
-      - PO1BIF6080
-      - PO2BIF4580
-      - PO2BIF6080
-
-  op_126_lvd:             # lavavajillas/lavadora no integrable (frente parcial) — FHABS
-    ui: Referencia LVD
-    # sin tipo
-    subcampos:
-      marca:      Marca
-      referencia: Referencia
-    muebles:
-      - FHABS6580
+  # op_126_lvv_lvd y op_126_lvd eliminados (08/06/2026):
+  # LVV/LVD no envían referencia de electro a SG — ni UI ni JSON.
 
   op_126_campana:         # campana integrada — HH
     ui: Referencia campana

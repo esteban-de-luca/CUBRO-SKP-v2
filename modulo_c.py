@@ -445,27 +445,45 @@ def calcular_opciones(entrada: list[dict]) -> list[dict]:
         )
 
         # ── p_built_in_detail y op_900 ────────────────────────────────────────
-        marca     = (fila.get("Marca electro")      or "").strip()
-        referencia= (fila.get("Referencia electro") or "").strip()
-        tipo_ui   = (fila.get("Tipo electro")       or "").strip()
-        ancho_e   = (fila.get("Ancho electro")      or "").strip()
-        alto_e    = (fila.get("Alto electro")        or "").strip()
-        fondo_e   = (fila.get("Fondo electro")      or "").strip()
-
-        p_built_in: list[dict] | None = None
-        if marca and referencia:
-            # Caso A: referencia conocida → p_built_in_detail
-            p_built_in = [{
-                "p_manufacturer_code":   marca,
-                "p_appliance_reference": referencia,
-                "p_sequence":            "0",
-            }]
-        elif marca and tipo_ui and ancho_e and alto_e and fondo_e:
-            # Caso B: sin referencia → op_900 con Tipo+Marca+dimensiones
-            tipo_ui_a_sg = mapeos.get("tipo_ui_a_sg") or {}
-            tipo_fr = tipo_ui_a_sg.get(tipo_ui, tipo_ui)
-            p_article_900 = f"{tipo_fr} {marca} {ancho_e} {alto_e} {fondo_e}"
-            opciones_sg.append(_opt("900", p_article_900))
+        # Soporta hasta 2 electros (AFSMO/AFSMOBT): electro 1 = inferior (seq 0),
+        # electro 2 = superior (seq 1). Para el resto de muebles solo aplica electro 1.
+        _tipo_ui_a_sg = mapeos.get("tipo_ui_a_sg") or {}
+        _electros = [
+            (
+                (fila.get("Marca electro")        or "").strip(),
+                (fila.get("Referencia electro")   or "").strip(),
+                (fila.get("Tipo electro")         or "").strip(),
+                (fila.get("Ancho electro")        or "").strip(),
+                (fila.get("Alto electro")         or "").strip(),
+                (fila.get("Fondo electro")        or "").strip(),
+            ),
+            (
+                (fila.get("Marca electro 2")      or "").strip(),
+                (fila.get("Referencia electro 2") or "").strip(),
+                (fila.get("Tipo electro 2")       or "").strip(),
+                (fila.get("Ancho electro 2")      or "").strip(),
+                (fila.get("Alto electro 2")       or "").strip(),
+                (fila.get("Fondo electro 2")      or "").strip(),
+            ),
+        ]
+        p_built_in_entries: list[dict] = []
+        for seq, (m, r, t, a, al, f) in enumerate(_electros):
+            if not m:
+                continue
+            if r:
+                # Caso A: referencia conocida → entrada en p_built_in_detail
+                p_built_in_entries.append({
+                    "p_manufacturer_code":   m,
+                    "p_appliance_reference": r,
+                    "p_sequence":            str(seq),
+                })
+            elif t and a and al and f:
+                # Caso B: sin referencia → op_900
+                tipo_fr = _tipo_ui_a_sg.get(t, t)
+                opciones_sg.append(_opt("900", f"{tipo_fr} {m} {a} {al} {f}"))
+                lbl = "Dimensiones electro" if seq == 0 else "Dimensiones electro 2"
+                opc_adic.append({"etiqueta": lbl, "valor": f"{a}×{al}×{f} mm", "origen": "usuario"})
+        p_built_in: list[dict] | None = p_built_in_entries or None
 
         # ── Item JSON ─────────────────────────────────────────────────────────
         # Los campos estáticos (p_quantity, p_width/height/depth, p_delivery_date…)
