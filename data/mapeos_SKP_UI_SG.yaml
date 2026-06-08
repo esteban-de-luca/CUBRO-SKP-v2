@@ -35,6 +35,8 @@ opciones:
   - { skp: "Trasera / Color tir. de superficie", ui: Color tirador,       sg: op_301  }
   - { skp: C_Rodapietext,                      ui: Rodapié,               sg: op_402  }
   - { skp: Ancho,                              ui: Reducción de ancho,    sg: op_231  }
+  - { skp: "Color del mueble abierto",         ui: Acabado del mueble abierto,               sg: op_410 }
+  - { skp: "Color del mueble abierto",         ui: Acabado de la trasera del mueble abierto, sg: op_420 }
 
   # Selección del usuario en el Paso 1
   - { skp: "", ui: Sin mecanizado para tirador, sg: op_121 }
@@ -235,6 +237,47 @@ del_csv:
   op_231:
     - { skp: "10000 mm", ui: Reducción de ancho, sg: RL3 }
     # El valor reducido (campo "Ancho reducido" del CSV) se envía en p_param1.
+
+  # ---------------------------------------------------------------------------
+  # Color del mueble abierto → Opción 410 — Acabado del mueble abierto
+  # Solo para EOV/EOAVV. Mismo mapeo que op_101 pero solo LACA y WOOD.
+  # op_420 (Acabado de la trasera) recibe el mismo código SG — es forzada e invisible.
+  # ---------------------------------------------------------------------------
+  op_410:
+    - { skp: "Crema LACA",      ui: Crema,      sg: CR6 }
+    - { skp: "Seda LACA",       ui: Seda,       sg: SED }
+    - { skp: "Blanco LACA",     ui: Blanco,     sg: BAO }
+    - { skp: "Petal LACA",      ui: Petal,      sg: PEA }
+    - { skp: "Vela LACA",       ui: Vela,       sg: VL6 }
+    - { skp: "Marga LACA",      ui: Marga,      sg: MAA }
+    - { skp: "Zafiro LACA",     ui: Zafiro,     sg: ZAF }
+    - { skp: "Uva LACA",        ui: Uva,        sg: UVA }
+    - { skp: "Noche LACA",      ui: Noche,      sg: NOE }
+    - { skp: "Pino LACA",       ui: Pino,       sg: PI6 }
+    - { skp: "Halo LACA",       ui: Halo,       sg: HAL }
+    - { skp: "Grass LACA",      ui: Grass,      sg: GRS }
+    - { skp: "Laurel LACA",     ui: Laurel,     sg: LAU }
+    - { skp: "Nordic Oak WOOD", ui: Nordic Oak, sg: TCK }
+    - { skp: "Oak WOOD",        ui: Oak,        sg: TAK }
+    - { skp: "Smoked Oak WOOD", ui: Smoked Oak, sg: TNK }
+  op_420:
+    # Idéntico a op_410 — op_420 es forzada e invisible al usuario
+    - { skp: "Crema LACA",      ui: Crema,      sg: CR6 }
+    - { skp: "Seda LACA",       ui: Seda,       sg: SED }
+    - { skp: "Blanco LACA",     ui: Blanco,     sg: BAO }
+    - { skp: "Petal LACA",      ui: Petal,      sg: PEA }
+    - { skp: "Vela LACA",       ui: Vela,       sg: VL6 }
+    - { skp: "Marga LACA",      ui: Marga,      sg: MAA }
+    - { skp: "Zafiro LACA",     ui: Zafiro,     sg: ZAF }
+    - { skp: "Uva LACA",        ui: Uva,        sg: UVA }
+    - { skp: "Noche LACA",      ui: Noche,      sg: NOE }
+    - { skp: "Pino LACA",       ui: Pino,       sg: PI6 }
+    - { skp: "Halo LACA",       ui: Halo,       sg: HAL }
+    - { skp: "Grass LACA",      ui: Grass,      sg: GRS }
+    - { skp: "Laurel LACA",     ui: Laurel,     sg: LAU }
+    - { skp: "Nordic Oak WOOD", ui: Nordic Oak, sg: TCK }
+    - { skp: "Oak WOOD",        ui: Oak,        sg: TAK }
+    - { skp: "Smoked Oak WOOD", ui: Smoked Oak, sg: TNK }
 
 
 # =============================================================================

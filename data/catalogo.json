@@ -991,5 +991,77 @@
     "ancho_mm": 900,
     "alto_mm": 2200,
     "fondo_mm": 570
+  },
+  "EOVV37": {
+    "designaciones": {
+      "es": "Elemento abierto variable",
+      "fr": "ELEMENT OUVERT VARIABLE"
+    },
+    "ancho_mm": null,
+    "alto_mm": null,
+    "fondo_mm": 375
+  },
+  "EOV8760": {
+    "designaciones": {
+      "es": "Elemento abierto para islas variable",
+      "fr": "ELEMENT OUVERT POUR ILOTS VARIABLE"
+    },
+    "ancho_mm": null,
+    "alto_mm": 870,
+    "fondo_mm": 600
+  },
+  "EOV9060": {
+    "designaciones": {
+      "es": "Elemento abierto para islas variable",
+      "fr": "ELEMENT OUVERT POUR ILOTS VARIABLE"
+    },
+    "ancho_mm": null,
+    "alto_mm": 900,
+    "fondo_mm": 600
+  },
+  "EOV20760": {
+    "designaciones": {
+      "es": "Elemento abierto armario variable fin de implantación",
+      "fr": "ELEMENT OUVERT ARMOIRE VARIABLE FIN D'IMPLANTATION"
+    },
+    "ancho_mm": null,
+    "alto_mm": 2070,
+    "fondo_mm": 600
+  },
+  "EOV21060": {
+    "designaciones": {
+      "es": "Elemento abierto armario variable fin de implantación",
+      "fr": "ELEMENT OUVERT ARMOIRE VARIABLE FIN D'IMPLANTATION"
+    },
+    "ancho_mm": null,
+    "alto_mm": 2100,
+    "fondo_mm": 600
+  },
+  "EOV22760": {
+    "designaciones": {
+      "es": "Elemento abierto armario variable fin de implantación",
+      "fr": "ELEMENT OUVERT ARMOIRE VARIABLE FIN D'IMPLANTATION"
+    },
+    "ancho_mm": null,
+    "alto_mm": 2270,
+    "fondo_mm": 600
+  },
+  "EOV23060": {
+    "designaciones": {
+      "es": "Elemento abierto armario variable fin de implantación",
+      "fr": "ELEMENT OUVERT ARMOIRE VARIABLE FIN D'IMPLANTATION"
+    },
+    "ancho_mm": null,
+    "alto_mm": 2300,
+    "fondo_mm": 600
+  },
+  "EOAVV37": {
+    "designaciones": {
+      "es": "Elemento abierto armario variable",
+      "fr": "ELEMENT OUVERT ARMOIRE VARIABLE"
+    },
+    "ancho_mm": null,
+    "alto_mm": null,
+    "fondo_mm": 375
   }
 }

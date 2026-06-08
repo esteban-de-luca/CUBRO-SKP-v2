@@ -83,11 +83,12 @@ def _cargar_ui_aviso() -> dict[str, dict]:
         with path.open(encoding="utf-8") as f:
             del_csv = (yaml.safe_load(f) or {}).get("del_csv") or {}
         return {
-            "gama":     _tabla(del_csv.get("op_100")),           # "1"→"LACA", "2"→"WOOD"…
-            "frente":   _tabla(del_csv.get("op_101")),           # "Crema LACA"→"Crema"…
-            "interior": _tabla(del_csv.get("op_200")),           # "Blanco mueble"→"Blanco"…
-            "tirador":  _tabla(del_csv.get("op_300")),           # "2"→"Round", "7"→"Plantea"…
-            "trasera":  _tabla(del_csv.get("op_301_integrado")), # "Oak WOOD"→"Oak"…
+            "gama":                _tabla(del_csv.get("op_100")),           # "1"→"LACA", "2"→"WOOD"…
+            "frente":              _tabla(del_csv.get("op_101")),           # "Crema LACA"→"Crema"…
+            "interior":            _tabla(del_csv.get("op_200")),           # "Blanco mueble"→"Blanco"…
+            "tirador":             _tabla(del_csv.get("op_300")),           # "2"→"Round", "7"→"Plantea"…
+            "trasera":             _tabla(del_csv.get("op_301_integrado")), # "Oak WOOD"→"Oak"…
+            "color_mueble_abierto": _tabla(del_csv.get("op_410")),         # "Oak WOOD"→"Oak"…
         }
     except Exception:
         return {}
@@ -100,6 +101,7 @@ COLUMNAS_VALIDAS = [
     "Name", "Ancho", "LenZ", "Apertura", "D_Gama", "ColorFrente",
     "Color del interior", "Tirador", "Trasera",
     "Color tir. de superficie", "C_Rodapietext", "Ancho reducido",
+    "Color del mueble abierto",
 ]
 
 COLUMNAS_OBLIGATORIAS = ["Summary", "Name", "D_Gama", "ColorFrente", "Tirador", "C_Rodapietext"]
@@ -200,6 +202,17 @@ _TIRADOR_INT_TO_SG_OP300: dict[int, list[str]] = {
 # Muebles suspendidos: no llevan rodapié (H, HH, HAV, HR, HLVV, HPT)
 CODIGOS_SUSPENSO: set[str] = set(
     ((_OPCIONES.get("op_402") or {}).get("excepciones")) or []
+)
+
+# Muebles abiertos (EOV/EOAVV): sin frente, usan op_410/op_420 en lugar de op_100/101/200/300/301
+CODIGOS_MUEBLE_ABIERTO: set[str] = set(
+    ((_OPCIONES.get("op_410") or {}).get("codigos")) or []
+)
+
+# Subconjunto de muebles abiertos cuyo p_fastening se determina según el rodapié del CSV
+# (EOVV37, EOAVV37 — pueden ser posados o suspendidos)
+CODIGOS_PS_SEGUN_RODAPIE: set[str] = set(
+    ((_OPCIONES.get("op_402") or {}).get("p_s_segun_rodapie")) or []
 )
 
 # Frentes sin mueble (fondo_mm = null): tampoco llevan rodapié
@@ -452,7 +465,10 @@ def parsear_csv(archivo) -> dict:
     _ui_frente   = _ui.get("frente")   or {}
     _ui_interior = _ui.get("interior") or {}
     _ui_tirador  = _ui.get("tirador")  or {}
-    _ui_trasera  = _ui.get("trasera")  or {}
+    _ui_trasera         = _ui.get("trasera")          or {}
+    _ui_color_abierto   = _ui.get("color_mueble_abierto") or {}
+    # Valores skp válidos para op_410 (color mueble abierto)
+    _color_abierto_validos: set[str] = set(_ui_color_abierto.keys())
 
     # 1. Leer CSV
     try:
@@ -596,112 +612,162 @@ def parsear_csv(archivo) -> dict:
             except ValueError:
                 pass
 
-        # A12/A14 — Tirador
-        tirador = _normalizar_tirador(fila.get("Tirador", ""))
-        if tirador is None:
-            avisos.append("Falta el tipo de tirador")
-        elif tirador not in TIRADORES_VALIDOS:
-            avisos.append(f"Tipo de tirador '{_ui_tirador.get(str(tirador), str(tirador))}' no reconocido")
-        elif tirador in TIRADORES_MECANISMO:
-            # Touch Latch (20) o Prise de main (21) — validar compatibilidad con el mueble
-            _nombre_tir = _ui_tirador.get(str(tirador), str(tirador))
-            if name_raw in CODIGOS_SIN_MECANISMO:
-                # Frentes sin mueble: ningún mecanismo es válido
-                avisos.append(
-                    f"Este mueble no es compatible con el tirador {_nombre_tir}"
-                )
-            elif tirador == 20 and name_raw not in CODIGOS_SOLO_TL1:
-                avisos.append(
-                    "Este mueble no es compatible con el tirador Touch Latch"
-                )
-            elif tirador == 21 and name_raw not in CODIGOS_SOLO_PS1:
-                avisos.append(
-                    "Este mueble no es compatible con el tirador Prise de main"
-                )
-        elif name_raw in TIRADORES_RESTRINGIDOS and tirador is not None and tirador != 0:
-            # A24 — tirador no permitido para este mueble (lista blanca en reglas.yaml)
-            # Tirador 0 (Sin tirador) queda excluido: aplica a todos los muebles sin restricción.
-            _sg_codes_tirador = _TIRADOR_INT_TO_SG_OP300.get(tirador, [])
-            _permitidos = TIRADORES_RESTRINGIDOS[name_raw]
-            if not any(sg in _permitidos for sg in _sg_codes_tirador):
-                _nombre_tirador_ui = _ui_tirador.get(str(tirador), str(tirador))
-                avisos.append(
-                    f"El tirador '{_nombre_tirador_ui}' no está permitido para este mueble — "
-                    f"solo se admiten: {', '.join(_permitidos)}"
-                )
+        # ── Muebles abiertos (EOV/EOAVV) ──────────────────────────────────────
+        es_mueble_abierto = name_raw in CODIGOS_MUEBLE_ABIERTO
 
-        # A11 — D_Gama vacío
-        d_gama = _str_or_none(fila.get("D_Gama", ""))
-        if d_gama is None:
-            avisos.append("Falta la gama del frente")
-
-        # A05/A13 — Color del interior (no aplica a frentes sin mueble)
-        color_interior = _str_or_none(fila.get("Color del interior", ""))
-        if name_raw not in CODIGOS_SIN_INTERIOR:
-            if color_interior is None:
-                avisos.append("Falta el color del interior")
-            elif color_interior not in COLOR_INTERIOR_VALIDOS:
-                avisos.append(f"Color del interior '{_ui_interior.get(color_interior, color_interior)}' no reconocido")
-
-        # A07 — D_Gama incompatible con ColorFrente
-        color_frente_val = _str_or_none(fila.get("ColorFrente", ""))
-        if d_gama is not None and color_frente_val is not None:
-            sufijos = GAMA_SUFIJOS.get(d_gama, [])
-            if sufijos and not any(s in color_frente_val.upper() for s in sufijos):
+        # ── Color del mueble abierto ───────────────────────────────────────────
+        color_mueble_abierto_raw = _str_or_none(fila.get("Color del mueble abierto", ""))
+        if es_mueble_abierto:
+            if color_mueble_abierto_raw is None:
+                avisos.append("Falta el campo 'Color del mueble abierto' — es obligatorio para este mueble.")
+            elif color_mueble_abierto_raw not in _color_abierto_validos:
                 avisos.append(
-                    f"La gama ({_ui_gama.get(d_gama, d_gama)}) no coincide con el color de frente "
-                    f"'{_ui_frente.get(color_frente_val, color_frente_val)}'"
+                    f"Color del mueble abierto '{color_mueble_abierto_raw}' no reconocido "
+                    f"— debe ser un color LACA o WOOD válido."
                 )
+        else:
+            if color_mueble_abierto_raw is not None:
+                avisos.append("Este mueble no admite el campo 'Color del mueble abierto'.")
 
-        # A23 — Apertura
-        apertura = _normalizar_apertura(fila.get("Apertura", ""))
-
-        if name_raw in CODIGOS_SIN_APERTURA:
-            if apertura is not None:
-                avisos_internos.append("Este mueble no requiere apertura — el valor se ignorará")
-            apertura = None
-        elif name_raw in CATALOGO_CODIGOS:
-            if apertura is None:
-                avisos.append(
-                    "Este mueble requiere apertura (izquierda o derecha) "
-                    "pero no tiene ninguna asignada"
-                )
-
-        # ── Lógica tirador / color ─────────────────────────────────────────────
-        trasera_raw   = _str_or_none(fila.get("Trasera", ""))
-        color_tir_raw = _str_or_none(fila.get("Color tir. de superficie", ""))
-        color_tirador = None
+        # Variables de frente/tirador — solo aplican a muebles con frente
+        tirador       = None
+        d_gama        = None
+        color_interior = None
+        color_frente_val = None
+        apertura      = None
         trasera       = None
+        color_tirador = None
 
-        if tirador in TIRADORES_TRASERA:
-            trasera = trasera_raw
-            if trasera is None:
-                avisos.append("Falta el color de la trasera")
-            elif trasera.upper() not in TRASERA_VALIDAS:
-                avisos.append(f"Color de trasera '{_ui_trasera.get(trasera, trasera)}' no reconocido")
+        if not es_mueble_abierto:
+            # A12/A14 — Tirador
+            tirador = _normalizar_tirador(fila.get("Tirador", ""))
+            if tirador is None:
+                avisos.append("Falta el tipo de tirador")
+            elif tirador not in TIRADORES_VALIDOS:
+                avisos.append(f"Tipo de tirador '{_ui_tirador.get(str(tirador), str(tirador))}' no reconocido")
+            elif tirador in TIRADORES_MECANISMO:
+                # Touch Latch (20) o Prise de main (21) — validar compatibilidad con el mueble
+                _nombre_tir = _ui_tirador.get(str(tirador), str(tirador))
+                if name_raw in CODIGOS_SIN_MECANISMO:
+                    # Frentes sin mueble: ningún mecanismo es válido
+                    avisos.append(
+                        f"Este mueble no es compatible con el tirador {_nombre_tir}"
+                    )
+                elif tirador == 20 and name_raw not in CODIGOS_SOLO_TL1:
+                    avisos.append(
+                        "Este mueble no es compatible con el tirador Touch Latch"
+                    )
+                elif tirador == 21 and name_raw not in CODIGOS_SOLO_PS1:
+                    avisos.append(
+                        "Este mueble no es compatible con el tirador Prise de main"
+                    )
+            elif name_raw in TIRADORES_RESTRINGIDOS and tirador is not None and tirador != 0:
+                # A24 — tirador no permitido para este mueble (lista blanca en reglas.yaml)
+                # Tirador 0 (Sin tirador) queda excluido: aplica a todos los muebles sin restricción.
+                _sg_codes_tirador = _TIRADOR_INT_TO_SG_OP300.get(tirador, [])
+                _permitidos = TIRADORES_RESTRINGIDOS[name_raw]
+                if not any(sg in _permitidos for sg in _sg_codes_tirador):
+                    _nombre_tirador_ui = _ui_tirador.get(str(tirador), str(tirador))
+                    avisos.append(
+                        f"El tirador '{_nombre_tirador_ui}' no está permitido para este mueble — "
+                        f"solo se admiten: {', '.join(_permitidos)}"
+                    )
 
-        elif tirador in TIRADORES_SUPERFICIE:
-            color_tirador = color_tir_raw
-            if color_tirador is None:
-                avisos.append("Falta el color del tirador de superficie")
-            elif color_tirador not in COLORES_TIRADOR_SUPERFICIE_VALIDOS:
-                avisos.append(
-                    f"Color de tirador '{color_tirador}' no reconocido — "
-                    f"los valores válidos son: {', '.join(sorted(COLORES_TIRADOR_SUPERFICIE_VALIDOS))}"
-                )
+            # A11 — D_Gama vacío
+            d_gama = _str_or_none(fila.get("D_Gama", ""))
+            if d_gama is None:
+                avisos.append("Falta la gama del frente")
 
-        # A09 — Frente no-LACA con Trasera Laca
-        if (tirador in TIRADORES_TRASERA
-                and trasera is not None
-                and d_gama is not None
-                and d_gama != D_GAMA_LACA
-                and trasera.upper() == "LACA"):
-            avisos.append("La trasera Laca no es compatible con un frente que no es LACA")
+            # A05/A13 — Color del interior (no aplica a frentes sin mueble)
+            color_interior = _str_or_none(fila.get("Color del interior", ""))
+            if name_raw not in CODIGOS_SIN_INTERIOR:
+                if color_interior is None:
+                    avisos.append("Falta el color del interior")
+                elif color_interior not in COLOR_INTERIOR_VALIDOS:
+                    avisos.append(f"Color del interior '{_ui_interior.get(color_interior, color_interior)}' no reconocido")
+
+            # A07 — D_Gama incompatible con ColorFrente
+            color_frente_val = _str_or_none(fila.get("ColorFrente", ""))
+            if d_gama is not None and color_frente_val is not None:
+                sufijos = GAMA_SUFIJOS.get(d_gama, [])
+                if sufijos and not any(s in color_frente_val.upper() for s in sufijos):
+                    avisos.append(
+                        f"La gama ({_ui_gama.get(d_gama, d_gama)}) no coincide con el color de frente "
+                        f"'{_ui_frente.get(color_frente_val, color_frente_val)}'"
+                    )
+
+            # A23 — Apertura
+            apertura = _normalizar_apertura(fila.get("Apertura", ""))
+
+            if name_raw in CODIGOS_SIN_APERTURA:
+                if apertura is not None:
+                    avisos_internos.append("Este mueble no requiere apertura — el valor se ignorará")
+                apertura = None
+            elif name_raw in CATALOGO_CODIGOS:
+                if apertura is None:
+                    avisos.append(
+                        "Este mueble requiere apertura (izquierda o derecha) "
+                        "pero no tiene ninguna asignada"
+                    )
+
+            # ── Lógica tirador / color ─────────────────────────────────────────
+            trasera_raw   = _str_or_none(fila.get("Trasera", ""))
+            color_tir_raw = _str_or_none(fila.get("Color tir. de superficie", ""))
+
+            if tirador in TIRADORES_TRASERA:
+                trasera = trasera_raw
+                if trasera is None:
+                    avisos.append("Falta el color de la trasera")
+                elif trasera.upper() not in TRASERA_VALIDAS:
+                    avisos.append(f"Color de trasera '{_ui_trasera.get(trasera, trasera)}' no reconocido")
+
+            elif tirador in TIRADORES_SUPERFICIE:
+                color_tirador = color_tir_raw
+                if color_tirador is None:
+                    avisos.append("Falta el color del tirador de superficie")
+                elif color_tirador not in COLORES_TIRADOR_SUPERFICIE_VALIDOS:
+                    avisos.append(
+                        f"Color de tirador '{color_tirador}' no reconocido — "
+                        f"los valores válidos son: {', '.join(sorted(COLORES_TIRADOR_SUPERFICIE_VALIDOS))}"
+                    )
+
+            # A09 — Frente no-LACA con Trasera Laca
+            if (tirador in TIRADORES_TRASERA
+                    and trasera is not None
+                    and d_gama is not None
+                    and d_gama != D_GAMA_LACA
+                    and trasera.upper() == "LACA"):
+                avisos.append("La trasera Laca no es compatible con un frente que no es LACA")
 
         # ── Lógica rodapié ─────────────────────────────────────────────────────
         rodapie_raw = _str_or_none(fila.get("C_Rodapietext", ""))
 
-        if name_raw in CODIGOS_SIN_RODAPIE:
+        if es_mueble_abierto and name_raw in CODIGOS_PS_SEGUN_RODAPIE:
+            # EOVV37, EOAVV37: rodapié opcional; vacío = suspendido; solo "70 mm" o "100 mm"
+            if rodapie_raw is None:
+                rodapie = None  # suspendido — sin aviso
+            elif rodapie_raw not in RODAPIE_VALIDOS_DEFAULT:
+                avisos.append(
+                    f"Rodapié '{rodapie_raw}' no válido para este mueble "
+                    f"— solo se admiten 70 mm, 100 mm o vacío (suspendido)."
+                )
+                rodapie = rodapie_raw
+            else:
+                rodapie = rodapie_raw
+        elif es_mueble_abierto:
+            # Otros EOV: rodapié obligatorio, solo "70 mm" o "100 mm"
+            if rodapie_raw is None:
+                avisos.append("Falta el valor de rodapié")
+                rodapie = None
+            elif rodapie_raw not in RODAPIE_VALIDOS_DEFAULT:
+                avisos.append(
+                    f"Valor de rodapié '{rodapie_raw}' no permitido para este mueble — "
+                    f"los valores aceptados son 70 mm y 100 mm"
+                )
+                rodapie = rodapie_raw
+            else:
+                rodapie = rodapie_raw
+        elif name_raw in CODIGOS_SIN_RODAPIE:
             if rodapie_raw is not None and name_raw in CODIGOS_SUSPENSO:
                 # Aviso interno: no se muestra al usuario ni afecta al estado del mueble
                 avisos_internos.append(f"Mueble suspenso — el rodapié '{rodapie_raw}' se ignorará")
@@ -735,23 +801,24 @@ def parsear_csv(archivo) -> dict:
         estado = "✅ CORRECTO" if not avisos else "⚠️ REVISAR"
 
         resultado["muebles"].append({
-            "name":            name_raw,
-            "name_skp":        name_skp,
-            "summary":         summary_raw or "",
-            "estado":          estado,
-            "apertura":        apertura,
-            "d_gama":          d_gama,
-            "color_frente":    color_frente_val,
-            "color_interior":  color_interior,
-            "tirador":         tirador,
-            "trasera":         trasera,
-            "color_tirador":   color_tirador,
-            "rodapie":         rodapie,
-            "ancho":           ancho_raw,
-            "ancho_reducido":  ancho_reducido_raw,
-            "len_z":           len_z_raw,
-            "avisos":          avisos,
-            "avisos_internos": avisos_internos,
+            "name":                  name_raw,
+            "name_skp":              name_skp,
+            "summary":               summary_raw or "",
+            "estado":                estado,
+            "apertura":              apertura,
+            "d_gama":                d_gama,
+            "color_frente":          color_frente_val,
+            "color_interior":        color_interior,
+            "tirador":               tirador,
+            "trasera":               trasera,
+            "color_tirador":         color_tirador,
+            "rodapie":               rodapie,
+            "ancho":                 ancho_raw,
+            "ancho_reducido":        ancho_reducido_raw,
+            "len_z":                 len_z_raw,
+            "color_mueble_abierto":  color_mueble_abierto_raw or "",
+            "avisos":                avisos,
+            "avisos_internos":       avisos_internos,
         })
 
     return resultado
@@ -767,22 +834,23 @@ def _a_formato_b(m: dict) -> dict:
     """
     tirador = m.get("tirador")
     return {
-        "Name":                     m.get("name") or "",
-        "Name SKP":                 m.get("name_skp") or "",
-        "Summary":                  m.get("summary") or "",
-        "Estado":                   m.get("estado") or "",
-        "Apertura":                 m.get("apertura") or "",
-        "D_Gama":                   m.get("d_gama") or "",
-        "ColorFrente":              m.get("color_frente") or "",
-        "Color del interior":       m.get("color_interior") or "",
-        "Tirador":                  str(tirador) if tirador is not None else "",
-        "Trasera":                  m.get("trasera") or "",
-        "Color tir. de superficie": m.get("color_tirador") or "",
-        "C_Rodapietext":            m.get("rodapie") or "",
-        "Ancho":                    m.get("ancho") or "",
-        "Ancho reducido":           m.get("ancho_reducido") or "",
-        "LenZ":                     m.get("len_z") or "",
-        "Avisos":                   " | ".join(m.get("avisos") or []),
+        "Name":                       m.get("name") or "",
+        "Name SKP":                   m.get("name_skp") or "",
+        "Summary":                    m.get("summary") or "",
+        "Estado":                     m.get("estado") or "",
+        "Apertura":                   m.get("apertura") or "",
+        "D_Gama":                     m.get("d_gama") or "",
+        "ColorFrente":                m.get("color_frente") or "",
+        "Color del interior":         m.get("color_interior") or "",
+        "Tirador":                    str(tirador) if tirador is not None else "",
+        "Trasera":                    m.get("trasera") or "",
+        "Color tir. de superficie":   m.get("color_tirador") or "",
+        "C_Rodapietext":              m.get("rodapie") or "",
+        "Ancho":                      m.get("ancho") or "",
+        "Ancho reducido":             m.get("ancho_reducido") or "",
+        "LenZ":                       m.get("len_z") or "",
+        "Color del mueble abierto":   m.get("color_mueble_abierto") or "",
+        "Avisos":                     " | ".join(m.get("avisos") or []),
     }
 
 

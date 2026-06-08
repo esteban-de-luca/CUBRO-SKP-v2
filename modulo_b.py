@@ -78,6 +78,22 @@ _COLORES_PATH = pathlib.Path(__file__).parent / "data" / "colores_mueble.yaml"
 _ASSETS_COLORES = pathlib.Path(__file__).parent / "assets" / "colores"
 _ASSETS_OPCIONES = pathlib.Path(__file__).parent / "assets" / "opciones"
 
+# Conjuntos de muebles abiertos (EOV/EOAVV) — carga al importar módulo
+def _cargar_opciones_mueble_raw() -> dict:
+    if not _OPCIONES_MUEBLE_PATH.exists():
+        return {}
+    with _OPCIONES_MUEBLE_PATH.open(encoding="utf-8") as f:
+        return yaml.safe_load(f) or {}
+
+_OPCIONES_RAW = _cargar_opciones_mueble_raw()
+
+CODIGOS_MUEBLE_ABIERTO: set[str] = set(
+    ((_OPCIONES_RAW.get("op_410") or {}).get("codigos")) or []
+)
+CODIGOS_PS_SEGUN_RODAPIE: set[str] = set(
+    ((_OPCIONES_RAW.get("op_402") or {}).get("p_s_segun_rodapie")) or []
+)
+
 
 @st.cache_data
 def _cargar_sg_a_ui() -> dict[str, str]:
@@ -360,6 +376,15 @@ def _ui_color_frente(raw: str) -> str:
     return raw
 
 
+def _ui_color_mueble_abierto(raw: str) -> str:
+    """Traduce el valor SKP del color de mueble abierto a etiqueta UI.
+
+    Usa la misma lógica que _ui_color_frente: elimina el sufijo de gama.
+    'Oak WOOD' → 'Oak', 'Crema LACA' → 'Crema'.
+    """
+    return _ui_color_frente(raw)
+
+
 def _ui_tirador(tirador_code: str) -> str:
     return _TIRADOR_UI.get((tirador_code or "").strip(), "")
 
@@ -506,6 +531,9 @@ def construir_entrada_modulo_c(
             "Rodapié": _normalizar_vacio(
                 _ui_rodapie(mueble.get("C_Rodapietext", ""))
             ),
+            "Acabado del mueble abierto": _ui_color_mueble_abierto(
+                mueble.get("Color del mueble abierto", "")
+            ),
             "Reducción de ancho": _bool_str(reduccion),
             "Ancho reducido": ancho_reducido,
             "Sin mecanizado": _bool_str(opcionales.get("op_121", False)),
@@ -544,16 +572,22 @@ def _cabecera_card(mueble: dict, catalogo: dict, revisado: bool) -> str:
     if designacion:
         partes.append(designacion)
 
-    gama = _ui_gama(mueble.get("D_Gama", ""))
-    color = _ui_color_frente(mueble.get("ColorFrente", ""))
-    gama_color = " ".join(p for p in (gama, color) if p)
-    if gama_color:
-        partes.append(gama_color)
+    name_code = (mueble.get("Name") or "").strip()
+    if name_code in CODIGOS_MUEBLE_ABIERTO:
+        color_abierto = _ui_color_mueble_abierto(mueble.get("Color del mueble abierto", ""))
+        if color_abierto:
+            partes.append(color_abierto)
+    else:
+        gama = _ui_gama(mueble.get("D_Gama", ""))
+        color = _ui_color_frente(mueble.get("ColorFrente", ""))
+        gama_color = " ".join(p for p in (gama, color) if p)
+        if gama_color:
+            partes.append(gama_color)
 
-    tirador = _ui_tirador(mueble.get("Tirador", ""))
-    if tirador:
-        color_tirador = _ui_color_tirador(mueble, tirador)
-        partes.append(" ".join(p for p in (tirador, color_tirador) if p))
+        tirador = _ui_tirador(mueble.get("Tirador", ""))
+        if tirador:
+            color_tirador = _ui_color_tirador(mueble, tirador)
+            partes.append(" ".join(p for p in (tirador, color_tirador) if p))
 
     return " · ".join(partes)
 
@@ -587,9 +621,7 @@ def pantalla_validacion(muebles: list[dict]) -> None:
 
 def _bloque_informativo(mueble: dict, catalogo: dict) -> None:
     """Línea inicial de la card abierta: Apertura · Ancho · Alto · Fondo · Color interior · Rodapié."""
-    apertura      = _ui_apertura(mueble.get("Apertura", ""))
     ancho         = _ui_ancho(mueble)
-    color_interior = _ui_color_interior(mueble.get("Color del interior", ""))
     rodapie       = _ui_rodapie(mueble.get("C_Rodapietext", ""))
 
     name  = (mueble.get("Name") or "").strip()
@@ -611,14 +643,27 @@ def _bloque_informativo(mueble: dict, catalogo: dict) -> None:
     fondo_mm  = entry.get("fondo_mm")
     fondo_str = f"{fondo_mm} mm" if fondo_mm is not None else "—"
 
-    st.markdown(
-        f"**Apertura:** {apertura}  ·  "
-        f"**Ancho:** {ancho}  ·  "
-        f"**Alto:** {alto_str}  ·  "
-        f"**Fondo:** {fondo_str}  ·  "
-        f"**Color interior:** {color_interior}  ·  "
-        f"**Rodapié:** {rodapie}"
-    )
+    if name in CODIGOS_MUEBLE_ABIERTO:
+        color_abierto = _ui_color_mueble_abierto(mueble.get("Color del mueble abierto", ""))
+        rodapie_label = rodapie if rodapie != "—" else ("(vacío = suspendido)" if name in CODIGOS_PS_SEGUN_RODAPIE else "—")
+        st.markdown(
+            f"**Acabado del mueble abierto:** {color_abierto or '—'}  ·  "
+            f"**Ancho:** {ancho}  ·  "
+            f"**Alto:** {alto_str}  ·  "
+            f"**Fondo:** {fondo_str}  ·  "
+            f"**Rodapié:** {rodapie_label}"
+        )
+    else:
+        apertura       = _ui_apertura(mueble.get("Apertura", ""))
+        color_interior = _ui_color_interior(mueble.get("Color del interior", ""))
+        st.markdown(
+            f"**Apertura:** {apertura}  ·  "
+            f"**Ancho:** {ancho}  ·  "
+            f"**Alto:** {alto_str}  ·  "
+            f"**Fondo:** {fondo_str}  ·  "
+            f"**Color interior:** {color_interior}  ·  "
+            f"**Rodapié:** {rodapie}"
+        )
 
 
 def _check_mueble(
@@ -1277,16 +1322,18 @@ def paso_1(muebles: list[dict]) -> None:
                 _cabecera_card(mueble, catalogo, revisado),
                 expanded=expanded,
             ):
-                img_path = _imagen_mueble(name)
-                meta_126 = _meta_op_126(name, interfaz)
+                img_path    = _imagen_mueble(name)
+                meta_126    = _meta_op_126(name, interfaz)
+                es_abierto  = name in CODIGOS_MUEBLE_ABIERTO
                 if img_path:
                     col_img, col_info = st.columns([1, 3])
                     with col_img:
                         st.image(str(img_path), width=229)
-                        _render_swatches_color(
-                            _ui_color_frente(mueble.get("ColorFrente", "")),
-                            _ui_color_interior(mueble.get("Color del interior", "")),
-                        )
+                        if not es_abierto:
+                            _render_swatches_color(
+                                _ui_color_frente(mueble.get("ColorFrente", "")),
+                                _ui_color_interior(mueble.get("Color del interior", "")),
+                            )
                     with col_info:
                         _bloque_informativo(mueble, catalogo)
                         if aplicables:
@@ -1304,10 +1351,11 @@ def paso_1(muebles: list[dict]) -> None:
                             )
                 else:
                     _bloque_informativo(mueble, catalogo)
-                    _render_swatches_color(
-                        _ui_color_frente(mueble.get("ColorFrente", "")),
-                        _ui_color_interior(mueble.get("Color del interior", "")),
-                    )
+                    if not es_abierto:
+                        _render_swatches_color(
+                            _ui_color_frente(mueble.get("ColorFrente", "")),
+                            _ui_color_interior(mueble.get("Color del interior", "")),
+                        )
                     if aplicables:
                         tirador_code = str(mueble.get("Tirador") or "").strip()
                         _renderizar_opcionales(clave, name, tirador_code, aplicables, interfaz, selecciones)
@@ -1373,48 +1421,68 @@ def paso_1(muebles: list[dict]) -> None:
 def _bloque_configuracion(mueble: dict) -> list[tuple[str, str]]:
     """Pares (etiqueta, valor) del bloque Configuración — Paso 1 (campos CSV brutos)."""
     items: list[tuple[str, str]] = []
-    apertura = _ui_apertura(mueble.get("Apertura", ""))
-    if apertura and apertura != "—":
-        items.append(("Apertura", apertura))
-    gama = _ui_gama(mueble.get("D_Gama", ""))
-    color = _ui_color_frente(mueble.get("ColorFrente", ""))
-    gama_color = " ".join(p for p in (gama, color) if p)
-    if gama_color:
-        items.append(("Gama y color frente", gama_color))
-    color_int = _ui_color_interior(mueble.get("Color del interior", ""))
-    if color_int and color_int != "—":
-        items.append(("Color interior", color_int))
-    tirador = _ui_tirador(mueble.get("Tirador", ""))
-    if tirador:
-        col_t = _ui_color_tirador(mueble, tirador)
-        items.append(("Tirador", " ".join(p for p in (tirador, col_t) if p)))
-    rodapie = _ui_rodapie(mueble.get("C_Rodapietext", ""))
-    if rodapie and rodapie != "—":
-        items.append(("Rodapié", rodapie))
+    name = (mueble.get("Name") or "").strip()
+    if name in CODIGOS_MUEBLE_ABIERTO:
+        color_abierto = _ui_color_mueble_abierto(mueble.get("Color del mueble abierto", ""))
+        if color_abierto:
+            items.append(("Acabado del mueble abierto", color_abierto))
+        rodapie = _ui_rodapie(mueble.get("C_Rodapietext", ""))
+        if rodapie and rodapie != "—":
+            items.append(("Rodapié", rodapie))
+        elif name in CODIGOS_PS_SEGUN_RODAPIE:
+            items.append(("Rodapié", "(vacío = suspendido)"))
+    else:
+        apertura = _ui_apertura(mueble.get("Apertura", ""))
+        if apertura and apertura != "—":
+            items.append(("Apertura", apertura))
+        gama = _ui_gama(mueble.get("D_Gama", ""))
+        color = _ui_color_frente(mueble.get("ColorFrente", ""))
+        gama_color = " ".join(p for p in (gama, color) if p)
+        if gama_color:
+            items.append(("Gama y color frente", gama_color))
+        color_int = _ui_color_interior(mueble.get("Color del interior", ""))
+        if color_int and color_int != "—":
+            items.append(("Color interior", color_int))
+        tirador = _ui_tirador(mueble.get("Tirador", ""))
+        if tirador:
+            col_t = _ui_color_tirador(mueble, tirador)
+            items.append(("Tirador", " ".join(p for p in (tirador, col_t) if p)))
+        rodapie = _ui_rodapie(mueble.get("C_Rodapietext", ""))
+        if rodapie and rodapie != "—":
+            items.append(("Rodapié", rodapie))
     return items
 
 
 def _bloque_configuracion_c(entrada: dict) -> list[tuple[str, str]]:
     """Pares (etiqueta, valor) del bloque Configuración — Paso 2 (campos 23 columnas, ya en UI)."""
     items: list[tuple[str, str]] = []
-    apertura = (entrada.get("Apertura") or "").strip()
-    if apertura:
-        items.append(("Apertura", apertura))
-    gama  = (entrada.get("Gama del frente")   or "").strip()
-    color = (entrada.get("Acabado del frente") or "").strip()
-    gama_color = " ".join(p for p in (gama, color) if p)
-    if gama_color:
-        items.append(("Gama y color frente", gama_color))
-    color_int = (entrada.get("Color interior") or "").strip()
-    if color_int:
-        items.append(("Color interior", color_int))
-    tirador = (entrada.get("Tirador") or "").strip()
-    if tirador:
-        col_t = (entrada.get("Color tirador") or "").strip()
-        items.append(("Tirador", " ".join(p for p in (tirador, col_t) if p)))
-    rodapie = (entrada.get("Rodapié") or "").strip()
-    if rodapie:
-        items.append(("Rodapié", rodapie))
+    code = (entrada.get("Código mueble") or "").strip()
+    if code in CODIGOS_MUEBLE_ABIERTO:
+        color_abierto = (entrada.get("Acabado del mueble abierto") or "").strip()
+        if color_abierto:
+            items.append(("Acabado del mueble abierto", color_abierto))
+        rodapie = (entrada.get("Rodapié") or "").strip()
+        if rodapie:
+            items.append(("Rodapié", rodapie))
+    else:
+        apertura = (entrada.get("Apertura") or "").strip()
+        if apertura:
+            items.append(("Apertura", apertura))
+        gama  = (entrada.get("Gama del frente")   or "").strip()
+        color = (entrada.get("Acabado del frente") or "").strip()
+        gama_color = " ".join(p for p in (gama, color) if p)
+        if gama_color:
+            items.append(("Gama y color frente", gama_color))
+        color_int = (entrada.get("Color interior") or "").strip()
+        if color_int:
+            items.append(("Color interior", color_int))
+        tirador = (entrada.get("Tirador") or "").strip()
+        if tirador:
+            col_t = (entrada.get("Color tirador") or "").strip()
+            items.append(("Tirador", " ".join(p for p in (tirador, col_t) if p)))
+        rodapie = (entrada.get("Rodapié") or "").strip()
+        if rodapie:
+            items.append(("Rodapié", rodapie))
     return items
 
 
@@ -1503,6 +1571,7 @@ def _render_card_resumen(entrada: dict, catalogo: dict) -> None:
 
     color_frente   = (entrada.get("Acabado del frente") or "").strip()
     color_interior = (entrada.get("Color interior") or "").strip()
+    es_abierto     = code in CODIGOS_MUEBLE_ABIERTO
 
     with st.container(border=True):
         st.markdown(titulo)
@@ -1512,7 +1581,8 @@ def _render_card_resumen(entrada: dict, catalogo: dict) -> None:
         with col_img:
             if img_path:
                 st.image(str(img_path), width=229)
-            _render_swatches_color(color_frente, color_interior)
+            if not es_abierto:
+                _render_swatches_color(color_frente, color_interior)
 
         with col_config:
             config = _bloque_configuracion_c(entrada)

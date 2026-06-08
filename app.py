@@ -66,6 +66,7 @@ def _mock_muebles() -> list[dict]:
             "Ancho": "600 mm",
             "Ancho reducido": "",
             "LenZ": "800",
+            "Color del mueble abierto": "",
             "Avisos": "",
         },
         {
@@ -83,6 +84,7 @@ def _mock_muebles() -> list[dict]:
             "Ancho": "600 mm",
             "Ancho reducido": "",
             "LenZ": "720",
+            "Color del mueble abierto": "",
             "Avisos": "",
         },
         {
@@ -100,7 +102,27 @@ def _mock_muebles() -> list[dict]:
             "Ancho": "10000 mm",
             "Ancho reducido": "",
             "LenZ": "",
+            "Color del mueble abierto": "",
             "Avisos": "A02 | A17",
+        },
+        {
+            "Name": "EOV9060",
+            "Name SKP": "EOV9060-1",
+            "Summary": "M4",
+            "Estado": "✅ CORRECTO",
+            "Apertura": "",
+            "D_Gama": "",
+            "ColorFrente": "",
+            "Color del interior": "",
+            "Tirador": "",
+            "Trasera": "",
+            "Color tir. de superficie": "",
+            "C_Rodapietext": "100 mm",
+            "Ancho": "600 mm",
+            "Ancho reducido": "",
+            "LenZ": "900",
+            "Color del mueble abierto": "Oak WOOD",
+            "Avisos": "",
         },
     ]
 
@@ -205,6 +227,7 @@ _COLUMNAS_OUTPUT_MODULO_A = {
     "Name", "Name SKP", "Estado", "Apertura", "D_Gama", "ColorFrente",
     "Color del interior", "Tirador", "Trasera", "Color tir. de superficie",
     "C_Rodapietext", "Ancho", "Ancho reducido", "LenZ", "Avisos",
+    # "Color del mueble abierto" es opcional (no en todos los CSVs) — no se incluye en la check
 }
 
 

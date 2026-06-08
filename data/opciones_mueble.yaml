@@ -154,6 +154,14 @@ p_hinge:
     - BE2B908057
     - BEBTS608057
     - BEBTS908057
+    - EOVV37
+    - EOV8760
+    - EOV9060
+    - EOV20760
+    - EOV21060
+    - EOV22760
+    - EOV23060
+    - EOAVV37
 
   lift:              # apertura lift
     - HLVV57
@@ -584,6 +592,14 @@ op_231:
   - AVA1P6022057   # P
   - ABA6020057     # P
   - ABA6022057     # P
+  - EOVV37         # P
+  - EOV8760        # P
+  - EOV9060        # P
+  - EOV20760       # P
+  - EOV21060       # P
+  - EOV22760       # P
+  - EOV23060       # P
+  - EOAVV37        # P
   # eliminados 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026: B308035, B308057
 
 
@@ -644,6 +660,26 @@ op_402:
     BC604035: ["10 mm", "70 mm", "100 mm"]
     BC604057: ["10 mm", "70 mm", "100 mm"]
     # BC158057 no tiene restricción especial — acepta los valores por defecto (70 mm y 100 mm)
+  p_s_segun_rodapie:   # muebles cuyo p_fastening (P/S) se determina dinámicamente según rodapié del CSV
+    - EOVV37
+    - EOAVV37
+
+
+# -----------------------------------------------------------------------------
+# op_410 / op_420 — Acabado mueble abierto / Acabado trasera mueble abierto
+# op_410 y op_420 reciben el mismo código SG. op_420 es forzada e invisible.
+# Solo aplica a muebles sin frente (EOV/EOAVV). Obligatorio en el CSV.
+# -----------------------------------------------------------------------------
+op_410:
+  codigos:
+    - EOVV37
+    - EOV8760
+    - EOV9060
+    - EOV20760
+    - EOV21060
+    - EOV22760
+    - EOV23060
+    - EOAVV37
 
 
 # -----------------------------------------------------------------------------
@@ -658,6 +694,8 @@ op_700:
     - HH1908035
     - HH16010035
     - HH19010035
+    - EOVV37
+    - EOAVV37
   no_aplica:      # no se envía DEM ni como opcional ni como forzado
     - AGM9020057
     - AGM9022057

@@ -231,31 +231,47 @@ def _calcular_opciones_mueble(
                 "origen": origen,
             })
 
-    # ── op_100 — Gama del frente (todos: O) ──────────────────────────────────
-    sg_100 = indices.get("op_100", {}).get(gama_ui, "")
-    if sg_100:
-        _sg("op_100", sg_100)
+    # ── Muebles abiertos (EOV/EOAVV): op_410/op_420 en lugar de frente/tirador ──
+    codigos_mueble_abierto: set[str] = set(
+        ((op_mueble.get("op_410") or {}).get("codigos")) or []
+    )
+    es_abierto = code in codigos_mueble_abierto
 
-    # ── op_101 — Acabado del frente (todos: O) ───────────────────────────────
-    acabado = (fila.get("Acabado del frente") or "").strip()
-    sg_101  = indices.get("op_101", {}).get(acabado, "")
-    if sg_101:
-        _sg("op_101", sg_101)
+    if es_abierto:
+        # op_410 — Acabado del mueble abierto
+        # op_420 — Acabado de la trasera (mismo código SG, forzada e invisible)
+        color_abierto = (fila.get("Acabado del mueble abierto") or "").strip()
+        sg_410 = indices.get("op_410", {}).get(color_abierto, "")
+        if sg_410:
+            _sg("op_410", sg_410, etiqueta="Acabado del mueble abierto")
+            _sg("op_420", sg_410)  # forzada e invisible, mismo código
+    else:
+        # ── op_100 — Gama del frente (todos: O) ──────────────────────────────────
+        sg_100 = indices.get("op_100", {}).get(gama_ui, "")
+        if sg_100:
+            _sg("op_100", sg_100)
+
+        # ── op_101 — Acabado del frente (todos: O) ───────────────────────────────
+        acabado = (fila.get("Acabado del frente") or "").strip()
+        sg_101  = indices.get("op_101", {}).get(acabado, "")
+        if sg_101:
+            _sg("op_101", sg_101)
 
     # ── op_103, op_104 — EXCLUIDAS: SG las calcula en AS400 ─────────────────
 
-    # ── op_200 — Color interior (todos: O excepto frentes sin mueble) ────────
-    excl_200 = (op_mueble.get("op_200") or {}).get("excepciones") or []
-    if code not in excl_200:
-        interior = (fila.get("Color interior") or "").strip()
-        sg_200   = indices.get("op_200", {}).get(interior, "")
-        if sg_200:
-            _sg("op_200", sg_200)
+    if not es_abierto:
+        # ── op_200 — Color interior (todos: O excepto frentes sin mueble) ────────
+        excl_200 = (op_mueble.get("op_200") or {}).get("excepciones") or []
+        if code not in excl_200:
+            interior = (fila.get("Color interior") or "").strip()
+            sg_200   = indices.get("op_200", {}).get(interior, "")
+            if sg_200:
+                _sg("op_200", sg_200)
 
     # ── op_203, op_204 — EXCLUIDAS: SG las calcula en AS400 ─────────────────
 
     # ── op_206 — Sistema de cierre FSP (F en muebles batientes) ─────────────
-    if code in (op_mueble.get("op_206") or []):
+    if not es_abierto and code in (op_mueble.get("op_206") or []):
         sg_206 = (forzadas_yaml.get("op_206") or {}).get("sg", "FSP")
         _sg("op_206", sg_206)
 
@@ -308,11 +324,12 @@ def _calcular_opciones_mueble(
     # ── op_209 — EXCLUIDA: SG la calcula en AS400 ───────────────────────────
 
     # ── op_217 — Sistema de apertura sin tirador físico ──────────────────────
-    datos_217 = op_mueble.get("op_217") or {}
-    if tirador_ui == "Touch Latch" and code in (datos_217.get("solo_TL1") or []):
-        _sg("op_217", "TL1")
-    elif tirador_ui == "Prise de main" and code in (datos_217.get("solo_PS1") or []):
-        _sg("op_217", "PS1")
+    if not es_abierto:
+        datos_217 = op_mueble.get("op_217") or {}
+        if tirador_ui == "Touch Latch" and code in (datos_217.get("solo_TL1") or []):
+            _sg("op_217", "TL1")
+        elif tirador_ui == "Prise de main" and code in (datos_217.get("solo_PS1") or []):
+            _sg("op_217", "PS1")
 
     # ── op_220 — Recorte para perfil LED ─────────────────────────────────────
     if code in (op_mueble.get("op_220") or []) and _es_true(fila.get("Recorte LED")):
@@ -340,31 +357,32 @@ def _calcular_opciones_mueble(
         valor_mm  = ancho_raw.replace("mm", "").replace(" ", "").strip()
         _sg("op_231", "RL3", param1=valor_mm, origen="usuario", etiqueta="Reducción de ancho")
 
-    # ── op_300 — Tipo de tirador (todos: O) ───────────────────────────────────
-    sg_300_base = indices.get("op_300", {}).get(tirador_ui, "")
-    if sg_300_base:
-        if tirador_ui in ("Curve", "Line"):
-            # Sufijo H (batiente) o C (coulissant/extraíble/banco)
-            sufijo  = "H" if _es_batiente(code, op_mueble) else "C"
-            prefijo = "Q2" if tirador_ui == "Curve" else "Q3"
-            sg_300  = f"{prefijo}{sufijo}"
-        else:
-            sg_300 = sg_300_base
-        _sg("op_300", sg_300)
+    # ── op_300 — Tipo de tirador (todos: O, excepto muebles abiertos) ───────────
+    if not es_abierto:
+        sg_300_base = indices.get("op_300", {}).get(tirador_ui, "")
+        if sg_300_base:
+            if tirador_ui in ("Curve", "Line"):
+                # Sufijo H (batiente) o C (coulissant/extraíble/banco)
+                sufijo  = "H" if _es_batiente(code, op_mueble) else "C"
+                prefijo = "Q2" if tirador_ui == "Curve" else "Q3"
+                sg_300  = f"{prefijo}{sufijo}"
+            else:
+                sg_300 = sg_300_base
+            _sg("op_300", sg_300)
 
-    # ── op_301 — Color del tirador ────────────────────────────────────────────
-    excl_301 = (op_mueble.get("op_301") or {}).get("excepciones") or []
-    if code not in excl_301 and tirador_ui not in _TIRADORES_SIN_COLOR and tirador_ui:
-        color = (fila.get("Color tirador") or "").strip()
-        if tirador_ui in _TIRADORES_INTEGRADOS:
-            # Round/Square: color de la trasera (o del frente si Trasera=Laca)
-            # ya resuelto por Módulo B en el campo "Color tirador"
-            sg_301 = indices.get("op_301_integrado", {}).get(color, "")
-        else:
-            # Curve/Line/Plantea: color del tirador de superficie
-            sg_301 = indices.get("op_301_superficie", {}).get(color, "")
-        if sg_301:
-            _sg("op_301", sg_301)
+        # ── op_301 — Color del tirador ────────────────────────────────────────────
+        excl_301 = (op_mueble.get("op_301") or {}).get("excepciones") or []
+        if code not in excl_301 and tirador_ui not in _TIRADORES_SIN_COLOR and tirador_ui:
+            color = (fila.get("Color tirador") or "").strip()
+            if tirador_ui in _TIRADORES_INTEGRADOS:
+                # Round/Square: color de la trasera (o del frente si Trasera=Laca)
+                # ya resuelto por Módulo B en el campo "Color tirador"
+                sg_301 = indices.get("op_301_integrado", {}).get(color, "")
+            else:
+                # Curve/Line/Plantea: color del tirador de superficie
+                sg_301 = indices.get("op_301_superficie", {}).get(color, "")
+            if sg_301:
+                _sg("op_301", sg_301)
 
     # ── op_402 — Rodapié / altura de patas ────────────────────────────────────
     excl_402 = (op_mueble.get("op_402") or {}).get("excepciones") or []
@@ -420,7 +438,8 @@ def calcular_opciones(entrada: list[dict]) -> list[dict]:
         # ── Designación en francés ────────────────────────────────────────────
         cat_entry = catalogo.get(code) or {}
         des_es    = (cat_entry.get("designaciones") or {}).get("es", "")
-        label_fr  = nombres_fr.get(des_es, "")
+        # Buscar en la tabla de nombres del YAML; si no existe, usar el campo "fr" del catálogo
+        label_fr  = nombres_fr.get(des_es, "") or (cat_entry.get("designaciones") or {}).get("fr", "")
 
         # ── p_hinge ───────────────────────────────────────────────────────────
         cat_hinge   = _p_hinge_cat(code, op_mueble)
@@ -437,7 +456,15 @@ def calcular_opciones(entrada: list[dict]) -> list[dict]:
             p_hinge = None
 
         # ── p_fastening ───────────────────────────────────────────────────────
-        p_fastening = "S" if _es_suspendido(code, op_mueble) else "P"
+        _ps_segun_rodapie: set[str] = set(
+            ((op_mueble.get("op_402") or {}).get("p_s_segun_rodapie")) or []
+        )
+        if code in _ps_segun_rodapie:
+            # EOVV37, EOAVV37: suspendido si rodapié vacío, posado si "70 mm" o "100 mm"
+            _rodapie_val = (fila.get("Rodapié") or "").strip()
+            p_fastening = "P" if _rodapie_val else "S"
+        else:
+            p_fastening = "S" if _es_suspendido(code, op_mueble) else "P"
 
         # ── Opciones ──────────────────────────────────────────────────────────
         opciones_sg, opc_adic, codigos, avisos = _calcular_opciones_mueble(
