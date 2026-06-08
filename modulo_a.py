@@ -476,9 +476,25 @@ def parsear_csv(archivo) -> dict:
             contenido = archivo.read()
             if isinstance(contenido, bytes):
                 contenido = contenido.decode("utf-8-sig")
-            df = pd.read_csv(io.StringIO(contenido), dtype=str)
         else:
-            df = pd.read_csv(archivo, dtype=str)
+            with open(archivo, encoding="utf-8-sig") as _f:
+                contenido = _f.read()
+
+        # Normalizar nº de campos: SketchUp a veces genera comas finales extra
+        # en algunas filas (→ "Expected N fields, saw N+1"). Se eliminan los
+        # campos vacíos al final de cada línea hasta igualar al encabezado.
+        _lineas = contenido.splitlines()
+        if _lineas:
+            _n_header = _lineas[0].count(",") + 1
+            _lineas_norm: list[str] = []
+            for _linea in _lineas:
+                _campos = _linea.split(",")
+                while len(_campos) > _n_header and _campos[-1].strip() == "":
+                    _campos.pop()
+                _lineas_norm.append(",".join(_campos))
+            contenido = "\n".join(_lineas_norm)
+
+        df = pd.read_csv(io.StringIO(contenido), dtype=str)
     except Exception as e:
         resultado["error_archivo"] = f"No se pudo leer el archivo: {e}"
         return resultado
