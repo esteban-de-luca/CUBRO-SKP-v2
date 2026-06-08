@@ -527,12 +527,23 @@ def calcular_opciones(entrada: list[dict]) -> list[dict]:
 # Export: JSON de pedido (p_items)
 # =============================================================================
 
+def _sin_nulos(obj):
+    """Elimina recursivamente las claves cuyo valor es None (null en JSON).
+    Valores falsy distintos de None (0, "", False, []) se conservan."""
+    if isinstance(obj, dict):
+        return {k: _sin_nulos(v) for k, v in obj.items() if v is not None}
+    if isinstance(obj, list):
+        return [_sin_nulos(i) for i in obj]
+    return obj
+
+
 def generar_json_pedido(resultado: list[dict]) -> list[dict]:
     """
     Extrae la lista p_items del resultado de calcular_opciones.
     Solo esta parte se envía a la API de Schmidt Groupe.
+    Los campos con valor null se eliminan del output.
     """
-    return [r["p_item"] for r in resultado if "p_item" in r]
+    return [_sin_nulos(r["p_item"]) for r in resultado if "p_item" in r]
 
 
 # =============================================================================
