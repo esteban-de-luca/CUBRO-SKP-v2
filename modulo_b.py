@@ -526,10 +526,12 @@ def construir_entrada_modulo_c(
 
 
 def _cabecera_card(mueble: dict, catalogo: dict, revisado: bool) -> str:
-    """[check] · Name · Designación · Gama Color · Tirador Color (CLAUDE.md §7)."""
+    """[check] · Summary · Name · Designación · Gama Color · Tirador Color (CLAUDE.md §7)."""
     check = "🟢" if revisado else "🔴"
+    summary = (mueble.get("Summary") or "").strip()
     nombre = mueble.get("Name") or mueble.get("Name SKP") or "—"
-    partes = [f"{check} {nombre}"]
+    nombre_completo = f"{summary} {nombre}" if summary else nombre
+    partes = [f"{check} {nombre_completo}"]
 
     designacion = _designacion(mueble, catalogo)
     if designacion:
