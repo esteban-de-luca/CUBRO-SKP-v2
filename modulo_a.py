@@ -162,8 +162,9 @@ CODIGOS_SIN_INTERIOR: set[str] = set(
 )
 
 # Muebles que no admiten tiradores de mecanismo (Touch Latch=20, Prise de main=21)
+# Fuente: opciones_mueble.yaml → op_217.no_aplica
 CODIGOS_SIN_MECANISMO: set[str] = set(
-    ((_OPCIONES.get("op_300") or {}).get("sin_mecanismo")) or []
+    ((_OPCIONES.get("op_217") or {}).get("no_aplica")) or []
 )
 
 # Muebles que solo admiten Touch Latch (TL1) — fuente: opciones_mueble.yaml op_217.solo_TL1
