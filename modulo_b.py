@@ -530,8 +530,8 @@ def _cabecera_card(mueble: dict, catalogo: dict, revisado: bool) -> str:
     check = "🟢" if revisado else "🔴"
     summary = (mueble.get("Summary") or "").strip()
     nombre = mueble.get("Name") or mueble.get("Name SKP") or "—"
-    nombre_completo = f"{summary} {nombre}" if summary else nombre
-    partes = [f"{check} {nombre_completo}"]
+    prefijo = f"**{summary}** " if summary else ""
+    partes = [f"{check} {prefijo}{nombre}"]
 
     designacion = _designacion(mueble, catalogo)
     if designacion:
@@ -1170,13 +1170,16 @@ def paso_1(muebles: list[dict]) -> None:
     st.divider()
 
     solo_pendientes = bool(st.session_state.get("paso_1_solo_pendientes", False))
-    a_mostrar = [
-        m for m in muebles
-        if not (
-            solo_pendientes
-            and selecciones.get(_identificador_mueble(m), {}).get("check")
-        )
-    ]
+    a_mostrar = sorted(
+        [
+            m for m in muebles
+            if not (
+                solo_pendientes
+                and selecciones.get(_identificador_mueble(m), {}).get("check")
+            )
+        ],
+        key=lambda m: (m.get("Summary") or "").strip(),
+    )
 
     if a_mostrar:
         for mueble in a_mostrar:
