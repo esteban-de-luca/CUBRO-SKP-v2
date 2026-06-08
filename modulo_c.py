@@ -472,7 +472,6 @@ def calcular_opciones(entrada: list[dict]) -> list[dict]:
             "p_item_code":             code,
             "p_item_label":            label_fr,
             "p_item_origin_id":        None,
-            "p_father_item_origin_id": None,
             "p_quantity":              _d.get("p_quantity", 1),
             "p_hinge":                 p_hinge,
             "p_fastening":             p_fastening,
