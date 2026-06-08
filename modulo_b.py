@@ -1527,6 +1527,20 @@ def _bloque_dimensiones(mueble: dict, catalogo: dict) -> list[tuple[str, str]]:
     return items
 
 
+def _fmt_mm(val: str) -> str:
+    """Normaliza un valor de dimensión a 'NNN mm'.
+
+    Acepta '600 mm', '600mm', '600', 750, etc. y devuelve siempre 'NNN mm'.
+    Si no se puede parsear devuelve el valor tal cual.
+    """
+    v = str(val).strip()
+    v_num = v.lower().removesuffix("mm").strip()
+    try:
+        return f"{int(float(v_num.replace(',', '.')))} mm"
+    except ValueError:
+        return v
+
+
 def _bloque_dimensiones_c(entrada: dict, catalogo: dict) -> list[tuple[str, str]]:
     """Pares (etiqueta, valor) del bloque Dimensiones — Paso 2 (campos 23 columnas)."""
     items: list[tuple[str, str]] = []
@@ -1535,22 +1549,20 @@ def _bloque_dimensiones_c(entrada: dict, catalogo: dict) -> list[tuple[str, str]
 
     if str(entrada.get("Reducción de ancho", "False")).strip() == "True":
         ancho_red = (entrada.get("Ancho reducido") or "").strip()
-        items.append(("Ancho", f"Reducción ({ancho_red})"))
+        items.append(("Ancho", f"Reducción ({_fmt_mm(ancho_red)})"))
     elif entry.get("ancho_mm"):
         items.append(("Ancho", f"{entry['ancho_mm']} mm"))
     else:
-        # Variable o null en catálogo → valor real del CSV
         ancho_csv = (entrada.get("Ancho CSV") or "").strip()
         if ancho_csv:
-            items.append(("Ancho", ancho_csv))
+            items.append(("Ancho", _fmt_mm(ancho_csv)))
 
     if entry.get("alto_mm"):
         items.append(("Alto", f"{entry['alto_mm']} mm"))
     else:
-        # Variable o null en catálogo → valor real del CSV
         alto_csv = (entrada.get("Alto CSV") or "").strip()
         if alto_csv:
-            items.append(("Alto", alto_csv))
+            items.append(("Alto", _fmt_mm(alto_csv)))
 
     fondo = entry.get("fondo_mm")
     if fondo is not None:
