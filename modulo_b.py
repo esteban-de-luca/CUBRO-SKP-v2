@@ -1538,21 +1538,16 @@ def _bloque_dimensiones_c(entrada: dict, catalogo: dict) -> list[tuple[str, str]
         items.append(("Ancho", f"Reducción ({ancho_red})"))
     elif entry.get("ancho_mm"):
         items.append(("Ancho", f"{entry['ancho_mm']} mm"))
-    elif "ancho_variable" in entry:
-        av = entry["ancho_variable"]
-        items.append(("Ancho", f"variable ({av['min']}–{av['max']} mm)"))
     else:
+        # Variable o null en catálogo → valor real del CSV
         ancho_csv = (entrada.get("Ancho CSV") or "").strip()
         if ancho_csv:
             items.append(("Ancho", ancho_csv))
 
-    alto = entry.get("alto_mm")
-    if alto:
-        items.append(("Alto", f"{alto} mm"))
-    elif "alto_variable" in entry:
-        av = entry["alto_variable"]
-        items.append(("Alto", f"variable ({av['min']}–{av['max']} mm)"))
+    if entry.get("alto_mm"):
+        items.append(("Alto", f"{entry['alto_mm']} mm"))
     else:
+        # Variable o null en catálogo → valor real del CSV
         alto_csv = (entrada.get("Alto CSV") or "").strip()
         if alto_csv:
             items.append(("Alto", alto_csv))
