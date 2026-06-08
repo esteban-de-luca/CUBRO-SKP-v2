@@ -444,23 +444,28 @@ def calcular_opciones(entrada: list[dict]) -> list[dict]:
             fila, mapeos, op_mueble, reglas, indices
         )
 
-        # ── p_built_in_detail ─────────────────────────────────────────────────
-        # Claves SG y columnas de origen vienen de data/p_item_schema.yaml.
-        bid_mapping    = (_cargar_p_item_schema().get("p_built_in_detail_mapping") or {})
-        marca          = (fila.get("Marca electro") or "").strip()
-        p_built_in: dict | None = None
-        if marca and bid_mapping:
-            p_built_in = {
-                sg_key: ((fila.get(col_key) or "").strip() or None)
-                for sg_key, col_key in bid_mapping.items()
-            }
+        # ── p_built_in_detail y op_900 ────────────────────────────────────────
+        marca     = (fila.get("Marca electro")      or "").strip()
+        referencia= (fila.get("Referencia electro") or "").strip()
+        tipo_ui   = (fila.get("Tipo electro")       or "").strip()
+        ancho_e   = (fila.get("Ancho electro")      or "").strip()
+        alto_e    = (fila.get("Alto electro")        or "").strip()
+        fondo_e   = (fila.get("Fondo electro")      or "").strip()
 
-        # ── Traducir p_appliance_type UI → SG (francés) ──────────────────────
-        tipo_ui_a_sg = mapeos.get("tipo_ui_a_sg") or {}
-        if p_built_in and p_built_in.get("p_appliance_type") and tipo_ui_a_sg:
-            tipo_ui = p_built_in["p_appliance_type"]
-            if tipo_ui in tipo_ui_a_sg:
-                p_built_in["p_appliance_type"] = tipo_ui_a_sg[tipo_ui]
+        p_built_in: list[dict] | None = None
+        if marca and referencia:
+            # Caso A: referencia conocida → p_built_in_detail
+            p_built_in = [{
+                "p_manufacturer_code":   marca,
+                "p_appliance_reference": referencia,
+                "p_sequence":            "0",
+            }]
+        elif marca and tipo_ui and ancho_e and alto_e and fondo_e:
+            # Caso B: sin referencia → op_900 con Tipo+Marca+dimensiones
+            tipo_ui_a_sg = mapeos.get("tipo_ui_a_sg") or {}
+            tipo_fr = tipo_ui_a_sg.get(tipo_ui, tipo_ui)
+            p_article_900 = f"{tipo_fr} {marca} {ancho_e} {alto_e} {fondo_e}"
+            opciones_sg.append(_opt("900", p_article_900))
 
         # ── Item JSON ─────────────────────────────────────────────────────────
         # Los campos estáticos (p_quantity, p_width/height/depth, p_delivery_date…)
@@ -559,8 +564,6 @@ _EXCEL_COLS: list[tuple[str, str, str | None, str | None]] = [
     ("p_built_in_manuf.",   "output", None,                    "_manuf"),
     ("Referencia electro",  "input",  "Referencia electro",    None),
     ("p_built_in_ref.",     "output", None,                    "_ref"),
-    ("Tipo electro",        "input",  "Tipo electro",          None),
-    ("p_built_in_type",     "output", None,                    "_type"),
     ("Avisos",              "aviso",  None,                    "_avisos"),
 ]
 
@@ -570,7 +573,7 @@ def _valor_excel(res: dict, key_entrada: str | None, key_salida: str | None) -> 
     # res contiene todos los campos de entrada + los campos calculados
     p_item  = res.get("p_item") or {}
     codigos = res.get("codigos_sg") or {}
-    bid     = p_item.get("p_built_in_detail") or {}
+    bid     = (p_item.get("p_built_in_detail") or [{}])[0]
     avisos  = res.get("avisos_c") or []
 
     if key_entrada is not None:
@@ -583,7 +586,6 @@ def _valor_excel(res: dict, key_entrada: str | None, key_salida: str | None) -> 
         "_p_fastening":  p_item.get("p_fastening", ""),
         "_manuf":        bid.get("p_manufacturer_code", "") or "",
         "_ref":          bid.get("p_appliance_reference", "") or "",
-        "_type":         bid.get("p_appliance_type", "") or "",
         "_avisos":       " | ".join(_cargar_avisos().get(a, a) for a in avisos),
     }
     if key_salida in especiales:

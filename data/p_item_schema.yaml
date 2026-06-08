@@ -46,8 +46,9 @@ p_variant_option_defaults:
 # Solo se incluye en el p_item cuando "Marca electro" está rellena.
 
 p_built_in_detail_mapping:
+  # Solo se genera cuando Marca + Referencia están presentes.
+  # Tipo y dimensiones van a op_900 cuando no hay referencia (ver modulo_c).
 
   p_manufacturer_code:   "Marca electro"       # marca del electrodoméstico
   p_appliance_reference: "Referencia electro"  # referencia del modelo
-  p_built_in_height:     "Altura electro"      # altura del hueco en mm
-  p_appliance_type:      "Tipo electro"        # tipo (horno, lavavajillas, etc.)
+  p_sequence:            "0"                   # valor fijo requerido por SG

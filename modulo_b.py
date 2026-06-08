@@ -512,14 +512,12 @@ def construir_entrada_modulo_c(
             "Cajón interior": _bool_str(opcionales.get("op_223", False)),
             "Mueble de caldera": _bool_str(opcionales.get("op_227", False)),
             "Sin encolar": _bool_str(opcionales.get("op_700_opcional", False)),
-            "Marca electro": str(op_126.get("marca", "")).strip(),
+            "Marca electro":      str(op_126.get("marca", "")).strip(),
             "Referencia electro": str(op_126.get("referencia", "")).strip(),
-            "Altura electro": (
-                f"{str(op_126.get('altura', '')).strip()} mm"
-                if str(op_126.get("altura", "")).strip()
-                else ""
-            ),
-            "Tipo electro": str(op_126.get("tipo", "")).strip(),
+            "Tipo electro":       str(op_126.get("tipo", "")).strip(),
+            "Ancho electro":      str(op_126.get("ancho", "")).strip(),
+            "Alto electro":       str(op_126.get("alto", "")).strip(),
+            "Fondo electro":      str(op_126.get("fondo", "")).strip(),
         }
         entrada.append(fila)
     return entrada
@@ -819,15 +817,14 @@ def _control_radio_op_222(
 _SUBCAMPOS_OP_126_DEFAULT = {
     "marca": "Marca",
     "referencia": "Referencia",
-    "altura": "Altura (mm)",
-    # "tipo" NO está aquí: se gestiona siempre vía tipo_auto (oculto) o tipo_opciones (selectbox),
-    # nunca como campo de texto libre.
+    # "tipo" NO está aquí: se gestiona siempre vía tipo_auto (oculto) o tipo_opciones (selectbox).
+    # "ancho"/"alto"/"fondo" solo aparecen cuando no hay referencia (Case B).
 }
 
 # Validación de formato por subcampo de op_126.
 # marca      → solo letras (incluye acentos y espacio para nombres de marca compuestos)
 # referencia → alfanumérico + separadores habituales en referencias de producto
-# altura     → solo dígitos (valor en mm)
+# ancho/alto/fondo → solo dígitos (valor en mm)
 _VALIDACION_OP_126: dict[str, dict] = {
     "marca": {
         "patron":  re.compile(r"^[A-Za-zÀ-ÿ\s\-]+$"),
@@ -837,12 +834,22 @@ _VALIDACION_OP_126: dict[str, dict] = {
     "referencia": {
         "patron":  re.compile(r"^[A-Za-z0-9\s\-\.\/\_]+$"),
         "error":   "Solo se admiten caracteres alfanuméricos",
-        "ejemplo": "Código de modelo del fabricante. Suele aparecer en la ficha técnica. Si no lo conoces, indica la Altura.",
+        "ejemplo": "Código de modelo del fabricante. Suele aparecer en la ficha técnica.",
     },
-    "altura": {
+    "ancho": {
         "patron":  re.compile(r"^\d+$"),
         "error":   "Solo se admiten números enteros (en mm)",
-        "ejemplo": "Altura del hueco del electrodoméstico en mm. Si no la sabes, rellena la Referencia.",
+        "ejemplo": "Ancho del hueco en mm",
+    },
+    "alto": {
+        "patron":  re.compile(r"^\d+$"),
+        "error":   "Solo se admiten números enteros (en mm)",
+        "ejemplo": "Alto del hueco en mm",
+    },
+    "fondo": {
+        "patron":  re.compile(r"^\d+$"),
+        "error":   "Solo se admiten números enteros (en mm)",
+        "ejemplo": "Fondo del hueco en mm",
     },
 }
 
@@ -867,26 +874,25 @@ def _op_126_completo(valor, meta: dict | None = None) -> bool:
     if not marca:
         return False
 
-    # Tipo: auto → siempre OK; opciones → debe estar en la lista; en subcampos → debe rellenarse
+    # Tipo: auto → siempre OK; opciones → debe estar en la lista
     if tipo_auto:
         pass  # satisfecho automáticamente
     elif tipo_opciones:
         if str(valor.get("tipo", "")).strip() not in tipo_opciones:
             return False
-    elif "tipo" in subcampos:
-        if not str(valor.get("tipo", "")).strip():
-            return False
 
-    tiene_ref = "referencia" in subcampos
-    tiene_alt = "altura" in subcampos
-    if tiene_ref and tiene_alt:
-        if not (str(valor.get("referencia", "")).strip() or str(valor.get("altura", "")).strip()):
-            return False
-    elif tiene_ref:
+    # Caso A (tiene_referencia=True): Referencia obligatoria
+    # Caso B (tiene_referencia=False): Ancho + Alto + Fondo los tres obligatorios
+    tiene_referencia = bool(valor.get("tiene_referencia", True))
+    if tiene_referencia:
         if not str(valor.get("referencia", "")).strip():
             return False
-    elif tiene_alt:
-        if not str(valor.get("altura", "")).strip():
+    else:
+        if not (
+            str(valor.get("ancho", "")).strip()
+            and str(valor.get("alto", "")).strip()
+            and str(valor.get("fondo", "")).strip()
+        ):
             return False
 
     # Validación de formato: ningún campo relleno puede tener formato inválido.
@@ -1011,11 +1017,10 @@ def _control_electrodomestico_op_126(
     if _TOOLTIPS_OPCIONALES.get("op_126"):
         st.caption(_TOOLTIPS_OPCIONALES["op_126"])
 
-    nuevo: dict[str, str] = {}
+    nuevo: dict = {}
 
     # ── Tipo: desplegable si hay opciones, oculto si es fijo ─────────────────
     if tipo_auto:
-        # Tipo determinado por el mueble — no se muestra al usuario
         nuevo["tipo"] = tipo_auto
     elif tipo_opciones:
         prev_tipo = prev.get("tipo", tipo_opciones[0])
@@ -1029,23 +1034,60 @@ def _control_electrodomestico_op_126(
             help="ej. Horno, Microondas, Placa, Frigorífico",
         )
 
-    # ── Campos de referencia (marca, referencia, altura) ─────────────────────
-    # "tipo" se gestiona SIEMPRE en el bloque de arriba (tipo_auto u opciones) — nunca aquí.
-    for sub_key, sub_label in subcampos.items():
-        if sub_key == "tipo":
-            continue
-        regla    = _VALIDACION_OP_126.get(sub_key)
-        help_txt = regla["ejemplo"] if regla else None
-        valor_campo = st.text_input(
-            sub_label,
-            value=prev.get(sub_key, ""),
-            key=f"op_126_{sub_key}_{clave}",
-            help=help_txt,
+    # ── Marca (siempre visible) ───────────────────────────────────────────────
+    regla_marca = _VALIDACION_OP_126["marca"]
+    marca_val = st.text_input(
+        "Marca",
+        value=prev.get("marca", ""),
+        key=f"op_126_marca_{clave}",
+        help=regla_marca["ejemplo"],
+    )
+    if marca_val.strip() and not regla_marca["patron"].match(marca_val.strip()):
+        st.caption(f"⚠️ {regla_marca['error']} ({regla_marca['ejemplo']})")
+    nuevo["marca"] = marca_val
+
+    # ── Radio: ¿conoces la referencia? ───────────────────────────────────────
+    prev_tiene_ref = bool(prev.get("tiene_referencia", True))
+    idx_radio = 0 if prev_tiene_ref else 1
+    radio_val = st.radio(
+        "¿Conoces la referencia del electrodoméstico?",
+        options=["Sí", "No"],
+        index=idx_radio,
+        key=f"op_126_tiene_ref_{clave}",
+        horizontal=True,
+    )
+    tiene_referencia = (radio_val == "Sí")
+    nuevo["tiene_referencia"] = tiene_referencia
+
+    if tiene_referencia:
+        # ── Caso A: Referencia ────────────────────────────────────────────────
+        regla_ref = _VALIDACION_OP_126["referencia"]
+        ref_val = st.text_input(
+            "Referencia",
+            value=prev.get("referencia", ""),
+            key=f"op_126_referencia_{clave}",
+            help=regla_ref["ejemplo"],
         )
-        # Feedback inline si el valor relleno tiene formato inválido
-        if regla and valor_campo.strip() and not regla["patron"].match(valor_campo.strip()):
-            st.caption(f"⚠️ {regla['error']} ({regla['ejemplo']})")
-        nuevo[sub_key] = valor_campo
+        if ref_val.strip() and not regla_ref["patron"].match(ref_val.strip()):
+            st.caption(f"⚠️ {regla_ref['error']} ({regla_ref['ejemplo']})")
+        nuevo["referencia"] = ref_val
+        nuevo["ancho"] = ""
+        nuevo["alto"]  = ""
+        nuevo["fondo"] = ""
+    else:
+        # ── Caso B: Dimensiones ───────────────────────────────────────────────
+        nuevo["referencia"] = ""
+        for dim_key, dim_label in [("ancho", "Ancho (mm)"), ("alto", "Alto (mm)"), ("fondo", "Fondo (mm)")]:
+            regla_dim = _VALIDACION_OP_126[dim_key]
+            dim_val = st.text_input(
+                dim_label,
+                value=prev.get(dim_key, ""),
+                key=f"op_126_{dim_key}_{clave}",
+                help=regla_dim["ejemplo"],
+            )
+            if dim_val.strip() and not regla_dim["patron"].match(dim_val.strip()):
+                st.caption(f"⚠️ {regla_dim['error']} ({regla_dim['ejemplo']})")
+            nuevo[dim_key] = dim_val
 
     if nuevo != prev:
         opcionales["op_126"] = nuevo
@@ -1501,8 +1543,6 @@ def paso_2(pedido: list[dict] | None) -> None:
 
     if st.button("← Volver al Paso 1"):
         st.session_state.pantalla = PANTALLA_PASO_1
-        # Invalida el export guardado al volver atrás
-        st.session_state.pop("_export_excel", None)
         st.session_state.pop("_export_json", None)
         st.rerun()
 
@@ -1518,33 +1558,18 @@ def paso_2(pedido: list[dict] | None) -> None:
     st.divider()
 
     # ── Exportar pedido ───────────────────────────────────────────────────────
-    # Al hacer clic se generan ambos archivos y se muestran los botones de descarga.
-    if st.button("📦 Exportar pedido", type="primary"):
+    if st.button("📦 Exportar pedido JSON", type="primary"):
         import modulo_c as _mc  # importación local para mantener modulo_b autónomo
-        st.session_state["_export_excel"] = _mc.generar_excel_revision(pedido)
         st.session_state["_export_json"] = json.dumps(
             _mc.generar_json_pedido(pedido), ensure_ascii=False, indent=2
         ).encode("utf-8")
 
-    if st.session_state.get("_export_excel"):
+    if st.session_state.get("_export_json"):
         nombre = _nombre_export_base()
-        col_xlsx, col_json = st.columns(2)
-        with col_xlsx:
-            st.download_button(
-                "⬇ Excel de revisión",
-                data=st.session_state["_export_excel"],
-                file_name=f"{nombre}_revision.xlsx",
-                mime=(
-                    "application/vnd.openxmlformats-officedocument"
-                    ".spreadsheetml.sheet"
-                ),
-                use_container_width=True,
-            )
-        with col_json:
-            st.download_button(
-                "⬇ JSON de pedido",
-                data=st.session_state["_export_json"],
-                file_name=f"{nombre}_pedido.json",
-                mime="application/json",
-                use_container_width=True,
-            )
+        st.download_button(
+            "⬇ JSON de pedido",
+            data=st.session_state["_export_json"],
+            file_name=f"{nombre}_pedido.json",
+            mime="application/json",
+            use_container_width=True,
+        )
