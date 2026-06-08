@@ -332,6 +332,7 @@ def _cargar_interfaz(_v: int = 3) -> dict:
                 "subcampos":     variante_data.get("subcampos") or {},
                 "tipo_auto":     variante_data.get("tipo_auto"),
                 "tipo_opciones": variante_data.get("tipo_opciones"),
+                "doble":         bool(variante_data.get("doble")),
             }
             for mueble in (variante_data.get("muebles") or []):
                 mueble_a_variante[mueble] = variante_key
@@ -1016,13 +1017,12 @@ def _render_bloque_electro(
 ) -> dict:
     """Renderiza los campos de un electrodoméstico y retorna el nuevo valor.
 
-    Si no hay tipo (tipo_auto=None y tipo_opciones=None) → siempre Caso A,
-    sin radio (p.ej. campana, placa). Si hay tipo → radio Sí/No para elegir
-    entre referencia (Caso A) o dimensiones (Caso B).
+    Siempre muestra radio Sí/No para elegir entre referencia (Caso A) o
+    dimensiones (Caso B). Cuando no hay tipo (campana), el radio aparece
+    igualmente pero la selección de tipo se omite.
     """
     key = f"_{sufijo}" if sufijo else ""
     nuevo: dict = {}
-    tiene_tipo = bool(tipo_auto or tipo_opciones)
 
     # ── Tipo ─────────────────────────────────────────────────────────────────
     if tipo_auto:
@@ -1051,19 +1051,16 @@ def _render_bloque_electro(
         st.caption(f"⚠️ {regla_marca['error']} ({regla_marca['ejemplo']})")
     nuevo["marca"] = marca_val
 
-    # ── Radio (solo si hay tipo) ───────────────────────────────────────────
-    if tiene_tipo:
-        prev_tiene_ref = bool(prev.get("tiene_referencia", True))
-        radio_val = st.radio(
-            "¿Conoces la referencia?",
-            options=["Sí", "No"],
-            index=0 if prev_tiene_ref else 1,
-            key=f"op_126_tiene_ref{key}_{clave}",
-            horizontal=True,
-        )
-        tiene_referencia = (radio_val == "Sí")
-    else:
-        tiene_referencia = True  # sin tipo → solo Caso A
+    # ── Radio ─────────────────────────────────────────────────────────────
+    prev_tiene_ref = bool(prev.get("tiene_referencia", True))
+    radio_val = st.radio(
+        "¿Conoces la referencia?",
+        options=["Sí", "No"],
+        index=0 if prev_tiene_ref else 1,
+        key=f"op_126_tiene_ref{key}_{clave}",
+        horizontal=True,
+    )
+    tiene_referencia = (radio_val == "Sí")
 
     nuevo["tiene_referencia"] = tiene_referencia
 

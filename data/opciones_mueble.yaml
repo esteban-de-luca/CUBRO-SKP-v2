@@ -782,8 +782,8 @@ variantes_op_126:
   # LVV/LVD no envían referencia de electro a SG — ni UI ni JSON.
 
   op_126_campana:         # campana integrada — HH
-    ui: Referencia campana
-    # sin tipo
+    ui: Campana
+    # sin tipo (radio Sí/No disponible igual que el resto de electros)
     subcampos:
       marca:      Marca
       referencia: Referencia

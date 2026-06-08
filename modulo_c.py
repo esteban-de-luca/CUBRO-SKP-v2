@@ -477,12 +477,14 @@ def calcular_opciones(entrada: list[dict]) -> list[dict]:
                     "p_appliance_reference": r,
                     "p_sequence":            str(seq),
                 })
-            elif t and a and al and f:
-                # Caso B: sin referencia → op_900
-                tipo_fr = _tipo_ui_a_sg.get(t, t)
-                opciones_sg.append(_opt("900", f"{tipo_fr} {m} {a} {al} {f}"))
-                lbl = "Dimensiones electro" if seq == 0 else "Dimensiones electro 2"
-                opc_adic.append({"etiqueta": lbl, "valor": f"{a}×{al}×{f} mm", "origen": "usuario"})
+            elif a and al and f:
+                # Caso B: sin referencia → op_900 (tipo opcional — campana no lo tiene)
+                tipo_fr = _tipo_ui_a_sg.get(t, t) if t else ""
+                prefijo = f"{tipo_fr} {m}" if tipo_fr else m
+                articulo = (
+                    f"{prefijo} Largeur: {a} mm, Hauteur: {al} mm, Profondeur: {f} mm"
+                )
+                opciones_sg.append(_opt("900", articulo))
         p_built_in: list[dict] | None = p_built_in_entries or None
 
         # ── Item JSON ─────────────────────────────────────────────────────────
