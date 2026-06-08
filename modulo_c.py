@@ -108,7 +108,7 @@ _TIRADORES_SIN_COLOR  = frozenset({"Touch Latch", "Prise de main"})
 
 # (No hay constantes hardcodeadas aquí — todos los valores vienen de los YAMLs)
 # op_700 forzadas/no_aplica → data/opciones_mueble.yaml (op_700.forzadas / op_700.no_aplica)
-# Frases de avisos         → data/avisos.yaml (modulo_c.AV01 / AV02 / AV03)
+# Frases de avisos: strings directos en español — no se usan códigos cortos (AV0x)
 
 
 # =============================================================================
@@ -297,7 +297,7 @@ def _calcular_opciones_mueble(
             etiqueta="Sin mecanizado para tirador",
         )
         if es_forzado:
-            avisos.append("AV03")
+            avisos.append("Este mueble no lleva mecanización para tirador.")
 
     # ── op_207 — Equipamiento fregadero / cubos de basura / despensa ─────────
     datos_207 = op_mueble.get("op_207") or {}
@@ -399,7 +399,7 @@ def _calcular_opciones_mueble(
     if code in forzados700:
         # HH*: DEM siempre obligatorio (muebles en escuadra, sin encolar para montaje)
         _sg("op_700", "DEM", origen="automatico", etiqueta="Mueble sin encolar")
-        avisos.append("AV02")
+        avisos.append("Este mueble siempre se entrega sin encolar para facilitar el montaje.")
     elif code not in no_aplica700 and _es_true(fila.get("Sin encolar")):
         # Resto: opcional, solo si el usuario lo marcó
         _sg("op_700", "DEM", origen="usuario", etiqueta="Mueble sin encolar")
@@ -648,7 +648,7 @@ def _valor_excel(res: dict, key_entrada: str | None, key_salida: str | None) -> 
         "_p_fastening":  p_item.get("p_fastening", ""),
         "_manuf":        bid.get("p_manufacturer_code", "") or "",
         "_ref":          bid.get("p_appliance_reference", "") or "",
-        "_avisos":       " | ".join(_cargar_avisos().get(a, a) for a in avisos),
+        "_avisos":       " | ".join(avisos),
     }
     if key_salida in especiales:
         return str(especiales[key_salida])

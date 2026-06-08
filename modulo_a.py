@@ -537,9 +537,12 @@ def parsear_csv(archivo) -> dict:
         name_skp           = name_raw  # preservar Name original de SketchUp
         summary_raw        = _str_or_none(fila.get("Summary", ""))
 
-        # A26 — Summary vacío → bloqueante (debe corregirse en SketchUp)
+        # Summary vacío → bloqueante (debe corregirse en SketchUp)
         if summary_raw is None:
-            avisos.append("A26")
+            avisos.append(
+                "El mueble no tiene referencia asignada (campo Summary vacío) "
+                "— asígnala en SketchUp antes de exportar el CSV."
+            )
 
         # ── Op. 231 — Reducción de ancho ──────────────────────────────────────
         if ancho_raw == "10000 mm":
