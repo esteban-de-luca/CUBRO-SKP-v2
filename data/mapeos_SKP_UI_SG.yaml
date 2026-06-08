@@ -334,6 +334,7 @@ tipo_ui_a_sg:
   Placa:             "Plaque"
   "Placa aspirante": "Plaque aspirante"
   Frigo:             "Réfrigérateur"
+  Campana:           "Hotte"
 
 
 # =============================================================================

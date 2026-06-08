@@ -467,24 +467,28 @@ def calcular_opciones(entrada: list[dict]) -> list[dict]:
             ),
         ]
         p_built_in_entries: list[dict] = []
-        for seq, (m, r, t, a, al, f) in enumerate(_electros):
+        caso_b_articles:    list[str]  = []
+        for _seq, (m, r, t, a, al, f) in enumerate(_electros):
             if not m:
                 continue
             if r:
                 # Caso A: referencia conocida → entrada en p_built_in_detail
+                # p_sequence siempre "0" según contrato SG
                 p_built_in_entries.append({
                     "p_manufacturer_code":   m,
                     "p_appliance_reference": r,
-                    "p_sequence":            str(seq),
+                    "p_sequence":            "0",
                 })
             elif a and al and f:
-                # Caso B: sin referencia → op_900 (tipo opcional — campana no lo tiene)
+                # Caso B: sin referencia → acumular en lista para op_900 única
                 tipo_fr = _tipo_ui_a_sg.get(t, t) if t else ""
                 prefijo = f"{tipo_fr} {m}" if tipo_fr else m
-                articulo = (
+                caso_b_articles.append(
                     f"{prefijo} Largeur: {a} mm, Hauteur: {al} mm, Profondeur: {f} mm"
                 )
-                opciones_sg.append(_opt("900", articulo))
+        # Un solo op_900 con todos los Caso B concatenados (si los hay)
+        if caso_b_articles:
+            opciones_sg.append(_opt("900", ", ".join(caso_b_articles)))
         p_built_in: list[dict] | None = p_built_in_entries or None
 
         # ── Item JSON ─────────────────────────────────────────────────────────

@@ -1013,13 +1013,14 @@ def _control_op_207(
 
 
 def _render_bloque_electro(
-    clave: str, sufijo: str, tipo_auto, tipo_opciones, prev: dict
+    clave: str, sufijo: str, tipo_auto, tipo_opciones, prev: dict, tipo_fallback: str = ""
 ) -> dict:
     """Renderiza los campos de un electrodoméstico y retorna el nuevo valor.
 
     Siempre muestra radio Sí/No para elegir entre referencia (Caso A) o
-    dimensiones (Caso B). Cuando no hay tipo (campana), el radio aparece
-    igualmente pero la selección de tipo se omite.
+    dimensiones (Caso B).
+    tipo_fallback: tipo implícito cuando el mueble no tiene tipo seleccionable
+    (p.ej. "Campana" para HH). Se guarda en el dict pero no se muestra en UI.
     """
     key = f"_{sufijo}" if sufijo else ""
     nuevo: dict = {}
@@ -1038,6 +1039,9 @@ def _render_bloque_electro(
             key=f"op_126_tipo{key}_{clave}",
             help="ej. Horno, Microondas, Placa, Frigorífico",
         )
+    elif tipo_fallback:
+        # Sin tipo seleccionable (campana): tipo implícito, no se muestra en UI
+        nuevo["tipo"] = tipo_fallback
 
     # ── Marca ─────────────────────────────────────────────────────────────────
     regla_marca = _VALIDACION_OP_126["marca"]
@@ -1099,6 +1103,8 @@ def _control_electrodomestico_op_126(
     tipo_auto     = meta.get("tipo_auto")
     tipo_opciones = meta.get("tipo_opciones")
     doble         = bool(meta.get("doble"))
+    # Tipo implícito para muebles sin tipo seleccionable (p.ej. campana → "Campana")
+    tipo_fallback = "" if (tipo_auto or tipo_opciones) else (meta.get("etiqueta") or "")
 
     st.markdown(f"**{meta.get('ui') or meta.get('etiqueta') or 'Electrodoméstico'}**")
     if _TOOLTIPS_OPCIONALES.get("op_126"):
@@ -1109,9 +1115,9 @@ def _control_electrodomestico_op_126(
         prev_1 = opcionales.get("op_126")   if isinstance(opcionales.get("op_126"),   dict) else {}
         prev_2 = opcionales.get("op_126_2") if isinstance(opcionales.get("op_126_2"), dict) else {}
         st.caption("Electrodoméstico 1 (inferior)")
-        nuevo_1 = _render_bloque_electro(clave, "1", tipo_auto, tipo_opciones, prev_1)
+        nuevo_1 = _render_bloque_electro(clave, "1", tipo_auto, tipo_opciones, prev_1, tipo_fallback)
         st.caption("Electrodoméstico 2 (superior)")
-        nuevo_2 = _render_bloque_electro(clave, "2", tipo_auto, tipo_opciones, prev_2)
+        nuevo_2 = _render_bloque_electro(clave, "2", tipo_auto, tipo_opciones, prev_2, tipo_fallback)
         if nuevo_1 != prev_1 or nuevo_2 != prev_2:
             opcionales["op_126"]   = nuevo_1
             opcionales["op_126_2"] = nuevo_2
@@ -1120,7 +1126,7 @@ def _control_electrodomestico_op_126(
     else:
         # ── Un solo slot ──────────────────────────────────────────────────────
         prev = opcionales.get("op_126") if isinstance(opcionales.get("op_126"), dict) else {}
-        nuevo = _render_bloque_electro(clave, "", tipo_auto, tipo_opciones, prev)
+        nuevo = _render_bloque_electro(clave, "", tipo_auto, tipo_opciones, prev, tipo_fallback)
         if nuevo != prev:
             opcionales["op_126"] = nuevo
             _registrar_edicion(clave, selecciones)
