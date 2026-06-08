@@ -243,7 +243,7 @@ def _calcular_opciones_mueble(
         color_abierto = (fila.get("Acabado del mueble abierto") or "").strip()
         sg_410 = indices.get("op_410", {}).get(color_abierto, "")
         if sg_410:
-            _sg("op_410", sg_410, etiqueta="Acabado del mueble abierto")
+            _sg("op_410", sg_410)  # visible en Configuración, no en Opciones adicionales
             _sg("op_420", sg_410)  # forzada e invisible, mismo código
     else:
         # ── op_100 — Gama del frente (todos: O) ──────────────────────────────────
