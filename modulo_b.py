@@ -1361,9 +1361,7 @@ def paso_1(muebles: list[dict]) -> None:
                                     estado["opcionales"], selecciones,
                                 )
                         else:
-                            st.caption(
-                                "Este mueble no tiene opciones adicionales configurables."
-                            )
+                            pass  # sin opcionales — no se muestra ningún mensaje
                 else:
                     _bloque_informativo(mueble, catalogo)
                     if not es_abierto:
@@ -1381,10 +1379,7 @@ def paso_1(muebles: list[dict]) -> None:
                                 estado["opcionales"], selecciones,
                             )
                     else:
-                        st.caption(
-                            "Este mueble no tiene opciones opcionales aplicables. "
-                            "Pre-marcado como revisado."
-                        )
+                        pass  # sin opcionales — no se muestra ningún mensaje
 
                 razon_bloqueo = None
                 if "op_126" in aplicables:
