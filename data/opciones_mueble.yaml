@@ -694,8 +694,6 @@ op_700:
     - HH1908035
     - HH16010035
     - HH19010035
-    - EOVV37
-    - EOAVV37
   no_aplica:      # no se envía DEM ni como opcional ni como forzado
     - AGM9020057
     - AGM9022057
@@ -832,3 +830,19 @@ variantes_op_126:
       - HH1908035
       - HH16010035
       - HH19010035
+
+
+# -----------------------------------------------------------------------------
+# avisos_desmontado — Muebles que siempre se envían desmontados al cliente
+# Solo aviso informativo — no afecta a ninguna opción SG (op_700 u otras).
+#   codigos:  lista exacta de códigos afectados
+#   prefijos: todos los muebles cuyo código empiece por ese prefijo
+# -----------------------------------------------------------------------------
+avisos_desmontado:
+  codigos:
+    - EOV8760
+    - EOV9060
+    - EOV20760
+    - EOV21060
+  prefijos:
+    - AGM

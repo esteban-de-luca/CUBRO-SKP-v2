@@ -471,6 +471,13 @@ def calcular_opciones(entrada: list[dict]) -> list[dict]:
             fila, mapeos, op_mueble, reglas, indices
         )
 
+        # ── Aviso informativo: muebles que siempre se envían desmontados ──────
+        _av_d        = op_mueble.get("avisos_desmontado") or {}
+        _av_codigos  = set(_av_d.get("codigos")  or [])
+        _av_prefijos = tuple(_av_d.get("prefijos") or [])
+        if code in _av_codigos or (_av_prefijos and code.startswith(_av_prefijos)):
+            avisos.append("Este mueble siempre se envía desmontado al cliente.")
+
         # ── p_built_in_detail y op_900 ────────────────────────────────────────
         # Soporta hasta 2 electros (AFSMO/AFSMOBT): electro 1 = inferior (seq 0),
         # electro 2 = superior (seq 1). Para el resto de muebles solo aplica electro 1.
