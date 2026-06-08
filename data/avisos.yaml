@@ -27,6 +27,13 @@ modulo_a:
   A25: >-
     Este mueble no es compatible con el tirador [nombre_tirador].
 
+  # A26 — Campo Summary vacío.
+  # La columna Summary (1ª columna del CSV) es el identificador de origen que SG
+  # necesita en el campo p_item_origin_id del pedido. Sin él no se puede generar
+  # el JSON. Debe rellenarse en SketchUp antes de exportar el CSV.
+  A26: >-
+    Falta el campo Summary — rellénalo en SketchUp antes de exportar el CSV.
+
 modulo_c:
 
   # AV01 — Opción seleccionada no disponible para el mueble.

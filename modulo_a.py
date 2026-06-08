@@ -102,7 +102,7 @@ COLUMNAS_VALIDAS = [
     "Color tir. de superficie", "C_Rodapietext", "Ancho reducido",
 ]
 
-COLUMNAS_OBLIGATORIAS = ["Name", "D_Gama", "ColorFrente", "Tirador", "C_Rodapietext"]
+COLUMNAS_OBLIGATORIAS = ["Summary", "Name", "D_Gama", "ColorFrente", "Tirador", "C_Rodapietext"]
 
 PREFIJOS_INSTALACION = [
     "DESAGUE_", "FONTANERIA_", "ELECT_", "FONTANERÍA_",
@@ -503,6 +503,11 @@ def parsear_csv(archivo) -> dict:
         ancho_raw          = ancho_check
         ancho_reducido_raw = _str_or_none(fila.get("Ancho reducido", ""))
         name_skp           = name_raw  # preservar Name original de SketchUp
+        summary_raw        = _str_or_none(fila.get("Summary", ""))
+
+        # A26 — Summary vacío → bloqueante (debe corregirse en SketchUp)
+        if summary_raw is None:
+            avisos.append("A26")
 
         # ── Op. 231 — Reducción de ancho ──────────────────────────────────────
         if ancho_raw == "10000 mm":
@@ -732,6 +737,7 @@ def parsear_csv(archivo) -> dict:
         resultado["muebles"].append({
             "name":            name_raw,
             "name_skp":        name_skp,
+            "summary":         summary_raw or "",
             "estado":          estado,
             "apertura":        apertura,
             "d_gama":          d_gama,
@@ -763,6 +769,7 @@ def _a_formato_b(m: dict) -> dict:
     return {
         "Name":                     m.get("name") or "",
         "Name SKP":                 m.get("name_skp") or "",
+        "Summary":                  m.get("summary") or "",
         "Estado":                   m.get("estado") or "",
         "Apertura":                 m.get("apertura") or "",
         "D_Gama":                   m.get("d_gama") or "",
