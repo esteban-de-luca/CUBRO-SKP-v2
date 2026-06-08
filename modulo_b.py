@@ -547,6 +547,8 @@ def construir_entrada_modulo_c(
             ),
             "Reducción de ancho": _bool_str(reduccion),
             "Ancho reducido": ancho_reducido,
+            "Ancho CSV": "" if reduccion else ancho_raw,   # para Paso 2 cuando ancho_mm es null en catálogo
+            "Alto CSV": (mueble.get("LenZ") or "").strip(),  # ídem para alto
             "Sin mecanizado": _bool_str(opcionales.get("op_121", False)),
             "Cubos de basura": _export_op_207(opcionales.get("op_207_opcional", False)),
             "Recorte LED": _bool_str(opcionales.get("op_220", False)),
@@ -1539,6 +1541,10 @@ def _bloque_dimensiones_c(entrada: dict, catalogo: dict) -> list[tuple[str, str]
     elif "ancho_variable" in entry:
         av = entry["ancho_variable"]
         items.append(("Ancho", f"variable ({av['min']}–{av['max']} mm)"))
+    else:
+        ancho_csv = (entrada.get("Ancho CSV") or "").strip()
+        if ancho_csv:
+            items.append(("Ancho", ancho_csv))
 
     alto = entry.get("alto_mm")
     if alto:
@@ -1546,6 +1552,10 @@ def _bloque_dimensiones_c(entrada: dict, catalogo: dict) -> list[tuple[str, str]
     elif "alto_variable" in entry:
         av = entry["alto_variable"]
         items.append(("Alto", f"variable ({av['min']}–{av['max']} mm)"))
+    else:
+        alto_csv = (entrada.get("Alto CSV") or "").strip()
+        if alto_csv:
+            items.append(("Alto", alto_csv))
 
     fondo = entry.get("fondo_mm")
     if fondo is not None:
