@@ -442,18 +442,24 @@ def calcular_opciones(entrada: list[dict]) -> list[dict]:
         label_fr  = nombres_fr.get(des_es, "") or (cat_entry.get("designaciones") or {}).get("fr", "")
 
         # ── p_hinge ───────────────────────────────────────────────────────────
-        cat_hinge   = _p_hinge_cat(code, op_mueble)
-        apertura_ui = (fila.get("Apertura") or "").strip()
-        if cat_hinge == "lee_csv":
-            p_hinge: str | None = indices.get("apertura", {}).get(apertura_ui)
-        elif cat_hinge == "nulo":
-            p_hinge = "D"   # provisional hasta confirmar con SG (ver opciones_mueble.yaml)
-        elif cat_hinge == "coulissant":
-            p_hinge = "C"
-        elif cat_hinge == "lift":
-            p_hinge = "L"
+        _codigos_abierto: set[str] = set(
+            ((op_mueble.get("op_410") or {}).get("codigos")) or []
+        )
+        if code in _codigos_abierto:
+            p_hinge: str | None = None  # muebles abiertos: sin p_hinge en el JSON
         else:
-            p_hinge = None
+            cat_hinge   = _p_hinge_cat(code, op_mueble)
+            apertura_ui = (fila.get("Apertura") or "").strip()
+            if cat_hinge == "lee_csv":
+                p_hinge = indices.get("apertura", {}).get(apertura_ui)
+            elif cat_hinge == "nulo":
+                p_hinge = "D"   # provisional hasta confirmar con SG (ver opciones_mueble.yaml)
+            elif cat_hinge == "coulissant":
+                p_hinge = "C"
+            elif cat_hinge == "lift":
+                p_hinge = "L"
+            else:
+                p_hinge = None
 
         # ── p_fastening ───────────────────────────────────────────────────────
         _ps_segun_rodapie: set[str] = set(
