@@ -1258,7 +1258,10 @@ def paso_1(muebles: list[dict]) -> None:
                 and selecciones.get(_identificador_mueble(m), {}).get("check")
             )
         ],
-        key=lambda m: (m.get("Summary") or "").strip(),
+        key=lambda m: [
+            int(t) if t.isdigit() else t.lower()
+            for t in re.split(r"(\d+)", (m.get("Summary") or "").strip())
+        ],
     )
 
     if a_mostrar:
