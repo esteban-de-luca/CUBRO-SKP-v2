@@ -604,6 +604,7 @@ def pantalla_validacion(muebles: list[dict]) -> None:
         )
         tabla = [
             {
+                "Referencia": m.get("Summary", "") or "—",
                 "Name SKP": m.get("Name SKP", "") or "—",
                 "Avisos": m.get("Avisos", "") or "—",
             }
