@@ -94,6 +94,17 @@ CODIGOS_PS_SEGUN_RODAPIE: set[str] = set(
     ((_OPCIONES_RAW.get("op_402") or {}).get("p_s_segun_rodapie")) or []
 )
 
+_av_d_raw = (_OPCIONES_RAW.get("avisos_desmontado") or {})
+CODIGOS_DESMONTADO: set[str]        = set(_av_d_raw.get("codigos")  or [])
+PREFIJOS_DESMONTADO: tuple[str, ...] = tuple(_av_d_raw.get("prefijos") or [])
+
+
+def _es_desmontado(code: str) -> bool:
+    """True si el mueble siempre se envía desmontado al cliente (aviso informativo)."""
+    return code in CODIGOS_DESMONTADO or bool(
+        PREFIJOS_DESMONTADO and code.startswith(PREFIJOS_DESMONTADO)
+    )
+
 
 @st.cache_data
 def _cargar_sg_a_ui() -> dict[str, str]:
@@ -665,6 +676,9 @@ def _bloque_informativo(mueble: dict, catalogo: dict) -> None:
             f"**Color interior:** {color_interior}  ·  "
             f"**Rodapié:** {rodapie}"
         )
+
+    if _es_desmontado(name):
+        st.info("Este mueble siempre se envía desmontado al cliente.", icon="ℹ️")
 
 
 def _check_mueble(
@@ -1576,6 +1590,9 @@ def _render_card_resumen(entrada: dict, catalogo: dict) -> None:
 
     with st.container(border=True):
         st.markdown(titulo)
+
+        if _es_desmontado(code):
+            st.info("Este mueble siempre se envía desmontado al cliente.", icon="ℹ️")
 
         col_img, col_config, col_dims, col_opc = st.columns([1, 2, 1, 2])
 

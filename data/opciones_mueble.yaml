@@ -695,6 +695,10 @@ op_700:
     - HH16010035
     - HH19010035
   no_aplica:      # no se envía DEM ni como opcional ni como forzado
+    - EOV8760
+    - EOV9060
+    - EOV20760
+    - EOV21060
     - AGM9020057
     - AGM9022057
     - FHABS6580    # añadido 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026
