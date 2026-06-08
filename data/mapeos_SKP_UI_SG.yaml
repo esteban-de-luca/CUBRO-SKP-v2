@@ -330,7 +330,7 @@ opcionales:
 tipo_ui_a_sg:
   Horno:             "Four"
   Micro:             "Microondes"
-  Combi:             "Combi"              # TODO: confirmar término exacto con SG
+  Combi:             "Combi"
   Placa:             "Plaque"
   "Placa aspirante": "Plaque aspirante"
   Frigo:             "Réfrigérateur"

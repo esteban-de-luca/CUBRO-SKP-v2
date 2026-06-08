@@ -51,7 +51,7 @@ _TOOLTIPS_OPCIONALES = {
     "op_223":                "Añade un cajón interior dentro del mueble.",
     "op_227":                "El mueble se vacía de baldas para alojar una caldera.",
     "op_700_opcional":       "El mueble se entrega sin pegar. Las campanas HH siempre lo llevan para facilitar el ajuste en obra.",
-    "op_126":                "Datos del electrodoméstico encastrado. Marca y Tipo son obligatorios; rellena Referencia o Altura (al menos uno de los dos).",
+    "op_126":                "Datos del electrodoméstico encastrado. Marca obligatoria. Si conoces la referencia del modelo, introdúcela; si no, rellena las tres dimensiones (Ancho, Alto y Fondo en mm).",
 }
 
 _TIRADORES_SIN_COLOR = {"Touch Latch", "Prise de main", "Sin tirador"}

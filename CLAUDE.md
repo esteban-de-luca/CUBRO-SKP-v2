@@ -1,7 +1,7 @@
 # CLAUDE.md — Proyecto HbM CUBRO × Schmidt Groupe
 
 > Este archivo es el puente de contexto para Claude Code. Lee esto antes de tocar nada.
-> Última actualización: mayo 2026.
+> Última actualización: junio 2026.
 
 ---
 
@@ -269,33 +269,44 @@ C_Rodapietext · Ancho · Ancho reducido · LenZ · Avisos
 
 ### Output del Paso 1 → Entrada Módulo C
 
-Contrato confirmado con Lucía el 2026-05-11 (hipótesis B). `list[dict]` plana, una fila por mueble, **23 keys fijas** (las mismas en todas las filas; valores `""` o `"False"` cuando la opcional no aplica). Las transformaciones CSV→UI de §8 ya están aplicadas. Lo construye `modulo_b.construir_entrada_modulo_c(muebles, selecciones, catalogo)`.
+Contrato actualizado 2026-06-08. `list[dict]` plana, una fila por mueble, **29 keys fijas** (las mismas en todas las filas; valores `""` o `"False"` cuando la opcional no aplica). Las transformaciones CSV→UI de §8 ya están aplicadas. Lo construye `modulo_b.construir_entrada_modulo_c(muebles, selecciones, catalogo)`.
 
 | # | Columna | Tipo | Origen |
 |---|---|---|---|
-| 1 | Código mueble | `str` | CSV `Name` |
-| 2 | Descripción | `str` | `catalogo.json.<name>.designaciones.es` |
-| 3 | Posición | `str` | Reservada (siempre `""`) |
-| 4 | Apertura | `str` | UI label o `""` |
-| 5 | Gama del frente | `str` | LACA / WOOD / LINOLEO / LAMINADO |
-| 6 | Acabado del frente | `str` | Color sin sufijo de gama ("Crema") |
-| 7 | Color interior | `str` | Sin "mueble" ("Blanco") |
-| 8 | Tirador | `str` | UI label (Round, Square, …) o `""` |
-| 9 | Color tirador | `str` | Touch Latch/Prise de main → `""`. Trasera=Laca → color del frente. Resto → valor crudo |
-| 10 | Rodapié | `str` | "70/100 mm" / "Sin patas" / `""` |
-| 11 | Reducción de ancho | `"True"`/`"False"` | CSV `Ancho == "10000 mm"` |
-| 12 | Ancho reducido | `str` | Valor cuando Reducción=True, sino `""` |
-| 13 | Sin mecanizado | `"True"`/`"False"` | op_121 |
-| 14 | Cubos de basura | `"True"`/`"False"` | op_207_opcional |
-| 15 | Recorte LED | `"True"`/`"False"` | op_220 |
-| 16 | Sensor para mando LED | `str` | "Derecha" / "Izquierda" / `""` (op_222) |
-| 17 | Cajón interior | `"True"`/`"False"` | op_223 |
-| 18 | Mueble de caldera | `"True"`/`"False"` | op_227 |
-| 19 | Sin encolar | `"True"`/`"False"` | op_700_opcional |
-| 20 | Marca electro | `str` | op_126.marca |
-| 21 | Referencia electro | `str` | op_126.referencia |
-| 22 | Altura electro | `str` | op_126.altura |
-| 23 | Tipo electro | `str` | op_126.tipo |
+| 1 | Summary | `str` | CSV `Summary` — identificador SKP (→ `p_item_origin_id`) |
+| 2 | Código mueble | `str` | CSV `Name` |
+| 3 | Descripción | `str` | `catalogo.json.<name>.designaciones.es` |
+| 4 | Posición | `str` | Reservada (siempre `""`) |
+| 5 | Apertura | `str` | UI label o `""` |
+| 6 | Gama del frente | `str` | LACA / WOOD / LINOLEO / LAMINADO |
+| 7 | Acabado del frente | `str` | Color sin sufijo de gama ("Crema") |
+| 8 | Color interior | `str` | Sin "mueble" ("Blanco") |
+| 9 | Tirador | `str` | UI label (Round, Square, …) o `""` |
+| 10 | Color tirador | `str` | Touch Latch/Prise de main → `""`. Trasera=Laca → color del frente. Resto → valor crudo |
+| 11 | Rodapié | `str` | "70/100 mm" / "Sin patas" / `""` |
+| 12 | Reducción de ancho | `"True"`/`"False"` | CSV `Ancho == "10000 mm"` |
+| 13 | Ancho reducido | `str` | Valor cuando Reducción=True, sino `""` |
+| 14 | Sin mecanizado | `"True"`/`"False"` | op_121 |
+| 15 | Cubos de basura | `"True"`/`"False"` | op_207_opcional |
+| 16 | Recorte LED | `"True"`/`"False"` | op_220 |
+| 17 | Sensor para mando LED | `str` | "Derecha" / "Izquierda" / `""` (op_222) |
+| 18 | Cajón interior | `"True"`/`"False"` | op_223 |
+| 19 | Mueble de caldera | `"True"`/`"False"` | op_227 |
+| 20 | Sin encolar | `"True"`/`"False"` | op_700_opcional |
+| 21 | Marca electro | `str` | op_126.marca (electro 1) |
+| 22 | Referencia electro | `str` | op_126.referencia — Caso A |
+| 23 | Tipo electro | `str` | op_126.tipo (incl. "Campana" implícito para HH) |
+| 24 | Ancho electro | `str` | op_126.ancho — Caso B (mm) |
+| 25 | Alto electro | `str` | op_126.alto — Caso B (mm) |
+| 26 | Fondo electro | `str` | op_126.fondo — Caso B (mm) |
+| 27 | Marca electro 2 | `str` | op_126_2.marca (electro 2, solo AFSMO/AFSMOBT) |
+| 28 | Referencia electro 2 | `str` | op_126_2.referencia — Caso A |
+| 29 | Tipo electro 2 | `str` | op_126_2.tipo |
+| 30 | Ancho electro 2 | `str` | op_126_2.ancho — Caso B (mm) |
+| 31 | Alto electro 2 | `str` | op_126_2.alto — Caso B (mm) |
+| 32 | Fondo electro 2 | `str` | op_126_2.fondo — Caso B (mm) |
+
+**Nota Caso A / Caso B (electro):** si el usuario conoce la referencia del modelo → rellena Referencia (Caso A, genera `p_built_in_detail`). Si no → rellena Ancho+Alto+Fondo (Caso B, genera `op_900`). Marca siempre obligatoria. Campana (HH) recibe `Tipo electro = "Campana"` implícitamente aunque no lo seleccione el usuario.
 
 ### `data/catalogo.json`
 
