@@ -491,6 +491,7 @@ def construir_entrada_modulo_c(
             "Código mueble": (mueble.get("Name") or "").strip(),
             "Descripción": _designacion(mueble, catalogo),
             "Posición": "",  # placeholder reservado, lo rellenara C en el futuro
+            "Summary": (mueble.get("Summary") or "").strip(),  # identificador SKP → p_item_origin_id
             "Apertura": _normalizar_vacio(_ui_apertura(mueble.get("Apertura", ""))),
             "Gama del frente": _ui_gama(mueble.get("D_Gama", "")),
             "Acabado del frente": _ui_color_frente(mueble.get("ColorFrente", "")),

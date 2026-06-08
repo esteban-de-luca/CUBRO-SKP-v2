@@ -16,7 +16,7 @@ p_item_defaults:
   p_ord_cat_code:           __computed__   # posición en el pedido — string ("1", "2"…)
   p_item_code:              __computed__   # código del mueble
   p_item_label:             __computed__   # designación oficial en francés (SG)
-  p_item_origin_id:         __computed__   # pendiente de confirmar con SG
+  p_item_origin_id:         __computed__   # columna "Summary" del CSV de SketchUp (1ª columna)
   p_quantity:               1              # siempre 1 (entero)
   p_hinge:                  __computed__   # apertura: G / D / L / C según mueble
   p_fastening:              __computed__   # calculado por reglas.yaml

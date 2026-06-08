@@ -96,6 +96,7 @@ def _cargar_ui_aviso() -> dict[str, dict]:
 # ── Constantes globales (valores fijos, no dependen del mueble) ────────────────
 
 COLUMNAS_VALIDAS = [
+    "Summary",  # identificador de origen SKP → p_item_origin_id en SG
     "Name", "Ancho", "LenZ", "Apertura", "D_Gama", "ColorFrente",
     "Color del interior", "Tirador", "Trasera",
     "Color tir. de superficie", "C_Rodapietext", "Ancho reducido",

@@ -471,7 +471,7 @@ def calcular_opciones(entrada: list[dict]) -> list[dict]:
             "p_ord_cat_code":          str(i + 1),
             "p_item_code":             code,
             "p_item_label":            label_fr,
-            "p_item_origin_id":        None,
+            "p_item_origin_id":        (fila.get("Summary") or "").strip() or None,
             "p_quantity":              _d.get("p_quantity", 1),
             "p_hinge":                 p_hinge,
             "p_fastening":             p_fastening,
