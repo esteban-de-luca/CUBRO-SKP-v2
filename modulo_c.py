@@ -513,11 +513,9 @@ def calcular_opciones(entrada: list[dict]) -> list[dict]:
                 continue
             if r:
                 # Caso A: referencia conocida → entrada en p_built_in_detail
-                # p_sequence siempre "0" según contrato SG
                 p_built_in_entries.append({
                     "p_manufacturer_code":   m,
                     "p_appliance_reference": r,
-                    "p_sequence":            "0",
                 })
             elif a and al and f:
                 # Caso B: sin referencia → acumular en lista para op_900 única

@@ -51,4 +51,3 @@ p_built_in_detail_mapping:
 
   p_manufacturer_code:   "Marca electro"       # marca del electrodoméstico
   p_appliance_reference: "Referencia electro"  # referencia del modelo
-  p_sequence:            "0"                   # valor fijo requerido por SG
