@@ -51,7 +51,7 @@ _TOOLTIPS_OPCIONALES = {
     "op_223":                "Añade un cajón interior dentro del mueble.",
     "op_227":                "El mueble se vacía de baldas para alojar una caldera.",
     "op_700_opcional":       "El mueble se entrega sin pegar. Las campanas HH siempre lo llevan para facilitar el ajuste en obra.",
-    "op_126":                "Datos del electrodoméstico encastrado. Marca obligatoria. Si conoces la referencia del modelo, introdúcela; si no, rellena las tres dimensiones (Ancho, Alto y Fondo en mm).",
+    "op_126":                "Datos del electrodoméstico encastrado. Marca obligatoria. Si conoces la referencia del modelo, introdúcela; si no, indica la altura del hueco en mm.",
 }
 
 _TIRADORES_SIN_COLOR = {"Touch Latch", "Prise de main", "Sin tirador"}
@@ -909,44 +909,27 @@ _VALIDACION_OP_126: dict[str, dict] = {
 
 
 def _op_126_completo(valor, meta: dict | None = None) -> bool:
-    """Valida que el bloque op_126 esté completo según la meta de la variante.
+    """Valida que el bloque op_126 esté completo.
 
-    - tipo_auto   → tipo siempre satisfecho (fijo por mueble, no editable).
-    - tipo_opciones → el usuario debe haber seleccionado una opción del desplegable.
-    - Subcampos   → marca siempre requerida; ref/altura según los presentes en la variante.
+    - Marca siempre obligatoria.
+    - Caso A (tiene_referencia=True): Referencia obligatoria.
+    - Caso B (tiene_referencia=False): Alto obligatorio (altura en mm).
     """
     if not isinstance(valor, dict):
         return False
-    if meta is None:
-        meta = {}
-
-    subcampos     = meta.get("subcampos") or _SUBCAMPOS_OP_126_DEFAULT
-    tipo_auto     = meta.get("tipo_auto")
-    tipo_opciones = meta.get("tipo_opciones")
 
     marca = str(valor.get("marca", "")).strip()
     if not marca:
         return False
 
-    # Tipo: auto → siempre OK; opciones → debe estar en la lista
-    if tipo_auto:
-        pass  # satisfecho automáticamente
-    elif tipo_opciones:
-        if str(valor.get("tipo", "")).strip() not in tipo_opciones:
-            return False
-
-    # Caso A (tiene_referencia=True): Referencia obligatoria
-    # Caso B (tiene_referencia=False): Ancho + Alto + Fondo los tres obligatorios
+    # Caso A: Referencia obligatoria
+    # Caso B: Alto obligatorio (altura del hueco en mm)
     tiene_referencia = bool(valor.get("tiene_referencia", True))
     if tiene_referencia:
         if not str(valor.get("referencia", "")).strip():
             return False
     else:
-        if not (
-            str(valor.get("ancho", "")).strip()
-            and str(valor.get("alto", "")).strip()
-            and str(valor.get("fondo", "")).strip()
-        ):
+        if not str(valor.get("alto", "")).strip():
             return False
 
     # Validación de formato: ningún campo relleno puede tener formato inválido.
