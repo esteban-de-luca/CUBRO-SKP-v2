@@ -21,9 +21,9 @@
 # p_hinge — Sentido de apertura de puerta
 # No sigue el esquema O/F/P: su valor depende del tipo de mueble.
 #   lee_csv   → D (Derecha) o G (Gauche/Izquierda) según campo Apertura del CSV
-#   nulo      → null — muebles con 2 puertas en horizontal (lado a lado, 90 cm)
+#   nulo      → p_hinge se omite del JSON — muebles con 2 puertas en horizontal (lado a lado, 90 cm)
 #   coulissant → C — muebles sin puerta batiente (bloques, extraíbles, frentes)
-#   lift      → pendiente de confirmar con SG (apertura lift)
+#   lift      → L — apertura lift (confirmado con SG)
 # -----------------------------------------------------------------------------
 p_hinge:
 

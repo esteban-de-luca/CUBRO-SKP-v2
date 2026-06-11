@@ -453,11 +453,11 @@ def calcular_opciones(entrada: list[dict]) -> list[dict]:
             if cat_hinge == "lee_csv":
                 p_hinge = indices.get("apertura", {}).get(apertura_ui)
             elif cat_hinge == "nulo":
-                p_hinge = "D"   # provisional hasta confirmar con SG (ver opciones_mueble.yaml)
+                p_hinge = None  # 2 puertas horizontales — p_hinge no aplica, se omite del JSON
             elif cat_hinge == "coulissant":
                 p_hinge = "C"
             elif cat_hinge == "lift":
-                p_hinge = "L"
+                p_hinge = "L"   # apertura lift — confirmado con SG
             else:
                 p_hinge = None
 
