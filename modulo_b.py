@@ -558,16 +558,10 @@ def construir_entrada_modulo_c(
             "Sin encolar": _bool_str(opcionales.get("op_700_opcional", False)),
             "Marca electro":        str(op_126.get("marca", "")).strip(),
             "Referencia electro":   str(op_126.get("referencia", "")).strip(),
-            "Tipo electro":         str(op_126.get("tipo", "")).strip(),
-            "Ancho electro":        str(op_126.get("ancho", "")).strip(),
             "Alto electro":         str(op_126.get("alto", "")).strip(),
-            "Fondo electro":        str(op_126.get("fondo", "")).strip(),
             "Marca electro 2":      str(op_126_2.get("marca", "")).strip(),
             "Referencia electro 2": str(op_126_2.get("referencia", "")).strip(),
-            "Tipo electro 2":       str(op_126_2.get("tipo", "")).strip(),
-            "Ancho electro 2":      str(op_126_2.get("ancho", "")).strip(),
             "Alto electro 2":       str(op_126_2.get("alto", "")).strip(),
-            "Fondo electro 2":      str(op_126_2.get("fondo", "")).strip(),
         }
         entrada.append(fila)
     return entrada
@@ -888,14 +882,13 @@ def _control_radio_op_222(
 _SUBCAMPOS_OP_126_DEFAULT = {
     "marca": "Marca",
     "referencia": "Referencia",
-    # "tipo" NO está aquí: se gestiona siempre vía tipo_auto (oculto) o tipo_opciones (selectbox).
-    # "ancho"/"alto"/"fondo" solo aparecen cuando no hay referencia (Case B).
+    # "alto" solo aparece en Caso B (sin referencia).
 }
 
 # Validación de formato por subcampo de op_126.
 # marca      → solo letras (incluye acentos y espacio para nombres de marca compuestos)
 # referencia → alfanumérico + separadores habituales en referencias de producto
-# ancho/alto/fondo → solo dígitos (valor en mm)
+# alto       → solo dígitos (valor en mm)
 _VALIDACION_OP_126: dict[str, dict] = {
     "marca": {
         "patron":  re.compile(r"^[A-Za-zÀ-ÿ\s\-]+$"),
@@ -907,20 +900,10 @@ _VALIDACION_OP_126: dict[str, dict] = {
         "error":   "Solo se admiten caracteres alfanuméricos",
         "ejemplo": "Código de modelo del fabricante. Suele aparecer en la ficha técnica.",
     },
-    "ancho": {
-        "patron":  re.compile(r"^\d+$"),
-        "error":   "Solo se admiten números enteros (en mm)",
-        "ejemplo": "Ancho del hueco en mm",
-    },
     "alto": {
         "patron":  re.compile(r"^\d+$"),
         "error":   "Solo se admiten números enteros (en mm)",
-        "ejemplo": "Alto del hueco en mm",
-    },
-    "fondo": {
-        "patron":  re.compile(r"^\d+$"),
-        "error":   "Solo se admiten números enteros (en mm)",
-        "ejemplo": "Fondo del hueco en mm",
+        "ejemplo": "Altura del hueco en mm",
     },
 }
 
@@ -1074,36 +1057,14 @@ def _control_op_207(
         _control_checkbox_op_207(clave, meta, opcionales, selecciones)
 
 
-def _render_bloque_electro(
-    clave: str, sufijo: str, tipo_auto, tipo_opciones, prev: dict, tipo_fallback: str = ""
-) -> dict:
+def _render_bloque_electro(clave: str, sufijo: str, prev: dict) -> dict:
     """Renderiza los campos de un electrodoméstico y retorna el nuevo valor.
 
-    Siempre muestra radio Sí/No para elegir entre referencia (Caso A) o
-    dimensiones (Caso B).
-    tipo_fallback: tipo implícito cuando el mueble no tiene tipo seleccionable
-    (p.ej. "Campana" para HH). Se guarda en el dict pero no se muestra en UI.
+    Caso A (¿Conoces la referencia? → Sí): Marca + Referencia.
+    Caso B (¿Conoces la referencia? → No): Marca + Altura (mm).
     """
     key = f"_{sufijo}" if sufijo else ""
     nuevo: dict = {}
-
-    # ── Tipo ─────────────────────────────────────────────────────────────────
-    if tipo_auto:
-        nuevo["tipo"] = tipo_auto
-    elif tipo_opciones:
-        prev_tipo = prev.get("tipo", tipo_opciones[0])
-        if prev_tipo not in tipo_opciones:
-            prev_tipo = tipo_opciones[0]
-        nuevo["tipo"] = st.selectbox(
-            "Tipo",
-            options=tipo_opciones,
-            index=tipo_opciones.index(prev_tipo),
-            key=f"op_126_tipo{key}_{clave}",
-            help="ej. Horno, Microondas, Placa, Frigorífico",
-        )
-    elif tipo_fallback:
-        # Sin tipo seleccionable (campana): tipo implícito, no se muestra en UI
-        nuevo["tipo"] = tipo_fallback
 
     # ── Marca ─────────────────────────────────────────────────────────────────
     regla_marca = _VALIDACION_OP_126["marca"]
@@ -1117,7 +1078,7 @@ def _render_bloque_electro(
         st.caption(f"⚠️ {regla_marca['error']} ({regla_marca['ejemplo']})")
     nuevo["marca"] = marca_val
 
-    # ── Radio ─────────────────────────────────────────────────────────────
+    # ── Radio ─────────────────────────────────────────────────────────────────
     prev_tiene_ref = bool(prev.get("tiene_referencia", True))
     radio_val = st.radio(
         "¿Conoces la referencia?",
@@ -1127,10 +1088,10 @@ def _render_bloque_electro(
         horizontal=True,
     )
     tiene_referencia = (radio_val == "Sí")
-
     nuevo["tiene_referencia"] = tiene_referencia
 
     if tiene_referencia:
+        # Caso A: Referencia
         regla_ref = _VALIDACION_OP_126["referencia"]
         ref_val = st.text_input(
             "Referencia",
@@ -1141,20 +1102,20 @@ def _render_bloque_electro(
         if ref_val.strip() and not regla_ref["patron"].match(ref_val.strip()):
             st.caption(f"⚠️ {regla_ref['error']} ({regla_ref['ejemplo']})")
         nuevo["referencia"] = ref_val
-        nuevo["ancho"] = nuevo["alto"] = nuevo["fondo"] = ""
+        nuevo["alto"] = ""
     else:
+        # Caso B: solo Altura
         nuevo["referencia"] = ""
-        for dim_key, dim_label in [("ancho", "Ancho (mm)"), ("alto", "Alto (mm)"), ("fondo", "Fondo (mm)")]:
-            regla_dim = _VALIDACION_OP_126[dim_key]
-            dim_val = st.text_input(
-                dim_label,
-                value=prev.get(dim_key, ""),
-                key=f"op_126_{dim_key}{key}_{clave}",
-                help=regla_dim["ejemplo"],
-            )
-            if dim_val.strip() and not regla_dim["patron"].match(dim_val.strip()):
-                st.caption(f"⚠️ {regla_dim['error']} ({regla_dim['ejemplo']})")
-            nuevo[dim_key] = dim_val
+        regla_alto = _VALIDACION_OP_126["alto"]
+        alto_val = st.text_input(
+            "Altura (mm)",
+            value=prev.get("alto", ""),
+            key=f"op_126_alto{key}_{clave}",
+            help=regla_alto["ejemplo"],
+        )
+        if alto_val.strip() and not regla_alto["patron"].match(alto_val.strip()):
+            st.caption(f"⚠️ {regla_alto['error']} ({regla_alto['ejemplo']})")
+        nuevo["alto"] = alto_val
 
     return nuevo
 
@@ -1162,11 +1123,7 @@ def _render_bloque_electro(
 def _control_electrodomestico_op_126(
     clave: str, meta: dict, opcionales: dict, selecciones: dict
 ) -> None:
-    tipo_auto     = meta.get("tipo_auto")
-    tipo_opciones = meta.get("tipo_opciones")
-    doble         = bool(meta.get("doble"))
-    # Tipo implícito para muebles sin tipo seleccionable (p.ej. campana → "Campana")
-    tipo_fallback = "" if (tipo_auto or tipo_opciones) else (meta.get("etiqueta") or "")
+    doble = bool(meta.get("doble"))
 
     st.markdown(f"**{meta.get('ui') or meta.get('etiqueta') or 'Electrodoméstico'}**")
     if _TOOLTIPS_OPCIONALES.get("op_126"):
@@ -1177,9 +1134,9 @@ def _control_electrodomestico_op_126(
         prev_1 = opcionales.get("op_126")   if isinstance(opcionales.get("op_126"),   dict) else {}
         prev_2 = opcionales.get("op_126_2") if isinstance(opcionales.get("op_126_2"), dict) else {}
         st.caption("Electrodoméstico 1 (inferior)")
-        nuevo_1 = _render_bloque_electro(clave, "1", tipo_auto, tipo_opciones, prev_1, tipo_fallback)
+        nuevo_1 = _render_bloque_electro(clave, "1", prev_1)
         st.caption("Electrodoméstico 2 (superior)")
-        nuevo_2 = _render_bloque_electro(clave, "2", tipo_auto, tipo_opciones, prev_2, tipo_fallback)
+        nuevo_2 = _render_bloque_electro(clave, "2", prev_2)
         if nuevo_1 != prev_1 or nuevo_2 != prev_2:
             opcionales["op_126"]   = nuevo_1
             opcionales["op_126_2"] = nuevo_2
@@ -1188,7 +1145,7 @@ def _control_electrodomestico_op_126(
     else:
         # ── Un solo slot ──────────────────────────────────────────────────────
         prev = opcionales.get("op_126") if isinstance(opcionales.get("op_126"), dict) else {}
-        nuevo = _render_bloque_electro(clave, "", tipo_auto, tipo_opciones, prev, tipo_fallback)
+        nuevo = _render_bloque_electro(clave, "", prev)
         if nuevo != prev:
             opcionales["op_126"] = nuevo
             _registrar_edicion(clave, selecciones)
@@ -1294,18 +1251,6 @@ def paso_1(muebles: list[dict]) -> None:
             tirador_code_init = str(mueble.get("Tirador") or "").strip()
             if _es_forzado_op_121(tirador_code_init, name, meta_121):
                 opcionales["op_121"] = True
-
-        # Inicializar tipo_auto en op_126 aunque el usuario no abra la card.
-        # Garantiza que "Tipo electro" llegue correctamente a construir_entrada_modulo_c.
-        if "op_126" in aplicables:
-            meta_126 = _meta_op_126(name, interfaz)
-            tipo_auto = meta_126.get("tipo_auto")
-            if tipo_auto:
-                op126_val = opcionales.get("op_126")
-                if not isinstance(op126_val, dict):
-                    opcionales["op_126"] = {"tipo": tipo_auto}
-                elif not op126_val.get("tipo"):
-                    op126_val["tipo"] = tipo_auto
 
     st.header("Paso 1 — Selección de opciones")
     _render_cabecera_global(muebles, selecciones)
@@ -1632,16 +1577,10 @@ def _render_card_resumen(entrada: dict, catalogo: dict) -> None:
             # Datos del electrodoméstico (leídos directamente de entrada)
             marca      = (entrada.get("Marca electro")        or "").strip()
             referencia = (entrada.get("Referencia electro")   or "").strip()
-            tipo       = (entrada.get("Tipo electro")         or "").strip()
-            ancho_e    = (entrada.get("Ancho electro")        or "").strip()
             alto_e     = (entrada.get("Alto electro")         or "").strip()
-            fondo_e    = (entrada.get("Fondo electro")        or "").strip()
             marca_2    = (entrada.get("Marca electro 2")      or "").strip()
             ref_2      = (entrada.get("Referencia electro 2") or "").strip()
-            tipo_2     = (entrada.get("Tipo electro 2")       or "").strip()
-            ancho_e_2  = (entrada.get("Ancho electro 2")      or "").strip()
             alto_e_2   = (entrada.get("Alto electro 2")       or "").strip()
-            fondo_e_2  = (entrada.get("Fondo electro 2")      or "").strip()
             tiene_electro = bool(marca)
 
             if opc_adic or tiene_electro:
@@ -1664,17 +1603,17 @@ def _render_card_resumen(entrada: dict, catalogo: dict) -> None:
                     st.caption("⚙ Forzado automáticamente por reglas")
 
                 if tiene_electro:
-                    def _linea_electro(m, r, t, a, al, f, label):
+                    def _linea_electro(m, r, al, label):
                         if r:
                             partes = " · ".join(p for p in (m, r) if p)
                         else:
-                            dims = f"{a}×{al}×{f} mm" if (a and al and f) else ""
-                            partes = " · ".join(p for p in (m, t, dims) if p)
+                            altura = f"{al} mm" if al else ""
+                            partes = " · ".join(p for p in (m, altura) if p)
                         st.markdown(f"- **{label}:** {partes}")
                     lbl1 = "Electrodoméstico 1" if marca_2 else "Electrodoméstico"
-                    _linea_electro(marca, referencia, tipo, ancho_e, alto_e, fondo_e, lbl1)
+                    _linea_electro(marca, referencia, alto_e, lbl1)
                     if marca_2:
-                        _linea_electro(marca_2, ref_2, tipo_2, ancho_e_2, alto_e_2, fondo_e_2, "Electrodoméstico 2")
+                        _linea_electro(marca_2, ref_2, alto_e_2, "Electrodoméstico 2")
 
         # Espaciador para dar margen inferior igual al superior dentro del borde
         st.markdown('<div style="margin-bottom:8px"></div>', unsafe_allow_html=True)

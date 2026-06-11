@@ -364,23 +364,6 @@ opcionales:
 
 
 # =============================================================================
-# TIPO UI → SG
-# Traducción de la etiqueta UI del tipo de electrodoméstico al valor en francés
-# que Schmidt Groupe espera en el campo p_appliance_type del JSON de pedido.
-# El Módulo C aplica esta traducción después de recibir el label UI del Módulo B.
-# =============================================================================
-
-tipo_ui_a_sg:
-  Horno:             "Four"
-  Micro:             "Microondes"
-  Combi:             "Combi"
-  Placa:             "Plaque"
-  "Placa aspirante": "Plaque aspirante"
-  Frigo:             "Réfrigérateur"
-  Campana:           "Hotte"
-
-
-# =============================================================================
 # NOMBRES
 # Traducción de la designación en español (designaciones.es del catalogo.json)
 # a la designación oficial en francés de Schmidt Groupe (p_item_label).

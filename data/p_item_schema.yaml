@@ -50,4 +50,5 @@ p_built_in_detail_mapping:
   # Tipo y dimensiones van a op_900 cuando no hay referencia (ver modulo_c).
 
   p_manufacturer_code:   "Marca electro"       # marca del electrodoméstico
-  p_appliance_reference: "Referencia electro"  # referencia del modelo
+  p_appliance_reference: "Referencia electro"  # Caso A — referencia conocida
+  p_built_in_height:     "Alto electro"        # Caso B — altura en mm (entero)

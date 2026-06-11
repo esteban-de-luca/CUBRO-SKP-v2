@@ -484,49 +484,38 @@ def calcular_opciones(entrada: list[dict]) -> list[dict]:
         if code in _av_codigos or (_av_prefijos and code.startswith(_av_prefijos)):
             avisos.append("Este mueble siempre se envía desmontado al cliente.")
 
-        # ── p_built_in_detail y op_900 ────────────────────────────────────────
-        # Soporta hasta 2 electros (AFSMO/AFSMOBT): electro 1 = inferior (seq 0),
-        # electro 2 = superior (seq 1). Para el resto de muebles solo aplica electro 1.
-        _tipo_ui_a_sg = mapeos.get("tipo_ui_a_sg") or {}
+        # ── p_built_in_detail ─────────────────────────────────────────────────
+        # Soporta hasta 2 electros (AFSMO/AFSMOBT): electro 1 = inferior, electro 2 = superior.
+        # Caso A (referencia conocida): p_appliance_reference.
+        # Caso B (sin referencia): p_built_in_height (entero, en mm).
         _electros = [
             (
                 (fila.get("Marca electro")        or "").strip(),
                 (fila.get("Referencia electro")   or "").strip(),
-                (fila.get("Tipo electro")         or "").strip(),
-                (fila.get("Ancho electro")        or "").strip(),
                 (fila.get("Alto electro")         or "").strip(),
-                (fila.get("Fondo electro")        or "").strip(),
             ),
             (
                 (fila.get("Marca electro 2")      or "").strip(),
                 (fila.get("Referencia electro 2") or "").strip(),
-                (fila.get("Tipo electro 2")       or "").strip(),
-                (fila.get("Ancho electro 2")      or "").strip(),
                 (fila.get("Alto electro 2")       or "").strip(),
-                (fila.get("Fondo electro 2")      or "").strip(),
             ),
         ]
         p_built_in_entries: list[dict] = []
-        caso_b_articles:    list[str]  = []
-        for _seq, (m, r, t, a, al, f) in enumerate(_electros):
+        for m, r, al in _electros:
             if not m:
                 continue
             if r:
-                # Caso A: referencia conocida → entrada en p_built_in_detail
+                # Caso A: referencia conocida
                 p_built_in_entries.append({
                     "p_manufacturer_code":   m,
                     "p_appliance_reference": r,
                 })
-            elif a and al and f:
-                # Caso B: sin referencia → acumular en lista para op_900 única
-                tipo_fr = _tipo_ui_a_sg.get(t, t) if t else ""
-                prefijo = f"{tipo_fr} {m}" if tipo_fr else m
-                caso_b_articles.append(
-                    f"{prefijo} Largeur: {a} mm, Hauteur: {al} mm, Profondeur: {f} mm"
-                )
-        # Un solo op_900 con todos los Caso B concatenados (si los hay)
-        if caso_b_articles:
-            opciones_sg.append(_opt("900", ", ".join(caso_b_articles)))
+            elif al:
+                # Caso B: sin referencia — solo altura en mm
+                p_built_in_entries.append({
+                    "p_manufacturer_code": m,
+                    "p_built_in_height":   int(al),
+                })
         p_built_in: list[dict] | None = p_built_in_entries or None
 
         # ── Item JSON ─────────────────────────────────────────────────────────
