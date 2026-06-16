@@ -918,17 +918,16 @@ def _op_126_completo(valor, meta: dict | None = None) -> bool:
     if not isinstance(valor, dict):
         return False
 
-    marca = str(valor.get("marca", "")).strip()
-    if not marca:
-        return False
-
-    # Caso A: Referencia obligatoria
-    # Caso B: Alto obligatorio (altura del hueco en mm)
     tiene_referencia = bool(valor.get("tiene_referencia", True))
+
     if tiene_referencia:
+        # Caso A: Marca + Referencia obligatorios
+        if not str(valor.get("marca", "")).strip():
+            return False
         if not str(valor.get("referencia", "")).strip():
             return False
     else:
+        # Caso B: solo Alto obligatorio (sin marca)
         if not str(valor.get("alto", "")).strip():
             return False
 
@@ -1044,24 +1043,12 @@ def _render_bloque_electro(clave: str, sufijo: str, prev: dict) -> dict:
     """Renderiza los campos de un electrodoméstico y retorna el nuevo valor.
 
     Caso A (¿Conoces la referencia? → Sí): Marca + Referencia.
-    Caso B (¿Conoces la referencia? → No): Marca + Altura (mm).
+    Caso B (¿Conoces la referencia? → No): solo Altura (mm), sin marca.
     """
     key = f"_{sufijo}" if sufijo else ""
     nuevo: dict = {}
 
-    # ── Marca ─────────────────────────────────────────────────────────────────
-    regla_marca = _VALIDACION_OP_126["marca"]
-    marca_val = st.text_input(
-        "Marca",
-        value=prev.get("marca", ""),
-        key=f"op_126_marca{key}_{clave}",
-        help=regla_marca["ejemplo"],
-    )
-    if marca_val.strip() and not regla_marca["patron"].match(marca_val.strip()):
-        st.caption(f"⚠️ {regla_marca['error']} ({regla_marca['ejemplo']})")
-    nuevo["marca"] = marca_val
-
-    # ── Radio ─────────────────────────────────────────────────────────────────
+    # ── Radio primero ─────────────────────────────────────────────────────────
     prev_tiene_ref = bool(prev.get("tiene_referencia", True))
     radio_val = st.radio(
         "¿Conoces la referencia?",
@@ -1074,7 +1061,18 @@ def _render_bloque_electro(clave: str, sufijo: str, prev: dict) -> dict:
     nuevo["tiene_referencia"] = tiene_referencia
 
     if tiene_referencia:
-        # Caso A: Referencia
+        # Caso A: Marca + Referencia
+        regla_marca = _VALIDACION_OP_126["marca"]
+        marca_val = st.text_input(
+            "Marca",
+            value=prev.get("marca", ""),
+            key=f"op_126_marca{key}_{clave}",
+            help=regla_marca["ejemplo"],
+        )
+        if marca_val.strip() and not regla_marca["patron"].match(marca_val.strip()):
+            st.caption(f"⚠️ {regla_marca['error']} ({regla_marca['ejemplo']})")
+        nuevo["marca"] = marca_val
+
         regla_ref = _VALIDACION_OP_126["referencia"]
         ref_val = st.text_input(
             "Referencia",
@@ -1087,7 +1085,8 @@ def _render_bloque_electro(clave: str, sufijo: str, prev: dict) -> dict:
         nuevo["referencia"] = ref_val
         nuevo["alto"] = ""
     else:
-        # Caso B: solo Altura
+        # Caso B: solo Altura (sin marca)
+        nuevo["marca"] = ""
         nuevo["referencia"] = ""
         regla_alto = _VALIDACION_OP_126["alto"]
         alto_val = st.text_input(

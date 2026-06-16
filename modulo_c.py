@@ -502,19 +502,16 @@ def calcular_opciones(entrada: list[dict]) -> list[dict]:
         ]
         p_built_in_entries: list[dict] = []
         for m, r, al in _electros:
-            if not m:
-                continue
             if r:
-                # Caso A: referencia conocida
+                # Caso A: referencia conocida — Marca + Referencia
                 p_built_in_entries.append({
                     "p_manufacturer_code":   m,
                     "p_appliance_reference": r,
                 })
             elif al:
-                # Caso B: sin referencia — solo altura en mm
+                # Caso B: sin referencia — solo altura en mm (sin marca)
                 p_built_in_entries.append({
-                    "p_manufacturer_code": m,
-                    "p_built_in_height":   int(al),
+                    "p_built_in_height": int(al),
                 })
         p_built_in: list[dict] | None = p_built_in_entries or None
 
