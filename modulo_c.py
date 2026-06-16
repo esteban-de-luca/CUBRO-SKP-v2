@@ -511,7 +511,7 @@ def calcular_opciones(entrada: list[dict]) -> list[dict]:
             elif al:
                 # Caso B: sin referencia — solo altura en mm (sin marca)
                 p_built_in_entries.append({
-                    "p_built_in_height": int(al),
+                    "p_built_in_height": str(al),
                 })
         p_built_in: list[dict] | None = p_built_in_entries or None
 
