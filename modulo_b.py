@@ -98,6 +98,12 @@ _av_d_raw = (_OPCIONES_RAW.get("avisos_desmontado") or {})
 CODIGOS_DESMONTADO: set[str]        = set(_av_d_raw.get("codigos")  or [])
 PREFIJOS_DESMONTADO: tuple[str, ...] = tuple(_av_d_raw.get("prefijos") or [])
 
+# Tapetas (FF*/FFAL*): sin apertura, tirador, color interior ni rodapié.
+# op_101 viene de la columna "Acabado" del CSV.
+CODIGOS_TAPETA: set[str] = set(
+    ((_OPCIONES_RAW.get("tapetas") or {}).get("codigos")) or []
+)
+
 
 def _es_desmontado(code: str) -> bool:
     """True si el mueble siempre se envía desmontado al cliente (aviso informativo)."""
@@ -586,6 +592,12 @@ def _cabecera_card(mueble: dict, catalogo: dict, revisado: bool) -> str:
         color_abierto = _ui_color_mueble_abierto(mueble.get("Color del mueble abierto", ""))
         if color_abierto:
             partes.append(color_abierto)
+    elif name_code in CODIGOS_TAPETA:
+        gama    = _ui_gama(mueble.get("D_Gama", ""))
+        acabado = (mueble.get("Acabado") or "").strip()
+        gama_acabado = " ".join(p for p in (gama, acabado) if p)
+        if gama_acabado:
+            partes.append(gama_acabado)
     else:
         gama = _ui_gama(mueble.get("D_Gama", ""))
         color = _ui_color_frente(mueble.get("ColorFrente", ""))
@@ -663,6 +675,14 @@ def _bloque_informativo(mueble: dict, catalogo: dict) -> None:
             f"**Fondo:** {fondo_str}  ·  "
             f"**Rodapié:** {rodapie_label}"
         )
+    elif name in CODIGOS_TAPETA:
+        acabado = (mueble.get("Acabado") or "").strip()
+        st.markdown(
+            f"**Acabado:** {acabado or '—'}  ·  "
+            f"**Ancho:** {ancho}  ·  "
+            f"**Alto:** {alto_str}  ·  "
+            f"**Fondo:** {fondo_str}"
+        )
     else:
         apertura       = _ui_apertura(mueble.get("Apertura", ""))
         color_interior = _ui_color_interior(mueble.get("Color del interior", ""))
@@ -735,10 +755,10 @@ def _opcionales_aplicables(mueble: dict, interfaz: dict) -> list[str]:
         if name in (interfaz.get(op_id, {}).get("muebles") or []):
             aplicables.append(op_id)
 
-    # op_700 — aplica a todos salvo los no_aplica.
+    # op_700 — aplica a todos salvo los no_aplica y las tapetas (sin encolar no tiene sentido).
     # Los forzadas (campanas HH*) también se incluyen: se muestran desactivados y marcados.
     meta_700 = interfaz.get("op_700_opcional") or {}
-    if "op_700_opcional" in interfaz and name not in (meta_700.get("excluidos") or []):
+    if "op_700_opcional" in interfaz and name not in (meta_700.get("excluidos") or []) and name not in CODIGOS_TAPETA:
         aplicables.append("op_700_opcional")
 
     # op_126 — lista plana de muebles (BFT y AFS)
@@ -1416,6 +1436,12 @@ def _bloque_configuracion_c(entrada: dict) -> list[tuple[str, str]]:
         rodapie = (entrada.get("Rodapié") or "").strip()
         if rodapie:
             items.append(("Rodapié", rodapie))
+    elif code in CODIGOS_TAPETA:
+        gama    = (entrada.get("Gama del frente") or "").strip()
+        acabado = (entrada.get("Acabado") or "").strip()
+        gama_acabado = " ".join(p for p in (gama, acabado) if p)
+        if gama_acabado:
+            items.append(("Gama y acabado", gama_acabado))
     else:
         apertura = (entrada.get("Apertura") or "").strip()
         if apertura:

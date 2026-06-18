@@ -225,6 +225,13 @@ _codigos_sin_fondo: set[str] = {
 # Conjunto unificado: todos los que no necesitan rodapié
 CODIGOS_SIN_RODAPIE: set[str] = CODIGOS_SUSPENSO | _codigos_sin_fondo
 
+# Tapetas (FF*/FFAL*): sin apertura, tirador, color interior ni rodapié.
+# op_101 viene de la columna "Acabado" del CSV (no de ColorFrente).
+CODIGOS_TAPETA: set[str] = set((_OPCIONES.get("tapetas") or {}).get("codigos") or [])
+CODIGOS_SIN_APERTURA |= CODIGOS_TAPETA
+CODIGOS_SIN_INTERIOR |= CODIGOS_TAPETA
+CODIGOS_SIN_RODAPIE  |= CODIGOS_TAPETA
+
 # Altos estándar por código para validación A21
 CATALOG_ALTOS: dict[str, int] = {
     code: data["alto_mm"]
@@ -535,6 +542,7 @@ def parsear_csv(archivo) -> dict:
 
         ancho_raw          = ancho_check
         ancho_reducido_raw = _str_or_none(fila.get("Ancho reducido", ""))
+        acabado_raw        = _str_or_none(fila.get("Acabado", ""))
         name_skp           = name_raw  # preservar Name original de SketchUp
         summary_raw        = _str_or_none(fila.get("Summary", ""))
 
@@ -659,13 +667,17 @@ def parsear_csv(archivo) -> dict:
         color_tirador = None
 
         if not es_mueble_abierto:
-            # A12/A14 — Tirador
-            tirador = _normalizar_tirador(fila.get("Tirador", ""))
-            if tirador is None:
+            # Tapetas (FF*/FFAL*): sin tirador, sin color de tirador
+            es_tapeta = name_raw in CODIGOS_TAPETA
+
+            # A12/A14 — Tirador (no aplica a tapetas)
+            if not es_tapeta:
+                tirador = _normalizar_tirador(fila.get("Tirador", ""))
+            if not es_tapeta and tirador is None:
                 avisos.append("Falta el tipo de tirador")
-            elif tirador not in TIRADORES_VALIDOS:
+            elif not es_tapeta and tirador not in TIRADORES_VALIDOS:
                 avisos.append(f"Tipo de tirador '{_ui_tirador.get(str(tirador), str(tirador))}' no reconocido")
-            elif tirador in TIRADORES_MECANISMO:
+            elif not es_tapeta and tirador in TIRADORES_MECANISMO:
                 # Touch Latch (20) o Prise de main (21) — validar compatibilidad con el mueble
                 _nombre_tir = _ui_tirador.get(str(tirador), str(tirador))
                 if name_raw in CODIGOS_SIN_MECANISMO:
@@ -835,6 +847,7 @@ def parsear_csv(archivo) -> dict:
             "rodapie":               rodapie,
             "ancho":                 ancho_raw,
             "ancho_reducido":        ancho_reducido_raw,
+            "acabado":               acabado_raw or "",
             "len_z":                 len_z_raw,
             "color_mueble_abierto":  color_mueble_abierto_raw or "",
             "avisos":                avisos,
@@ -868,6 +881,7 @@ def _a_formato_b(m: dict) -> dict:
         "C_Rodapietext":              m.get("rodapie") or "",
         "Ancho":                      m.get("ancho") or "",
         "Ancho reducido":             m.get("ancho_reducido") or "",
+        "Acabado":                    m.get("acabado") or "",
         "LenZ":                       m.get("len_z") or "",
         "Color del mueble abierto":   m.get("color_mueble_abierto") or "",
         "Avisos":                     " | ".join(m.get("avisos") or []),
