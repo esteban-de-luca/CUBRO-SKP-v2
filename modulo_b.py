@@ -360,6 +360,7 @@ def _cargar_interfaz(_v: int = 3) -> dict:
                 "tipo_auto":     variante_data.get("tipo_auto"),
                 "tipo_opciones": variante_data.get("tipo_opciones"),
                 "doble":         bool(variante_data.get("doble")),
+                "solo_caso_a":   bool(variante_data.get("solo_caso_a", False)),
             }
             for mueble in (variante_data.get("muebles") or []):
                 mueble_a_variante[mueble] = variante_key
@@ -1117,7 +1118,9 @@ def _control_electrodomestico_op_126(
     solo_caso_a = bool(meta.get("solo_caso_a", False))
 
     st.markdown(f"**{meta.get('ui') or meta.get('etiqueta') or 'Electrodoméstico'}**")
-    if _TOOLTIPS_OPCIONALES.get("op_126"):
+    if solo_caso_a:
+        st.caption("Indica la marca y referencia del modelo.")
+    elif _TOOLTIPS_OPCIONALES.get("op_126"):
         st.caption(_TOOLTIPS_OPCIONALES["op_126"])
 
     if doble:
