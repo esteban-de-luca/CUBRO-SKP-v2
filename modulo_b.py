@@ -1039,25 +1039,33 @@ def _control_op_207(
         _control_checkbox_op_207(clave, meta, opcionales, selecciones)
 
 
-def _render_bloque_electro(clave: str, sufijo: str, prev: dict) -> dict:
+def _render_bloque_electro(
+    clave: str, sufijo: str, prev: dict, solo_caso_a: bool = False
+) -> dict:
     """Renderiza los campos de un electrodoméstico y retorna el nuevo valor.
 
     Caso A (¿Conoces la referencia? → Sí): Marca + Referencia.
     Caso B (¿Conoces la referencia? → No): solo Altura (mm), sin marca.
+    Si solo_caso_a=True (campanas), el radio no se muestra y siempre es Caso A.
     """
     key = f"_{sufijo}" if sufijo else ""
     nuevo: dict = {}
 
-    # ── Radio primero ─────────────────────────────────────────────────────────
-    prev_tiene_ref = bool(prev.get("tiene_referencia", True))
-    radio_val = st.radio(
-        "¿Conoces la referencia?",
-        options=["Sí", "No"],
-        index=0 if prev_tiene_ref else 1,
-        key=f"op_126_tiene_ref{key}_{clave}",
-        horizontal=True,
-    )
-    tiene_referencia = (radio_val == "Sí")
+    if solo_caso_a:
+        # Campanas: solo Caso A, sin radio
+        tiene_referencia = True
+    else:
+        # Radio primero
+        prev_tiene_ref = bool(prev.get("tiene_referencia", True))
+        radio_val = st.radio(
+            "¿Conoces la referencia?",
+            options=["Sí", "No"],
+            index=0 if prev_tiene_ref else 1,
+            key=f"op_126_tiene_ref{key}_{clave}",
+            horizontal=True,
+        )
+        tiene_referencia = (radio_val == "Sí")
+
     nuevo["tiene_referencia"] = tiene_referencia
 
     if tiene_referencia:
@@ -1105,7 +1113,8 @@ def _render_bloque_electro(clave: str, sufijo: str, prev: dict) -> dict:
 def _control_electrodomestico_op_126(
     clave: str, meta: dict, opcionales: dict, selecciones: dict
 ) -> None:
-    doble = bool(meta.get("doble"))
+    doble       = bool(meta.get("doble"))
+    solo_caso_a = bool(meta.get("solo_caso_a", False))
 
     st.markdown(f"**{meta.get('ui') or meta.get('etiqueta') or 'Electrodoméstico'}**")
     if _TOOLTIPS_OPCIONALES.get("op_126"):
@@ -1116,9 +1125,9 @@ def _control_electrodomestico_op_126(
         prev_1 = opcionales.get("op_126")   if isinstance(opcionales.get("op_126"),   dict) else {}
         prev_2 = opcionales.get("op_126_2") if isinstance(opcionales.get("op_126_2"), dict) else {}
         st.caption("Electrodoméstico 1 (inferior)")
-        nuevo_1 = _render_bloque_electro(clave, "1", prev_1)
+        nuevo_1 = _render_bloque_electro(clave, "1", prev_1, solo_caso_a)
         st.caption("Electrodoméstico 2 (superior)")
-        nuevo_2 = _render_bloque_electro(clave, "2", prev_2)
+        nuevo_2 = _render_bloque_electro(clave, "2", prev_2, solo_caso_a)
         if nuevo_1 != prev_1 or nuevo_2 != prev_2:
             opcionales["op_126"]   = nuevo_1
             opcionales["op_126_2"] = nuevo_2
@@ -1127,7 +1136,7 @@ def _control_electrodomestico_op_126(
     else:
         # ── Un solo slot ──────────────────────────────────────────────────────
         prev = opcionales.get("op_126") if isinstance(opcionales.get("op_126"), dict) else {}
-        nuevo = _render_bloque_electro(clave, "", prev)
+        nuevo = _render_bloque_electro(clave, "", prev, solo_caso_a)
         if nuevo != prev:
             opcionales["op_126"] = nuevo
             _registrar_edicion(clave, selecciones)

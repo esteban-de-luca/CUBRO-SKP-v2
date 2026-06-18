@@ -825,7 +825,7 @@ variantes_op_126:
 
   op_126_campana:         # campana integrada — HH
     ui: Campana
-    # sin tipo (radio Sí/No disponible igual que el resto de electros)
+    solo_caso_a: true     # solo Marca + Referencia — Caso B (altura) no disponible
     subcampos:
       marca:      Marca
       referencia: Referencia
