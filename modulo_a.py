@@ -101,10 +101,11 @@ COLUMNAS_VALIDAS = [
     "Name", "Ancho", "LenZ", "Apertura", "D_Gama", "ColorFrente",
     "Color del interior", "Tirador", "Trasera",
     "Color tir. de superficie", "C_Rodapietext", "Ancho reducido",
+    "Acabado",
     "Color del mueble abierto",
 ]
 
-COLUMNAS_OBLIGATORIAS = ["Summary", "Name", "D_Gama", "ColorFrente", "Tirador", "C_Rodapietext"]
+COLUMNAS_OBLIGATORIAS = ["Summary", "Name", "D_Gama", "ColorFrente", "Tirador", "C_Rodapietext", "Acabado"]
 
 PREFIJOS_INSTALACION = [
     "DESAGUE_", "FONTANERIA_", "ELECT_", "FONTANERÍA_",
