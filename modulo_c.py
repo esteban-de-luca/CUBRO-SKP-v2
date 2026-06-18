@@ -237,6 +237,9 @@ def _calcular_opciones_mueble(
     )
     es_abierto = code in codigos_mueble_abierto
 
+    # ── Tapetas (FF*/FFAL*): op_101 viene de "Acabado" en lugar de "Acabado del frente" ──
+    codigos_tapeta: set[str] = set((op_mueble.get("tapetas") or {}).get("codigos") or [])
+
     if es_abierto:
         # op_410 — Acabado del mueble abierto
         # op_420 — Acabado de la trasera (mismo código SG, forzada e invisible)
@@ -251,8 +254,10 @@ def _calcular_opciones_mueble(
         if sg_100:
             _sg("op_100", sg_100)
 
-        # ── op_101 — Acabado del frente (todos: O) ───────────────────────────────
-        acabado = (fila.get("Acabado del frente") or "").strip()
+        # ── op_101 — Acabado del frente ──────────────────────────────────────────
+        # Tapetas: op_101 viene de "Acabado" (CSV directo). Resto: "Acabado del frente".
+        acabado_col = "Acabado" if code in codigos_tapeta else "Acabado del frente"
+        acabado = (fila.get(acabado_col) or "").strip()
         sg_101  = indices.get("op_101", {}).get(acabado, "")
         if sg_101:
             _sg("op_101", sg_101)
