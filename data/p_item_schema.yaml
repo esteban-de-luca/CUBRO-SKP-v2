@@ -51,4 +51,4 @@ p_built_in_detail_mapping:
 
   p_manufacturer_code:   "Marca electro"       # marca del electrodoméstico
   p_appliance_reference: "Referencia electro"  # Caso A — referencia conocida
-  p_built_in_height:     "Alto electro"        # Caso B — altura en mm (entero)
+  p_built_in_height:     "Alto electro"        # Caso B — altura en mm (string)

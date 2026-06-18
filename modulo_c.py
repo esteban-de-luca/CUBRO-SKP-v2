@@ -487,7 +487,7 @@ def calcular_opciones(entrada: list[dict]) -> list[dict]:
         # ── p_built_in_detail ─────────────────────────────────────────────────
         # Soporta hasta 2 electros (AFSMO/AFSMOBT): electro 1 = inferior, electro 2 = superior.
         # Caso A (referencia conocida): p_appliance_reference.
-        # Caso B (sin referencia): p_built_in_height (entero, en mm).
+        # Caso B (sin referencia): p_built_in_height (string, en mm).
         _electros = [
             (
                 (fila.get("Marca electro")        or "").strip(),
