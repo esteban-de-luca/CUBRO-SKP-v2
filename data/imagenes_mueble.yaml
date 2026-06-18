@@ -13,6 +13,21 @@
 
 prefijos:
   # ── Más largos primero para evitar capturas prematuras ───────────────────
+
+  # ── Tapetas FF12 y FFAL10 ────────────────────────────────────────────────
+  FFAL10100: FFAL10100.png
+  FFAL1080:  FFAL1080.png
+  FFAL1060:  FFAL1060.png
+  FF12220:   FF12220.png
+  FF12200:   FF12200.png
+  FF12100:   FF12100.png
+  FF1290:    FF1290.png
+  FF1287:    FF1287.png
+  FF1280:    FF1280.png
+  FF1260:    FF1260.png
+  FF12V:     FF12V.png
+
+  # ── Resto de muebles ─────────────────────────────────────────────────────
   HPT60V57: HPT60V57.png
   AFSMOBT:  AFSMOBT.png
   HLVV57:   HLVV57.png
