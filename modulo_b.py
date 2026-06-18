@@ -681,7 +681,7 @@ def _bloque_informativo(mueble: dict, catalogo: dict) -> None:
             f"**Acabado:** {acabado or '—'}  ·  "
             f"**Ancho:** {ancho}  ·  "
             f"**Alto:** {alto_str}  ·  "
-            f"**Fondo:** {fondo_str}"
+            f"**Espesor:** {fondo_str}"
         )
     else:
         apertura       = _ui_apertura(mueble.get("Apertura", ""))
@@ -1532,7 +1532,9 @@ def _bloque_dimensiones_c(entrada: dict, catalogo: dict) -> list[tuple[str, str]
 
     fondo = entry.get("fondo_mm")
     if fondo is not None:
-        items.append(("Fondo", f"{fondo} mm"))
+        # Tapetas: el "fondo" es en realidad el espesor del panel
+        etiqueta_fondo = "Espesor" if code in CODIGOS_TAPETA else "Fondo"
+        items.append((etiqueta_fondo, f"{fondo} mm"))
 
     return items
 
