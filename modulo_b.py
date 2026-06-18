@@ -548,6 +548,7 @@ def construir_entrada_modulo_c(
             ),
             "Reducción de ancho": _bool_str(reduccion),
             "Ancho reducido": ancho_reducido,
+            "Acabado": str(mueble.get("Acabado") or "").strip(),
             "Ancho CSV": "" if reduccion else ancho_raw,   # para Paso 2 cuando ancho_mm es null en catálogo
             "Alto CSV": (mueble.get("LenZ") or "").strip(),  # ídem para alto
             "Sin mecanizado": _bool_str(opcionales.get("op_121", False)),
@@ -557,7 +558,6 @@ def construir_entrada_modulo_c(
             "Cajón interior": _bool_str(opcionales.get("op_223", False)),
             "Mueble de caldera": _bool_str(opcionales.get("op_227", False)),
             "Sin encolar": _bool_str(opcionales.get("op_700_opcional", False)),
-            "Acabado": str(mueble.get("Acabado") or "").strip(),
             "Marca electro":        str(op_126.get("marca", "")).strip(),
             "Referencia electro":   str(op_126.get("referencia", "")).strip(),
             "Alto electro":         str(op_126.get("alto", "")).strip(),
