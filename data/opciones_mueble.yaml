@@ -843,3 +843,25 @@ avisos_desmontado:
     - EOV23060
   prefijos:
     - AGM
+
+
+# -----------------------------------------------------------------------------
+# tapetas — FF* y FFAL*
+# op_100 (gama): viene de D_Gama como siempre.
+# op_101 (acabado): viene de la columna "Acabado" del CSV (no de ColorFrente).
+# Sin apertura, sin tirador, sin color interior, sin rodapié.
+# -----------------------------------------------------------------------------
+tapetas:
+  op_101_desde_acabado: true   # modulo_c lee "Acabado" en lugar de "Acabado del frente"
+  codigos:
+    - FF12200
+    - FF12220
+    - FF1260
+    - FF1280
+    - FF1287
+    - FF1290
+    - FF12100
+    - FF12V
+    - FFAL1060
+    - FFAL1080
+    - FFAL10100

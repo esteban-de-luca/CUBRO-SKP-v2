@@ -1063,5 +1063,72 @@
     "ancho_mm": null,
     "alto_mm": null,
     "fondo_mm": 375
+  },
+  "FF12200": {
+    "designaciones": { "es": "Tapeta vertical" },
+    "ancho_mm": 120,
+    "alto_mm": 2000,
+    "fondo_mm": 19
+  },
+  "FF12220": {
+    "designaciones": { "es": "Tapeta vertical" },
+    "ancho_mm": 120,
+    "alto_mm": 2200,
+    "fondo_mm": 19
+  },
+  "FF1260": {
+    "designaciones": { "es": "Tapeta vertical" },
+    "ancho_mm": 120,
+    "alto_mm": 600,
+    "fondo_mm": 19
+  },
+  "FF1280": {
+    "designaciones": { "es": "Tapeta vertical" },
+    "ancho_mm": 120,
+    "alto_mm": 800,
+    "fondo_mm": 19
+  },
+  "FF1287": {
+    "designaciones": { "es": "Tapeta vertical girada 90°" },
+    "ancho_mm": 120,
+    "alto_mm": 870,
+    "fondo_mm": 19
+  },
+  "FF1290": {
+    "designaciones": { "es": "Tapeta vertical girada 90°" },
+    "ancho_mm": 120,
+    "alto_mm": 900,
+    "fondo_mm": 19
+  },
+  "FF12100": {
+    "designaciones": { "es": "Tapeta vertical" },
+    "ancho_mm": 120,
+    "alto_mm": 1000,
+    "fondo_mm": 19
+  },
+  "FF12V": {
+    "designaciones": { "es": "Tapeta vertical de altura variable" },
+    "ancho_mm": 120,
+    "alto_mm": null,
+    "fondo_mm": 19,
+    "alto_variable": { "min": 600, "max": 2450 }
+  },
+  "FFAL1060": {
+    "designaciones": { "es": "Tapeta de ángulo" },
+    "ancho_mm": 100,
+    "alto_mm": 600,
+    "fondo_mm": 19
+  },
+  "FFAL1080": {
+    "designaciones": { "es": "Tapeta de ángulo" },
+    "ancho_mm": 100,
+    "alto_mm": 800,
+    "fondo_mm": 19
+  },
+  "FFAL10100": {
+    "designaciones": { "es": "Tapeta de ángulo" },
+    "ancho_mm": 100,
+    "alto_mm": 1000,
+    "fondo_mm": 19
   }
 }
