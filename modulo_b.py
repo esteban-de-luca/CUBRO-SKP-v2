@@ -51,7 +51,7 @@ _TOOLTIPS_OPCIONALES = {
     "op_223":                "Añade un cajón interior dentro del mueble.",
     "op_227":                "El mueble se vacía de baldas para alojar una caldera.",
     "op_700_opcional":       "El mueble se entrega sin pegar. Las campanas HH siempre lo llevan para facilitar el ajuste en obra.",
-    "op_126":                "Datos del electrodoméstico encastrado. Marca obligatoria. Si conoces la referencia del modelo, introdúcela; si no, indica la altura del hueco en mm.",
+    "op_126":                "Datos del electrodoméstico encastrado. Si conoces la referencia del modelo, indica marca y referencia; si no, indica solo la altura del hueco en mm.",
 }
 
 _TIRADORES_SIN_COLOR = {"Touch Latch", "Prise de main", "Sin tirador"}
@@ -463,8 +463,8 @@ def _identificador_mueble(mueble: dict) -> str:
 
 
 # ----------------------------------------------------------------------------
-# Builder: Paso 1 → Módulo C (contrato Hipótesis B, 2026-05-11).
-# Genera una lista plana de 23 columnas por mueble. Mismas keys para todos
+# Builder: Paso 1 → Módulo C (contrato 2026-06-11, ver CLAUDE.md §9).
+# Genera una lista plana de filas, una por mueble. Mismas keys para todos
 # los muebles aunque la opcional no aplique (en ese caso "False" / "").
 # ----------------------------------------------------------------------------
 
@@ -502,7 +502,7 @@ def _sensor_led_export(valor) -> str:
 def construir_entrada_modulo_c(
     muebles: list[dict], selecciones: dict, catalogo: dict
 ) -> list[dict]:
-    """Construye la entrada para el Módulo C (23 columnas por mueble).
+    """Construye la entrada para el Módulo C (ver contrato en CLAUDE.md §9).
 
     Aplica las transformaciones CSV→UI de CLAUDE.md §8, incluyendo el caso
     Trasera=Laca → color del frente (igual que en la cabecera de cards).
@@ -1393,7 +1393,7 @@ def _bloque_configuracion(mueble: dict) -> list[tuple[str, str]]:
 
 
 def _bloque_configuracion_c(entrada: dict) -> list[tuple[str, str]]:
-    """Pares (etiqueta, valor) del bloque Configuración — Paso 2 (campos 23 columnas, ya en UI)."""
+    """Pares (etiqueta, valor) del bloque Configuración — Paso 2 (campos de entrada, ya en UI)."""
     items: list[tuple[str, str]] = []
     code = (entrada.get("Código mueble") or "").strip()
     if code in CODIGOS_MUEBLE_ABIERTO:
@@ -1469,7 +1469,7 @@ def _fmt_mm(val: str) -> str:
 
 
 def _bloque_dimensiones_c(entrada: dict, catalogo: dict) -> list[tuple[str, str]]:
-    """Pares (etiqueta, valor) del bloque Dimensiones — Paso 2 (campos 23 columnas)."""
+    """Pares (etiqueta, valor) del bloque Dimensiones — Paso 2."""
     items: list[tuple[str, str]] = []
     code  = (entrada.get("Código mueble") or "").strip()
     entry = catalogo.get(code) or {}
@@ -1506,7 +1506,7 @@ def _render_lista_items(items: list[tuple[str, str]]) -> None:
 def _render_card_resumen(entrada: dict, catalogo: dict) -> None:
     """Card-resumen NO plegable de un mueble en el Paso 2 (CLAUDE.md §7).
 
-    `entrada` tiene el formato 23 columnas extendido por modulo_c (ya en UI):
+    `entrada` es el dict de entrada extendido por modulo_c (ya en UI):
     'Código mueble', 'Gama del frente', 'Tirador'... + 'opciones_adicionales',
     'codigos_sg', 'p_item', 'avisos_c'.
     """

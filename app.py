@@ -140,7 +140,7 @@ _OPCIONALES_BOOL_EN_ENTRADA = (
 
 
 def _mock_pedido(muebles: list[dict], entrada: list[dict]) -> list[dict]:
-    """Mock del Módulo C — consume la entrada de 23 columnas (hipótesis B).
+    """Mock del Módulo C — consume la entrada de Paso 1 (CLAUDE.md §9).
 
     Devuelve la misma list[dict] que espera el Paso 2: cada entrada extiende
     el dict del mueble original con:
@@ -170,8 +170,7 @@ def _mock_pedido(muebles: list[dict], entrada: list[dict]) -> list[dict]:
         electro_partes = [
             fila.get("Marca electro", ""),
             fila.get("Referencia electro", ""),
-            fila.get("Altura electro", ""),
-            fila.get("Tipo electro", ""),
+            fila.get("Alto electro", ""),
         ]
         electro_partes = [p for p in electro_partes if p]
         if electro_partes:

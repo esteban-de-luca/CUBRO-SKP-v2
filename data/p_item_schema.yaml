@@ -43,12 +43,11 @@ p_variant_option_defaults:
 
 # ── Campos de p_built_in_detail y su columna de origen ───────────────────────
 # Mapeo: clave JSON (SG) → nombre de columna en la entrada del Módulo C.
-# Solo se incluye en el p_item cuando "Marca electro" está rellena.
+# Se genera cuando hay datos de electrodoméstico:
+#   Caso A (referencia conocida): p_manufacturer_code + p_appliance_reference.
+#   Caso B (sin referencia):      solo p_built_in_height (sin p_manufacturer_code).
 
 p_built_in_detail_mapping:
-  # Solo se genera cuando Marca + Referencia están presentes.
-  # Tipo y dimensiones van a op_900 cuando no hay referencia (ver modulo_c).
-
-  p_manufacturer_code:   "Marca electro"       # marca del electrodoméstico
+  p_manufacturer_code:   "Marca electro"       # marca — solo Caso A
   p_appliance_reference: "Referencia electro"  # Caso A — referencia conocida
   p_built_in_height:     "Alto electro"        # Caso B — altura en mm (string)
