@@ -232,6 +232,14 @@ CODIGOS_SIN_APERTURA |= CODIGOS_TAPETA
 CODIGOS_SIN_INTERIOR |= CODIGOS_TAPETA
 CODIGOS_SIN_RODAPIE  |= CODIGOS_TAPETA
 
+# Rodapiés (SOCX*): sin apertura, tirador, color interior ni patas.
+# op_401 viene de la columna "Acabado" del CSV (mismo índice que op_101).
+# El campo Ancho llega vacío desde SketchUp (la X del código sustituye el ancho).
+CODIGOS_RODAPIE: set[str] = set((_OPCIONES.get("rodapiés") or {}).get("codigos") or [])
+CODIGOS_SIN_APERTURA |= CODIGOS_RODAPIE
+# CODIGOS_SIN_INTERIOR y CODIGOS_SIN_RODAPIE ya incluyen CODIGOS_RODAPIE
+# vía op_200.excepciones y op_402.excepciones respectivamente.
+
 # Altos estándar por código para validación A21
 CATALOG_ALTOS: dict[str, int] = {
     code: data["alto_mm"]
@@ -536,11 +544,12 @@ def parsear_csv(archivo) -> dict:
             continue
 
         # I05 — Ancho vacío → descarte silencioso (subcomponentes -C1, -P1, etc.)
+        # Excepción: rodapiés (SOCX*) no transmiten el ancho desde SketchUp.
         ancho_check = _str_or_none(fila.get("Ancho", ""))
-        if ancho_check is None:
+        if ancho_check is None and name_raw not in CODIGOS_RODAPIE:
             continue
 
-        ancho_raw          = ancho_check
+        ancho_raw          = ancho_check or ""   # rodapié: ancho vacío (no transmitido)
         ancho_reducido_raw = _str_or_none(fila.get("Ancho reducido", ""))
         acabado_raw        = _str_or_none(fila.get("Acabado", ""))
         name_skp           = name_raw  # preservar Name original de SketchUp
@@ -667,17 +676,18 @@ def parsear_csv(archivo) -> dict:
         color_tirador = None
 
         if not es_mueble_abierto:
-            # Tapetas (FF*/FFAL*): sin tirador, sin color de tirador
-            es_tapeta = name_raw in CODIGOS_TAPETA
+            # Tapetas (FF*/FFAL*) y rodapiés (SOCX*): sin tirador, sin color de tirador
+            es_tapeta   = name_raw in CODIGOS_TAPETA
+            es_rodapie  = name_raw in CODIGOS_RODAPIE
 
-            # A12/A14 — Tirador (no aplica a tapetas)
-            if not es_tapeta:
+            # A12/A14 — Tirador (no aplica a tapetas ni rodapiés)
+            if not es_tapeta and not es_rodapie:
                 tirador = _normalizar_tirador(fila.get("Tirador", ""))
-            if not es_tapeta and tirador is None:
+            if not es_tapeta and not es_rodapie and tirador is None:
                 avisos.append("Falta el tipo de tirador")
-            elif not es_tapeta and tirador not in TIRADORES_VALIDOS:
+            elif not es_tapeta and not es_rodapie and tirador not in TIRADORES_VALIDOS:
                 avisos.append(f"Tipo de tirador '{_ui_tirador.get(str(tirador), str(tirador))}' no reconocido")
-            elif not es_tapeta and tirador in TIRADORES_MECANISMO:
+            elif not es_tapeta and not es_rodapie and tirador in TIRADORES_MECANISMO:
                 # Touch Latch (20) o Prise de main (21) — validar compatibilidad con el mueble
                 _nombre_tir = _ui_tirador.get(str(tirador), str(tirador))
                 if name_raw in CODIGOS_SIN_MECANISMO:
@@ -705,9 +715,9 @@ def parsear_csv(archivo) -> dict:
                         f"solo se admiten: {', '.join(_permitidos)}"
                     )
 
-            # A11 — D_Gama vacío
+            # A11 — D_Gama vacío (no aplica a rodapiés — no usan op_100)
             d_gama = _str_or_none(fila.get("D_Gama", ""))
-            if d_gama is None:
+            if d_gama is None and not es_rodapie:
                 avisos.append("Falta la gama del frente")
 
             # A05/A13 — Color del interior (no aplica a frentes sin mueble)
