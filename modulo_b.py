@@ -1425,8 +1425,9 @@ def _agrupar_rodapies(muebles_rodapie: list[dict]) -> list[dict]:
         key = f"{code_skp}|{gama_ui}|{acabado_ui}"
 
         ancho_raw = (m.get("Ancho") or "").strip()
-        match_mm  = re.match(r"^(\d+)\s*mm$", ancho_raw)
-        ancho_mm  = int(match_mm.group(1)) if match_mm else 0
+        # Acepta enteros y decimales con punto o coma ("4721,2 mm", "2769 mm", "2769.5 mm")
+        match_mm  = re.match(r"^(\d+(?:[.,]\d+)?)\s*mm$", ancho_raw)
+        ancho_mm  = round(float(match_mm.group(1).replace(",", "."))) if match_mm else 0
         summary   = (m.get("Summary") or "").strip()
 
         if key not in grupos:
