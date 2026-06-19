@@ -526,11 +526,12 @@ def calcular_opciones(entrada: list[dict]) -> list[dict]:
         # El orden de claves sigue exactamente el contrato de Schmidt Groupe.
         _d = _p_item_defaults()
 
-        # Tapetas: p_width = ancho nominal del catálogo (el SKP puede mostrar otra medida).
-        # FF12V: p_height = alto introducido por el usuario (pieza a medida para ajuste en obra).
-        _codigos_tapeta_c: set[str] = set((op_mueble.get("tapetas") or {}).get("codigos") or [])
+        # Tapetas: solo se rellena la dimensión variable.
+        # SG conoce las dimensiones estándar por el código de artículo → el resto va a 0.
+        # FF12V: dimensión variable = alto → p_height = valor introducido por el usuario.
+        # Resto de tapetas: ninguna dimensión variable → p_width/p_height/p_depth = 0.
         _alto_final = (fila.get("Alto final tapeta") or "").strip()
-        _p_width  = cat_entry["ancho_mm"] if code in _codigos_tapeta_c and cat_entry.get("ancho_mm") else _d.get("p_width", 0)
+        _p_width  = _d.get("p_width", 0)
         _p_height = int(_alto_final) if code == "FF12V" and _alto_final.isdigit() else _d.get("p_height", 0)
 
         p_item: dict = {
