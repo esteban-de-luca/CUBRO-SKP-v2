@@ -107,6 +107,12 @@ CODIGOS_TAPETA: set[str] = set(
     ((_OPCIONES_RAW.get("tapetas") or {}).get("codigos")) or []
 )
 
+# Rodapiés (SOC*): sin apertura, tirador, color interior ni patas.
+# op_401 viene de la columna "Acabado" del CSV (mismo índice que op_101).
+CODIGOS_RODAPIE: set[str] = set(
+    ((_OPCIONES_RAW.get("rodapiés") or {}).get("codigos")) or []
+)
+
 
 def _es_desmontado(code: str) -> bool:
     """True si el mueble siempre se envía desmontado al cliente (aviso informativo)."""
@@ -569,9 +575,9 @@ def construir_entrada_modulo_c(
             ),
             "Reducción de ancho": _bool_str(reduccion),
             "Ancho reducido": ancho_reducido,
-            # Tapetas: quitar sufijo de gama para que modulo_c pueda hacer el lookup op_101
-            # igual que se hace con "Acabado del frente" en muebles normales.
-            "Acabado": _ui_color_frente(mueble.get("Acabado") or "") if name in CODIGOS_TAPETA else str(mueble.get("Acabado") or "").strip(),
+            # Tapetas y rodapiés: quitar sufijo de gama para que modulo_c pueda hacer
+            # el lookup op_101 (tapetas) / op_401 (rodapiés) igual que "Acabado del frente".
+            "Acabado": _ui_color_frente(mueble.get("Acabado") or "") if name in CODIGOS_TAPETA or name in CODIGOS_RODAPIE else str(mueble.get("Acabado") or "").strip(),
             "Ancho CSV": "" if reduccion else ancho_raw,   # para Paso 2 cuando ancho_mm es null en catálogo
             "Alto CSV": alto_csv_final,                      # FF12V: alto del usuario; resto: LenZ de SKP
             "Alto final tapeta": alto_ff12v if name == "FF12V" and _alto_ff12v_valido(alto_ff12v) else "",
@@ -616,6 +622,10 @@ def _cabecera_card(mueble: dict, catalogo: dict, revisado: bool) -> str:
         gama_acabado = " ".join(p for p in (gama, acabado) if p)
         if gama_acabado:
             partes.append(gama_acabado)
+    elif name_code in CODIGOS_RODAPIE:
+        acabado = _ui_color_frente(mueble.get("Acabado") or "")   # quita sufijo gama
+        if acabado:
+            partes.append(acabado)
     else:
         gama = _ui_gama(mueble.get("D_Gama", ""))
         color = _ui_color_frente(mueble.get("ColorFrente", ""))
@@ -710,6 +720,15 @@ def _bloque_informativo(mueble: dict, catalogo: dict) -> None:
                 f"pero se enviará de **{ancho_std}** que es el ancho estándar.",
                 icon="ℹ️",
             )
+    elif name in CODIGOS_RODAPIE:
+        acabado   = _ui_color_frente(mueble.get("Acabado") or "")   # quita sufijo gama
+        ancho_std = f"{entry.get('ancho_mm')} mm" if entry.get("ancho_mm") else "—"
+        st.markdown(
+            f"**Acabado:** {acabado or '—'}  ·  "
+            f"**Ancho:** {ancho_std}  ·  "
+            f"**Alto:** {alto_str}  ·  "
+            f"**Espesor:** {fondo_str}"
+        )
     else:
         apertura       = _ui_apertura(mueble.get("Apertura", ""))
         color_interior = _ui_color_interior(mueble.get("Color del interior", ""))
@@ -782,10 +801,10 @@ def _opcionales_aplicables(mueble: dict, interfaz: dict) -> list[str]:
         if name in (interfaz.get(op_id, {}).get("muebles") or []):
             aplicables.append(op_id)
 
-    # op_700 — aplica a todos salvo los no_aplica y las tapetas (sin encolar no tiene sentido).
+    # op_700 — aplica a todos salvo los no_aplica, tapetas y rodapiés.
     # Los forzadas (campanas HH*) también se incluyen: se muestran desactivados y marcados.
     meta_700 = interfaz.get("op_700_opcional") or {}
-    if "op_700_opcional" in interfaz and name not in (meta_700.get("excluidos") or []) and name not in CODIGOS_TAPETA:
+    if "op_700_opcional" in interfaz and name not in (meta_700.get("excluidos") or []) and name not in CODIGOS_TAPETA and name not in CODIGOS_RODAPIE:
         aplicables.append("op_700_opcional")
 
     # op_126 — lista plana de muebles (BFT y AFS)
@@ -1387,11 +1406,17 @@ def paso_1(muebles: list[dict]) -> None:
                 img_path    = _imagen_mueble(name)
                 meta_126    = _meta_op_126(name, interfaz)
                 es_abierto  = name in CODIGOS_MUEBLE_ABIERTO
-                # Helper local: swatch adaptado a mueble normal o tapeta
+                # Helper local: swatch adaptado a mueble normal, tapeta o rodapié
                 def _swatch(en_imagen: bool = True) -> None:
                     if es_abierto:
                         return
                     if name in CODIGOS_TAPETA:
+                        _render_swatches_color(
+                            _ui_color_frente(mueble.get("Acabado") or ""),
+                            "",
+                            etiqueta_frente="Acabado",
+                        )
+                    elif name in CODIGOS_RODAPIE:
                         _render_swatches_color(
                             _ui_color_frente(mueble.get("Acabado") or ""),
                             "",
@@ -1547,6 +1572,10 @@ def _bloque_configuracion_c(entrada: dict) -> list[tuple[str, str]]:
         gama_acabado = " ".join(p for p in (gama, acabado) if p)
         if gama_acabado:
             items.append(("Gama y acabado", gama_acabado))
+    elif code in CODIGOS_RODAPIE:
+        acabado = _ui_color_frente(entrada.get("Acabado") or "")   # quita sufijo gama
+        if acabado:
+            items.append(("Acabado", acabado))
     else:
         apertura = (entrada.get("Apertura") or "").strip()
         if apertura:
@@ -1637,8 +1666,8 @@ def _bloque_dimensiones_c(entrada: dict, catalogo: dict) -> list[tuple[str, str]
 
     fondo = entry.get("fondo_mm")
     if fondo is not None:
-        # Tapetas: el "fondo" es en realidad el espesor del panel
-        etiqueta_fondo = "Espesor" if code in CODIGOS_TAPETA else "Fondo"
+        # Tapetas y rodapiés: el "fondo" es en realidad el espesor del panel
+        etiqueta_fondo = "Espesor" if code in CODIGOS_TAPETA or code in CODIGOS_RODAPIE else "Fondo"
         items.append((etiqueta_fondo, f"{fondo} mm"))
 
     return items
@@ -1670,9 +1699,10 @@ def _render_card_resumen(entrada: dict, catalogo: dict) -> None:
     img_path = _imagen_mueble(code)
 
     es_tapeta      = code in CODIGOS_TAPETA
+    es_rodapie     = code in CODIGOS_RODAPIE
     es_abierto     = code in CODIGOS_MUEBLE_ABIERTO
-    # Tapetas: el color de acabado llega en "Acabado", no en "Acabado del frente"
-    if es_tapeta:
+    # Tapetas y rodapiés: el color de acabado llega en "Acabado", no en "Acabado del frente"
+    if es_tapeta or es_rodapie:
         color_frente    = _ui_color_frente(entrada.get("Acabado") or "")
         etiqueta_frente = "Acabado"
     else:

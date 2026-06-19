@@ -241,6 +241,10 @@ def _calcular_opciones_mueble(
     # ── Tapetas (FF*/FFAL*): op_101 viene de "Acabado" en lugar de "Acabado del frente" ──
     codigos_tapeta: set[str] = set((op_mueble.get("tapetas") or {}).get("codigos") or [])
 
+    # ── Rodapiés (SOC*): op_401 en lugar de op_100+op_101, viene de "Acabado" ──
+    codigos_rodapie: set[str] = set((op_mueble.get("rodapiés") or {}).get("codigos") or [])
+    es_rodapie = code in codigos_rodapie
+
     if es_abierto:
         # op_410 — Acabado del mueble abierto
         # op_420 — Acabado de la trasera (mismo código SG, forzada e invisible)
@@ -249,6 +253,13 @@ def _calcular_opciones_mueble(
         if sg_410:
             _sg("op_410", sg_410)  # visible en Configuración, no en Opciones adicionales
             _sg("op_420", sg_410)  # forzada e invisible, mismo código
+    elif es_rodapie:
+        # ── op_401 — Acabado del rodapié (mismo índice de valores que op_101) ────
+        # No se envía op_100 (gama), SG lo determina a partir del código de artículo.
+        acabado_rod = (fila.get("Acabado") or "").strip()
+        sg_401 = indices.get("op_101", {}).get(acabado_rod, "")
+        if sg_401:
+            _sg("op_401", sg_401)
     else:
         # ── op_100 — Gama del frente (todos: O) ──────────────────────────────────
         sg_100 = indices.get("op_100", {}).get(gama_ui, "")
@@ -468,9 +479,10 @@ def calcular_opciones(entrada: list[dict]) -> list[dict]:
                 p_hinge = None
 
         # ── p_fastening ───────────────────────────────────────────────────────
-        # Tapetas: no se envía (SG lo determina internamente). Se omite del JSON vía _sin_nulos.
+        # Tapetas y rodapiés: no se envía. Se omite del JSON vía _sin_nulos.
         _codigos_tapeta_fast: set[str] = set((op_mueble.get("tapetas") or {}).get("codigos") or [])
-        if code in _codigos_tapeta_fast:
+        _codigos_rodapie_fast: set[str] = set((op_mueble.get("rodapiés") or {}).get("codigos") or [])
+        if code in _codigos_tapeta_fast or code in _codigos_rodapie_fast:
             p_fastening = None
         else:
             _ps_segun_rodapie: set[str] = set(

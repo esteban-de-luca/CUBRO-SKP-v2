@@ -57,6 +57,8 @@ opciones:
   - { skp: "", ui: Referencia LVV/LVD,          sg: p_built_in_detail }
   - { skp: "", ui: Referencia LVD,              sg: p_built_in_detail }
   - { skp: "", ui: Referencia campana,          sg: p_built_in_detail }
+  # Rodapiés SOC*
+  - { skp: Acabado, ui: Acabado rodapié, sg: op_401 }   # mismo índice de valores que op_101
 
   # Forzadas por el Módulo C (sin intervención del usuario)
   - { skp: "", ui: "", sg: op_103 }
