@@ -1982,6 +1982,8 @@ def _render_card_resumen(entrada: dict, catalogo: dict) -> None:
         titulo = f"### {prefijo}{nombre}"
         if des:
             titulo += f"  ·  {des}"
+    img_path = _imagen_mueble(code)
+
     # Tapetas y rodapiés: el color de acabado llega en "Acabado", no en "Acabado del frente"
     if es_tapeta or es_rodapie:
         color_frente    = _ui_color_frente(entrada.get("Acabado") or "")
