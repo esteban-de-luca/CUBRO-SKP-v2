@@ -263,7 +263,7 @@ Color del interior · Tirador · Trasera · Color tir. de superficie ·
 C_Rodapietext · Ancho · Ancho reducido · Acabado · LenZ · Avisos
 ```
 
-- `Acabado`: columna obligatoria del CSV. Para tapetas es el código de acabado del frente (con sufijo de gama, p.ej. "Pistachio LINOLEO"). Para el resto de muebles, campo pendiente de mapeo a opciones SG.
+- `Acabado`: columna obligatoria del CSV. Para tapetas contiene el color del frente con sufijo de gama tal como viene del CSV (p.ej. "Pistachio LINOLEO") — modulo_b quita el sufijo antes de pasarlo al contrato B→C. Para el resto de muebles, campo pendiente de mapeo a opciones SG.
 - `Estado`: `✅ CORRECTO` o `⚠️ REVISAR`. Si REVISAR → bloquea avance.
 - `Avisos`: string concatenada con ` | ` (con espacios). Códigos posibles: A02, A05, A09, A10, A11, A12, A17, A21, A22, A23, E07, CB12.
 - `Name SKP`: nombre original que vino de SketchUp. Siempre presente (úsalo como identificador en UI cuando `Name` esté vacío o no resuelto).
@@ -288,7 +288,7 @@ Contrato actualizado 2026-06-19. `list[dict]` plana, una fila por mueble, **31 k
 | 12 | Acabado del mueble abierto | `str` | Solo EOV/EOAVV (muebles sin frente). Vacío para el resto |
 | 13 | Reducción de ancho | `"True"`/`"False"` | CSV `Ancho == "10000 mm"` |
 | 14 | Ancho reducido | `str` | Valor cuando Reducción=True, sino `""` |
-| 15 | Acabado | `str` | CSV `Acabado` directo. Usado por modulo_c como op_101 para tapetas |
+| 15 | Acabado | `str` | CSV `Acabado` sin sufijo de gama (p.ej. "Pistachio", no "Pistachio LINOLEO"). Usado por modulo_c como op_101 para tapetas; mismo lookup que "Acabado del frente" |
 | 16 | Ancho CSV | `str` | Ancho del modelo SKP (vacío si hay reducción). Para Paso 2 cuando catálogo no tiene ancho_mm |
 | 17 | Alto CSV | `str` | LenZ del modelo SKP. Para FF12V: alto introducido por el usuario en mm |
 | 18 | Alto final tapeta | `str` | Entero en mm solo para FF12V con alto válido. Usado por modulo_c para `p_height`. Vacío para el resto |
@@ -308,7 +308,7 @@ Contrato actualizado 2026-06-19. `list[dict]` plana, una fila por mueble, **31 k
 
 **Electro Caso A / Caso B:** si el usuario conoce la referencia → rellena Marca + Referencia electro (genera `p_built_in_detail`). Si no → rellena Marca + Alto electro (genera `p_built_in_detail` con `p_built_in_height`). Campanas (HH) solo admiten Caso A.
 
-**Tapetas (FF12*/FFAL10*):** Apertura, Color interior, Tirador, Color tirador, Rodapié y Acabado del mueble abierto siempre vacíos. `Acabado` contiene el color con sufijo de gama tal como viene del CSV (modulo_c lo usa directamente para op_101). Solo FF12V usa "Alto final tapeta". Dimensiones JSON: `p_width = p_depth = 0` (SG las conoce por código); `p_height = 0` salvo FF12V.
+**Tapetas (FF12*/FFAL10*):** Apertura, Color interior, Tirador, Color tirador, Rodapié y Acabado del mueble abierto siempre vacíos. `Acabado` contiene el color **sin sufijo de gama** ("Pistachio", no "Pistachio LINOLEO") — modulo_b lo procesa con `_ui_color_frente()` igual que "Acabado del frente". modulo_c lo usa para op_101 con el mismo índice UI→SG. Solo FF12V usa "Alto final tapeta". Dimensiones JSON: `p_width = p_depth = 0` (SG las conoce por código); `p_height = 0` salvo FF12V.
 
 ### `data/catalogo.json`
 

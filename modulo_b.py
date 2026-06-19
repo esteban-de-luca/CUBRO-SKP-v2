@@ -569,7 +569,9 @@ def construir_entrada_modulo_c(
             ),
             "Reducción de ancho": _bool_str(reduccion),
             "Ancho reducido": ancho_reducido,
-            "Acabado": str(mueble.get("Acabado") or "").strip(),
+            # Tapetas: quitar sufijo de gama para que modulo_c pueda hacer el lookup op_101
+            # igual que se hace con "Acabado del frente" en muebles normales.
+            "Acabado": _ui_color_frente(mueble.get("Acabado") or "") if name in CODIGOS_TAPETA else str(mueble.get("Acabado") or "").strip(),
             "Ancho CSV": "" if reduccion else ancho_raw,   # para Paso 2 cuando ancho_mm es null en catálogo
             "Alto CSV": alto_csv_final,                      # FF12V: alto del usuario; resto: LenZ de SKP
             "Alto final tapeta": alto_ff12v if name == "FF12V" and _alto_ff12v_valido(alto_ff12v) else "",
