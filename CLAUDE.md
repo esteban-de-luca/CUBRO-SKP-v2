@@ -40,9 +40,9 @@ SketchUp → Export CSV → Módulo A (validación) → Módulo B (UI Paso 1)
 
 ### Reglas de archivos
 
-- Cada persona edita exclusivamente su archivo. Nadie toca el archivo de otro sin coordinación explícita previa.
-- `app.py` es responsabilidad de Esteban. Si excepcionalmente alguien más necesita tocarlo, avisar al equipo antes.
-- Los archivos compartidos (`data/*.yaml`, `data/catalogo.json`) requieren avisar al equipo **antes** de hacer push.
+- La asignación de archivos por persona es orientativa, no una restricción operativa.
+- Claude puede modificar cualquier archivo del proyecto sin pedir permiso a nadie — basta con que alguien del equipo lo pida en la sesión.
+- Los archivos compartidos (`data/*.yaml`, `data/catalogo.json`) se editan directamente cuando sea necesario.
 
 ### Herramientas
 
@@ -101,7 +101,7 @@ Inicio de sesión
       ↓
 git pull  →  sincronizar cambios de compañeros
       ↓
-Editar MI archivo en el repositorio local
+Editar los archivos necesarios en el repositorio local
       ↓
 git add + commit + push  →  GitHub  →  Streamlit se actualiza
       ↓
@@ -112,11 +112,7 @@ Avisar al equipo si el cambio afecta a otros módulos
 
 ## 3. Quién soy yo en este contexto
 
-Estás interactuando con **Esteban**, responsable del Módulo B. Por tanto:
-
-- Solo se modifica `modulo_b.py` y `app.py` (la orquestación general también es responsabilidad del Módulo B, ya que B es la UI).
-- **NO se modifican** `modulo_a.py`, `modulo_c.py`, `data/mapeos_SKP_UI_SG.yaml`, `data/reglas.yaml` ni `data/catalogo.json` sin coordinación explícita.
-- Si una decisión arquitectónica afecta a A o C, hay que documentarla y avisar a Javier/Lucía — no modificar sus archivos.
+Estás interactuando con el equipo de CUBRO. Claude puede modificar cualquier archivo del proyecto — `modulo_a.py`, `modulo_b.py`, `modulo_c.py`, `app.py`, cualquier YAML/JSON — sin pedir permiso ni coordinación previa. Cuando alguien del equipo pide un cambio, se hace y punto.
 
 ---
 
