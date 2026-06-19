@@ -1593,11 +1593,15 @@ def paso_1(muebles: list[dict]) -> None:
     if "rodapie_grupos_abiertos" not in st.session_state:
         st.session_state.rodapie_grupos_abiertos = set()
     for grupo in grupos_rodapie:
+        key_g = grupo["key"]
+        es_nuevo = key_g not in st.session_state.rodapie_grupos
         st.session_state.rodapie_grupos.setdefault(
-            grupo["key"], {"n3600": 0, "n1800": 0, "check": False}
+            key_g, {"n3600": 0, "n1800": 0, "check": False}
         )
-        # Nuevos grupos empiezan expandidos
-        st.session_state.rodapie_grupos_abiertos.add(grupo["key"])
+        if es_nuevo:
+            # Solo los grupos nuevos empiezan expandidos;
+            # los ya existentes conservan su estado (colapsado si estaban revisados)
+            st.session_state.rodapie_grupos_abiertos.add(key_g)
 
     # Expandidos por defecto: inicializar con todas las claves si aún no existe.
     if "paso_1_abiertos" not in st.session_state:
