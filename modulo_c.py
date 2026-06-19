@@ -449,6 +449,9 @@ def calcular_opciones(entrada: list[dict]) -> list[dict]:
     indices    = _build_indices(mapeos)
     nombres_fr = mapeos.get("nombres") or {}
 
+    # Códigos SG de rodapié (SOC36010, SOC18010, SOC3607, SOC1807) — para p_quantity
+    _codigos_rodapie_sg: set[str] = set((op_mueble.get("rodapiés") or {}).get("codigos_sg") or [])
+
     resultado: list[dict] = []
 
     for i, fila in enumerate(entrada):
@@ -559,7 +562,7 @@ def calcular_opciones(entrada: list[dict]) -> list[dict]:
             "p_item_code":             code,
             "p_item_label":            label_fr,
             "p_item_origin_id":        (fila.get("Summary") or "").strip() or None,
-            "p_quantity":              int((fila.get("Cantidad") or "").strip() or 0) if code in codigos_rodapie_sg and (fila.get("Cantidad") or "").strip() else _d.get("p_quantity", 1),
+            "p_quantity":              int((fila.get("Cantidad") or "").strip() or 0) if code in _codigos_rodapie_sg and (fila.get("Cantidad") or "").strip() else _d.get("p_quantity", 1),
             "p_hinge":                 p_hinge,
             "p_fastening":             p_fastening,
             "p_width":                 _p_width,
