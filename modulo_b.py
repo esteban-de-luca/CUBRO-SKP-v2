@@ -1465,13 +1465,14 @@ def _render_card_grupo_rodapie(grupo: dict, catalogo: dict) -> None:  # noqa: C9
     )
     revisado = bool(estado.get("check", False))
 
-    alto_mm = 100 if code_skp == "SOCX10" else 70
-    titulo  = (
+    alto_mm  = 100 if code_skp == "SOCX10" else 70
+    titulo   = (
         f"{'🟢' if revisado else '🔴'}  Rodapié {alto_mm} mm  ·  "
         f"{acabado_ui} ({gama_ui})  ·  Total necesario: {total_mm} mm"
     )
+    expanded = key in st.session_state.get("rodapie_grupos_abiertos", set())
 
-    with st.expander(titulo, expanded=True):
+    with st.expander(titulo, expanded=expanded):
         img_path = _imagen_mueble(code_skp)
         col_img, col_body = (st.columns([1, 3]) if img_path else (None, None))
 
@@ -1558,6 +1559,11 @@ def _render_card_grupo_rodapie(grupo: dict, catalogo: dict) -> None:  # noqa: C9
             )
             if nuevo_check != revisado:
                 estado["check"] = nuevo_check
+                abiertos_rod = st.session_state.setdefault("rodapie_grupos_abiertos", set())
+                if nuevo_check:
+                    abiertos_rod.discard(key)   # colapsar al marcar
+                else:
+                    abiertos_rod.add(key)        # expandir al desmarcar
                 st.rerun()
 
         if img_path and col_img is not None:
@@ -1584,10 +1590,14 @@ def paso_1(muebles: list[dict]) -> None:
     # Inicializar estado de grupos en session_state
     if "rodapie_grupos" not in st.session_state:
         st.session_state.rodapie_grupos = {}
+    if "rodapie_grupos_abiertos" not in st.session_state:
+        st.session_state.rodapie_grupos_abiertos = set()
     for grupo in grupos_rodapie:
         st.session_state.rodapie_grupos.setdefault(
             grupo["key"], {"n3600": 0, "n1800": 0, "check": False}
         )
+        # Nuevos grupos empiezan expandidos
+        st.session_state.rodapie_grupos_abiertos.add(grupo["key"])
 
     # Expandidos por defecto: inicializar con todas las claves si aún no existe.
     if "paso_1_abiertos" not in st.session_state:
