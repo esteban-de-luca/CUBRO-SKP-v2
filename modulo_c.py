@@ -468,15 +468,20 @@ def calcular_opciones(entrada: list[dict]) -> list[dict]:
                 p_hinge = None
 
         # ── p_fastening ───────────────────────────────────────────────────────
-        _ps_segun_rodapie: set[str] = set(
-            ((op_mueble.get("op_402") or {}).get("p_s_segun_rodapie")) or []
-        )
-        if code in _ps_segun_rodapie:
-            # EOVV37, EOAVV37: suspendido si rodapié vacío, posado si "70 mm" o "100 mm"
-            _rodapie_val = (fila.get("Rodapié") or "").strip()
-            p_fastening = "P" if _rodapie_val else "S"
+        # Tapetas: no se envía (SG lo determina internamente). Se omite del JSON vía _sin_nulos.
+        _codigos_tapeta_fast: set[str] = set((op_mueble.get("tapetas") or {}).get("codigos") or [])
+        if code in _codigos_tapeta_fast:
+            p_fastening = None
         else:
-            p_fastening = "S" if _es_suspendido(code, op_mueble) else "P"
+            _ps_segun_rodapie: set[str] = set(
+                ((op_mueble.get("op_402") or {}).get("p_s_segun_rodapie")) or []
+            )
+            if code in _ps_segun_rodapie:
+                # EOVV37, EOAVV37: suspendido si rodapié vacío, posado si "70 mm" o "100 mm"
+                _rodapie_val = (fila.get("Rodapié") or "").strip()
+                p_fastening = "P" if _rodapie_val else "S"
+            else:
+                p_fastening = "S" if _es_suspendido(code, op_mueble) else "P"
 
         # ── Opciones ──────────────────────────────────────────────────────────
         opciones_sg, opc_adic, codigos, avisos = _calcular_opciones_mueble(
