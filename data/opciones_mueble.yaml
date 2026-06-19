@@ -170,24 +170,20 @@ p_hinge:
 # op_100 — Gama del frente
 # -----------------------------------------------------------------------------
 op_100:
-  todos: O   # Obligatoria en todos excepto rodapiés (SOC*)
+  todos: O   # Obligatoria en todos excepto rodapiés (SOCX*)
   excepciones:
-    - SOC36010   # no aplica — rodapié (solo op_401)
-    - SOC18010   # no aplica — rodapié
-    - SOC3607    # no aplica — rodapié
-    - SOC1807    # no aplica — rodapié
+    - SOCX10   # no aplica — rodapié (solo op_401)
+    - SOCX07   # no aplica — rodapié
 
 
 # -----------------------------------------------------------------------------
 # op_101 — Acabado del frente
 # -----------------------------------------------------------------------------
 op_101:
-  todos: O   # Obligatoria en todos excepto rodapiés (SOC* usan op_401 en su lugar)
+  todos: O   # Obligatoria en todos excepto rodapiés (SOCX* usan op_401 en su lugar)
   excepciones:
-    - SOC36010   # no aplica — rodapié (usa op_401)
-    - SOC18010   # no aplica — rodapié
-    - SOC3607    # no aplica — rodapié
-    - SOC1807    # no aplica — rodapié
+    - SOCX10   # no aplica — rodapié (usa op_401)
+    - SOCX07   # no aplica — rodapié
 
 
 # -----------------------------------------------------------------------------
@@ -244,10 +240,8 @@ op_200:
     - FFAL1060     # no aplica — tapeta
     - FFAL1080     # no aplica — tapeta
     - FFAL10100    # no aplica — tapeta
-    - SOC36010     # no aplica — rodapié (sin mueble interior)
-    - SOC18010     # no aplica — rodapié
-    - SOC3607      # no aplica — rodapié
-    - SOC1807      # no aplica — rodapié
+    - SOCX10       # no aplica — rodapié (sin mueble interior)
+    - SOCX07       # no aplica — rodapié
 
 
 # -----------------------------------------------------------------------------
@@ -691,10 +685,8 @@ op_402:
     - FFAL1060     # no aplica — tapeta
     - FFAL1080     # no aplica — tapeta
     - FFAL10100    # no aplica — tapeta
-    - SOC36010     # no aplica — rodapié (sin patas)
-    - SOC18010     # no aplica — rodapié
-    - SOC3607      # no aplica — rodapié
-    - SOC1807      # no aplica — rodapié
+    - SOCX10       # no aplica — rodapié (sin patas)
+    - SOCX07       # no aplica — rodapié
   restricciones_valores:
     # Muebles de banco: admiten además el rodapié de 10 mm (SPI)
     BC604035: ["10 mm", "70 mm", "100 mm"]
@@ -750,10 +742,8 @@ op_700:
     - PO1BIF6080   # añadido 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026
     - PO2BIF4580   # añadido 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026
     - PO2BIF6080   # añadido 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026
-    - SOC36010     # no aplica — rodapié
-    - SOC18010     # no aplica — rodapié
-    - SOC3607      # no aplica — rodapié
-    - SOC1807      # no aplica — rodapié
+    - SOCX10       # no aplica — rodapié
+    - SOCX07       # no aplica — rodapié
 
 
 # -----------------------------------------------------------------------------
@@ -920,7 +910,5 @@ tapetas:
 rodapiés:
   op_401_desde_acabado: true   # modulo_c lee "Acabado" y lo mapea como op_401
   codigos:
-    - SOC36010
-    - SOC18010
-    - SOC3607
-    - SOC1807
+    - SOCX10
+    - SOCX07

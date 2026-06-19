@@ -1131,27 +1131,15 @@
     "alto_mm": 1000,
     "fondo_mm": 19
   },
-  "SOC36010": {
+  "SOCX10": {
     "designaciones": { "es": "Rodapié" },
-    "ancho_mm": 3600,
+    "ancho_mm": null,
     "alto_mm": 100,
     "fondo_mm": 13
   },
-  "SOC18010": {
+  "SOCX07": {
     "designaciones": { "es": "Rodapié" },
-    "ancho_mm": 1800,
-    "alto_mm": 100,
-    "fondo_mm": 13
-  },
-  "SOC3607": {
-    "designaciones": { "es": "Rodapié" },
-    "ancho_mm": 3600,
-    "alto_mm": 70,
-    "fondo_mm": 13
-  },
-  "SOC1807": {
-    "designaciones": { "es": "Rodapié" },
-    "ancho_mm": 1800,
+    "ancho_mm": null,
     "alto_mm": 70,
     "fondo_mm": 13
   }

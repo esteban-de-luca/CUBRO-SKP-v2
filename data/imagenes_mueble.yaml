@@ -64,5 +64,5 @@ prefijos:
   A2I:      A2I.png
   H1:       H1.png
   HR:       HR.png
-  SOC:      SO.png          # rodapiés SOC36010, SOC18010, SOC3607, SOC1807
+  SOC:      SO.png          # rodapiés SOCX10, SOCX07
   B:        B.png           # catch-all para muebles B no capturados antes
