@@ -633,7 +633,7 @@ def construir_entrada_modulo_c(
                 "Código mueble": cod,
                 "Descripción": desc,
                 "Posición": "",
-                "Summary": f"{code_skp}_{gama_ui}_{acabado_ui}",
+                "Summary": "",
                 "Apertura": "",
                 "Gama del frente": gama_ui,
                 "Acabado del frente": acabado_ui,
@@ -1470,7 +1470,7 @@ def _render_card_grupo_rodapie(grupo: dict, catalogo: dict) -> None:  # noqa: C9
         f"{acabado_ui} ({gama_ui})  ·  Total necesario: {total_mm} mm"
     )
 
-    with st.expander(titulo, expanded=False):
+    with st.expander(titulo, expanded=True):
         img_path = _imagen_mueble(code_skp)
         col_img, col_body = (st.columns([1, 3]) if img_path else (None, None))
 
@@ -1837,9 +1837,18 @@ def _bloque_configuracion_c(entrada: dict) -> list[tuple[str, str]]:
         if gama_acabado:
             items.append(("Gama y acabado", gama_acabado))
     elif code in CODIGOS_RODAPIE:
-        acabado = _ui_color_frente(entrada.get("Acabado") or "")   # quita sufijo gama
-        if acabado:
-            items.append(("Acabado", acabado))
+        gama    = (entrada.get("Gama del frente") or "").strip()
+        acabado = _ui_color_frente(entrada.get("Acabado") or "")
+        gama_acabado = " ".join(p for p in (gama, acabado) if p)
+        if gama_acabado:
+            items.append(("Acabado", gama_acabado))
+        cantidad = (entrada.get("Cantidad") or "").strip()
+        if cantidad:
+            try:
+                n = int(cantidad)
+                items.append(("Cantidad", f"{n} pieza{'s' if n != 1 else ''}"))
+            except ValueError:
+                items.append(("Cantidad", cantidad))
     else:
         apertura = (entrada.get("Apertura") or "").strip()
         if apertura:
@@ -1955,16 +1964,24 @@ def _render_card_resumen(entrada: dict, catalogo: dict) -> None:
     des       = (cat_entry.get("designaciones") or {}).get("es", "")
     summary   = (entrada.get("Summary") or "").strip()
 
-    prefijo = f"**{summary}** · " if summary else ""
-    titulo = f"### {prefijo}{nombre}"
-    if des:
-        titulo += f"  ·  {des}"
-
-    img_path = _imagen_mueble(code)
-
     es_tapeta      = code in CODIGOS_TAPETA
     es_rodapie     = code in CODIGOS_RODAPIE
+    es_rodapie_sg  = code in CODIGOS_RODAPIE_SG
     es_abierto     = code in CODIGOS_MUEBLE_ABIERTO
+
+    # Título: rodapiés SG → código · Rodapié · Gama Acabado
+    if es_rodapie_sg:
+        gama_t    = (entrada.get("Gama del frente") or "").strip()
+        acabado_t = _ui_color_frente(entrada.get("Acabado") or "")
+        ga_str    = " ".join(p for p in (gama_t, acabado_t) if p)
+        titulo = f"### {nombre}  ·  Rodapié"
+        if ga_str:
+            titulo += f"  ·  {ga_str}"
+    else:
+        prefijo = f"**{summary}** · " if summary else ""
+        titulo = f"### {prefijo}{nombre}"
+        if des:
+            titulo += f"  ·  {des}"
     # Tapetas y rodapiés: el color de acabado llega en "Acabado", no en "Acabado del frente"
     if es_tapeta or es_rodapie:
         color_frente    = _ui_color_frente(entrada.get("Acabado") or "")
