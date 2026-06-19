@@ -1510,8 +1510,10 @@ def _render_card_grupo_rodapie(grupo: dict, catalogo: dict) -> None:  # noqa: C9
             if n3600_nuevo != estado.get("n3600") or n1800_nuevo != estado.get("n1800"):
                 estado["n3600"] = n3600_nuevo
                 estado["n1800"] = n1800_nuevo
-                if estado.get("check"):
-                    estado["check"] = False
+                # Resetear el check tanto en nuestro dict como en el estado interno
+                # del widget de Streamlit (si no se hace los dos, el widget lo ignora)
+                estado["check"] = False
+                st.session_state[f"check_rod_{key}"] = False
                 st.rerun()
 
             total_elegido = n3600_nuevo * 3600 + n1800_nuevo * 1800
