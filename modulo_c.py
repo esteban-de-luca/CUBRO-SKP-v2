@@ -3,7 +3,8 @@ modulo_c.py — Módulo C: Mapeo, cálculo y generación de output
 Responsable: Lucía
 
 Input:  list[dict] — salida de modulo_b.construir_entrada_modulo_c()
-        23 columnas, valores en lenguaje UI (CLAUDE.md §9).
+        26 columnas base + columnas auxiliares (Ancho CSV, Alto CSV, Alto final tapeta,
+        Acabado del mueble abierto, Summary). Valores en lenguaje UI (CLAUDE.md §9).
 
 Output principal:
     calcular_opciones(entrada) → list[dict]   para paso_2 de Módulo B

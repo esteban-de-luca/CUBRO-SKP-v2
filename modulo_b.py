@@ -1667,9 +1667,16 @@ def _render_card_resumen(entrada: dict, catalogo: dict) -> None:
 
     img_path = _imagen_mueble(code)
 
-    color_frente   = (entrada.get("Acabado del frente") or "").strip()
-    color_interior = (entrada.get("Color interior") or "").strip()
+    es_tapeta      = code in CODIGOS_TAPETA
     es_abierto     = code in CODIGOS_MUEBLE_ABIERTO
+    # Tapetas: el color de acabado llega en "Acabado", no en "Acabado del frente"
+    if es_tapeta:
+        color_frente    = _ui_color_frente(entrada.get("Acabado") or "")
+        etiqueta_frente = "Acabado"
+    else:
+        color_frente    = (entrada.get("Acabado del frente") or "").strip()
+        etiqueta_frente = "Frente"
+    color_interior = (entrada.get("Color interior") or "").strip()
 
     with st.container(border=True):
         st.markdown(titulo)
@@ -1683,7 +1690,7 @@ def _render_card_resumen(entrada: dict, catalogo: dict) -> None:
             if img_path:
                 st.image(str(img_path), width=229)
             if not es_abierto:
-                _render_swatches_color(color_frente, color_interior)
+                _render_swatches_color(color_frente, color_interior, etiqueta_frente=etiqueta_frente)
 
         with col_config:
             config = _bloque_configuracion_c(entrada)

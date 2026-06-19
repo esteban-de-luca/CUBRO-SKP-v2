@@ -215,7 +215,7 @@ op_121:
 # op_200 — Color interior del mueble
 # -----------------------------------------------------------------------------
 op_200:
-  todos: O   # Obligatoria en todos excepto frentes sin mueble (POBIF/PO1BIF/PO2BIF)
+  todos: O   # Obligatoria en todos excepto frentes sin mueble (POBIF/PO1BIF/PO2BIF) y tapetas
   excepciones:
     - POBIF4580    # no aplica — frente sin mueble
     - POBIF6080    # no aplica — frente sin mueble
@@ -223,6 +223,17 @@ op_200:
     - PO1BIF6080   # no aplica — frente sin mueble
     - PO2BIF4580   # no aplica — frente sin mueble
     - PO2BIF6080   # no aplica — frente sin mueble
+    - FF12200      # no aplica — tapeta (sin mueble interior)
+    - FF12220      # no aplica — tapeta
+    - FF1260       # no aplica — tapeta
+    - FF1280       # no aplica — tapeta
+    - FF1287       # no aplica — tapeta
+    - FF1290       # no aplica — tapeta
+    - FF12100      # no aplica — tapeta
+    - FF12V        # no aplica — tapeta (alto variable)
+    - FFAL1060     # no aplica — tapeta
+    - FFAL1080     # no aplica — tapeta
+    - FFAL10100    # no aplica — tapeta
 
 
 # -----------------------------------------------------------------------------
@@ -623,7 +634,7 @@ op_301:
 # No aplica a muebles suspendidos (pared y altillos).
 # -----------------------------------------------------------------------------
 op_402:
-  todos: O   # Obligatoria en todos excepto muebles suspendidos
+  todos: O   # Obligatoria en todos excepto muebles suspendidos y tapetas
   excepciones:
     - H1306035     # no aplica — suspendido
     - H1456035     # no aplica — suspendido
@@ -655,6 +666,17 @@ op_402:
     - HR60V57      # no aplica — suspendido
     - HLVV57       # no aplica — suspendido
     - HPT60V57     # no aplica — suspendido
+    - FF12200      # no aplica — tapeta (sin patas)
+    - FF12220      # no aplica — tapeta
+    - FF1260       # no aplica — tapeta
+    - FF1280       # no aplica — tapeta
+    - FF1287       # no aplica — tapeta
+    - FF1290       # no aplica — tapeta
+    - FF12100      # no aplica — tapeta
+    - FF12V        # no aplica — tapeta (alto variable)
+    - FFAL1060     # no aplica — tapeta
+    - FFAL1080     # no aplica — tapeta
+    - FFAL10100    # no aplica — tapeta
   restricciones_valores:
     # Muebles de banco: admiten además el rodapié de 10 mm (SPI)
     BC604035: ["10 mm", "70 mm", "100 mm"]

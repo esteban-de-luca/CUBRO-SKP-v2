@@ -260,53 +260,55 @@ Mostrar solo el nombre del tirador, sin color.
 ```
 Name · Name SKP · Estado · Apertura · D_Gama · ColorFrente ·
 Color del interior · Tirador · Trasera · Color tir. de superficie ·
-C_Rodapietext · Ancho · Ancho reducido · LenZ · Avisos
+C_Rodapietext · Ancho · Ancho reducido · Acabado · LenZ · Avisos
 ```
 
+- `Acabado`: columna obligatoria del CSV. Para tapetas es el código de acabado del frente (con sufijo de gama, p.ej. "Pistachio LINOLEO"). Para el resto de muebles, campo pendiente de mapeo a opciones SG.
 - `Estado`: `✅ CORRECTO` o `⚠️ REVISAR`. Si REVISAR → bloquea avance.
 - `Avisos`: string concatenada con ` | ` (con espacios). Códigos posibles: A02, A05, A09, A10, A11, A12, A17, A21, A22, A23, E07, CB12.
 - `Name SKP`: nombre original que vino de SketchUp. Siempre presente (úsalo como identificador en UI cuando `Name` esté vacío o no resuelto).
 
 ### Output del Paso 1 → Entrada Módulo C
 
-Contrato actualizado 2026-06-08. `list[dict]` plana, una fila por mueble, **29 keys fijas** (las mismas en todas las filas; valores `""` o `"False"` cuando la opcional no aplica). Las transformaciones CSV→UI de §8 ya están aplicadas. Lo construye `modulo_b.construir_entrada_modulo_c(muebles, selecciones, catalogo)`.
+Contrato actualizado 2026-06-19. `list[dict]` plana, una fila por mueble, **31 keys fijas** (las mismas en todas las filas; valores `""` o `"False"` cuando no aplica). Las transformaciones CSV→UI de §8 ya están aplicadas. Lo construye `modulo_b.construir_entrada_modulo_c(muebles, selecciones, catalogo)`.
 
 | # | Columna | Tipo | Origen |
 |---|---|---|---|
-| 1 | Summary | `str` | CSV `Summary` — identificador SKP (→ `p_item_origin_id`) |
-| 2 | Código mueble | `str` | CSV `Name` |
-| 3 | Descripción | `str` | `catalogo.json.<name>.designaciones.es` |
-| 4 | Posición | `str` | Reservada (siempre `""`) |
-| 5 | Apertura | `str` | UI label o `""` |
+| 1 | Código mueble | `str` | CSV `Name` |
+| 2 | Descripción | `str` | `catalogo.json.<name>.designaciones.es` |
+| 3 | Posición | `str` | Reservada (siempre `""`) |
+| 4 | Summary | `str` | CSV `Summary` — identificador SKP (→ `p_item_origin_id`) |
+| 5 | Apertura | `str` | UI label ("Izquierda"/"Derecha"/"Lift") o `""` |
 | 6 | Gama del frente | `str` | LACA / WOOD / LINOLEO / LAMINADO |
-| 7 | Acabado del frente | `str` | Color sin sufijo de gama ("Crema") |
-| 8 | Color interior | `str` | Sin "mueble" ("Blanco") |
-| 9 | Tirador | `str` | UI label (Round, Square, …) o `""` |
-| 10 | Color tirador | `str` | Touch Latch/Prise de main → `""`. Trasera=Laca → color del frente. Resto → valor crudo |
-| 11 | Rodapié | `str` | "70/100 mm" / "Sin patas" / `""` |
-| 12 | Reducción de ancho | `"True"`/`"False"` | CSV `Ancho == "10000 mm"` |
-| 13 | Ancho reducido | `str` | Valor cuando Reducción=True, sino `""` |
-| 14 | Sin mecanizado | `"True"`/`"False"` | op_121 |
-| 15 | Cubos de basura | `"True"`/`"False"` | op_207_opcional |
-| 16 | Recorte LED | `"True"`/`"False"` | op_220 |
-| 17 | Sensor para mando LED | `str` | "Derecha" / "Izquierda" / `""` (op_222) |
-| 18 | Cajón interior | `"True"`/`"False"` | op_223 |
-| 19 | Mueble de caldera | `"True"`/`"False"` | op_227 |
-| 20 | Sin encolar | `"True"`/`"False"` | op_700_opcional |
-| 21 | Marca electro | `str` | op_126.marca (electro 1) |
-| 22 | Referencia electro | `str` | op_126.referencia — Caso A |
-| 23 | Tipo electro | `str` | op_126.tipo (incl. "Campana" implícito para HH) |
-| 24 | Ancho electro | `str` | op_126.ancho — Caso B (mm) |
-| 25 | Alto electro | `str` | op_126.alto — Caso B (mm) |
-| 26 | Fondo electro | `str` | op_126.fondo — Caso B (mm) |
-| 27 | Marca electro 2 | `str` | op_126_2.marca (electro 2, solo AFSMO/AFSMOBT) |
-| 28 | Referencia electro 2 | `str` | op_126_2.referencia — Caso A |
-| 29 | Tipo electro 2 | `str` | op_126_2.tipo |
-| 30 | Ancho electro 2 | `str` | op_126_2.ancho — Caso B (mm) |
-| 31 | Alto electro 2 | `str` | op_126_2.alto — Caso B (mm) |
-| 32 | Fondo electro 2 | `str` | op_126_2.fondo — Caso B (mm) |
+| 7 | Acabado del frente | `str` | Color sin sufijo de gama ("Crema"). Vacío para tapetas |
+| 8 | Color interior | `str` | Sin "mueble" ("Blanco"). Vacío para tapetas |
+| 9 | Tirador | `str` | UI label (Round, Square, …) o `""`. Vacío para tapetas |
+| 10 | Color tirador | `str` | Touch Latch/Prise de main → `""`. Trasera=Laca → color frente. Vacío para tapetas |
+| 11 | Rodapié | `str` | "70 mm" / "100 mm" / "Sin patas" / `""`. Vacío para tapetas |
+| 12 | Acabado del mueble abierto | `str` | Solo EOV/EOAVV (muebles sin frente). Vacío para el resto |
+| 13 | Reducción de ancho | `"True"`/`"False"` | CSV `Ancho == "10000 mm"` |
+| 14 | Ancho reducido | `str` | Valor cuando Reducción=True, sino `""` |
+| 15 | Acabado | `str` | CSV `Acabado` directo. Usado por modulo_c como op_101 para tapetas |
+| 16 | Ancho CSV | `str` | Ancho del modelo SKP (vacío si hay reducción). Para Paso 2 cuando catálogo no tiene ancho_mm |
+| 17 | Alto CSV | `str` | LenZ del modelo SKP. Para FF12V: alto introducido por el usuario en mm |
+| 18 | Alto final tapeta | `str` | Entero en mm solo para FF12V con alto válido. Usado por modulo_c para `p_height`. Vacío para el resto |
+| 19 | Sin mecanizado | `"True"`/`"False"` | op_121 |
+| 20 | Cubos de basura | `"True"`/`"False"` | op_207_opcional |
+| 21 | Recorte LED | `"True"`/`"False"` | op_220 |
+| 22 | Sensor para mando LED | `str` | "Derecha" / "Izquierda" / `""` (op_222) |
+| 23 | Cajón interior | `"True"`/`"False"` | op_223 |
+| 24 | Mueble de caldera | `"True"`/`"False"` | op_227 |
+| 25 | Sin encolar | `"True"`/`"False"` | op_700_opcional |
+| 26 | Marca electro | `str` | op_126.marca — electro 1 |
+| 27 | Referencia electro | `str` | op_126.referencia — Caso A (referencia conocida) |
+| 28 | Alto electro | `str` | op_126.alto — Caso B (sin referencia, altura en mm) |
+| 29 | Marca electro 2 | `str` | op_126_2.marca — electro 2 (solo AFSMO/AFSMOBT) |
+| 30 | Referencia electro 2 | `str` | op_126_2.referencia — Caso A slot 2 |
+| 31 | Alto electro 2 | `str` | op_126_2.alto — Caso B slot 2 |
 
-**Nota Caso A / Caso B (electro):** si el usuario conoce la referencia del modelo → rellena Referencia (Caso A, genera `p_built_in_detail`). Si no → rellena Ancho+Alto+Fondo (Caso B, genera `op_900`). Marca siempre obligatoria. Campana (HH) recibe `Tipo electro = "Campana"` implícitamente aunque no lo seleccione el usuario.
+**Electro Caso A / Caso B:** si el usuario conoce la referencia → rellena Marca + Referencia electro (genera `p_built_in_detail`). Si no → rellena Marca + Alto electro (genera `p_built_in_detail` con `p_built_in_height`). Campanas (HH) solo admiten Caso A.
+
+**Tapetas (FF12*/FFAL10*):** Apertura, Color interior, Tirador, Color tirador, Rodapié y Acabado del mueble abierto siempre vacíos. `Acabado` contiene el color con sufijo de gama tal como viene del CSV (modulo_c lo usa directamente para op_101). Solo FF12V usa "Alto final tapeta". Dimensiones JSON: `p_width = p_depth = 0` (SG las conoce por código); `p_height = 0` salvo FF12V.
 
 ### `data/catalogo.json`
 
