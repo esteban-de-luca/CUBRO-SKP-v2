@@ -68,6 +68,9 @@ _APERTURA_UI = {
 }
 _ANCHO_REDUCCION_RAW = "10000 mm"
 _RODAPIE_SIN_PATAS_RAW = "0 mm"
+# Tapeta variable: FF12V acepta altos entre estos límites (ver catálogo alto_variable)
+_FF12V_ALTO_MIN = 600
+_FF12V_ALTO_MAX = 2450
 _CATALOGO_PATH = pathlib.Path(__file__).parent / "data" / "catalogo.json"
 _MAPEOS_SKP_UI_SG_PATH = pathlib.Path(__file__).parent / "data" / "mapeos_SKP_UI_SG.yaml"
 _OPCIONES_MUEBLE_PATH = pathlib.Path(__file__).parent / "data" / "opciones_mueble.yaml"
@@ -518,6 +521,7 @@ def construir_entrada_modulo_c(
     entrada: list[dict] = []
     for mueble in muebles:
         clave = _identificador_mueble(mueble)
+        name  = (mueble.get("Name") or "").strip()
         opcionales = (selecciones.get(clave, {}) or {}).get("opcionales", {}) or {}
 
         ancho_raw = (mueble.get("Ancho") or "").strip()
@@ -525,6 +529,13 @@ def construir_entrada_modulo_c(
         ancho_reducido = (
             (mueble.get("Ancho reducido") or "").strip() if reduccion else ""
         )
+
+        # FF12V: el alto del pedido es el valor introducido por el usuario (no el de SKP)
+        alto_ff12v = str(opcionales.get("alto_ff12v", "")).strip()
+        if name == "FF12V" and _alto_ff12v_valido(alto_ff12v):
+            alto_csv_final = f"{alto_ff12v} mm"
+        else:
+            alto_csv_final = (mueble.get("LenZ") or "").strip()
 
         tirador_ui = _ui_tirador(mueble.get("Tirador", ""))
 
@@ -556,7 +567,8 @@ def construir_entrada_modulo_c(
             "Ancho reducido": ancho_reducido,
             "Acabado": str(mueble.get("Acabado") or "").strip(),
             "Ancho CSV": "" if reduccion else ancho_raw,   # para Paso 2 cuando ancho_mm es null en catálogo
-            "Alto CSV": (mueble.get("LenZ") or "").strip(),  # ídem para alto
+            "Alto CSV": alto_csv_final,                      # FF12V: alto del usuario; resto: LenZ de SKP
+            "Alto final tapeta": alto_ff12v if name == "FF12V" and _alto_ff12v_valido(alto_ff12v) else "",
             "Sin mecanizado": _bool_str(opcionales.get("op_121", False)),
             "Cubos de basura": _export_op_207(opcionales.get("op_207_opcional", False)),
             "Recorte LED": _bool_str(opcionales.get("op_220", False)),
@@ -676,13 +688,22 @@ def _bloque_informativo(mueble: dict, catalogo: dict) -> None:
             f"**Rodapié:** {rodapie_label}"
         )
     elif name in CODIGOS_TAPETA:
-        acabado = (mueble.get("Acabado") or "").strip()
+        acabado    = (mueble.get("Acabado") or "").strip()
+        ancho_std  = f"{entry.get('ancho_mm')} mm" if entry.get("ancho_mm") else "—"
+        ancho_skp  = ancho   # valor que viene del modelo SKP
         st.markdown(
             f"**Acabado:** {acabado or '—'}  ·  "
-            f"**Ancho:** {ancho}  ·  "
+            f"**Ancho:** {ancho_std}  ·  "
             f"**Alto:** {alto_str}  ·  "
             f"**Espesor:** {fondo_str}"
         )
+        # Aviso si el modelo SKP tiene un ancho distinto al estándar de fabricación
+        if ancho_skp and ancho_skp != "—" and ancho_skp != ancho_std:
+            st.info(
+                f"Este elemento tiene un ancho de **{ancho_skp}** en el modelo 3D, "
+                f"pero se enviará de **{ancho_std}** que es el ancho estándar.",
+                icon="ℹ️",
+            )
     else:
         apertura       = _ui_apertura(mueble.get("Apertura", ""))
         color_interior = _ui_color_interior(mueble.get("Color del interior", ""))
@@ -1194,6 +1215,64 @@ def _renderizar_opcionales(
             _control_checkbox_opcional(clave, op_id, meta, opcionales, selecciones)
 
 
+def _alto_ff12v_valido(valor: str) -> bool:
+    """True si el valor introducido para el alto de FF12V es numéricamente válido."""
+    v = str(valor).strip()
+    return v.isdigit() and _FF12V_ALTO_MIN <= int(v) <= _FF12V_ALTO_MAX
+
+
+def _control_alto_tapeta_variable(
+    clave: str, mueble: dict, opcionales: dict, selecciones: dict
+) -> None:
+    """Advertencia + campo de alto final para FF12V (tapeta de alto variable).
+
+    El valor introducido por el usuario reemplazará el alto de SketchUp en el
+    resumen del pedido y en el JSON enviado a Schmidt Groupe (p_height).
+    Rango permitido: _FF12V_ALTO_MIN – _FF12V_ALTO_MAX mm.
+    """
+    # Alto que viene del modelo SKP (solo para mostrar en el aviso)
+    len_z_raw = (mueble.get("LenZ") or "").strip()
+    try:
+        alto_skp_str = f"{int(float(len_z_raw))} mm" if len_z_raw else None
+    except ValueError:
+        alto_skp_str = len_z_raw or None
+
+    if alto_skp_str:
+        st.warning(
+            f"Este elemento mide **{alto_skp_str}** de alto en el modelo 3D, pero siempre "
+            f"recomendamos mandar las piezas a medida recrecidas para ajustar en obra.",
+            icon="⚠️",
+        )
+    else:
+        st.warning(
+            "Siempre recomendamos mandar las piezas a medida recrecidas para ajustar en obra.",
+            icon="⚠️",
+        )
+
+    prev_alto = str(opcionales.get("alto_ff12v", "")).strip()
+    nuevo_alto = st.text_input(
+        "¿Qué medida final de alto debe tener la pieza? (mm)",
+        value=prev_alto,
+        key=f"alto_ff12v_{clave}",
+        placeholder=f"Entre {_FF12V_ALTO_MIN} y {_FF12V_ALTO_MAX}",
+        help=f"Solo números enteros en mm. Mínimo {_FF12V_ALTO_MIN} mm, máximo {_FF12V_ALTO_MAX} mm.",
+    )
+
+    v = nuevo_alto.strip()
+    if v:
+        if not v.isdigit():
+            st.caption("⚠️ Introduce solo números enteros (sin decimales ni unidades).")
+        elif not (_FF12V_ALTO_MIN <= int(v) <= _FF12V_ALTO_MAX):
+            st.caption(
+                f"⚠️ El alto debe estar entre {_FF12V_ALTO_MIN} mm y {_FF12V_ALTO_MAX} mm."
+            )
+
+    if nuevo_alto != prev_alto:
+        opcionales["alto_ff12v"] = nuevo_alto
+        _registrar_edicion(clave, selecciones)
+        st.rerun()
+
+
 def _render_cabecera_global(muebles: list[dict], selecciones: dict) -> None:
     """Contador en vivo + acciones globales (CLAUDE.md §7)."""
     total = len(muebles)
@@ -1343,8 +1422,21 @@ def paso_1(muebles: list[dict]) -> None:
                     else:
                         pass  # sin opcionales — no se muestra ningún mensaje
 
+                # FF12V — control de alto variable (fuera de columnas, ancho completo)
+                if name == "FF12V":
+                    st.divider()
+                    _control_alto_tapeta_variable(
+                        clave, mueble, estado["opcionales"], selecciones
+                    )
+
                 razon_bloqueo = None
-                if "op_126" in aplicables:
+                if name == "FF12V":
+                    if not _alto_ff12v_valido(estado["opcionales"].get("alto_ff12v", "")):
+                        razon_bloqueo = (
+                            "Indica la medida final de alto de la pieza "
+                            "antes de marcar como revisado."
+                        )
+                elif "op_126" in aplicables:
                     _doble = bool(meta_126.get("doble"))
                     _e1_ok = _op_126_completo(estado["opcionales"].get("op_126"), meta=meta_126)
                     _e2_ok = (not _doble) or _op_126_completo(estado["opcionales"].get("op_126_2"), meta=meta_126)

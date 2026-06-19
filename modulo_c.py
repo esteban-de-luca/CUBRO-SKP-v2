@@ -525,6 +525,14 @@ def calcular_opciones(entrada: list[dict]) -> list[dict]:
         # vienen de data/p_item_schema.yaml; los calculados se construyen aquí.
         # El orden de claves sigue exactamente el contrato de Schmidt Groupe.
         _d = _p_item_defaults()
+
+        # Tapetas: p_width = ancho nominal del catálogo (el SKP puede mostrar otra medida).
+        # FF12V: p_height = alto introducido por el usuario (pieza a medida para ajuste en obra).
+        _codigos_tapeta_c: set[str] = set((op_mueble.get("tapetas") or {}).get("codigos") or [])
+        _alto_final = (fila.get("Alto final tapeta") or "").strip()
+        _p_width  = cat_entry["ancho_mm"] if code in _codigos_tapeta_c and cat_entry.get("ancho_mm") else _d.get("p_width", 0)
+        _p_height = int(_alto_final) if code == "FF12V" and _alto_final.isdigit() else _d.get("p_height", 0)
+
         p_item: dict = {
             "p_ord_cat_code":          str(i + 1),
             "p_item_code":             code,
@@ -533,8 +541,8 @@ def calcular_opciones(entrada: list[dict]) -> list[dict]:
             "p_quantity":              _d.get("p_quantity", 1),
             "p_hinge":                 p_hinge,
             "p_fastening":             p_fastening,
-            "p_width":                 _d.get("p_width", 0),
-            "p_height":                _d.get("p_height", 0),
+            "p_width":                 _p_width,
+            "p_height":                _p_height,
             "p_depth":                 _d.get("p_depth", 0),
             "p_delivery_date":         _d.get("p_delivery_date"),
             "p_variant_options":       opciones_sg,
