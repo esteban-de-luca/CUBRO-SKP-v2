@@ -204,12 +204,16 @@ def _cargar_colores() -> dict:
         return yaml.safe_load(f) or {}
 
 
-def _render_swatches_color(color_frente: str, color_interior: str) -> None:
+def _render_swatches_color(
+    color_frente: str, color_interior: str, etiqueta_frente: str = "Frente"
+) -> None:
     """Muestra swatches de color apilados verticalmente (frente primero, interior debajo).
 
     Cada fila: imagen cuadrada 36 px a la izquierda + etiqueta a la derecha,
     renderizado con HTML inline para evitar problemas de columnas anidadas en Streamlit.
     Se omiten los colores sin imagen disponible.
+    etiqueta_frente: label visible junto al swatch (por defecto "Frente"; usar "Acabado"
+    para tapetas).
     """
     colores = _cargar_colores()
     items: list[tuple[str, pathlib.Path]] = []
@@ -218,7 +222,7 @@ def _render_swatches_color(color_frente: str, color_interior: str) -> None:
     if fn_frente:
         p = _ASSETS_COLORES / fn_frente
         if p.exists():
-            items.append((f"Frente: {color_frente}", p))
+            items.append((f"{etiqueta_frente}: {color_frente}", p))
 
     fn_interior = (colores.get("interior") or {}).get(color_interior)
     if fn_interior:
@@ -606,7 +610,7 @@ def _cabecera_card(mueble: dict, catalogo: dict, revisado: bool) -> str:
             partes.append(color_abierto)
     elif name_code in CODIGOS_TAPETA:
         gama    = _ui_gama(mueble.get("D_Gama", ""))
-        acabado = (mueble.get("Acabado") or "").strip()
+        acabado = _ui_color_frente(mueble.get("Acabado") or "")   # quita sufijo gama
         gama_acabado = " ".join(p for p in (gama, acabado) if p)
         if gama_acabado:
             partes.append(gama_acabado)
@@ -688,7 +692,7 @@ def _bloque_informativo(mueble: dict, catalogo: dict) -> None:
             f"**Rodapié:** {rodapie_label}"
         )
     elif name in CODIGOS_TAPETA:
-        acabado    = (mueble.get("Acabado") or "").strip()
+        acabado    = _ui_color_frente(mueble.get("Acabado") or "")   # quita sufijo gama
         ancho_std  = f"{entry.get('ancho_mm')} mm" if entry.get("ancho_mm") else "—"
         ancho_skp  = ancho   # valor que viene del modelo SKP
         st.markdown(
@@ -1381,15 +1385,27 @@ def paso_1(muebles: list[dict]) -> None:
                 img_path    = _imagen_mueble(name)
                 meta_126    = _meta_op_126(name, interfaz)
                 es_abierto  = name in CODIGOS_MUEBLE_ABIERTO
+                # Helper local: swatch adaptado a mueble normal o tapeta
+                def _swatch(en_imagen: bool = True) -> None:
+                    if es_abierto:
+                        return
+                    if name in CODIGOS_TAPETA:
+                        _render_swatches_color(
+                            _ui_color_frente(mueble.get("Acabado") or ""),
+                            "",
+                            etiqueta_frente="Acabado",
+                        )
+                    else:
+                        _render_swatches_color(
+                            _ui_color_frente(mueble.get("ColorFrente", "")),
+                            _ui_color_interior(mueble.get("Color del interior", "")),
+                        )
+
                 if img_path:
                     col_img, col_info = st.columns([1, 3])
                     with col_img:
                         st.image(str(img_path), width=229)
-                        if not es_abierto:
-                            _render_swatches_color(
-                                _ui_color_frente(mueble.get("ColorFrente", "")),
-                                _ui_color_interior(mueble.get("Color del interior", "")),
-                            )
+                        _swatch()
                     with col_info:
                         _bloque_informativo(mueble, catalogo)
                         if aplicables:
@@ -1401,15 +1417,14 @@ def paso_1(muebles: list[dict]) -> None:
                                     clave, meta_126,
                                     estado["opcionales"], selecciones,
                                 )
-                        else:
-                            pass  # sin opcionales — no se muestra ningún mensaje
+                        if name == "FF12V":
+                            st.divider()
+                            _control_alto_tapeta_variable(
+                                clave, mueble, estado["opcionales"], selecciones
+                            )
                 else:
                     _bloque_informativo(mueble, catalogo)
-                    if not es_abierto:
-                        _render_swatches_color(
-                            _ui_color_frente(mueble.get("ColorFrente", "")),
-                            _ui_color_interior(mueble.get("Color del interior", "")),
-                        )
+                    _swatch()
                     if aplicables:
                         tirador_code = str(mueble.get("Tirador") or "").strip()
                         _renderizar_opcionales(clave, name, tirador_code, aplicables, interfaz, selecciones)
@@ -1419,15 +1434,11 @@ def paso_1(muebles: list[dict]) -> None:
                                 clave, meta_126,
                                 estado["opcionales"], selecciones,
                             )
-                    else:
-                        pass  # sin opcionales — no se muestra ningún mensaje
-
-                # FF12V — control de alto variable (fuera de columnas, ancho completo)
-                if name == "FF12V":
-                    st.divider()
-                    _control_alto_tapeta_variable(
-                        clave, mueble, estado["opcionales"], selecciones
-                    )
+                    if name == "FF12V":
+                        st.divider()
+                        _control_alto_tapeta_variable(
+                            clave, mueble, estado["opcionales"], selecciones
+                        )
 
                 razon_bloqueo = None
                 if name == "FF12V":
@@ -1530,7 +1541,7 @@ def _bloque_configuracion_c(entrada: dict) -> list[tuple[str, str]]:
             items.append(("Rodapié", rodapie))
     elif code in CODIGOS_TAPETA:
         gama    = (entrada.get("Gama del frente") or "").strip()
-        acabado = (entrada.get("Acabado") or "").strip()
+        acabado = _ui_color_frente(entrada.get("Acabado") or "")   # quita sufijo gama
         gama_acabado = " ".join(p for p in (gama, acabado) if p)
         if gama_acabado:
             items.append(("Gama y acabado", gama_acabado))
