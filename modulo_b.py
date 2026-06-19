@@ -109,9 +109,12 @@ CODIGOS_TAPETA: set[str] = set(
 
 # Rodapiés (SOC*): sin apertura, tirador, color interior ni patas.
 # op_401 viene de la columna "Acabado" del CSV (mismo índice que op_101).
-CODIGOS_RODAPIE: set[str] = set(
-    ((_OPCIONES_RAW.get("rodapiés") or {}).get("codigos")) or []
-)
+_RODAPIES_CFG = _OPCIONES_RAW.get("rodapiés") or {}
+CODIGOS_RODAPIE: set[str] = set(_RODAPIES_CFG.get("codigos") or [])
+CODIGOS_RODAPIE_SKP: set[str] = set(_RODAPIES_CFG.get("codigos_skp") or [])
+CODIGOS_RODAPIE_SG: set[str] = set(_RODAPIES_CFG.get("codigos_sg") or [])
+# Mapeo: código SKP → [código SG 3600mm, código SG 1800mm]
+_RESOLUCION_RODAPIE: dict[str, list[str]] = _RODAPIES_CFG.get("resolucion") or {}
 
 
 def _es_desmontado(code: str) -> bool:
@@ -527,9 +530,16 @@ def construir_entrada_modulo_c(
     Aplica las transformaciones CSV→UI de CLAUDE.md §8, incluyendo el caso
     Trasera=Laca → color del frente (igual que en la cabecera de cards).
     Las opcionales no marcadas o no aplicables se exportan como "False" / "".
+
+    Las filas SOCX10/SOCX07 (virtual SKP) se omiten; en su lugar se emiten
+    filas SOC36010/SOC18010/SOC3607/SOC1807 con el campo "Cantidad" relleno,
+    derivadas de los grupos de selección en st.session_state.rodapie_grupos.
     """
     entrada: list[dict] = []
     for mueble in muebles:
+        # Saltar filas de rodapié SKP — se resuelven abajo como grupos SG
+        if (mueble.get("Name") or "").strip() in CODIGOS_RODAPIE_SKP:
+            continue
         clave = _identificador_mueble(mueble)
         name  = (mueble.get("Name") or "").strip()
         opcionales = (selecciones.get(clave, {}) or {}).get("opcionales", {}) or {}
@@ -594,8 +604,67 @@ def construir_entrada_modulo_c(
             "Marca electro 2":      str(op_126_2.get("marca", "")).strip(),
             "Referencia electro 2": str(op_126_2.get("referencia", "")).strip(),
             "Alto electro 2":       str(op_126_2.get("alto", "")).strip(),
+            "Cantidad": "",
         }
         entrada.append(fila)
+
+    # ── Filas de rodapié SG — derivadas de los grupos de selección ─────────────
+    # Construir grupos a partir de las filas SOCX* del CSV original
+    muebles_rodapie_skp = [m for m in muebles if (m.get("Name") or "").strip() in CODIGOS_RODAPIE_SKP]
+    grupos = _agrupar_rodapies(muebles_rodapie_skp)
+    rodapie_grupos_estado = st.session_state.get("rodapie_grupos", {})
+
+    for grupo in grupos:
+        key        = grupo["key"]
+        code_skp   = grupo["code_skp"]
+        acabado_ui = grupo["acabado_ui"]
+        gama_ui    = grupo["gama_ui"]
+        cod_3600   = grupo["cod_3600"]
+        cod_1800   = grupo["cod_1800"]
+        estado_grupo = rodapie_grupos_estado.get(key, {})
+        n3600 = int(estado_grupo.get("n3600", 0) or 0)
+        n1800 = int(estado_grupo.get("n1800", 0) or 0)
+
+        for cod, cantidad in ((cod_3600, n3600), (cod_1800, n1800)):
+            if not cod or cantidad <= 0:
+                continue
+            desc = (catalogo.get(cod) or {}).get("designaciones", {}).get("es", cod)
+            fila_sg: dict[str, str] = {
+                "Código mueble": cod,
+                "Descripción": desc,
+                "Posición": "",
+                "Summary": f"{code_skp}_{gama_ui}_{acabado_ui}",
+                "Apertura": "",
+                "Gama del frente": gama_ui,
+                "Acabado del frente": acabado_ui,
+                "Color interior": "",
+                "Tirador": "",
+                "Color tirador": "",
+                "Rodapié": "",
+                "Acabado del mueble abierto": "",
+                "Reducción de ancho": "False",
+                "Ancho reducido": "",
+                "Acabado": acabado_ui,
+                "Ancho CSV": "",
+                "Alto CSV": "",
+                "Alto final tapeta": "",
+                "Sin mecanizado": "False",
+                "Cubos de basura": "False",
+                "Recorte LED": "False",
+                "Sensor para mando LED": "",
+                "Cajón interior": "False",
+                "Mueble de caldera": "False",
+                "Sin encolar": "False",
+                "Marca electro": "",
+                "Referencia electro": "",
+                "Alto electro": "",
+                "Marca electro 2": "",
+                "Referencia electro 2": "",
+                "Alto electro 2": "",
+                "Cantidad": str(cantidad),
+            }
+            entrada.append(fila_sg)
+
     return entrada
 
 
@@ -1298,13 +1367,23 @@ def _control_alto_tapeta_variable(
         st.rerun()
 
 
-def _render_cabecera_global(muebles: list[dict], selecciones: dict) -> None:
+def _render_cabecera_global(
+    muebles: list[dict],
+    selecciones: dict,
+    grupos_rodapie: list[dict] | None = None,
+) -> None:
     """Contador en vivo + acciones globales (CLAUDE.md §7)."""
-    total = len(muebles)
-    revisados = sum(
+    grupos_rodapie = grupos_rodapie or []
+    total = len(muebles) + len(grupos_rodapie)
+    revisados_m = sum(
         1 for m in muebles
         if selecciones.get(_identificador_mueble(m), {}).get("check")
     )
+    revisados_g = sum(
+        1 for g in grupos_rodapie
+        if st.session_state.get("rodapie_grupos", {}).get(g["key"], {}).get("check")
+    )
+    revisados = revisados_m + revisados_g
     pendientes = total - revisados
 
     st.markdown(
@@ -1331,21 +1410,192 @@ def _render_cabecera_global(muebles: list[dict], selecciones: dict) -> None:
         )
 
 
+def _agrupar_rodapies(muebles_rodapie: list[dict]) -> list[dict]:
+    """Agrupa piezas de rodapié por (código SKP, gama, acabado) y suma anchos.
+
+    Devuelve una lista de dicts con la estructura:
+        key, code_skp, gama_ui, acabado_ui, piezas, total_mm, cod_3600, cod_1800
+    """
+    grupos: dict[str, dict] = {}
+    for m in muebles_rodapie:
+        code_skp  = (m.get("Name") or "").strip()
+        acabado_raw = (m.get("Acabado") or "").strip()
+        acabado_ui  = _ui_color_frente(acabado_raw)
+        gama_ui     = _ui_gama(m.get("D_Gama", ""))
+        key = f"{code_skp}|{gama_ui}|{acabado_ui}"
+
+        ancho_raw = (m.get("Ancho") or "").strip()
+        match_mm  = re.match(r"^(\d+)\s*mm$", ancho_raw)
+        ancho_mm  = int(match_mm.group(1)) if match_mm else 0
+        summary   = (m.get("Summary") or "").strip()
+
+        if key not in grupos:
+            resolucion = _RESOLUCION_RODAPIE.get(code_skp, [])
+            grupos[key] = {
+                "key":       key,
+                "code_skp":  code_skp,
+                "gama_ui":   gama_ui,
+                "acabado_ui": acabado_ui,
+                "piezas":    [],
+                "total_mm":  0,
+                "cod_3600":  resolucion[0] if len(resolucion) > 0 else "",
+                "cod_1800":  resolucion[1] if len(resolucion) > 1 else "",
+            }
+        grupos[key]["piezas"].append({"summary": summary, "ancho_mm": ancho_mm})
+        grupos[key]["total_mm"] += ancho_mm
+
+    return list(grupos.values())
+
+
+def _render_card_grupo_rodapie(grupo: dict, catalogo: dict) -> None:  # noqa: C901
+    """Renderiza la card de selección de piezas para un grupo de rodapié."""
+    key        = grupo["key"]
+    code_skp   = grupo["code_skp"]
+    acabado_ui = grupo["acabado_ui"]
+    gama_ui    = grupo["gama_ui"]
+    cod_3600   = grupo["cod_3600"]
+    cod_1800   = grupo["cod_1800"]
+    total_mm   = grupo["total_mm"]
+
+    if "rodapie_grupos" not in st.session_state:
+        st.session_state.rodapie_grupos = {}
+    estado = st.session_state.rodapie_grupos.setdefault(
+        key, {"n3600": 0, "n1800": 0, "check": False}
+    )
+    revisado = bool(estado.get("check", False))
+
+    alto_mm = 100 if code_skp == "SOCX10" else 70
+    titulo  = (
+        f"{'🟢' if revisado else '🔴'}  Rodapié {alto_mm} mm  ·  "
+        f"{acabado_ui} ({gama_ui})  ·  Total necesario: {total_mm} mm"
+    )
+
+    with st.expander(titulo, expanded=False):
+        img_path = _imagen_mueble(code_skp)
+        col_img, col_body = (st.columns([1, 3]) if img_path else (None, None))
+
+        def _cuerpo() -> None:
+            # Lista de piezas individuales
+            st.markdown("**Piezas incluidas en este grupo:**")
+            for pieza in grupo["piezas"]:
+                ancho_str = f"{pieza['ancho_mm']} mm" if pieza["ancho_mm"] else "—"
+                st.markdown(
+                    f"- **{pieza['summary']}** · {ancho_str}"
+                    if pieza["summary"] else f"- {ancho_str}"
+                )
+            st.markdown(f"**Total necesario: {total_mm} mm**")
+            st.divider()
+
+            # Selectores de cantidad
+            st.markdown("**Selecciona el número de piezas a pedir:**")
+            c1, c2 = st.columns(2)
+            with c1:
+                n3600_nuevo = st.number_input(
+                    f"{cod_3600}  (3600 mm/pieza)",
+                    min_value=0,
+                    step=1,
+                    value=int(estado.get("n3600", 0)),
+                    key=f"rod_n3600_{key}",
+                )
+            with c2:
+                n1800_nuevo = st.number_input(
+                    f"{cod_1800}  (1800 mm/pieza)",
+                    min_value=0,
+                    step=1,
+                    value=int(estado.get("n1800", 0)),
+                    key=f"rod_n1800_{key}",
+                )
+
+            # Actualizar y resetear check si cambian las cantidades
+            if n3600_nuevo != estado.get("n3600") or n1800_nuevo != estado.get("n1800"):
+                estado["n3600"] = n3600_nuevo
+                estado["n1800"] = n1800_nuevo
+                if estado.get("check"):
+                    estado["check"] = False
+                st.rerun()
+
+            total_elegido = n3600_nuevo * 3600 + n1800_nuevo * 1800
+
+            # Contador en vivo
+            if total_elegido == 0:
+                st.info("Selecciona las piezas necesarias.")
+            elif total_elegido < total_mm:
+                falta = total_mm - total_elegido
+                st.error(
+                    f"Total elegido: **{total_elegido} mm** — faltan **{falta} mm** "
+                    f"para cubrir los {total_mm} mm necesarios."
+                )
+            elif total_elegido == total_mm:
+                st.warning(
+                    f"Total elegido: **{total_elegido} mm** — exactamente igual al necesario. "
+                    "Se recomienda añadir algo más de material para evitar mermas."
+                )
+            else:
+                sobrante = total_elegido - total_mm
+                st.success(
+                    f"✅ Total elegido: **{total_elegido} mm** "
+                    f"(necesario: {total_mm} mm · sobrante: {sobrante} mm)"
+                )
+
+            # Check de revisado
+            st.divider()
+            razon = None
+            if total_elegido < total_mm:
+                razon = (
+                    f"El total elegido ({total_elegido} mm) es inferior al necesario "
+                    f"({total_mm} mm). Añade más piezas antes de marcar como revisado."
+                )
+            disabled = (not revisado) and (razon is not None)
+            nuevo_check = st.checkbox(
+                "He revisado este grupo de rodapié",
+                value=revisado,
+                key=f"check_rod_{key}",
+                disabled=disabled,
+                help=razon if disabled else None,
+            )
+            if nuevo_check != revisado:
+                estado["check"] = nuevo_check
+                st.rerun()
+
+        if img_path and col_img is not None:
+            with col_img:
+                st.image(str(img_path), width=229)
+                _render_swatches_color(acabado_ui, "", etiqueta_frente="Acabado")
+            with col_body:
+                _cuerpo()
+        else:
+            _cuerpo()
+
+
 def paso_1(muebles: list[dict]) -> None:
     """Paso 1 — Cards plegables, una por mueble, en orden del CSV."""
     catalogo = _cargar_catalogo()
     interfaz = _cargar_interfaz()
     selecciones = st.session_state.selecciones_paso_1
+
+    # Separar rodapiés SKP del resto — se procesan aparte en cards de grupo al final.
+    muebles_normales   = [m for m in muebles if (m.get("Name") or "").strip() not in CODIGOS_RODAPIE_SKP]
+    muebles_rodapie_skp = [m for m in muebles if (m.get("Name") or "").strip() in CODIGOS_RODAPIE_SKP]
+    grupos_rodapie = _agrupar_rodapies(muebles_rodapie_skp)
+
+    # Inicializar estado de grupos en session_state
+    if "rodapie_grupos" not in st.session_state:
+        st.session_state.rodapie_grupos = {}
+    for grupo in grupos_rodapie:
+        st.session_state.rodapie_grupos.setdefault(
+            grupo["key"], {"n3600": 0, "n1800": 0, "check": False}
+        )
+
     # Expandidos por defecto: inicializar con todas las claves si aún no existe.
     if "paso_1_abiertos" not in st.session_state:
         st.session_state["paso_1_abiertos"] = {
-            _identificador_mueble(m) for m in muebles
+            _identificador_mueble(m) for m in muebles_normales
         }
     abiertos = st.session_state["paso_1_abiertos"]
 
-    # Inicializa estado y pre-check para todos los muebles antes de pintar la
+    # Inicializa estado y pre-check para todos los muebles normales antes de pintar la
     # cabecera (los contadores deben verlos ya inicializados).
-    for mueble in muebles:
+    for mueble in muebles_normales:
         clave = _identificador_mueble(mueble)
         name  = (mueble.get("Name") or "").strip()
         aplicables = _opcionales_aplicables(mueble, interfaz)
@@ -1372,13 +1622,13 @@ def paso_1(muebles: list[dict]) -> None:
                 opcionales["op_121"] = True
 
     st.header("Paso 1 — Selección de opciones")
-    _render_cabecera_global(muebles, selecciones)
+    _render_cabecera_global(muebles_normales, selecciones, grupos_rodapie)
     st.divider()
 
     solo_pendientes = bool(st.session_state.get("paso_1_solo_pendientes", False))
     a_mostrar = sorted(
         [
-            m for m in muebles
+            m for m in muebles_normales
             if not (
                 solo_pendientes
                 and selecciones.get(_identificador_mueble(m), {}).get("check")
@@ -1497,13 +1747,27 @@ def paso_1(muebles: list[dict]) -> None:
                 st.divider()
                 _check_mueble(clave, selecciones, razon_bloqueo=razon_bloqueo)
     else:
-        st.info("No hay muebles pendientes. Todo revisado.")
+        if muebles_normales:
+            st.info("No hay muebles pendientes. Todo revisado.")
+
+    # ── Cards de grupos de rodapié — al final, colapsadas por defecto ─────────
+    if grupos_rodapie:
+        st.divider()
+        st.subheader("Rodapiés")
+        for grupo in grupos_rodapie:
+            _render_card_grupo_rodapie(grupo, catalogo)
 
     # Botón final de avance al Paso 2 (CLAUDE.md §7: solo al final).
     st.divider()
-    todos_revisados = all(
-        selecciones.get(_identificador_mueble(m), {}).get("check", False)
-        for m in muebles
+    todos_revisados = (
+        all(
+            selecciones.get(_identificador_mueble(m), {}).get("check", False)
+            for m in muebles_normales
+        )
+        and all(
+            st.session_state.get("rodapie_grupos", {}).get(g["key"], {}).get("check", False)
+            for g in grupos_rodapie
+        )
     )
     if st.button(
         "Continuar al Paso 2",

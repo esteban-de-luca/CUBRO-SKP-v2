@@ -1142,5 +1142,29 @@
     "ancho_mm": null,
     "alto_mm": 70,
     "fondo_mm": 13
+  },
+  "SOC36010": {
+    "designaciones": { "es": "Rodapié 100 mm — pieza 3600 mm" },
+    "ancho_mm": 3600,
+    "alto_mm": 100,
+    "fondo_mm": 13
+  },
+  "SOC18010": {
+    "designaciones": { "es": "Rodapié 100 mm — pieza 1800 mm" },
+    "ancho_mm": 1800,
+    "alto_mm": 100,
+    "fondo_mm": 13
+  },
+  "SOC3607": {
+    "designaciones": { "es": "Rodapié 70 mm — pieza 3600 mm" },
+    "ancho_mm": 3600,
+    "alto_mm": 70,
+    "fondo_mm": 13
+  },
+  "SOC1807": {
+    "designaciones": { "es": "Rodapié 70 mm — pieza 1800 mm" },
+    "ancho_mm": 1800,
+    "alto_mm": 70,
+    "fondo_mm": 13
   }
 }

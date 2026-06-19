@@ -242,7 +242,9 @@ def _calcular_opciones_mueble(
     codigos_tapeta: set[str] = set((op_mueble.get("tapetas") or {}).get("codigos") or [])
 
     # ── Rodapiés (SOC*): op_401 en lugar de op_100+op_101, viene de "Acabado" ──
-    codigos_rodapie: set[str] = set((op_mueble.get("rodapiés") or {}).get("codigos") or [])
+    _rodapies_cfg = op_mueble.get("rodapiés") or {}
+    codigos_rodapie: set[str] = set(_rodapies_cfg.get("codigos") or [])
+    codigos_rodapie_sg: set[str] = set(_rodapies_cfg.get("codigos_sg") or [])
     es_rodapie = code in codigos_rodapie
 
     if es_abierto:
@@ -557,7 +559,7 @@ def calcular_opciones(entrada: list[dict]) -> list[dict]:
             "p_item_code":             code,
             "p_item_label":            label_fr,
             "p_item_origin_id":        (fila.get("Summary") or "").strip() or None,
-            "p_quantity":              _d.get("p_quantity", 1),
+            "p_quantity":              int((fila.get("Cantidad") or "").strip() or 0) if code in codigos_rodapie_sg and (fila.get("Cantidad") or "").strip() else _d.get("p_quantity", 1),
             "p_hinge":                 p_hinge,
             "p_fastening":             p_fastening,
             "p_width":                 _p_width,

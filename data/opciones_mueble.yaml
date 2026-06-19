@@ -170,10 +170,14 @@ p_hinge:
 # op_100 — Gama del frente
 # -----------------------------------------------------------------------------
 op_100:
-  todos: O   # Obligatoria en todos excepto rodapiés (SOCX*)
+  todos: O   # Obligatoria en todos excepto rodapiés (SOCX* y SG codes SOC*)
   excepciones:
-    - SOCX10   # no aplica — rodapié (solo op_401)
-    - SOCX07   # no aplica — rodapié
+    - SOCX10    # no aplica — rodapié (solo op_401)
+    - SOCX07    # no aplica — rodapié
+    - SOC36010  # código SG de salida — op_401 ya calculado
+    - SOC18010  # código SG de salida
+    - SOC3607   # código SG de salida
+    - SOC1807   # código SG de salida
 
 
 # -----------------------------------------------------------------------------
@@ -182,8 +186,12 @@ op_100:
 op_101:
   todos: O   # Obligatoria en todos excepto rodapiés (SOCX* usan op_401 en su lugar)
   excepciones:
-    - SOCX10   # no aplica — rodapié (usa op_401)
-    - SOCX07   # no aplica — rodapié
+    - SOCX10    # no aplica — rodapié (usa op_401)
+    - SOCX07    # no aplica — rodapié
+    - SOC36010  # código SG de salida — op_401 ya calculado
+    - SOC18010  # código SG de salida
+    - SOC3607   # código SG de salida
+    - SOC1807   # código SG de salida
 
 
 # -----------------------------------------------------------------------------
@@ -242,6 +250,10 @@ op_200:
     - FFAL10100    # no aplica — tapeta
     - SOCX10       # no aplica — rodapié (sin mueble interior)
     - SOCX07       # no aplica — rodapié
+    - SOC36010     # código SG de salida
+    - SOC18010     # código SG de salida
+    - SOC3607      # código SG de salida
+    - SOC1807      # código SG de salida
 
 
 # -----------------------------------------------------------------------------
@@ -687,6 +699,10 @@ op_402:
     - FFAL10100    # no aplica — tapeta
     - SOCX10       # no aplica — rodapié (sin patas)
     - SOCX07       # no aplica — rodapié
+    - SOC36010     # código SG de salida
+    - SOC18010     # código SG de salida
+    - SOC3607      # código SG de salida
+    - SOC1807      # código SG de salida
   restricciones_valores:
     # Muebles de banco: admiten además el rodapié de 10 mm (SPI)
     BC604035: ["10 mm", "70 mm", "100 mm"]
@@ -744,6 +760,10 @@ op_700:
     - PO2BIF6080   # añadido 21/05/2026, confirmado por Jean Dilmetz el 20/05/2026
     - SOCX10       # no aplica — rodapié
     - SOCX07       # no aplica — rodapié
+    - SOC36010     # código SG de salida
+    - SOC18010     # código SG de salida
+    - SOC3607      # código SG de salida
+    - SOC1807      # código SG de salida
 
 
 # -----------------------------------------------------------------------------
@@ -906,9 +926,34 @@ tapetas:
 # Solo op_401 (mismo índice de valores que op_101, misma fuente "Acabado" del CSV).
 # Sin op_100, sin apertura, sin tirador, sin color interior, sin patas.
 # p_hinge y p_fastening se omiten del JSON.
+#
+# Flujo de agrupación en Módulo B:
+#   - codigos_skp: códigos que llegan de SketchUp (con X = ancho variable)
+#   - codigos_sg:  códigos reales de Schmidt Groupe (piezas de longitud fija)
+#   - codigos:     unión de los dos anteriores (para excepciones globales)
+#   - resolucion:  mapeo de SKP → [pieza 3600mm, pieza 1800mm]
 # -----------------------------------------------------------------------------
 rodapiés:
   op_401_desde_acabado: true   # modulo_c lee "Acabado" y lo mapea como op_401
+  codigos_skp:
+    - SOCX10
+    - SOCX07
+  codigos_sg:
+    - SOC36010
+    - SOC18010
+    - SOC3607
+    - SOC1807
   codigos:
     - SOCX10
     - SOCX07
+    - SOC36010
+    - SOC18010
+    - SOC3607
+    - SOC1807
+  resolucion:
+    SOCX10:
+      - SOC36010   # pieza 3600 mm, alto 100 mm
+      - SOC18010   # pieza 1800 mm, alto 100 mm
+    SOCX07:
+      - SOC3607    # pieza 3600 mm, alto 70 mm
+      - SOC1807    # pieza 1800 mm, alto 70 mm
