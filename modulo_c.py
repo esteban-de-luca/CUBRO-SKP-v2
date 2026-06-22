@@ -247,6 +247,10 @@ def _calcular_opciones_mueble(
     codigos_rodapie_sg: set[str] = set(_rodapies_cfg.get("codigos_sg") or [])
     es_rodapie = code in codigos_rodapie
 
+    # ── Joues (J19*): op_621 (coloris panneaux) desde "Acabado". Sin op_100 ni op_101. ──
+    codigos_joue: set[str] = set((op_mueble.get("joues") or {}).get("codigos") or [])
+    es_joue = code in codigos_joue
+
     if es_abierto:
         # op_410 — Acabado del mueble abierto
         # op_420 — Acabado de la trasera (mismo código SG, forzada e invisible)
@@ -262,6 +266,12 @@ def _calcular_opciones_mueble(
         sg_401 = indices.get("op_101", {}).get(acabado_rod, "")
         if sg_401:
             _sg("op_401", sg_401)
+    elif es_joue:
+        # ── op_621 — Coloris panneaux (mismo mapeo que op_101, sin op_100) ────
+        acabado_joue = (fila.get("Acabado") or "").strip()
+        sg_621 = indices.get("op_101", {}).get(acabado_joue, "")
+        if sg_621:
+            _sg("op_621", sg_621)
     else:
         # ── op_100 — Gama del frente (todos: O) ──────────────────────────────────
         sg_100 = indices.get("op_100", {}).get(gama_ui, "")
@@ -467,8 +477,9 @@ def calcular_opciones(entrada: list[dict]) -> list[dict]:
         _codigos_abierto: set[str] = set(
             ((op_mueble.get("op_410") or {}).get("codigos")) or []
         )
-        if code in _codigos_abierto:
-            p_hinge: str | None = None  # muebles abiertos: sin p_hinge en el JSON
+        _codigos_joue_hinge: set[str] = set((op_mueble.get("joues") or {}).get("codigos") or [])
+        if code in _codigos_abierto or code in _codigos_joue_hinge:
+            p_hinge: str | None = None  # muebles abiertos y joues: sin p_hinge en el JSON
         else:
             cat_hinge   = _p_hinge_cat(code, op_mueble)
             apertura_ui = (fila.get("Apertura") or "").strip()
@@ -484,10 +495,11 @@ def calcular_opciones(entrada: list[dict]) -> list[dict]:
                 p_hinge = None
 
         # ── p_fastening ───────────────────────────────────────────────────────
-        # Tapetas y rodapiés: no se envía. Se omite del JSON vía _sin_nulos.
+        # Tapetas, rodapiés y joues: no se envía. Se omite del JSON vía _sin_nulos.
         _codigos_tapeta_fast: set[str] = set((op_mueble.get("tapetas") or {}).get("codigos") or [])
         _codigos_rodapie_fast: set[str] = set((op_mueble.get("rodapiés") or {}).get("codigos") or [])
-        if code in _codigos_tapeta_fast or code in _codigos_rodapie_fast:
+        _codigos_joue_fast: set[str] = set((op_mueble.get("joues") or {}).get("codigos") or [])
+        if code in _codigos_tapeta_fast or code in _codigos_rodapie_fast or code in _codigos_joue_fast:
             p_fastening = None
         else:
             _ps_segun_rodapie: set[str] = set(
@@ -628,6 +640,7 @@ _EXCEL_COLS: list[tuple[str, str, str | None, str | None]] = [
     ("op_100",              "output", None,                    "op_100"),
     ("Acabado del frente",  "input",  "Acabado del frente",    None),
     ("op_101",              "output", None,                    "op_101"),
+    ("op_621",              "output", None,                    "op_621"),
     ("Color interior",      "input",  "Color interior",        None),
     ("op_200",              "output", None,                    "op_200"),
     ("op_206",              "output", None,                    "op_206"),

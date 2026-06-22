@@ -415,6 +415,15 @@ def _ui_color_frente(raw: str) -> str:
     return raw
 
 
+def _gama_desde_acabado(raw: str) -> str:
+    """Extrae la gama del valor completo de Acabado (p. ej. 'Crema LACA' → 'LACA')."""
+    raw = (raw or "").strip()
+    for sufijo in _GAMA_SUFIJOS:
+        if raw.endswith(sufijo):
+            return sufijo.strip()
+    return ""
+
+
 def _ui_color_mueble_abierto(raw: str) -> str:
     """Traduce el valor SKP del color de mueble abierto a etiqueta UI.
 
@@ -575,7 +584,7 @@ def construir_entrada_modulo_c(
             "Posición": "",  # placeholder reservado, lo rellenara C en el futuro
             "Summary": (mueble.get("Summary") or "").strip(),  # identificador SKP → p_item_origin_id
             "Apertura": _normalizar_vacio(_ui_apertura(mueble.get("Apertura", ""))),
-            "Gama del frente": _ui_gama(mueble.get("D_Gama", "")),
+            "Gama del frente": _gama_desde_acabado(mueble.get("Acabado", "")) if name in CODIGOS_JOUE else _ui_gama(mueble.get("D_Gama", "")),
             "Acabado del frente": _ui_color_frente(mueble.get("ColorFrente", "")),
             "Color interior": _normalizar_vacio(
                 _ui_color_interior(mueble.get("Color del interior", ""))
@@ -701,9 +710,11 @@ def _cabecera_card(mueble: dict, catalogo: dict, revisado: bool) -> str:
         if acabado:
             partes.append(acabado)
     elif name_code in CODIGOS_JOUE:
+        gama    = _gama_desde_acabado(mueble.get("Acabado") or "")
         acabado = _ui_color_frente(mueble.get("Acabado") or "")
-        if acabado:
-            partes.append(acabado)
+        gama_acabado = " ".join(p for p in (gama, acabado) if p)
+        if gama_acabado:
+            partes.append(gama_acabado)
     else:
         gama = _ui_gama(mueble.get("D_Gama", ""))
         color = _ui_color_frente(mueble.get("ColorFrente", ""))
@@ -808,10 +819,12 @@ def _bloque_informativo(mueble: dict, catalogo: dict) -> None:
             f"**Espesor:** {fondo_str}"
         )
     elif name in CODIGOS_JOUE:
+        gama      = _gama_desde_acabado(mueble.get("Acabado") or "")
         acabado   = _ui_color_frente(mueble.get("Acabado") or "")
         ancho_std = f"{entry.get('ancho_mm')} mm" if entry.get("ancho_mm") else ancho
+        gama_acabado = " ".join(p for p in (gama, acabado) if p)
         st.markdown(
-            f"**Acabado del panel:** {acabado or '—'}  ·  "
+            f"**Acabado del panel:** {gama_acabado or '—'}  ·  "
             f"**Ancho:** {ancho_std}  ·  "
             f"**Alto:** {alto_str}  ·  "
             f"**Espesor:** {fondo_str}"
@@ -1878,9 +1891,11 @@ def _bloque_configuracion_c(entrada: dict) -> list[tuple[str, str]]:
         if gama_acabado:
             items.append(("Gama y acabado", gama_acabado))
     elif code in CODIGOS_JOUE:
+        gama    = (entrada.get("Gama del frente") or "").strip()
         acabado = _ui_color_frente(entrada.get("Acabado") or "")
-        if acabado:
-            items.append(("Acabado del panel", acabado))
+        gama_acabado = " ".join(p for p in (gama, acabado) if p)
+        if gama_acabado:
+            items.append(("Acabado del panel", gama_acabado))
     elif code in CODIGOS_RODAPIE:
         gama    = (entrada.get("Gama del frente") or "").strip()
         acabado = _ui_color_frente(entrada.get("Acabado") or "")
@@ -2035,7 +2050,9 @@ def _render_card_resumen(entrada: dict, catalogo: dict) -> None:
         color_frente    = _ui_color_frente(entrada.get("Acabado") or "")
         etiqueta_frente = "Acabado"
     elif es_joue:
-        color_frente    = _ui_color_frente(entrada.get("Acabado") or "")
+        gama_j          = (entrada.get("Gama del frente") or "").strip()
+        acabado_j       = _ui_color_frente(entrada.get("Acabado") or "")
+        color_frente    = " ".join(p for p in (gama_j, acabado_j) if p)
         etiqueta_frente = "Acabado del panel"
     else:
         color_frente    = (entrada.get("Acabado del frente") or "").strip()
