@@ -98,7 +98,7 @@ def _cargar_ui_aviso() -> dict[str, dict]:
 
 COLUMNAS_VALIDAS = [
     "Summary",  # identificador de origen SKP → p_item_origin_id en SG
-    "Name", "Ancho", "LenZ", "Apertura", "D_Gama", "ColorFrente",
+    "Name", "Ancho", "Alto", "Apertura", "D_Gama", "ColorFrente",
     "Color del interior", "Tirador", "Trasera",
     "Color tir. de superficie", "C_Rodapietext", "Ancho reducido",
     "Acabado",
@@ -239,6 +239,13 @@ CODIGOS_RODAPIE: set[str] = set((_OPCIONES.get("rodapiés") or {}).get("codigos"
 CODIGOS_SIN_APERTURA |= CODIGOS_RODAPIE
 # CODIGOS_SIN_INTERIOR y CODIGOS_SIN_RODAPIE ya incluyen CODIGOS_RODAPIE
 # vía op_200.excepciones y op_402.excepciones respectivamente.
+
+# Joues (J19*): paneles laterales. Solo llevan Ancho, Alto y Acabado.
+# Sin apertura, tirador, color interior, gama, trasera ni rodapié.
+CODIGOS_JOUE: set[str] = set((_OPCIONES.get("joues") or {}).get("codigos") or [])
+CODIGOS_SIN_APERTURA |= CODIGOS_JOUE
+CODIGOS_SIN_INTERIOR |= CODIGOS_JOUE
+CODIGOS_SIN_RODAPIE  |= CODIGOS_JOUE
 
 # Altos estándar por código para validación A21
 CATALOG_ALTOS: dict[str, int] = {
@@ -599,8 +606,8 @@ def parsear_csv(archivo) -> dict:
         if name_raw not in CATALOGO_CODIGOS:
             avisos.append(f"'{name_raw}' no existe en el catálogo — revisar el código")
 
-        # A21 — LenZ vs alto del catálogo
-        len_z_raw = _str_or_none(fila.get("LenZ", ""))
+        # A21 — Alto vs alto del catálogo
+        len_z_raw = _str_or_none(fila.get("Alto", ""))
         if len_z_raw is not None:
             try:
                 len_z_mm = float(len_z_raw.replace(" mm", "").replace(",", ".").strip())
@@ -676,18 +683,19 @@ def parsear_csv(archivo) -> dict:
         color_tirador = None
 
         if not es_mueble_abierto:
-            # Tapetas (FF*/FFAL*) y rodapiés (SOCX*): sin tirador, sin color de tirador
+            # Tapetas (FF*/FFAL*), rodapiés (SOCX*) y joues (J19*): sin tirador, sin color
             es_tapeta   = name_raw in CODIGOS_TAPETA
             es_rodapie  = name_raw in CODIGOS_RODAPIE
+            es_joue     = name_raw in CODIGOS_JOUE
 
-            # A12/A14 — Tirador (no aplica a tapetas ni rodapiés)
-            if not es_tapeta and not es_rodapie:
+            # A12/A14 — Tirador (no aplica a tapetas, rodapiés ni joues)
+            if not es_tapeta and not es_rodapie and not es_joue:
                 tirador = _normalizar_tirador(fila.get("Tirador", ""))
-            if not es_tapeta and not es_rodapie and tirador is None:
+            if not es_tapeta and not es_rodapie and not es_joue and tirador is None:
                 avisos.append("Falta el tipo de tirador")
-            elif not es_tapeta and not es_rodapie and tirador not in TIRADORES_VALIDOS:
+            elif not es_tapeta and not es_rodapie and not es_joue and tirador not in TIRADORES_VALIDOS:
                 avisos.append(f"Tipo de tirador '{_ui_tirador.get(str(tirador), str(tirador))}' no reconocido")
-            elif not es_tapeta and not es_rodapie and tirador in TIRADORES_MECANISMO:
+            elif not es_tapeta and not es_rodapie and not es_joue and tirador in TIRADORES_MECANISMO:
                 # Touch Latch (20) o Prise de main (21) — validar compatibilidad con el mueble
                 _nombre_tir = _ui_tirador.get(str(tirador), str(tirador))
                 if name_raw in CODIGOS_SIN_MECANISMO:
@@ -715,9 +723,9 @@ def parsear_csv(archivo) -> dict:
                         f"solo se admiten: {', '.join(_permitidos)}"
                     )
 
-            # A11 — D_Gama vacío (no aplica a rodapiés — no usan op_100)
+            # A11 — D_Gama vacío (no aplica a rodapiés ni joues — no usan op_100)
             d_gama = _str_or_none(fila.get("D_Gama", ""))
-            if d_gama is None and not es_rodapie:
+            if d_gama is None and not es_rodapie and not es_joue:
                 avisos.append("Falta la gama del frente")
 
             # A05/A13 — Color del interior (no aplica a frentes sin mueble)
@@ -892,7 +900,7 @@ def _a_formato_b(m: dict) -> dict:
         "Ancho":                      m.get("ancho") or "",
         "Ancho reducido":             m.get("ancho_reducido") or "",
         "Acabado":                    m.get("acabado") or "",
-        "LenZ":                       m.get("len_z") or "",
+        "Alto":                       m.get("len_z") or "",
         "Color del mueble abierto":   m.get("color_mueble_abierto") or "",
         "Avisos":                     " | ".join(m.get("avisos") or []),
     }
