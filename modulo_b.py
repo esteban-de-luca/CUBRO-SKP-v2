@@ -1407,14 +1407,14 @@ def _control_dimensiones_joue_variable(
 
     st.info(
         f"Panel de dimensiones variables. El modelo 3D indica "
-        f"**{ancho_csv} mm** de fondo · **{alto_csv} mm** de alto. "
+        f"**{ancho_csv} mm** de ancho · **{alto_csv} mm** de alto. "
         f"Puedes ajustar las medidas para recrecerlas y ajustar en obra.",
         icon="ℹ️",
     )
     col_a, col_h = st.columns(2)
     with col_a:
         nuevo_a = st.number_input(
-            f"Fondo (mm)  [{ancho_min}–{ancho_max}]",
+            f"Ancho (mm)  [{ancho_min}–{ancho_max}]",
             min_value=ancho_min, max_value=ancho_max,
             value=_safe_int(prev_a, ancho_min),
             step=1,
