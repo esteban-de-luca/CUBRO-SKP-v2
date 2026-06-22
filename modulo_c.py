@@ -572,13 +572,14 @@ def calcular_opciones(entrada: list[dict]) -> list[dict]:
         _tiene_alto_var  = _cat_e_dim.get("alto_variable")  is not None
         _tiene_ancho_var = _cat_e_dim.get("ancho_variable") is not None
 
+        _es_joue_dim = code in _codigos_joue_hinge  # reutiliza el set ya cargado
         if code == "FF12V":
             # FF12V: el alto lo introduce el usuario en el paso 1 (alto_final_tapeta)
             _p_width  = _d.get("p_width", 0)
             _p_height = int(_alto_final) if _alto_final.isdigit() else _d.get("p_height", 0)
         else:
-            if es_joue:
-                # Joues/paneles: solo se emite la dimensión si es variable; el resto se omite.
+            if _es_joue_dim:
+                # Joues/paneles: solo se emite la dimensión si es variable en catálogo; el resto se omite.
                 _p_width  = int(_ancho_csv) if _tiene_ancho_var and _ancho_csv.isdigit() else None
                 _p_height = int(_alto_csv)  if _tiene_alto_var  and _alto_csv.isdigit()  else None
             else:
