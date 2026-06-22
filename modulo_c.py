@@ -565,9 +565,19 @@ def calcular_opciones(entrada: list[dict]) -> list[dict]:
         # SG conoce las dimensiones estándar por el código de artículo → el resto va a 0.
         # FF12V: dimensión variable = alto → p_height = valor introducido por el usuario.
         # Resto de tapetas: ninguna dimensión variable → p_width/p_height/p_depth = 0.
-        _alto_final = (fila.get("Alto final tapeta") or "").strip()
-        _p_width  = _d.get("p_width", 0)
-        _p_height = int(_alto_final) if code == "FF12V" and _alto_final.isdigit() else _d.get("p_height", 0)
+        # J19VV: joue variable → p_width = Ancho CSV (fondo), p_height = Alto CSV (altura).
+        _alto_final  = (fila.get("Alto final tapeta") or "").strip()
+        _ancho_csv   = (fila.get("Ancho CSV") or "").replace("mm", "").strip()
+        _alto_csv    = (fila.get("Alto CSV")  or "").replace("mm", "").strip()
+        if code == "J19VV":
+            _p_width  = int(_ancho_csv) if _ancho_csv.isdigit() else _d.get("p_width", 0)
+            _p_height = int(_alto_csv)  if _alto_csv.isdigit()  else _d.get("p_height", 0)
+        elif code == "FF12V" and _alto_final.isdigit():
+            _p_width  = _d.get("p_width", 0)
+            _p_height = int(_alto_final)
+        else:
+            _p_width  = _d.get("p_width", 0)
+            _p_height = _d.get("p_height", 0)
 
         p_item: dict = {
             "p_ord_cat_code":          str(i + 1),
