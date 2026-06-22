@@ -577,8 +577,8 @@ def calcular_opciones(entrada: list[dict]) -> list[dict]:
             _p_width  = _d.get("p_width", 0)
             _p_height = int(_alto_final) if _alto_final.isdigit() else _d.get("p_height", 0)
         else:
-            _p_width  = int(_ancho_csv) if _tiene_ancho_var and _ancho_csv.isdigit() else _d.get("p_width", 0)
-            _p_height = int(_alto_csv)  if _tiene_alto_var  and _alto_csv.isdigit()  else _d.get("p_height", 0)
+            _p_width  = int(_ancho_csv) if _tiene_ancho_var and _ancho_csv.isdigit() else (_cat_e_dim.get("ancho_mm") or _d.get("p_width", 0))
+            _p_height = int(_alto_csv)  if _tiene_alto_var  and _alto_csv.isdigit()  else (_cat_e_dim.get("alto_mm")  or _d.get("p_height", 0))
 
         p_item: dict = {
             "p_ord_cat_code":          str(i + 1),

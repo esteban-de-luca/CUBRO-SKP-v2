@@ -1380,19 +1380,16 @@ def _joue_dims_validas(dims: dict, cat_entry: dict) -> bool:
 def _control_dimensiones_joue_variable(
     clave: str, name: str, mueble: dict, catalogo: dict, opcionales: dict, selecciones: dict
 ) -> None:
-    """Controles para ajustar Fondo y Alto de un panel de dimensiones variables.
+    """Controles para ajustar las dimensiones variables de un panel antes de enviar a SG.
 
-    Pre-rellena con los valores del modelo SKP. El usuario puede ampliarlos
-    para recrecerlos y ajustar en obra, siempre dentro del rango del catálogo.
-    Los valores modificados reemplazan los del CSV en Ancho CSV / Alto CSV.
+    Muestra input solo para las dimensiones marcadas como variables en el catálogo.
+    Pre-rellena con los valores del modelo SKP; el usuario puede ampliarlos en obra.
     """
-    cat_entry = catalogo.get(name) or {}
-    av        = cat_entry.get("ancho_variable") or {}
-    alt_v     = cat_entry.get("alto_variable")  or {}
-    ancho_min = av.get("min", 100)
-    ancho_max = av.get("max", 9999)
-    alto_min  = alt_v.get("min", 100)
-    alto_max  = alt_v.get("max", 9999)
+    cat_entry  = catalogo.get(name) or {}
+    av         = cat_entry.get("ancho_variable") or {}
+    alt_v      = cat_entry.get("alto_variable")  or {}
+    tiene_av   = bool(av)
+    tiene_altv = bool(alt_v)
 
     ancho_csv = (mueble.get("Ancho") or "").replace("mm", "").strip()
     alto_csv  = (mueble.get("Alto")  or "").replace("mm", "").strip()
@@ -1405,32 +1402,51 @@ def _control_dimensiones_joue_variable(
     def _safe_int(s: str, fallback: int) -> int:
         return int(s) if s.isdigit() else fallback
 
+    partes_info = []
+    if tiene_av:
+        partes_info.append(f"**{ancho_csv} mm** de ancho")
+    if tiene_altv:
+        partes_info.append(f"**{alto_csv} mm** de alto")
     st.info(
         f"Panel de dimensiones variables. El modelo 3D indica "
-        f"**{ancho_csv} mm** de ancho · **{alto_csv} mm** de alto. "
+        f"{' · '.join(partes_info)}. "
         f"Puedes ajustar las medidas para recrecerlas y ajustar en obra.",
         icon="ℹ️",
     )
-    col_a, col_h = st.columns(2)
-    with col_a:
-        nuevo_a = st.number_input(
-            f"Ancho (mm)  [{ancho_min}–{ancho_max}]",
-            min_value=ancho_min, max_value=ancho_max,
-            value=_safe_int(prev_a, ancho_min),
-            step=1,
-            key=f"dims_joue_var_ancho_{clave}",
-        )
-    with col_h:
-        nuevo_h = st.number_input(
-            f"Alto (mm)  [{alto_min}–{alto_max}]",
-            min_value=alto_min, max_value=alto_max,
-            value=_safe_int(prev_h, alto_min),
-            step=1,
-            key=f"dims_joue_var_alto_{clave}",
-        )
 
-    nuevo_a_s = str(nuevo_a)
-    nuevo_h_s = str(nuevo_h)
+    nuevo_a_s = prev_a
+    nuevo_h_s = prev_h
+
+    cols = st.columns(2 if (tiene_av and tiene_altv) else 1)
+    col_idx = 0
+
+    if tiene_av:
+        ancho_min = av.get("min", 100)
+        ancho_max = av.get("max", 9999)
+        with cols[col_idx]:
+            nuevo_a = st.number_input(
+                f"Ancho (mm)  [{ancho_min}–{ancho_max}]",
+                min_value=ancho_min, max_value=ancho_max,
+                value=_safe_int(prev_a, ancho_min),
+                step=1,
+                key=f"dims_joue_var_ancho_{clave}",
+            )
+        nuevo_a_s = str(nuevo_a)
+        col_idx += 1
+
+    if tiene_altv:
+        alto_min = alt_v.get("min", 100)
+        alto_max = alt_v.get("max", 9999)
+        with cols[col_idx]:
+            nuevo_h = st.number_input(
+                f"Alto (mm)  [{alto_min}–{alto_max}]",
+                min_value=alto_min, max_value=alto_max,
+                value=_safe_int(prev_h, alto_min),
+                step=1,
+                key=f"dims_joue_var_alto_{clave}",
+            )
+        nuevo_h_s = str(nuevo_h)
+
     if nuevo_a_s != prev_a or nuevo_h_s != prev_h:
         opcionales[_key] = {"ancho": nuevo_a_s, "alto": nuevo_h_s}
         _registrar_edicion(clave, selecciones)

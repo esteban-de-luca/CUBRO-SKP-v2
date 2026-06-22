@@ -67,4 +67,5 @@ prefijos:
   SOC:      SO.png          # rodapiés SOCX10, SOCX07
   J19:      J.png           # joues (J199060, J19VV, etc.)
   BPLA1:    BPLA.png
+  HABE19:   HABE.png
   B:        B.png           # catch-all para muebles B no capturados antes
