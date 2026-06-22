@@ -957,3 +957,33 @@ rodapiés:
     SOCX07:
       - SOC3607    # pieza 3600 mm, alto 70 mm
       - SOC1807    # pieza 1800 mm, alto 70 mm
+
+
+# -----------------------------------------------------------------------------
+# joues — J19*
+# Solo op_621 (coloris panneaux).
+# El valor llega del CSV en la columna "Acabado" y se mapea con los mismos
+# códigos que op_101 (AcabadoFrente). Lo aplica el Módulo C.
+# Sin apertura, tirador, color interior, rodapié ni opcionales de usuario.
+# V1 (dimensión SG) viene de la columna "Ancho" del CSV.
+# V2 (dimensión SG) viene de la columna "Alto" del CSV.
+# -----------------------------------------------------------------------------
+joues:
+  op_621_desde_acabado: true   # modulo_c lee "Acabado" y lo mapea como op_621
+  codigos:
+    - J199060
+    - J198760
+    - J199037
+    - J198737
+    - J1921060
+    - J1920760
+    - J1923060
+    - J1922760
+    - J1921037
+    - J1920737
+    - J1923037
+    - J1922737
+    - J196037
+    - J198037
+    - J1910037
+    - J19VV

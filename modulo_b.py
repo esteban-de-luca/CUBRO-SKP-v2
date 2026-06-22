@@ -116,6 +116,11 @@ CODIGOS_RODAPIE_SG: set[str] = set(_RODAPIES_CFG.get("codigos_sg") or [])
 # Mapeo: código SKP → [código SG 3600mm, código SG 1800mm]
 _RESOLUCION_RODAPIE: dict[str, list[str]] = _RODAPIES_CFG.get("resolucion") or {}
 
+# Joues (J19*): solo op_621 (coloris panneaux) desde columna "Acabado" del CSV.
+# Sin apertura, tirador, color interior, rodapié ni opcionales de usuario.
+_JOUES_CFG = _OPCIONES_RAW.get("joues") or {}
+CODIGOS_JOUE: set[str] = set(_JOUES_CFG.get("codigos") or [])
+
 
 def _es_desmontado(code: str) -> bool:
     """True si el mueble siempre se envía desmontado al cliente (aviso informativo)."""
@@ -555,7 +560,7 @@ def construir_entrada_modulo_c(
         if name == "FF12V" and _alto_ff12v_valido(alto_ff12v):
             alto_csv_final = f"{alto_ff12v} mm"
         else:
-            alto_csv_final = (mueble.get("LenZ") or "").strip()
+            alto_csv_final = (mueble.get("Alto") or "").strip()
 
         tirador_ui = _ui_tirador(mueble.get("Tirador", ""))
 
@@ -587,9 +592,9 @@ def construir_entrada_modulo_c(
             "Ancho reducido": ancho_reducido,
             # Tapetas y rodapiés: quitar sufijo de gama para que modulo_c pueda hacer
             # el lookup op_101 (tapetas) / op_401 (rodapiés) igual que "Acabado del frente".
-            "Acabado": _ui_color_frente(mueble.get("Acabado") or "") if name in CODIGOS_TAPETA or name in CODIGOS_RODAPIE else str(mueble.get("Acabado") or "").strip(),
+            "Acabado": _ui_color_frente(mueble.get("Acabado") or "") if name in CODIGOS_TAPETA or name in CODIGOS_RODAPIE or name in CODIGOS_JOUE else str(mueble.get("Acabado") or "").strip(),
             "Ancho CSV": "" if reduccion else ancho_raw,   # para Paso 2 cuando ancho_mm es null en catálogo
-            "Alto CSV": alto_csv_final,                      # FF12V: alto del usuario; resto: LenZ de SKP
+            "Alto CSV": alto_csv_final,                      # FF12V: alto del usuario; resto: columna Alto del CSV
             "Alto final tapeta": alto_ff12v if name == "FF12V" and _alto_ff12v_valido(alto_ff12v) else "",
             "Sin mecanizado": _bool_str(opcionales.get("op_121", False)),
             "Cubos de basura": _export_op_207(opcionales.get("op_207_opcional", False)),
@@ -695,6 +700,10 @@ def _cabecera_card(mueble: dict, catalogo: dict, revisado: bool) -> str:
         acabado = _ui_color_frente(mueble.get("Acabado") or "")   # quita sufijo gama
         if acabado:
             partes.append(acabado)
+    elif name_code in CODIGOS_JOUE:
+        acabado = _ui_color_frente(mueble.get("Acabado") or "")
+        if acabado:
+            partes.append(acabado)
     else:
         gama = _ui_gama(mueble.get("D_Gama", ""))
         color = _ui_color_frente(mueble.get("ColorFrente", ""))
@@ -746,8 +755,8 @@ def _bloque_informativo(mueble: dict, catalogo: dict) -> None:
     name  = (mueble.get("Name") or "").strip()
     entry = catalogo.get(name) or {}
 
-    # Alto: LenZ del CSV (altura real en SketchUp); fallback al catálogo
-    len_z_raw = (mueble.get("LenZ") or "").strip()
+    # Alto: columna "Alto" del CSV (altura real en SketchUp); fallback al catálogo
+    len_z_raw = (mueble.get("Alto") or "").strip()
     if len_z_raw:
         try:
             alto_str = f"{int(float(len_z_raw))} mm"
@@ -794,6 +803,15 @@ def _bloque_informativo(mueble: dict, catalogo: dict) -> None:
         ancho_std = f"{entry.get('ancho_mm')} mm" if entry.get("ancho_mm") else "—"
         st.markdown(
             f"**Acabado:** {acabado or '—'}  ·  "
+            f"**Ancho:** {ancho_std}  ·  "
+            f"**Alto:** {alto_str}  ·  "
+            f"**Espesor:** {fondo_str}"
+        )
+    elif name in CODIGOS_JOUE:
+        acabado   = _ui_color_frente(mueble.get("Acabado") or "")
+        ancho_std = f"{entry.get('ancho_mm')} mm" if entry.get("ancho_mm") else ancho
+        st.markdown(
+            f"**Acabado del panel:** {acabado or '—'}  ·  "
             f"**Ancho:** {ancho_std}  ·  "
             f"**Alto:** {alto_str}  ·  "
             f"**Espesor:** {fondo_str}"
@@ -873,7 +891,7 @@ def _opcionales_aplicables(mueble: dict, interfaz: dict) -> list[str]:
     # op_700 — aplica a todos salvo los no_aplica, tapetas y rodapiés.
     # Los forzadas (campanas HH*) también se incluyen: se muestran desactivados y marcados.
     meta_700 = interfaz.get("op_700_opcional") or {}
-    if "op_700_opcional" in interfaz and name not in (meta_700.get("excluidos") or []) and name not in CODIGOS_TAPETA and name not in CODIGOS_RODAPIE:
+    if "op_700_opcional" in interfaz and name not in (meta_700.get("excluidos") or []) and name not in CODIGOS_TAPETA and name not in CODIGOS_RODAPIE and name not in CODIGOS_JOUE:
         aplicables.append("op_700_opcional")
 
     # op_126 — lista plana de muebles (BFT y AFS)
@@ -1325,7 +1343,7 @@ def _control_alto_tapeta_variable(
     Rango permitido: _FF12V_ALTO_MIN – _FF12V_ALTO_MAX mm.
     """
     # Alto que viene del modelo SKP (solo para mostrar en el aviso)
-    len_z_raw = (mueble.get("LenZ") or "").strip()
+    len_z_raw = (mueble.get("Alto") or "").strip()
     try:
         alto_skp_str = f"{int(float(len_z_raw))} mm" if len_z_raw else None
     except ValueError:
@@ -1689,6 +1707,12 @@ def paso_1(muebles: list[dict]) -> None:
                             "",
                             etiqueta_frente="Acabado",
                         )
+                    elif name in CODIGOS_JOUE:
+                        _render_swatches_color(
+                            _ui_color_frente(mueble.get("Acabado") or ""),
+                            "",
+                            etiqueta_frente="Acabado del panel",
+                        )
                     else:
                         _render_swatches_color(
                             _ui_color_frente(mueble.get("ColorFrente", "")),
@@ -1853,6 +1877,10 @@ def _bloque_configuracion_c(entrada: dict) -> list[tuple[str, str]]:
         gama_acabado = " ".join(p for p in (gama, acabado) if p)
         if gama_acabado:
             items.append(("Gama y acabado", gama_acabado))
+    elif code in CODIGOS_JOUE:
+        acabado = _ui_color_frente(entrada.get("Acabado") or "")
+        if acabado:
+            items.append(("Acabado del panel", acabado))
     elif code in CODIGOS_RODAPIE:
         gama    = (entrada.get("Gama del frente") or "").strip()
         acabado = _ui_color_frente(entrada.get("Acabado") or "")
@@ -1957,7 +1985,7 @@ def _bloque_dimensiones_c(entrada: dict, catalogo: dict) -> list[tuple[str, str]
     fondo = entry.get("fondo_mm")
     if fondo is not None:
         # Tapetas y rodapiés: el "fondo" es en realidad el espesor del panel
-        etiqueta_fondo = "Espesor" if code in CODIGOS_TAPETA or code in CODIGOS_RODAPIE else "Fondo"
+        etiqueta_fondo = "Espesor" if code in CODIGOS_TAPETA or code in CODIGOS_RODAPIE or code in CODIGOS_JOUE else "Fondo"
         items.append((etiqueta_fondo, f"{fondo} mm"))
 
     return items
@@ -1985,6 +2013,7 @@ def _render_card_resumen(entrada: dict, catalogo: dict) -> None:
     es_rodapie     = code in CODIGOS_RODAPIE
     es_rodapie_sg  = code in CODIGOS_RODAPIE_SG
     es_abierto     = code in CODIGOS_MUEBLE_ABIERTO
+    es_joue        = code in CODIGOS_JOUE
 
     # Título: rodapiés SG → código · Rodapié · Gama Acabado
     if es_rodapie_sg:
@@ -2001,10 +2030,13 @@ def _render_card_resumen(entrada: dict, catalogo: dict) -> None:
             titulo += f"  ·  {des}"
     img_path = _imagen_mueble(code)
 
-    # Tapetas y rodapiés: el color de acabado llega en "Acabado", no en "Acabado del frente"
+    # Tapetas, rodapiés y joues: el color llega en "Acabado", no en "Acabado del frente"
     if es_tapeta or es_rodapie:
         color_frente    = _ui_color_frente(entrada.get("Acabado") or "")
         etiqueta_frente = "Acabado"
+    elif es_joue:
+        color_frente    = _ui_color_frente(entrada.get("Acabado") or "")
+        etiqueta_frente = "Acabado del panel"
     else:
         color_frente    = (entrada.get("Acabado del frente") or "").strip()
         etiqueta_frente = "Frente"
@@ -2148,6 +2180,7 @@ def generar_pdf_resumen(
         'Espesor':                                    'Epaisseur',
         'Cantidad':                                   'Quantite',
         'Acabado del mueble abierto':                 'Finition meuble ouvert',
+        'Acabado del panel':                          'Finition panneau',
         'Acabado':                                    'Finition',
         'Electrodomestico':                           'Electromenager',
         'Electrodomestico 1':                         'Electromenager 1',
