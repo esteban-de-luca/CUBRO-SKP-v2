@@ -1,4 +1,4 @@
-"""
+﻿"""
 modulo_b.py — Módulo B: Interfaz y selección.
 Responsable: Esteban.
 
@@ -2093,7 +2093,7 @@ def _nombre_export_base() -> str:
 
 
 # =============================================================================
-# PDF — Exportar resumen del pedido
+# PDF - Exportar resumen del pedido
 # =============================================================================
 
 def generar_pdf_resumen(
@@ -2102,250 +2102,240 @@ def generar_pdf_resumen(
     csv_filename: str,
     fecha_export: str,
 ) -> bytes:
-    “””Genera un PDF con el resumen completo del pedido.
+    '''Genera un PDF con el resumen completo del pedido.
 
-    Replica exactamente los bloques que muestra cada card del Paso 2:
-    Configuración, Dimensiones y Opciones adicionales.
-    Cuando existe imagen del elemento la coloca a la izquierda del bloque.
+    Replica los bloques Configuracion / Dimensiones / Opciones adicionales
+    de cada card del Paso 2. Imagen del elemento a la izquierda si existe.
 
     Retorna los bytes del PDF generado.
-    “””
+    '''
     import struct
     from fpdf import FPDF
 
-    # ── Constantes de layout ──────────────────────────────────────────────────
-    _MARGEN      = 12   # mm — márgenes izquierdo y derecho
-    _HEADER_H    = 8    # mm — alto de la cabecera de página
-    _IMG_W       = 38   # mm — ancho fijo de la imagen en el PDF
-    _IMG_GAP     = 5    # mm — espacio entre imagen y bloque de texto
-    _COL_LABEL_W = 44   # mm — ancho de columna etiqueta en tabla
-    _FONT_MAIN   = “Helvetica”
-    _FONT_SIZE_HEADER  = 8
-    _FONT_SIZE_TITLE   = 11
-    _FONT_SIZE_SECTION = 9
-    _FONT_SIZE_BODY    = 8
-    _CELL_H      = 5.5  # mm — alto de cada fila de tabla
-    _GAP_SECTION = 3    # mm — espacio entre secciones dentro de un bloque
+    MARGEN      = 12
+    HEADER_H    = 8
+    IMG_W       = 38
+    IMG_GAP     = 5
+    COL_LABEL_W = 44
+    FONT_MAIN   = 'Helvetica'
+    FSZ_HEADER  = 8
+    FSZ_TITLE   = 11
+    FSZ_SECTION = 9
+    FSZ_BODY    = 8
+    CELL_H      = 5.5
+    GAP_SECTION = 3
 
     sg_ui = _cargar_sg_a_ui()
 
     class _PDF(FPDF):
-        def __init__(self, csv_filename: str, fecha_export: str):
-            super().__init__(orientation=”P”, unit=”mm”, format=”A4”)
-            self._csv_filename = csv_filename
-            self._fecha_export = fecha_export
-            self.set_margins(_MARGEN, _MARGEN + _HEADER_H + 2, _MARGEN)
+        def __init__(self, csv_fn, fecha):
+            super().__init__(orientation='P', unit='mm', format='A4')
+            self._csv_fn = csv_fn
+            self._fecha  = fecha
+            self.set_margins(MARGEN, MARGEN + HEADER_H + 2, MARGEN)
             self.set_auto_page_break(auto=True, margin=15)
 
         def header(self):
-            self.set_font(_FONT_MAIN, “I”, _FONT_SIZE_HEADER)
+            self.set_font(FONT_MAIN, 'I', FSZ_HEADER)
             self.set_y(6)
-            self.cell(0, _HEADER_H, self._csv_filename, align=”L”)
+            self.cell(0, HEADER_H, self._csv_fn, align='L')
             self.set_y(6)
-            self.cell(0, _HEADER_H, self._fecha_export, align=”R”)
-            self.set_y(_MARGEN + _HEADER_H)
+            self.cell(0, HEADER_H, self._fecha, align='R')
+            self.set_y(MARGEN + HEADER_H)
             self.set_draw_color(200, 200, 200)
-            self.line(_MARGEN, _MARGEN + _HEADER_H - 1, 210 - _MARGEN, _MARGEN + _HEADER_H - 1)
+            self.line(MARGEN, MARGEN + HEADER_H - 1, 210 - MARGEN, MARGEN + HEADER_H - 1)
 
         def footer(self):
             self.set_y(-10)
-            self.set_font(_FONT_MAIN, “I”, 7)
-            self.cell(0, 5, f”Página {self.page_no()}”, align=”C”)
+            self.set_font(FONT_MAIN, 'I', 7)
+            self.cell(0, 5, 'Pag. ' + str(self.page_no()), align='C')
 
-    def _safe(text: str) -> str:
-        “””Sustituye caracteres que FPDF (latin-1) no puede representar.”””
-        replacements = {
-            “‘”: “’”, “’”: “’”, ““”: ‘”’, “””: ‘”’,
-            “…”: “...”, “–“: “-”, “—“: “-”,
-            “☐”: “[ ]”, “☑”: “[x]”, “⚠”: “(!)”,
-            “ℹ”: “(i)”, “✅”: “[OK]”, “❌”: “[X]”,
-        }
-        for orig, repl in replacements.items():
+    def _safe(text):
+        # Reemplaza caracteres Unicode fuera de latin-1 por equivalentes ASCII.
+        # Las comillas tipograficas se expresan como escapes para evitar
+        # que el editor las confunda con delimitadores de cadena.
+        subs = [
+            ('‘', "'"),   # LEFT SINGLE QUOTATION MARK
+            ('’', "'"),   # RIGHT SINGLE QUOTATION MARK
+            ('“', '"'),   # LEFT DOUBLE QUOTATION MARK
+            ('”', '"'),   # RIGHT DOUBLE QUOTATION MARK
+            ('…', '...'), # HORIZONTAL ELLIPSIS
+            ('–', '-'),   # EN DASH
+            ('—', '-'),   # EM DASH
+            ('☐', '[ ]'), # BALLOT BOX
+            ('☑', '[x]'), # BALLOT BOX WITH CHECK
+            ('⚠', '(!)'), # WARNING SIGN
+            ('ℹ', '(i)'), # INFORMATION SOURCE
+            ('✅', '[OK]'),# WHITE HEAVY CHECK MARK
+            ('❌', '[X]'), # CROSS MARK
+        ]
+        for orig, repl in subs:
             text = text.replace(orig, repl)
         try:
-            text.encode(“latin-1”)
+            text.encode('latin-1')
         except UnicodeEncodeError:
-            text = text.encode(“latin-1”, errors=”replace”).decode(“latin-1”)
+            text = text.encode('latin-1', errors='replace').decode('latin-1')
         return text
 
-    def _png_height_mm(path: pathlib.Path, w_mm: float) -> float:
-        “””Calcula la altura renderizada de un PNG en mm dado un ancho fijo.
-
-        Lee el header del fichero (bytes 16-24) sin dependencias externas.
-        Devuelve w_mm como fallback si no se puede leer.
-        “””
+    def _png_height_mm(path, w_mm):
         try:
-            with path.open(“rb”) as f:
+            with path.open('rb') as f:
                 f.read(16)
-                w_px, h_px = struct.unpack(“>II”, f.read(8))
+                w_px, h_px = struct.unpack('>II', f.read(8))
             if w_px:
                 return w_mm * h_px / w_px
         except Exception:
             pass
-        return w_mm  # fallback: imagen cuadrada
+        return w_mm
 
-    def _render_tabla(pdf: _PDF, items: list[tuple[str, str]]) -> None:
+    def _render_tabla(pdf, items):
         for etiqueta, valor in items:
-            pdf.set_font(_FONT_MAIN, “B”, _FONT_SIZE_BODY)
-            pdf.cell(_COL_LABEL_W, _CELL_H, _safe(etiqueta + “:”), border=0)
-            pdf.set_font(_FONT_MAIN, “”, _FONT_SIZE_BODY)
-            # w=0 llena hasta el margen derecho, respetando el margen izquierdo activo
-            pdf.multi_cell(
-                0, _CELL_H,
-                _safe(valor),
-                border=0,
-                new_x=”LMARGIN”, new_y=”NEXT”,
-            )
+            pdf.set_font(FONT_MAIN, 'B', FSZ_BODY)
+            pdf.cell(COL_LABEL_W, CELL_H, _safe(etiqueta + ':'), border=0)
+            pdf.set_font(FONT_MAIN, '', FSZ_BODY)
+            pdf.multi_cell(0, CELL_H, _safe(valor), border=0,
+                           new_x='LMARGIN', new_y='NEXT')
 
-    def _seccion(pdf: _PDF, titulo: str) -> None:
-        pdf.set_font(_FONT_MAIN, “B”, _FONT_SIZE_SECTION)
+    def _seccion(pdf, titulo):
+        pdf.set_font(FONT_MAIN, 'B', FSZ_SECTION)
         pdf.set_fill_color(240, 240, 240)
-        pdf.cell(0, 6, _safe(titulo), border=0, fill=True, new_x=”LMARGIN”, new_y=”NEXT”)
+        pdf.cell(0, 6, _safe(titulo), border=0, fill=True,
+                 new_x='LMARGIN', new_y='NEXT')
         pdf.ln(1)
 
-    # ── Construir PDF ─────────────────────────────────────────────────────────
-    pdf = _PDF(csv_filename=_safe(csv_filename), fecha_export=_safe(fecha_export))
+    pdf = _PDF(_safe(csv_filename), _safe(fecha_export))
 
     for i, entrada in enumerate(pedido):
-        code     = (entrada.get(“Código mueble”) or “”).strip()
-        cat_e    = catalogo.get(code) or {}
-        des      = (cat_e.get(“designaciones”) or {}).get(“es”, “”)
-        summary  = (entrada.get(“Summary”) or “”).strip()
+        code    = (entrada.get('Código mueble') or '').strip()
+        cat_e   = catalogo.get(code) or {}
+        des     = (cat_e.get('designaciones') or {}).get('es', '')
+        summary = (entrada.get('Summary') or '').strip()
 
         es_rodapie_sg = code in CODIGOS_RODAPIE_SG
 
-        # ── Nueva página + título ─────────────────────────────────────────────
         pdf.add_page()
 
-        pdf.set_font(_FONT_MAIN, “B”, _FONT_SIZE_TITLE)
+        pdf.set_font(FONT_MAIN, 'B', FSZ_TITLE)
         if es_rodapie_sg:
-            gama_t    = (entrada.get(“Gama del frente”) or “”).strip()
-            acabado_t = _ui_color_frente(entrada.get(“Acabado”) or “”)
-            ga_str    = “  ·  “.join(p for p in (gama_t, acabado_t) if p)
-            titulo_pdf = f”{code}  ·  Rodapie”
+            gama_t    = (entrada.get('Gama del frente') or '').strip()
+            acabado_t = _ui_color_frente(entrada.get('Acabado') or '')
+            ga_str    = ' - '.join(p for p in (gama_t, acabado_t) if p)
+            titulo_pdf = code + ' - Rodapie'
             if ga_str:
-                titulo_pdf += f”  ·  {ga_str}”
+                titulo_pdf += ' - ' + ga_str
         else:
-            prefijo = f”{summary}  ·  “ if summary else “”
-            titulo_pdf = f”{prefijo}{code}”
+            prefijo    = (summary + ' - ') if summary else ''
+            titulo_pdf = prefijo + code
             if des:
-                titulo_pdf += f”  ·  {des}”
+                titulo_pdf += ' - ' + des
 
-        pdf.cell(0, 7, _safe(titulo_pdf), new_x=”LMARGIN”, new_y=”NEXT”)
+        pdf.cell(0, 7, _safe(titulo_pdf), new_x='LMARGIN', new_y='NEXT')
 
         if _es_desmontado(code):
-            pdf.set_font(_FONT_MAIN, “I”, _FONT_SIZE_BODY)
+            pdf.set_font(FONT_MAIN, 'I', FSZ_BODY)
             pdf.set_text_color(80, 80, 80)
-            pdf.cell(0, 5, _safe(“(i) Este mueble siempre se entrega desmontado al cliente.”),
-                     new_x=”LMARGIN”, new_y=”NEXT”)
+            pdf.cell(0, 5, '(i) Este mueble siempre se entrega desmontado.',
+                     new_x='LMARGIN', new_y='NEXT')
             pdf.set_text_color(0, 0, 0)
 
         pdf.ln(2)
 
-        # ── Imagen a la izquierda (si existe) ────────────────────────────────
         img_path = _imagen_mueble(code)
-        y_content_start = pdf.get_y()
+        y_top    = pdf.get_y()
         img_h_mm = 0.0
 
         if img_path:
-            img_h_mm = _png_height_mm(img_path, _IMG_W)
-            pdf.image(str(img_path), x=_MARGEN, y=y_content_start, w=_IMG_W)
-            # Desplazar el margen izquierdo para que el texto quede a la derecha
-            pdf.set_left_margin(_MARGEN + _IMG_W + _IMG_GAP)
-            pdf.set_x(_MARGEN + _IMG_W + _IMG_GAP)
+            img_h_mm = _png_height_mm(img_path, IMG_W)
+            pdf.image(str(img_path), x=MARGEN, y=y_top, w=IMG_W)
+            pdf.set_left_margin(MARGEN + IMG_W + IMG_GAP)
+            pdf.set_x(MARGEN + IMG_W + IMG_GAP)
 
-        # ── Configuración ─────────────────────────────────────────────────────
         config = _bloque_configuracion_c(entrada)
         if config:
-            _seccion(pdf, “Configuracion”)
+            _seccion(pdf, 'Configuracion')
             _render_tabla(pdf, config)
-            pdf.ln(_GAP_SECTION)
+            pdf.ln(GAP_SECTION)
 
-        # ── Dimensiones ───────────────────────────────────────────────────────
         dims = _bloque_dimensiones_c(entrada, catalogo)
         if dims:
-            _seccion(pdf, “Dimensiones”)
+            _seccion(pdf, 'Dimensiones')
             _render_tabla(pdf, dims)
-            pdf.ln(_GAP_SECTION)
+            pdf.ln(GAP_SECTION)
 
-        # ── Opciones adicionales ──────────────────────────────────────────────
-        opc_adic   = entrada.get(“opciones_adicionales”) or []
-        marca      = (entrada.get(“Marca electro”)        or “”).strip()
-        referencia = (entrada.get(“Referencia electro”)   or “”).strip()
-        alto_e     = (entrada.get(“Alto electro”)         or “”).strip()
-        marca_2    = (entrada.get(“Marca electro 2”)      or “”).strip()
-        ref_2      = (entrada.get(“Referencia electro 2”) or “”).strip()
-        alto_e_2   = (entrada.get(“Alto electro 2”)       or “”).strip()
+        opc_adic      = entrada.get('opciones_adicionales') or []
+        marca         = (entrada.get('Marca electro')        or '').strip()
+        referencia    = (entrada.get('Referencia electro')   or '').strip()
+        alto_e        = (entrada.get('Alto electro')         or '').strip()
+        marca_2       = (entrada.get('Marca electro 2')      or '').strip()
+        ref_2         = (entrada.get('Referencia electro 2') or '').strip()
+        alto_e_2      = (entrada.get('Alto electro 2')       or '').strip()
         tiene_electro = bool(marca)
 
-        opc_items: list[tuple[str, str]] = []
-
+        opc_items = []
         for entry_adic in opc_adic:
-            marcador    = “ [auto]” if entry_adic.get(“origen”) == “automatico” else “”
-            etiqueta    = entry_adic.get(“etiqueta”) or “”
-            valor_raw   = entry_adic.get(“valor”) or “”
+            marcador    = ' [auto]' if entry_adic.get('origen') == 'automatico' else ''
+            etiqueta    = entry_adic.get('etiqueta') or ''
+            valor_raw   = entry_adic.get('valor') or ''
             etiqueta_ui = sg_ui.get(etiqueta, etiqueta)
-            if valor_raw == “RL3”:
-                ancho_r     = (entrada.get(“Ancho reducido”) or “”).strip()
-                ancho_r_num = ancho_r.replace(“mm”, “”).strip()
-                valor_ui    = f”{ancho_r_num} mm” if ancho_r_num else “Reduccion de ancho”
+            if valor_raw == 'RL3':
+                ancho_r     = (entrada.get('Ancho reducido') or '').strip()
+                ancho_r_num = ancho_r.replace('mm', '').strip()
+                valor_ui    = (ancho_r_num + ' mm') if ancho_r_num else 'Reduccion de ancho'
             else:
                 valor_ui = sg_ui.get(valor_raw, valor_raw)
-            opc_items.append((etiqueta_ui, f”{valor_ui}{marcador}”))
+            opc_items.append((etiqueta_ui, valor_ui + marcador))
 
         if tiene_electro:
-            lbl1 = “Electrodomestico 1” if marca_2 else “Electrodomestico”
+            lbl1 = 'Electrodomestico 1' if marca_2 else 'Electrodomestico'
             if referencia:
-                opc_items.append((lbl1, f”{marca}  ·  {referencia}”))
+                opc_items.append((lbl1, marca + ' - ' + referencia))
             else:
-                alto_str = f”{alto_e} mm” if alto_e else “”
-                opc_items.append((lbl1, “  ·  “.join(p for p in (marca, alto_str) if p)))
+                alto_str = (alto_e + ' mm') if alto_e else ''
+                opc_items.append((lbl1, ' - '.join(p for p in (marca, alto_str) if p)))
             if marca_2:
                 if ref_2:
-                    opc_items.append((“Electrodomestico 2”, f”{marca_2}  ·  {ref_2}”))
+                    opc_items.append(('Electrodomestico 2', marca_2 + ' - ' + ref_2))
                 else:
-                    alto_str_2 = f”{alto_e_2} mm” if alto_e_2 else “”
-                    opc_items.append((“Electrodomestico 2”, “  ·  “.join(p for p in (marca_2, alto_str_2) if p)))
+                    alto_str_2 = (alto_e_2 + ' mm') if alto_e_2 else ''
+                    opc_items.append(('Electrodomestico 2',
+                                      ' - '.join(p for p in (marca_2, alto_str_2) if p)))
 
-        _seccion(pdf, “Opciones adicionales”)
+        _seccion(pdf, 'Opciones adicionales')
         if opc_items:
             _render_tabla(pdf, opc_items)
-            if any(e.get(“origen”) == “automatico” for e in opc_adic):
+            if any(e.get('origen') == 'automatico' for e in opc_adic):
                 pdf.ln(1)
-                pdf.set_font(_FONT_MAIN, “I”, 7)
+                pdf.set_font(FONT_MAIN, 'I', 7)
                 pdf.set_text_color(100, 100, 100)
-                pdf.cell(0, 4, _safe(“[auto] = Forzado automaticamente por reglas”),
-                         new_x=”LMARGIN”, new_y=”NEXT”)
+                pdf.cell(0, 4, '[auto] = Forzado automaticamente por reglas',
+                         new_x='LMARGIN', new_y='NEXT')
                 pdf.set_text_color(0, 0, 0)
         else:
-            pdf.set_font(_FONT_MAIN, “I”, _FONT_SIZE_BODY)
+            pdf.set_font(FONT_MAIN, 'I', FSZ_BODY)
             pdf.set_text_color(120, 120, 120)
-            pdf.cell(0, _CELL_H, _safe(“Ninguna”), new_x=”LMARGIN”, new_y=”NEXT”)
+            pdf.cell(0, CELL_H, 'Ninguna', new_x='LMARGIN', new_y='NEXT')
             pdf.set_text_color(0, 0, 0)
 
-        # ── Avisos de modulo_c ────────────────────────────────────────────────
-        avisos_c = entrada.get(“avisos_c”) or []
+        avisos_c = entrada.get('avisos_c') or []
         if avisos_c:
             pdf.ln(2)
-            pdf.set_font(_FONT_MAIN, “I”, _FONT_SIZE_BODY)
+            pdf.set_font(FONT_MAIN, 'I', FSZ_BODY)
             pdf.set_text_color(160, 80, 0)
             for aviso in avisos_c:
-                pdf.multi_cell(0, _CELL_H, _safe(f”(!) {aviso}”),
-                               new_x=”LMARGIN”, new_y=”NEXT”)
+                pdf.multi_cell(0, CELL_H, _safe('(!) ' + aviso),
+                               new_x='LMARGIN', new_y='NEXT')
             pdf.set_text_color(0, 0, 0)
 
-        # ── Restaurar margen y avanzar más allá de la imagen si es necesario ──
         if img_path:
-            pdf.set_left_margin(_MARGEN)
-            y_min = y_content_start + img_h_mm + 2
+            pdf.set_left_margin(MARGEN)
+            y_min = y_top + img_h_mm + 2
             if pdf.get_y() < y_min:
                 pdf.set_y(y_min)
 
-        # Separador entre elementos (excepto el último)
         if i < len(pedido) - 1:
             pdf.ln(4)
             pdf.set_draw_color(180, 180, 180)
-            pdf.line(_MARGEN, pdf.get_y(), 210 - _MARGEN, pdf.get_y())
+            pdf.line(MARGEN, pdf.get_y(), 210 - MARGEN, pdf.get_y())
 
     return bytes(pdf.output())
 
