@@ -561,23 +561,24 @@ def calcular_opciones(entrada: list[dict]) -> list[dict]:
         # El orden de claves sigue exactamente el contrato de Schmidt Groupe.
         _d = _p_item_defaults()
 
-        # Tapetas: solo se rellena la dimensión variable.
-        # SG conoce las dimensiones estándar por el código de artículo → el resto va a 0.
-        # FF12V: dimensión variable = alto → p_height = valor introducido por el usuario.
-        # Resto de tapetas: ninguna dimensión variable → p_width/p_height/p_depth = 0.
-        # J19VV: joue variable → p_width = Ancho CSV (fondo), p_height = Alto CSV (altura).
+        # Para piezas con dimensiones variables, p_width/p_height se toman del CSV.
+        # Piezas con alto_variable: HR*, HLVV57, HPT60V57, FF12V, J19VV.
+        # Piezas con ancho_variable: HLVV57, J19VV.
+        # SG necesita las dimensiones reales para fabricar; las fijas las conoce por código.
         _alto_final  = (fila.get("Alto final tapeta") or "").strip()
         _ancho_csv   = (fila.get("Ancho CSV") or "").replace("mm", "").strip()
         _alto_csv    = (fila.get("Alto CSV")  or "").replace("mm", "").strip()
-        if code == "J19VV":
-            _p_width  = int(_ancho_csv) if _ancho_csv.isdigit() else _d.get("p_width", 0)
-            _p_height = int(_alto_csv)  if _alto_csv.isdigit()  else _d.get("p_height", 0)
-        elif code == "FF12V" and _alto_final.isdigit():
+        _cat_e_dim   = catalogo.get(code) or {}
+        _tiene_alto_var  = _cat_e_dim.get("alto_variable")  is not None
+        _tiene_ancho_var = _cat_e_dim.get("ancho_variable") is not None
+
+        if code == "FF12V":
+            # FF12V: el alto lo introduce el usuario en el paso 1 (alto_final_tapeta)
             _p_width  = _d.get("p_width", 0)
-            _p_height = int(_alto_final)
+            _p_height = int(_alto_final) if _alto_final.isdigit() else _d.get("p_height", 0)
         else:
-            _p_width  = _d.get("p_width", 0)
-            _p_height = _d.get("p_height", 0)
+            _p_width  = int(_ancho_csv) if _tiene_ancho_var and _ancho_csv.isdigit() else _d.get("p_width", 0)
+            _p_height = int(_alto_csv)  if _tiene_alto_var  and _alto_csv.isdigit()  else _d.get("p_height", 0)
 
         p_item: dict = {
             "p_ord_cat_code":          str(i + 1),

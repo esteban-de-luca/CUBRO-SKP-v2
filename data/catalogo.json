@@ -583,7 +583,7 @@
     "alto_mm": null,
     "fondo_mm": 350,
     "alto_variable": {
-      "min": 200,
+      "min": 400,
       "max": 1000
     }
   },
@@ -595,7 +595,7 @@
     "alto_mm": null,
     "fondo_mm": 350,
     "alto_variable": {
-      "min": 200,
+      "min": 400,
       "max": 1000
     }
   },
@@ -607,7 +607,7 @@
     "alto_mm": null,
     "fondo_mm": 570,
     "alto_variable": {
-      "min": 200,
+      "min": 400,
       "max": 1000
     }
   },
@@ -619,7 +619,7 @@
     "alto_mm": null,
     "fondo_mm": 570,
     "alto_variable": {
-      "min": 200,
+      "min": 400,
       "max": 1000
     }
   },
