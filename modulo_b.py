@@ -2092,6 +2092,228 @@ def _nombre_export_base() -> str:
     return csv_origen or "pedido_cubro"
 
 
+# =============================================================================
+# PDF — Exportar resumen del pedido
+# =============================================================================
+
+def generar_pdf_resumen(
+    pedido: list[dict],
+    catalogo: dict,
+    csv_filename: str,
+    fecha_export: str,
+) -> bytes:
+    """Genera un PDF con el resumen completo del pedido.
+
+    Replica exactamente los bloques que muestra cada card del Paso 2:
+    Configuración, Dimensiones y Opciones adicionales.
+
+    Retorna los bytes del PDF generado.
+    """
+    from fpdf import FPDF
+
+    # ── Constantes de layout ──────────────────────────────────────────────────
+    _MARGEN     = 12   # mm — márgenes izquierdo, derecho y superior (no inferior)
+    _HEADER_H   = 8    # mm — alto de la cabecera de página
+    _COL_LABEL_W = 48  # mm — ancho de columna etiqueta en tabla
+    _COL_VAL_W   = 70  # mm — ancho de columna valor en tabla
+    _FONT_MAIN   = "Helvetica"
+    _FONT_SIZE_HEADER  = 8
+    _FONT_SIZE_TITLE   = 11
+    _FONT_SIZE_SECTION = 9
+    _FONT_SIZE_BODY    = 8
+    _CELL_H     = 5.5  # mm — alto de cada fila de tabla
+    _GAP_SECTION = 3   # mm — espacio entre secciones dentro de un bloque
+
+    sg_ui = _cargar_sg_a_ui()
+
+    class _PDF(FPDF):
+        def __init__(self, csv_filename: str, fecha_export: str):
+            super().__init__(orientation="P", unit="mm", format="A4")
+            self._csv_filename = csv_filename
+            self._fecha_export = fecha_export
+            self.set_margins(_MARGEN, _MARGEN + _HEADER_H + 2, _MARGEN)
+            self.set_auto_page_break(auto=True, margin=15)
+
+        def header(self):
+            self.set_font(_FONT_MAIN, "I", _FONT_SIZE_HEADER)
+            self.set_y(6)
+            self.cell(0, _HEADER_H, self._csv_filename, align="L")
+            self.set_y(6)
+            self.cell(0, _HEADER_H, self._fecha_export, align="R")
+            self.set_y(_MARGEN + _HEADER_H)
+            self.set_draw_color(200, 200, 200)
+            self.line(_MARGEN, _MARGEN + _HEADER_H - 1, 210 - _MARGEN, _MARGEN + _HEADER_H - 1)
+
+        def footer(self):
+            self.set_y(-10)
+            self.set_font(_FONT_MAIN, "I", 7)
+            self.cell(0, 5, f"Página {self.page_no()}", align="C")
+
+    def _safe(text: str) -> str:
+        """Sustituye caracteres que FPDF (latin-1) no puede representar."""
+        replacements = {
+            "’": "'", "‘": "'", "“": '"', "”": '"',
+            "…": "...", "–": "-", "—": "-",
+            "☐": "[ ]", "☑": "[x]", "⚠": "(!)",
+            "ℹ": "(i)", "✅": "[OK]", "❌": "[X]",
+            "—": "-",
+        }
+        for orig, repl in replacements.items():
+            text = text.replace(orig, repl)
+        try:
+            text.encode("latin-1")
+        except UnicodeEncodeError:
+            text = text.encode("latin-1", errors="replace").decode("latin-1")
+        return text
+
+    def _render_tabla(pdf: _PDF, items: list[tuple[str, str]]) -> None:
+        for etiqueta, valor in items:
+            pdf.set_font(_FONT_MAIN, "B", _FONT_SIZE_BODY)
+            pdf.cell(_COL_LABEL_W, _CELL_H, _safe(etiqueta + ":"), border=0)
+            pdf.set_font(_FONT_MAIN, "", _FONT_SIZE_BODY)
+            pdf.multi_cell(
+                _COL_VAL_W, _CELL_H,
+                _safe(valor),
+                border=0,
+                new_x="LMARGIN", new_y="NEXT",
+            )
+
+    def _seccion(pdf: _PDF, titulo: str) -> None:
+        pdf.set_font(_FONT_MAIN, "B", _FONT_SIZE_SECTION)
+        pdf.set_fill_color(240, 240, 240)
+        pdf.cell(0, 6, _safe(titulo), border=0, fill=True, new_x="LMARGIN", new_y="NEXT")
+        pdf.ln(1)
+
+    # ── Construir PDF ─────────────────────────────────────────────────────────
+    pdf = _PDF(csv_filename=_safe(csv_filename), fecha_export=_safe(fecha_export))
+
+    for i, entrada in enumerate(pedido):
+        code     = (entrada.get("Código mueble") or "").strip()
+        cat_e    = catalogo.get(code) or {}
+        des      = (cat_e.get("designaciones") or {}).get("es", "")
+        summary  = (entrada.get("Summary") or "").strip()
+
+        es_tapeta     = code in CODIGOS_TAPETA
+        es_rodapie    = code in CODIGOS_RODAPIE
+        es_rodapie_sg = code in CODIGOS_RODAPIE_SG
+
+        # ── Título del bloque ─────────────────────────────────────────────────
+        pdf.add_page()
+
+        pdf.set_font(_FONT_MAIN, "B", _FONT_SIZE_TITLE)
+        if es_rodapie_sg:
+            gama_t    = (entrada.get("Gama del frente") or "").strip()
+            acabado_t = _ui_color_frente(entrada.get("Acabado") or "")
+            ga_str    = "  ·  ".join(p for p in (gama_t, acabado_t) if p)
+            titulo_pdf = f"{code}  ·  Rodapie"
+            if ga_str:
+                titulo_pdf += f"  ·  {ga_str}"
+        else:
+            prefijo = f"{summary}  ·  " if summary else ""
+            titulo_pdf = f"{prefijo}{code}"
+            if des:
+                titulo_pdf += f"  ·  {des}"
+
+        pdf.cell(0, 7, _safe(titulo_pdf), new_x="LMARGIN", new_y="NEXT")
+
+        if _es_desmontado(code):
+            pdf.set_font(_FONT_MAIN, "I", _FONT_SIZE_BODY)
+            pdf.set_text_color(80, 80, 80)
+            pdf.cell(0, 5, _safe("(i) Este mueble siempre se entrega desmontado al cliente."),
+                     new_x="LMARGIN", new_y="NEXT")
+            pdf.set_text_color(0, 0, 0)
+
+        pdf.ln(2)
+
+        # ── Configuración ─────────────────────────────────────────────────────
+        config = _bloque_configuracion_c(entrada)
+        if config:
+            _seccion(pdf, "Configuracion")
+            _render_tabla(pdf, config)
+            pdf.ln(_GAP_SECTION)
+
+        # ── Dimensiones ───────────────────────────────────────────────────────
+        dims = _bloque_dimensiones_c(entrada, catalogo)
+        if dims:
+            _seccion(pdf, "Dimensiones")
+            _render_tabla(pdf, dims)
+            pdf.ln(_GAP_SECTION)
+
+        # ── Opciones adicionales ──────────────────────────────────────────────
+        opc_adic   = entrada.get("opciones_adicionales") or []
+        marca      = (entrada.get("Marca electro")        or "").strip()
+        referencia = (entrada.get("Referencia electro")   or "").strip()
+        alto_e     = (entrada.get("Alto electro")         or "").strip()
+        marca_2    = (entrada.get("Marca electro 2")      or "").strip()
+        ref_2      = (entrada.get("Referencia electro 2") or "").strip()
+        alto_e_2   = (entrada.get("Alto electro 2")       or "").strip()
+        tiene_electro = bool(marca)
+
+        opc_items: list[tuple[str, str]] = []
+
+        for entry_adic in opc_adic:
+            marcador    = " [auto]" if entry_adic.get("origen") == "automatico" else ""
+            etiqueta    = entry_adic.get("etiqueta") or ""
+            valor_raw   = entry_adic.get("valor") or ""
+            etiqueta_ui = sg_ui.get(etiqueta, etiqueta)
+            if valor_raw == "RL3":
+                ancho_r     = (entrada.get("Ancho reducido") or "").strip()
+                ancho_r_num = ancho_r.replace("mm", "").strip()
+                valor_ui    = f"{ancho_r_num} mm" if ancho_r_num else "Reduccion de ancho"
+            else:
+                valor_ui = sg_ui.get(valor_raw, valor_raw)
+            opc_items.append((etiqueta_ui, f"{valor_ui}{marcador}"))
+
+        if tiene_electro:
+            lbl1 = "Electrodomestico 1" if marca_2 else "Electrodomestico"
+            if referencia:
+                opc_items.append((lbl1, f"{marca}  ·  {referencia}"))
+            else:
+                alto_str = f"{alto_e} mm" if alto_e else ""
+                opc_items.append((lbl1, "  ·  ".join(p for p in (marca, alto_str) if p)))
+            if marca_2:
+                if ref_2:
+                    opc_items.append(("Electrodomestico 2", f"{marca_2}  ·  {ref_2}"))
+                else:
+                    alto_str_2 = f"{alto_e_2} mm" if alto_e_2 else ""
+                    opc_items.append(("Electrodomestico 2", "  ·  ".join(p for p in (marca_2, alto_str_2) if p)))
+
+        _seccion(pdf, "Opciones adicionales")
+        if opc_items:
+            _render_tabla(pdf, opc_items)
+            if any(e.get("origen") == "automatico" for e in opc_adic):
+                pdf.ln(1)
+                pdf.set_font(_FONT_MAIN, "I", 7)
+                pdf.set_text_color(100, 100, 100)
+                pdf.cell(0, 4, _safe("[auto] = Forzado automaticamente por reglas"),
+                         new_x="LMARGIN", new_y="NEXT")
+                pdf.set_text_color(0, 0, 0)
+        else:
+            pdf.set_font(_FONT_MAIN, "I", _FONT_SIZE_BODY)
+            pdf.set_text_color(120, 120, 120)
+            pdf.cell(0, _CELL_H, _safe("Ninguna"), new_x="LMARGIN", new_y="NEXT")
+            pdf.set_text_color(0, 0, 0)
+
+        # ── Avisos de modulo_c ────────────────────────────────────────────────
+        avisos_c = entrada.get("avisos_c") or []
+        if avisos_c:
+            pdf.ln(2)
+            pdf.set_font(_FONT_MAIN, "I", _FONT_SIZE_BODY)
+            pdf.set_text_color(160, 80, 0)
+            for aviso in avisos_c:
+                pdf.multi_cell(0, _CELL_H, _safe(f"(!) {aviso}"),
+                               new_x="LMARGIN", new_y="NEXT")
+            pdf.set_text_color(0, 0, 0)
+
+        # Separador al final de cada bloque (excepto el último)
+        if i < len(pedido) - 1:
+            pdf.ln(4)
+            pdf.set_draw_color(180, 180, 180)
+            pdf.line(_MARGEN, pdf.get_y(), 210 - _MARGEN, pdf.get_y())
+
+    return bytes(pdf.output())
+
+
 def paso_2(pedido: list[dict] | None) -> None:
     """Paso 2 — Revisión final del pedido y exportación."""
     catalogo = _cargar_catalogo()
@@ -2115,18 +2337,40 @@ def paso_2(pedido: list[dict] | None) -> None:
     st.divider()
 
     # ── Exportar pedido ───────────────────────────────────────────────────────
-    if st.button("📦 Exportar pedido JSON", type="primary"):
-        import modulo_c as _mc  # importación local para mantener modulo_b autónomo
-        st.session_state["_export_json"] = json.dumps(
-            _mc.generar_json_pedido(pedido), ensure_ascii=False, indent=2
-        ).encode("utf-8")
+    col_json, col_pdf = st.columns(2)
 
-    if st.session_state.get("_export_json"):
-        nombre = _nombre_export_base()
-        st.download_button(
-            "⬇ JSON de pedido",
-            data=st.session_state["_export_json"],
-            file_name=f"{nombre}_pedido.json",
-            mime="application/json",
-            use_container_width=True,
-        )
+    with col_json:
+        if st.button("📦 Exportar pedido JSON", type="primary", use_container_width=True):
+            import modulo_c as _mc  # importación local para mantener modulo_b autónomo
+            st.session_state["_export_json"] = json.dumps(
+                _mc.generar_json_pedido(pedido), ensure_ascii=False, indent=2
+            ).encode("utf-8")
+
+        if st.session_state.get("_export_json"):
+            nombre = _nombre_export_base()
+            st.download_button(
+                "⬇ JSON de pedido",
+                data=st.session_state["_export_json"],
+                file_name=f"{nombre}_pedido.json",
+                mime="application/json",
+                use_container_width=True,
+            )
+
+    with col_pdf:
+        if st.button("📄 Exportar PDF resumen", use_container_width=True):
+            from datetime import datetime as _dt
+            csv_fn  = st.session_state.get("csv_filename") or "pedido"
+            fecha   = _dt.now().strftime("%d/%m/%Y %H:%M")
+            st.session_state["_export_pdf"] = generar_pdf_resumen(
+                pedido, catalogo, csv_fn, fecha
+            )
+
+        if st.session_state.get("_export_pdf"):
+            nombre = _nombre_export_base()
+            st.download_button(
+                "⬇ PDF resumen",
+                data=st.session_state["_export_pdf"],
+                file_name=f"{nombre}_resumen.pdf",
+                mime="application/pdf",
+                use_container_width=True,
+            )
