@@ -2101,12 +2101,15 @@ def generar_pdf_resumen(
     catalogo: dict,
     csv_filename: str,
     fecha_export: str,
+    idioma: str = 'es',
 ) -> bytes:
     '''Genera un PDF con el resumen completo del pedido.
 
     Replica los bloques Configuracion / Dimensiones / Opciones adicionales
-    de cada card del Paso 2. Imagen del elemento a la izquierda si existe.
+    de cada card del Paso 2. Los elementos fluyen en paginas continuas.
+    Imagen del elemento a la izquierda si existe.
 
+    idioma: 'es' (default) o 'fr' para etiquetas y titulos de seccion en frances.
     Retorna los bytes del PDF generado.
     '''
     import struct
@@ -2124,8 +2127,41 @@ def generar_pdf_resumen(
     FSZ_BODY    = 8
     CELL_H      = 5.5
     GAP_SECTION = 3
+    MIN_SPACE   = 45   # mm minimos antes de empezar un nuevo elemento
 
     sg_ui = _cargar_sg_a_ui()
+
+    # Traducciones español -> frances para etiquetas y titulos de seccion
+    _FR = {
+        'Configuracion':                              'Configuration',
+        'Dimensiones':                                'Dimensions',
+        'Opciones adicionales':                       'Options additionnelles',
+        'Apertura':                                   'Ouverture',
+        'Gama y color frente':                        'Gamme et couleur facade',
+        'Gama y acabado':                             'Gamme et finition',
+        'Color interior':                             'Couleur interieur',
+        'Tirador':                                    'Poignee',
+        'Rodapié':                               'Plinthe',
+        'Ancho':                                      'Largeur',
+        'Alto':                                       'Hauteur',
+        'Fondo':                                      'Profondeur',
+        'Espesor':                                    'Epaisseur',
+        'Cantidad':                                   'Quantite',
+        'Acabado del mueble abierto':                 'Finition meuble ouvert',
+        'Acabado':                                    'Finition',
+        'Electrodomestico':                           'Electromenager',
+        'Electrodomestico 1':                         'Electromenager 1',
+        'Electrodomestico 2':                         'Electromenager 2',
+        'Ninguna':                                    'Aucune',
+        '[auto] = Forzado automaticamente por reglas': '[auto] = Force automatiquement par les regles',
+        '(i) Este mueble siempre se entrega desmontado.': '(i) Ce meuble est toujours livre demonte.',
+        'Pag. ':                                      'Page ',
+    }
+
+    def _t(text):
+        if idioma == 'fr':
+            return _FR.get(text, text)
+        return text
 
     class _PDF(FPDF):
         def __init__(self, csv_fn, fecha):
@@ -2148,26 +2184,18 @@ def generar_pdf_resumen(
         def footer(self):
             self.set_y(-10)
             self.set_font(FONT_MAIN, 'I', 7)
-            self.cell(0, 5, 'Pag. ' + str(self.page_no()), align='C')
+            self.cell(0, 5, _t('Pag. ') + str(self.page_no()), align='C')
 
     def _safe(text):
         # Reemplaza caracteres Unicode fuera de latin-1 por equivalentes ASCII.
-        # Las comillas tipograficas se expresan como escapes para evitar
-        # que el editor las confunda con delimitadores de cadena.
         subs = [
-            ('‘', "'"),   # LEFT SINGLE QUOTATION MARK
-            ('’', "'"),   # RIGHT SINGLE QUOTATION MARK
-            ('“', '"'),   # LEFT DOUBLE QUOTATION MARK
-            ('”', '"'),   # RIGHT DOUBLE QUOTATION MARK
-            ('…', '...'), # HORIZONTAL ELLIPSIS
-            ('–', '-'),   # EN DASH
-            ('—', '-'),   # EM DASH
-            ('☐', '[ ]'), # BALLOT BOX
-            ('☑', '[x]'), # BALLOT BOX WITH CHECK
-            ('⚠', '(!)'), # WARNING SIGN
-            ('ℹ', '(i)'), # INFORMATION SOURCE
-            ('✅', '[OK]'),# WHITE HEAVY CHECK MARK
-            ('❌', '[X]'), # CROSS MARK
+            ('‘', "'"), ('’', "'"),
+            ('“', '"'), ('”', '"'),
+            ('…', '...'),
+            ('–', '-'), ('—', '-'),
+            ('☐', '[ ]'), ('☑', '[x]'),
+            ('⚠', '(!)'), ('ℹ', '(i)'),
+            ('✅', '[OK]'), ('❌', '[X]'),
         ]
         for orig, repl in subs:
             text = text.replace(orig, repl)
@@ -2191,7 +2219,7 @@ def generar_pdf_resumen(
     def _render_tabla(pdf, items):
         for etiqueta, valor in items:
             pdf.set_font(FONT_MAIN, 'B', FSZ_BODY)
-            pdf.cell(COL_LABEL_W, CELL_H, _safe(etiqueta + ':'), border=0)
+            pdf.cell(COL_LABEL_W, CELL_H, _safe(_t(etiqueta) + ':'), border=0)
             pdf.set_font(FONT_MAIN, '', FSZ_BODY)
             pdf.multi_cell(0, CELL_H, _safe(valor), border=0,
                            new_x='LMARGIN', new_y='NEXT')
@@ -2199,22 +2227,36 @@ def generar_pdf_resumen(
     def _seccion(pdf, titulo):
         pdf.set_font(FONT_MAIN, 'B', FSZ_SECTION)
         pdf.set_fill_color(240, 240, 240)
-        pdf.cell(0, 6, _safe(titulo), border=0, fill=True,
+        pdf.cell(0, 6, _safe(_t(titulo)), border=0, fill=True,
                  new_x='LMARGIN', new_y='NEXT')
         pdf.ln(1)
 
     pdf = _PDF(_safe(csv_filename), _safe(fecha_export))
+    pdf.add_page()
 
     for i, entrada in enumerate(pedido):
         code    = (entrada.get('Código mueble') or '').strip()
         cat_e   = catalogo.get(code) or {}
-        des     = (cat_e.get('designaciones') or {}).get('es', '')
+        des_raw = (cat_e.get('designaciones') or {})
+        des     = des_raw.get(idioma) or des_raw.get('es') or ''
         summary = (entrada.get('Summary') or '').strip()
 
         es_rodapie_sg = code in CODIGOS_RODAPIE_SG
 
-        pdf.add_page()
+        # Separador entre elementos (excepto el primero)
+        if i > 0:
+            # Restaurar margen izquierdo (por si el elemento anterior tenia imagen)
+            pdf.set_left_margin(MARGEN)
+            remaining = (297 - 15) - pdf.get_y()
+            if remaining < MIN_SPACE:
+                pdf.add_page()
+            else:
+                pdf.ln(5)
+                pdf.set_draw_color(160, 160, 160)
+                pdf.line(MARGEN, pdf.get_y(), 210 - MARGEN, pdf.get_y())
+                pdf.ln(5)
 
+        # Titulo del elemento
         pdf.set_font(FONT_MAIN, 'B', FSZ_TITLE)
         if es_rodapie_sg:
             gama_t    = (entrada.get('Gama del frente') or '').strip()
@@ -2231,10 +2273,11 @@ def generar_pdf_resumen(
 
         pdf.cell(0, 7, _safe(titulo_pdf), new_x='LMARGIN', new_y='NEXT')
 
+        desmontado_msg = '(i) Este mueble siempre se entrega desmontado.'
         if _es_desmontado(code):
             pdf.set_font(FONT_MAIN, 'I', FSZ_BODY)
             pdf.set_text_color(80, 80, 80)
-            pdf.cell(0, 5, '(i) Este mueble siempre se entrega desmontado.',
+            pdf.cell(0, 5, _safe(_t(desmontado_msg)),
                      new_x='LMARGIN', new_y='NEXT')
             pdf.set_text_color(0, 0, 0)
 
@@ -2285,8 +2328,9 @@ def generar_pdf_resumen(
                 valor_ui = sg_ui.get(valor_raw, valor_raw)
             opc_items.append((etiqueta_ui, valor_ui + marcador))
 
+        electro_lbl = _t('Electrodomestico')
         if tiene_electro:
-            lbl1 = 'Electrodomestico 1' if marca_2 else 'Electrodomestico'
+            lbl1 = (_t('Electrodomestico 1') if marca_2 else electro_lbl)
             if referencia:
                 opc_items.append((lbl1, marca + ' - ' + referencia))
             else:
@@ -2294,10 +2338,10 @@ def generar_pdf_resumen(
                 opc_items.append((lbl1, ' - '.join(p for p in (marca, alto_str) if p)))
             if marca_2:
                 if ref_2:
-                    opc_items.append(('Electrodomestico 2', marca_2 + ' - ' + ref_2))
+                    opc_items.append((_t('Electrodomestico 2'), marca_2 + ' - ' + ref_2))
                 else:
                     alto_str_2 = (alto_e_2 + ' mm') if alto_e_2 else ''
-                    opc_items.append(('Electrodomestico 2',
+                    opc_items.append((_t('Electrodomestico 2'),
                                       ' - '.join(p for p in (marca_2, alto_str_2) if p)))
 
         _seccion(pdf, 'Opciones adicionales')
@@ -2307,13 +2351,14 @@ def generar_pdf_resumen(
                 pdf.ln(1)
                 pdf.set_font(FONT_MAIN, 'I', 7)
                 pdf.set_text_color(100, 100, 100)
-                pdf.cell(0, 4, '[auto] = Forzado automaticamente por reglas',
+                auto_lbl = '[auto] = Forzado automaticamente por reglas'
+                pdf.cell(0, 4, _safe(_t(auto_lbl)),
                          new_x='LMARGIN', new_y='NEXT')
                 pdf.set_text_color(0, 0, 0)
         else:
             pdf.set_font(FONT_MAIN, 'I', FSZ_BODY)
             pdf.set_text_color(120, 120, 120)
-            pdf.cell(0, CELL_H, 'Ninguna', new_x='LMARGIN', new_y='NEXT')
+            pdf.cell(0, CELL_H, _safe(_t('Ninguna')), new_x='LMARGIN', new_y='NEXT')
             pdf.set_text_color(0, 0, 0)
 
         avisos_c = entrada.get('avisos_c') or []
@@ -2326,16 +2371,12 @@ def generar_pdf_resumen(
                                new_x='LMARGIN', new_y='NEXT')
             pdf.set_text_color(0, 0, 0)
 
+        # Restaurar margen y avanzar mas alla de la imagen si es necesario
         if img_path:
             pdf.set_left_margin(MARGEN)
             y_min = y_top + img_h_mm + 2
             if pdf.get_y() < y_min:
                 pdf.set_y(y_min)
-
-        if i < len(pedido) - 1:
-            pdf.ln(4)
-            pdf.set_draw_color(180, 180, 180)
-            pdf.line(MARGEN, pdf.get_y(), 210 - MARGEN, pdf.get_y())
 
     return bytes(pdf.output())
 
@@ -2362,41 +2403,32 @@ def paso_2(pedido: list[dict] | None) -> None:
 
     st.divider()
 
-    # ── Exportar pedido ───────────────────────────────────────────────────────
-    col_json, col_pdf = st.columns(2)
-
-    with col_json:
-        if st.button("📦 Exportar pedido JSON", type="primary", use_container_width=True):
-            import modulo_c as _mc  # importación local para mantener modulo_b autónomo
-            st.session_state["_export_json"] = json.dumps(
+    def _generar_zip_export():
+        import io as _io
+        import zipfile as _zf
+        from datetime import datetime as _dt
+        csv_fn = st.session_state.get('csv_filename') or 'pedido'
+        fecha  = _dt.now().strftime('%d/%m/%Y %H:%M')
+        nombre = _nombre_export_base()
+        buf = _io.BytesIO()
+        with _zf.ZipFile(buf, 'w', _zf.ZIP_DEFLATED) as zfile:
+            import modulo_c as _mc
+            json_bytes = json.dumps(
                 _mc.generar_json_pedido(pedido), ensure_ascii=False, indent=2
-            ).encode("utf-8")
+            ).encode('utf-8')
+            zfile.writestr(nombre + '_pedido.json', json_bytes)
+            pdf_es = generar_pdf_resumen(pedido, catalogo, csv_fn, fecha, idioma='es')
+            zfile.writestr(nombre + '_resumen_es.pdf', pdf_es)
+            pdf_fr = generar_pdf_resumen(pedido, catalogo, csv_fn, fecha, idioma='fr')
+            zfile.writestr(nombre + '_resumen_fr.pdf', pdf_fr)
+        return buf.getvalue()
 
-        if st.session_state.get("_export_json"):
-            nombre = _nombre_export_base()
-            st.download_button(
-                "⬇ JSON de pedido",
-                data=st.session_state["_export_json"],
-                file_name=f"{nombre}_pedido.json",
-                mime="application/json",
-                use_container_width=True,
-            )
-
-    with col_pdf:
-        if st.button("📄 Exportar PDF resumen", use_container_width=True):
-            from datetime import datetime as _dt
-            csv_fn  = st.session_state.get("csv_filename") or "pedido"
-            fecha   = _dt.now().strftime("%d/%m/%Y %H:%M")
-            st.session_state["_export_pdf"] = generar_pdf_resumen(
-                pedido, catalogo, csv_fn, fecha
-            )
-
-        if st.session_state.get("_export_pdf"):
-            nombre = _nombre_export_base()
-            st.download_button(
-                "⬇ PDF resumen",
-                data=st.session_state["_export_pdf"],
-                file_name=f"{nombre}_resumen.pdf",
-                mime="application/pdf",
-                use_container_width=True,
-            )
+    nombre = _nombre_export_base()
+    st.download_button(
+        '\U0001f4e6 Exportar pedido JSON',
+        data=_generar_zip_export(),
+        file_name=nombre + '.zip',
+        mime='application/zip',
+        type='primary',
+        use_container_width=True,
+    )
