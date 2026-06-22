@@ -1,7 +1,7 @@
 # CLAUDE.md — Proyecto HbM CUBRO × Schmidt Groupe
 
 > Este archivo es el puente de contexto para Claude Code. Lee esto antes de tocar nada.
-> Última actualización: junio 2026.
+> Última actualización: mayo 2026.
 
 ---
 
@@ -40,9 +40,9 @@ SketchUp → Export CSV → Módulo A (validación) → Módulo B (UI Paso 1)
 
 ### Reglas de archivos
 
-- La asignación de archivos por persona es orientativa, no una restricción operativa.
-- Claude puede modificar cualquier archivo del proyecto sin pedir permiso a nadie — basta con que alguien del equipo lo pida en la sesión.
-- Los archivos compartidos (`data/*.yaml`, `data/catalogo.json`) se editan directamente cuando sea necesario.
+- Cada persona edita exclusivamente su archivo.
+- `app.py` es responsabilidad de Esteban.
+- Los archivos compartidos (`data/*.yaml`, `data/catalogo.json`) se pueden modificar directamente.
 
 ### Herramientas
 
@@ -101,18 +101,20 @@ Inicio de sesión
       ↓
 git pull  →  sincronizar cambios de compañeros
       ↓
-Editar los archivos necesarios en el repositorio local
+Editar MI archivo en el repositorio local
       ↓
 git add + commit + push  →  GitHub  →  Streamlit se actualiza
-      ↓
-Avisar al equipo si el cambio afecta a otros módulos
 ```
 
 ---
 
 ## 3. Quién soy yo en este contexto
 
-Estás interactuando con el equipo de CUBRO. Claude puede modificar cualquier archivo del proyecto — `modulo_a.py`, `modulo_b.py`, `modulo_c.py`, `app.py`, cualquier YAML/JSON — sin pedir permiso ni coordinación previa. Cuando alguien del equipo pide un cambio, se hace y punto.
+Estás interactuando con **Esteban**, responsable del Módulo B. Por tanto:
+
+- Solo se modifica `modulo_b.py` y `app.py` (la orquestación general también es responsabilidad del Módulo B, ya que B es la UI).
+- `modulo_a.py` y `modulo_c.py` no se tocan salvo que sea estrictamente necesario.
+- Los archivos de datos (`data/*.yaml`, `data/catalogo.json`) se modifican directamente cuando sea necesario.
 
 ---
 
@@ -192,7 +194,7 @@ El Módulo B es la UI. Interviene en DOS momentos del flujo:
 - Cabecera global: `X muebles · Y revisados · Z pendientes` (actualización en vivo) + acciones `[Expandir todas] [Colapsar todas] [☐ Solo pendientes]`.
 - Cards plegables, una por mueble, en orden del CSV.
 - Cabecera plegada: `[check] · Name · Designación · Gama Color · Tirador Color` (sin apertura ni reducción).
-- Card abierta: bloque informativo (Apertura · Ancho · Color interior · Rodapié) → controles opcionales con tooltips → divisor → bloque op_126 (4 textos: Marca / Referencia / Altura / Tipo) → check explícito.
+- Card abierta: bloque informativo (Apertura · Ancho · Alto · Fondo · Color interior · Rodapié) → controles opcionales con tooltips → divisor → bloque op_126 (radio "¿Conoces la referencia?" → Caso A [Sí]: Marca + Referencia / Caso B [No]: solo Altura en mm) → check explícito.
 - Sistema de check: explícito, bloquea avance, reset al editar, auto-cierre al marcar, pre-check para muebles sin opcionales.
 - Botón "Continuar al Paso 2" solo al final, avance directo.
 
@@ -259,52 +261,47 @@ Color del interior · Tirador · Trasera · Color tir. de superficie ·
 C_Rodapietext · Ancho · Ancho reducido · Acabado · LenZ · Avisos
 ```
 
-- `Acabado`: columna obligatoria del CSV. Para tapetas contiene el color del frente con sufijo de gama tal como viene del CSV (p.ej. "Pistachio LINOLEO") — modulo_b quita el sufijo antes de pasarlo al contrato B→C. Para el resto de muebles, campo pendiente de mapeo a opciones SG.
+- `Acabado`: columna obligatoria — sin ella el CSV no puede importarse. Pendiente de mapeo a opciones SG.
+
 - `Estado`: `✅ CORRECTO` o `⚠️ REVISAR`. Si REVISAR → bloquea avance.
 - `Avisos`: string concatenada con ` | ` (con espacios). Códigos posibles: A02, A05, A09, A10, A11, A12, A17, A21, A22, A23, E07, CB12.
 - `Name SKP`: nombre original que vino de SketchUp. Siempre presente (úsalo como identificador en UI cuando `Name` esté vacío o no resuelto).
 
 ### Output del Paso 1 → Entrada Módulo C
 
-Contrato actualizado 2026-06-19. `list[dict]` plana, una fila por mueble, **31 keys fijas** (las mismas en todas las filas; valores `""` o `"False"` cuando no aplica). Las transformaciones CSV→UI de §8 ya están aplicadas. Lo construye `modulo_b.construir_entrada_modulo_c(muebles, selecciones, catalogo)`.
+Contrato actualizado (2026-06-11). `list[dict]` plana, una fila por mueble. Las transformaciones CSV→UI de §8 ya están aplicadas. Lo construye `modulo_b.construir_entrada_modulo_c(muebles, selecciones, catalogo)`.
+
+**Electro — Caso A** (¿Conoces la referencia? = Sí): envía Marca + Referencia. **Caso B** (¿Conoces la referencia? = No): envía solo Alto electro en mm (sin Marca). Solo una de las dos estrategias por slot; las columnas no usadas van vacías.
 
 | # | Columna | Tipo | Origen |
 |---|---|---|---|
 | 1 | Código mueble | `str` | CSV `Name` |
 | 2 | Descripción | `str` | `catalogo.json.<name>.designaciones.es` |
 | 3 | Posición | `str` | Reservada (siempre `""`) |
-| 4 | Summary | `str` | CSV `Summary` — identificador SKP (→ `p_item_origin_id`) |
-| 5 | Apertura | `str` | UI label ("Izquierda"/"Derecha"/"Lift") o `""` |
-| 6 | Gama del frente | `str` | LACA / WOOD / LINOLEO / LAMINADO |
-| 7 | Acabado del frente | `str` | Color sin sufijo de gama ("Crema"). Vacío para tapetas |
-| 8 | Color interior | `str` | Sin "mueble" ("Blanco"). Vacío para tapetas |
-| 9 | Tirador | `str` | UI label (Round, Square, …) o `""`. Vacío para tapetas |
-| 10 | Color tirador | `str` | Touch Latch/Prise de main → `""`. Trasera=Laca → color frente. Vacío para tapetas |
-| 11 | Rodapié | `str` | "70 mm" / "100 mm" / "Sin patas" / `""`. Vacío para tapetas |
-| 12 | Acabado del mueble abierto | `str` | Solo EOV/EOAVV (muebles sin frente). Vacío para el resto |
-| 13 | Reducción de ancho | `"True"`/`"False"` | CSV `Ancho == "10000 mm"` |
-| 14 | Ancho reducido | `str` | Valor cuando Reducción=True, sino `""` |
-| 15 | Acabado | `str` | CSV `Acabado` sin sufijo de gama (p.ej. "Pistachio", no "Pistachio LINOLEO"). Usado por modulo_c como op_101 para tapetas; mismo lookup que "Acabado del frente" |
-| 16 | Ancho CSV | `str` | Ancho del modelo SKP (vacío si hay reducción). Para Paso 2 cuando catálogo no tiene ancho_mm |
-| 17 | Alto CSV | `str` | LenZ del modelo SKP. Para FF12V: alto introducido por el usuario en mm |
-| 18 | Alto final tapeta | `str` | Entero en mm solo para FF12V con alto válido. Usado por modulo_c para `p_height`. Vacío para el resto |
-| 19 | Sin mecanizado | `"True"`/`"False"` | op_121 |
-| 20 | Cubos de basura | `"True"`/`"False"` | op_207_opcional |
-| 21 | Recorte LED | `"True"`/`"False"` | op_220 |
-| 22 | Sensor para mando LED | `str` | "Derecha" / "Izquierda" / `""` (op_222) |
-| 23 | Cajón interior | `"True"`/`"False"` | op_223 |
-| 24 | Mueble de caldera | `"True"`/`"False"` | op_227 |
-| 25 | Sin encolar | `"True"`/`"False"` | op_700_opcional |
-| 26 | Marca electro | `str` | op_126.marca — electro 1 |
-| 27 | Referencia electro | `str` | op_126.referencia — Caso A (referencia conocida) |
-| 28 | Alto electro | `str` | op_126.alto — Caso B (sin referencia, altura en mm) |
-| 29 | Marca electro 2 | `str` | op_126_2.marca — electro 2 (solo AFSMO/AFSMOBT) |
-| 30 | Referencia electro 2 | `str` | op_126_2.referencia — Caso A slot 2 |
-| 31 | Alto electro 2 | `str` | op_126_2.alto — Caso B slot 2 |
-
-**Electro Caso A / Caso B:** si el usuario conoce la referencia → rellena Marca + Referencia electro (genera `p_built_in_detail`). Si no → rellena Marca + Alto electro (genera `p_built_in_detail` con `p_built_in_height`). Campanas (HH) solo admiten Caso A.
-
-**Tapetas (FF12*/FFAL10*):** Apertura, Color interior, Tirador, Color tirador, Rodapié y Acabado del mueble abierto siempre vacíos. `Acabado` contiene el color **sin sufijo de gama** ("Pistachio", no "Pistachio LINOLEO") — modulo_b lo procesa con `_ui_color_frente()` igual que "Acabado del frente". modulo_c lo usa para op_101 con el mismo índice UI→SG. Solo FF12V usa "Alto final tapeta". Dimensiones JSON: `p_width = p_depth = 0` (SG las conoce por código); `p_height = 0` salvo FF12V.
+| 4 | Apertura | `str` | UI label o `""` |
+| 5 | Gama del frente | `str` | LACA / WOOD / LINOLEO / LAMINADO |
+| 6 | Acabado del frente | `str` | Color sin sufijo de gama ("Crema") |
+| 7 | Color interior | `str` | Sin "mueble" ("Blanco") |
+| 8 | Tirador | `str` | UI label (Round, Square, …) o `""` |
+| 9 | Color tirador | `str` | Touch Latch/Prise de main → `""`. Trasera=Laca → color del frente. Resto → valor crudo |
+| 10 | Rodapié | `str` | "70/100 mm" / "Sin patas" / `""` |
+| 11 | Reducción de ancho | `"True"`/`"False"` | CSV `Ancho == "10000 mm"` |
+| 12 | Ancho reducido | `str` | Valor cuando Reducción=True, sino `""` |
+| 13 | Acabado | `str` | CSV `Acabado` — obligatorio en CSV; pendiente de mapeo SG |
+| 14 | Sin mecanizado | `"True"`/`"False"` | op_121 |
+| 15 | Cubos de basura | `"True"`/`"False"` | op_207_opcional |
+| 16 | Recorte LED | `"True"`/`"False"` | op_220 |
+| 17 | Sensor para mando LED | `str` | "Derecha" / "Izquierda" / `""` (op_222) |
+| 18 | Cajón interior | `"True"`/`"False"` | op_223 |
+| 19 | Mueble de caldera | `"True"`/`"False"` | op_227 |
+| 20 | Sin encolar | `"True"`/`"False"` | op_700_opcional |
+| 21 | Marca electro | `str` | op_126.marca — Caso A, sino `""` |
+| 22 | Referencia electro | `str` | op_126.referencia — Caso A, sino `""` |
+| 23 | Alto electro | `str` | op_126.alto en mm — Caso B, sino `""` |
+| 24 | Marca electro 2 | `str` | op_126_2.marca — Caso A slot 2, sino `""` |
+| 25 | Referencia electro 2 | `str` | op_126_2.referencia — Caso A slot 2, sino `""` |
+| 26 | Alto electro 2 | `str` | op_126_2.alto en mm — Caso B slot 2, sino `""` |
+| 27 | Cantidad | `str` | Solo para filas de rodapié SG (SOC36010/SOC18010/SOC3607/SOC1807): número de piezas. Resto de muebles: `""` |
 
 ### `data/catalogo.json`
 
@@ -348,7 +345,7 @@ Sección `interfaz` lista las 8 opciones opcionales que B debe presentar al usua
 - `op_223` Cajón interior (checkbox)
 - `op_227` Mueble de caldera (checkbox)
 - `op_700_opcional` Mueble sin encolar (checkbox)
-- `op_126` Electrodoméstico (bloque de 4 textos libres: marca, referencia, altura, tipo; solo BFT y AFS). El valor en `opcionales["op_126"]` es un `dict[str, str]` con las 4 keys. **Validación para marcar revisado** (confirmada con Lucía el 2026-05-11): Marca y Tipo siempre obligatorios; Referencia y Altura son intercambiables, al menos una de las dos debe estar rellena.
+- `op_126` Electrodoméstico (radio + campos condicionales; muebles BFT, AFS, AFS2B, AFSMO, AFSMOBT, BIBTS, A2I, HH — ver `opciones_mueble.yaml / p_built_in_detail`). BCUB2T excluidos: placa no requiere referencia. El valor en `opcionales["op_126"]` es un `dict` con keys: `tiene_referencia` (bool), `marca` (str), `referencia` (str), `alto` (str). **Validación para marcar revisado**: Caso A (`tiene_referencia=True`) → `marca` + `referencia` obligatorios; Caso B (`tiene_referencia=False`) → solo `alto` obligatorio (marca vacía). **Excepción**: muebles con `solo_caso_a: true` en `opciones_mueble.yaml` (campanas HH) no muestran el radio y siempre exigen Caso A.
 
 ### `data/reglas.yaml`
 
@@ -371,22 +368,16 @@ El Módulo B es "tonto" — recibe datos, los presenta en lenguaje UI, recoge se
 
 ### Pendientes del Módulo B (a resolver durante implementación)
 
-- Subir `data/catalogo.json` al repo (el archivo ya está generado).
 - Subir logo CUBRO PNG a `assets/logo_cubro.png`.
 - Redactar textos de tooltips de los controles opcionales (con la app delante).
-- Definir contrato exacto del output del Paso 1 hacia C (coordinarse con Lucía).
-- Decidir si B carga `catalogo.json` directamente o se delega en una función helper.
 
-### Pendientes que afectan al Módulo B pero dependen de otros
+### Pendientes abiertos
 
-| Punto | Bloquea | Responsable |
-|---|---|---|
-| Schema export DealHub | Solo el botón final del Paso 2 (placeholder por ahora, OK seguir) | Equipo |
-| Quién filtra facultativas según reglas condicionales (op_121 etc.) | El Paso 1 | Acordar con Lucía |
-| Origen de cada opción en el output de C (CSV / forzada / usuario) | El marcador `⚙ automático` del Paso 2 | Lucía |
-| Confirmar contrato del campo Apertura (lenguaje natural vs códigos) | Robustez del módulo | Javier |
-| Doc Módulo A — columnas no documentadas (Name SKP, Estado, LenZ, Avisos) y códigos aviso A17/A21/A22/A23 | Solo documentación | Javier |
-| Doc Módulo C — copy-paste donde dice "Módulo B" en lugar de "C" | Solo documentación | Lucía |
+| Punto | Bloquea |
+|---|---|
+| Schema export DealHub | Solo el botón final del Paso 2 (placeholder por ahora, OK seguir) |
+| Quién filtra facultativas según reglas condicionales (op_121 etc.) | El Paso 1 |
+| Origen de cada opción en el output de C (CSV / forzada / usuario) | El marcador `⚙ automático` del Paso 2 |
 
 ---
 
@@ -405,7 +396,7 @@ El Módulo B es "tonto" — recibe datos, los presenta en lenguaje UI, recoge se
 - **Idioma**: español de España. Tecnicismos en inglés permitidos, pero traducidos cuando se introducen.
 - **No generar código sin que se pida explícitamente.** Antes de implementar algo, confirmar.
 - **Lenguaje UI siempre** — nunca exponer `op_XXX`, códigos SG ni jerga técnica al usuario final.
-- **Confirmar antes de modificar Notion o archivos compartidos** (`data/*.yaml`, `data/catalogo.json`).
+- Los archivos de datos (`data/*.yaml`, `data/catalogo.json`) se modifican directamente cuando sea necesario, sin confirmación previa.
 - **Mantener trazabilidad**: cuando se haga un cambio significativo, dejarlo reflejado en commit message y, si toca arquitectura, plantear actualización en Notion.
 
 ---
@@ -453,6 +444,4 @@ Cada hito es un commit separado en `main`.
 Al terminar cada sesión de trabajo:
 
 1. Hacer commit y push de todos los cambios pendientes.
-2. Si se han tomado decisiones arquitectónicas nuevas, anotarlas en Notion.
-3. Si se ha cambiado algo del contrato entre módulos, avisar al responsable afectado.
-4. Si han cambiado convenciones, pendientes o estructura, actualizar este `CLAUDE.md`.
+2. Si han cambiado convenciones, pendientes o estructura, actualizar este `CLAUDE.md`.
