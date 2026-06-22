@@ -65,4 +65,5 @@ prefijos:
   H1:       H1.png
   HR:       HR.png
   SOC:      SO.png          # rodapiés SOCX10, SOCX07
+  J19:      J.png           # joues (J199060, J19VV, etc.)
   B:        B.png           # catch-all para muebles B no capturados antes
