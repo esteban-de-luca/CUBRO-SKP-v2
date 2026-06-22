@@ -1362,7 +1362,22 @@ def _joue_tiene_dims_variables(name: str, catalogo: dict) -> bool:
     if name not in CODIGOS_JOUE:
         return False
     e = catalogo.get(name) or {}
-    return bool(e.get("alto_variable") or e.get("ancho_variable"))
+    return bool(
+        e.get("alto_variable") or e.get("ancho_variable") or
+        e.get("alto_variable_por_gama") or e.get("ancho_variable_por_gama")
+    )
+
+
+def _rango_variable_joue(cat_entry: dict, dim: str, gama: str) -> dict:
+    """Devuelve el dict {min, max} para la dimensión 'alto' o 'ancho' de una joue.
+
+    Prioriza 'alto_variable_por_gama'/'ancho_variable_por_gama' si existen
+    (rangos distintos por gama); si no, cae en 'alto_variable'/'ancho_variable'.
+    """
+    por_gama = cat_entry.get(f"{dim}_variable_por_gama") or {}
+    if por_gama:
+        return por_gama.get(gama) or {}
+    return cat_entry.get(f"{dim}_variable") or {}
 
 
 def _joue_dims_validas(dims: dict, cat_entry: dict) -> bool:
@@ -1386,8 +1401,9 @@ def _control_dimensiones_joue_variable(
     Pre-rellena con los valores del modelo SKP; el usuario puede ampliarlos en obra.
     """
     cat_entry  = catalogo.get(name) or {}
-    av         = cat_entry.get("ancho_variable") or {}
-    alt_v      = cat_entry.get("alto_variable")  or {}
+    gama       = _gama_desde_acabado(mueble.get("Acabado", ""))
+    av         = _rango_variable_joue(cat_entry, "ancho", gama)
+    alt_v      = _rango_variable_joue(cat_entry, "alto",  gama)
     tiene_av   = bool(av)
     tiene_altv = bool(alt_v)
 
