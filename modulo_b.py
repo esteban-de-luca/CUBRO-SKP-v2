@@ -571,9 +571,9 @@ def construir_entrada_modulo_c(
         else:
             alto_csv_final = (mueble.get("Alto") or "").strip()
 
-        # J19VV: el usuario puede haber ajustado fondo y alto para recrecerlos en obra
-        if name == "J19VV":
-            _dims = opcionales.get("dims_j19vv") or {}
+        # Panel variable (J19VV, BPLA1, …): el usuario puede haber ajustado dimensiones en obra
+        if _joue_tiene_dims_variables(name, catalogo):
+            _dims = opcionales.get(f"dims_joue_var_{clave}") or {}
             _a = str(_dims.get("ancho", "")).strip()
             _h = str(_dims.get("alto",  "")).strip()
             ancho_csv_j19vv = f"{_a} mm" if _a.isdigit() else (ancho_raw if not reduccion else "")
@@ -613,8 +613,8 @@ def construir_entrada_modulo_c(
             # Tapetas y rodapiés: quitar sufijo de gama para que modulo_c pueda hacer
             # el lookup op_101 (tapetas) / op_401 (rodapiés) igual que "Acabado del frente".
             "Acabado": _ui_color_frente(mueble.get("Acabado") or "") if name in CODIGOS_TAPETA or name in CODIGOS_RODAPIE or name in CODIGOS_JOUE else str(mueble.get("Acabado") or "").strip(),
-            "Ancho CSV": ancho_csv_j19vv if name == "J19VV" else ("" if reduccion else ancho_raw),
-            "Alto CSV": alto_csv_j19vv if name == "J19VV" else alto_csv_final,
+            "Ancho CSV": ancho_csv_j19vv if ancho_csv_j19vv is not None else ("" if reduccion else ancho_raw),
+            "Alto CSV": alto_csv_j19vv if alto_csv_j19vv is not None else alto_csv_final,
             "Alto final tapeta": alto_ff12v if name == "FF12V" and _alto_ff12v_valido(alto_ff12v) else "",
             "Sin mecanizado": _bool_str(opcionales.get("op_121", False)),
             "Cubos de basura": _export_op_207(opcionales.get("op_207_opcional", False)),
@@ -1357,8 +1357,16 @@ def _alto_ff12v_valido(valor: str) -> bool:
     return v.isdigit() and _FF12V_ALTO_MIN <= int(v) <= _FF12V_ALTO_MAX
 
 
-def _j19vv_dims_validas(dims: dict, cat_entry: dict) -> bool:
-    """True si las dimensiones guardadas para J19VV son enteras y dentro del rango."""
+def _joue_tiene_dims_variables(name: str, catalogo: dict) -> bool:
+    """True si el código es una joue/panel con al menos una dimensión variable en el catálogo."""
+    if name not in CODIGOS_JOUE:
+        return False
+    e = catalogo.get(name) or {}
+    return bool(e.get("alto_variable") or e.get("ancho_variable"))
+
+
+def _joue_dims_validas(dims: dict, cat_entry: dict) -> bool:
+    """True si las dimensiones guardadas para una joue variable son enteras y dentro del rango."""
     av  = cat_entry.get("ancho_variable") or {}
     alt = cat_entry.get("alto_variable")  or {}
     a_s = str(dims.get("ancho", "")).strip()
@@ -1370,28 +1378,29 @@ def _j19vv_dims_validas(dims: dict, cat_entry: dict) -> bool:
 
 
 def _control_dimensiones_joue_variable(
-    clave: str, mueble: dict, catalogo: dict, opcionales: dict, selecciones: dict
+    clave: str, name: str, mueble: dict, catalogo: dict, opcionales: dict, selecciones: dict
 ) -> None:
-    """Controles para ajustar Fondo y Alto de J19VV antes de enviar a SG.
+    """Controles para ajustar Fondo y Alto de un panel de dimensiones variables.
 
     Pre-rellena con los valores del modelo SKP. El usuario puede ampliarlos
     para recrecerlos y ajustar en obra, siempre dentro del rango del catálogo.
     Los valores modificados reemplazan los del CSV en Ancho CSV / Alto CSV.
     """
-    cat_entry = catalogo.get("J19VV") or {}
+    cat_entry = catalogo.get(name) or {}
     av        = cat_entry.get("ancho_variable") or {}
     alt_v     = cat_entry.get("alto_variable")  or {}
-    ancho_min = av.get("min", 300)
-    ancho_max = av.get("max", 600)
-    alto_min  = alt_v.get("min", 300)
-    alto_max  = alt_v.get("max", 2450)
+    ancho_min = av.get("min", 100)
+    ancho_max = av.get("max", 9999)
+    alto_min  = alt_v.get("min", 100)
+    alto_max  = alt_v.get("max", 9999)
 
     ancho_csv = (mueble.get("Ancho") or "").replace("mm", "").strip()
     alto_csv  = (mueble.get("Alto")  or "").replace("mm", "").strip()
 
-    dims      = opcionales.get("dims_j19vv") or {}
-    prev_a    = str(dims.get("ancho", ancho_csv)).strip()
-    prev_h    = str(dims.get("alto",  alto_csv)).strip()
+    _key = f"dims_joue_var_{clave}"
+    dims   = opcionales.get(_key) or {}
+    prev_a = str(dims.get("ancho", ancho_csv)).strip()
+    prev_h = str(dims.get("alto",  alto_csv)).strip()
 
     def _safe_int(s: str, fallback: int) -> int:
         return int(s) if s.isdigit() else fallback
@@ -1409,7 +1418,7 @@ def _control_dimensiones_joue_variable(
             min_value=ancho_min, max_value=ancho_max,
             value=_safe_int(prev_a, ancho_min),
             step=1,
-            key=f"dims_j19vv_ancho_{clave}",
+            key=f"dims_joue_var_ancho_{clave}",
         )
     with col_h:
         nuevo_h = st.number_input(
@@ -1417,17 +1426,17 @@ def _control_dimensiones_joue_variable(
             min_value=alto_min, max_value=alto_max,
             value=_safe_int(prev_h, alto_min),
             step=1,
-            key=f"dims_j19vv_alto_{clave}",
+            key=f"dims_joue_var_alto_{clave}",
         )
 
     nuevo_a_s = str(nuevo_a)
     nuevo_h_s = str(nuevo_h)
     if nuevo_a_s != prev_a or nuevo_h_s != prev_h:
-        opcionales["dims_j19vv"] = {"ancho": nuevo_a_s, "alto": nuevo_h_s}
+        opcionales[_key] = {"ancho": nuevo_a_s, "alto": nuevo_h_s}
         _registrar_edicion(clave, selecciones)
         st.rerun()
-    elif "dims_j19vv" not in opcionales:
-        opcionales["dims_j19vv"] = {"ancho": prev_a, "alto": prev_h}
+    elif _key not in opcionales:
+        opcionales[_key] = {"ancho": prev_a, "alto": prev_h}
 
 
 def _control_alto_tapeta_variable(
@@ -1753,11 +1762,13 @@ def paso_1(muebles: list[dict]) -> None:
             if _es_forzado_op_121(tirador_code_init, name, meta_121):
                 opcionales["op_121"] = True
 
-        # J19VV: pre-inicializar dimensiones con los valores del CSV.
-        if name == "J19VV" and "dims_j19vv" not in opcionales:
-            ancho_init = (mueble.get("Ancho") or "").replace("mm", "").strip()
-            alto_init  = (mueble.get("Alto")  or "").replace("mm", "").strip()
-            opcionales["dims_j19vv"] = {"ancho": ancho_init, "alto": alto_init}
+        # Panel variable (J19VV, BPLA1, …): pre-inicializar dimensiones con los valores del CSV.
+        if _joue_tiene_dims_variables(name, catalogo):
+            _key_init = f"dims_joue_var_{clave}"
+            if _key_init not in opcionales:
+                ancho_init = (mueble.get("Ancho") or "").replace("mm", "").strip()
+                alto_init  = (mueble.get("Alto")  or "").replace("mm", "").strip()
+                opcionales[_key_init] = {"ancho": ancho_init, "alto": alto_init}
 
     st.header("Paso 1 — Selección de opciones")
     _render_cabecera_global(muebles_normales, selecciones, grupos_rodapie)
@@ -1843,10 +1854,10 @@ def paso_1(muebles: list[dict]) -> None:
                             _control_alto_tapeta_variable(
                                 clave, mueble, estado["opcionales"], selecciones
                             )
-                    if name == "J19VV":
+                    if _joue_tiene_dims_variables(name, catalogo):
                             st.divider()
                             _control_dimensiones_joue_variable(
-                                clave, mueble, catalogo, estado["opcionales"], selecciones
+                                clave, name, mueble, catalogo, estado["opcionales"], selecciones
                             )
                 else:
                     _bloque_informativo(mueble, catalogo)
@@ -1865,10 +1876,10 @@ def paso_1(muebles: list[dict]) -> None:
                         _control_alto_tapeta_variable(
                             clave, mueble, estado["opcionales"], selecciones
                         )
-                    if name == "J19VV":
+                    if _joue_tiene_dims_variables(name, catalogo):
                         st.divider()
                         _control_dimensiones_joue_variable(
-                            clave, mueble, catalogo, estado["opcionales"], selecciones
+                            clave, name, mueble, catalogo, estado["opcionales"], selecciones
                         )
 
                 razon_bloqueo = None
