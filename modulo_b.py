@@ -183,14 +183,21 @@ def _cargar_imagenes() -> list[tuple[str, str]]:
     return sorted(prefijos.items(), key=lambda x: len(x[0]), reverse=True)
 
 
-def _imagen_mueble(code: str) -> pathlib.Path | None:
+_FF12_POSICION_H = {"FF1260", "FF1280", "FF12100"}
+
+def _imagen_mueble(code: str, posicion: str = "") -> pathlib.Path | None:
     """Devuelve la Path al PNG del mueble si existe, o None.
 
     Usa longest-prefix-first: el primer prefijo (de mayor a menor longitud)
     que coincida con el inicio del código de mueble determina la imagen.
+    FF1260/FF1280/FF12100 con posición H usan la imagen de FF1260 (versión de pared).
     """
     if not code:
         return None
+    if code in _FF12_POSICION_H and posicion.upper() == "H":
+        ruta = _ASSETS_MUEBLES / "FF1260.png"
+        if ruta.exists():
+            return ruta
     for prefijo, filename in _cargar_imagenes():
         if code.startswith(prefijo):
             ruta = _ASSETS_MUEBLES / filename
@@ -1843,7 +1850,7 @@ def paso_1(muebles: list[dict]) -> None:
                 _cabecera_card(mueble, catalogo, revisado),
                 expanded=expanded,
             ):
-                img_path    = _imagen_mueble(name)
+                img_path    = _imagen_mueble(name, mueble.get("posicion") or "")
                 meta_126    = _meta_op_126(name, interfaz)
                 es_abierto  = name in CODIGOS_MUEBLE_ABIERTO
                 # Helper local: swatch adaptado a mueble normal, tapeta o rodapié
@@ -2202,7 +2209,7 @@ def _render_card_resumen(entrada: dict, catalogo: dict) -> None:
         titulo = f"### {prefijo}{nombre}"
         if des:
             titulo += f"  ·  {des}"
-    img_path = _imagen_mueble(code)
+    img_path = _imagen_mueble(code, entrada.get("Posición") or "")
 
     # Tapetas, rodapiés y joues: el color llega en "Acabado", no en "Acabado del frente"
     if es_tapeta or es_rodapie:
