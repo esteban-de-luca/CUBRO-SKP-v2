@@ -804,8 +804,10 @@ def _bloque_informativo(mueble: dict, catalogo: dict) -> None:
             f"**Fondo:** {fondo_str}",
             f"**Rodapié:** {rodapie_label}",
         ]
-        if posicion_ab == "H":
+        if posicion_ab == "S":
             partes_ab.append("**Posición:** de pared")
+        elif posicion_ab == "P":
+            partes_ab.append("**Posición:** con patas")
         st.markdown("  ·  ".join(partes_ab))
     elif name in CODIGOS_TAPETA:
         acabado    = _ui_color_frente(mueble.get("Acabado") or "")   # quita sufijo gama
@@ -2036,8 +2038,10 @@ def _bloque_configuracion_c(entrada: dict) -> list[tuple[str, str]]:
         rodapie = (entrada.get("Rodapié") or "").strip()
         if rodapie:
             items.append(("Rodapié", rodapie))
-        if posicion_c2 == "H":
+        if posicion_c2 == "S":
             items.append(("Posición", "de pared"))
+        elif posicion_c2 == "P":
+            items.append(("Posición", "con patas"))
     elif code in CODIGOS_TAPETA:
         gama    = (entrada.get("Gama del frente") or "").strip()
         acabado = _ui_color_frente(entrada.get("Acabado") or "")   # quita sufijo gama

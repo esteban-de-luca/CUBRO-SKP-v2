@@ -560,8 +560,15 @@ def parsear_csv(archivo) -> dict:
         ancho_reducido_raw = _str_or_none(fila.get("Ancho reducido", ""))
         acabado_raw        = _str_or_none(fila.get("Acabado", ""))
         posicion_raw       = (_str_or_none(fila.get("posicion", "")) or "").strip().upper()
-        if posicion_raw and posicion_raw not in ("B", "H"):
-            avisos.append(f"Valor de posicion '{posicion_raw}' no válido — los valores aceptados son B o H")
+        _es_eo = name_raw.startswith("EO")
+        if _es_eo:
+            if not posicion_raw:
+                avisos.append("Falta el valor de posicion — los valores aceptados son P (posé) o S (suspendu)")
+            elif posicion_raw not in ("P", "S"):
+                avisos.append(f"Valor de posicion '{posicion_raw}' no válido para este elemento — los valores aceptados son P o S")
+        elif name_raw in CODIGOS_TAPETA:
+            if posicion_raw and posicion_raw not in ("B", "H"):
+                avisos.append(f"Valor de posicion '{posicion_raw}' no válido — los valores aceptados son B o H")
         name_skp           = name_raw  # preservar Name original de SketchUp
         summary_raw        = _str_or_none(fila.get("Summary", ""))
 
