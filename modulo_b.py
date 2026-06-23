@@ -723,6 +723,8 @@ def _cabecera_card(mueble: dict, catalogo: dict, revisado: bool) -> str:
         gama_acabado = " ".join(p for p in (gama, acabado) if p)
         if gama_acabado:
             partes.append(gama_acabado)
+        if (mueble.get("posicion") or "").strip().upper() == "H":
+            partes.append("de pared")
     elif name_code in CODIGOS_RODAPIE:
         acabado = _ui_color_frente(mueble.get("Acabado") or "")   # quita sufijo gama
         if acabado:
