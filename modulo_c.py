@@ -512,6 +512,11 @@ def calcular_opciones(entrada: list[dict]) -> list[dict]:
             else:
                 p_fastening = "S" if _es_suspendido(code, op_mueble) else "P"
 
+        # Si viene "Posición" del CSV (B o H), sobreescribe p_fastening para tapetas y EO*.
+        _posicion_csv = (fila.get("Posición") or "").strip().upper()
+        if _posicion_csv in ("B", "H"):
+            p_fastening = _posicion_csv
+
         # ── Opciones ──────────────────────────────────────────────────────────
         opciones_sg, opc_adic, codigos, avisos = _calcular_opciones_mueble(
             fila, mapeos, op_mueble, reglas, indices

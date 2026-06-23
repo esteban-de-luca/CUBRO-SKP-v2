@@ -796,23 +796,31 @@ def _bloque_informativo(mueble: dict, catalogo: dict) -> None:
     if name in CODIGOS_MUEBLE_ABIERTO:
         color_abierto = _ui_color_mueble_abierto(mueble.get("Color del mueble abierto", ""))
         rodapie_label = rodapie if rodapie != "—" else ("(vacío = suspendido)" if name in CODIGOS_PS_SEGUN_RODAPIE else "—")
-        st.markdown(
-            f"**Acabado del mueble abierto:** {color_abierto or '—'}  ·  "
-            f"**Ancho:** {ancho}  ·  "
-            f"**Alto:** {alto_str}  ·  "
-            f"**Fondo:** {fondo_str}  ·  "
-            f"**Rodapié:** {rodapie_label}"
-        )
+        posicion_ab   = (mueble.get("Posicion") or "").strip().upper()
+        partes_ab = [
+            f"**Acabado del mueble abierto:** {color_abierto or '—'}",
+            f"**Ancho:** {ancho}",
+            f"**Alto:** {alto_str}",
+            f"**Fondo:** {fondo_str}",
+            f"**Rodapié:** {rodapie_label}",
+        ]
+        if posicion_ab == "H":
+            partes_ab.append("**Posición:** de pared")
+        st.markdown("  ·  ".join(partes_ab))
     elif name in CODIGOS_TAPETA:
         acabado    = _ui_color_frente(mueble.get("Acabado") or "")   # quita sufijo gama
         ancho_std  = f"{entry.get('ancho_mm')} mm" if entry.get("ancho_mm") else "—"
         ancho_skp  = ancho   # valor que viene del modelo SKP
-        st.markdown(
-            f"**Acabado:** {acabado or '—'}  ·  "
-            f"**Ancho:** {ancho_std}  ·  "
-            f"**Alto:** {alto_str}  ·  "
-            f"**Espesor:** {fondo_str}"
-        )
+        posicion   = (mueble.get("Posicion") or "").strip().upper()
+        partes = [
+            f"**Acabado:** {acabado or '—'}",
+            f"**Ancho:** {ancho_std}",
+            f"**Alto:** {alto_str}",
+            f"**Espesor:** {fondo_str}",
+        ]
+        if posicion == "H":
+            partes.append("**Posición:** de pared")
+        st.markdown("  ·  ".join(partes))
         # Aviso si el modelo SKP tiene un ancho distinto al estándar de fabricación
         if ancho_skp and ancho_skp != "—" and ancho_skp != ancho_std:
             st.info(
@@ -2020,6 +2028,7 @@ def _bloque_configuracion_c(entrada: dict) -> list[tuple[str, str]]:
     """Pares (etiqueta, valor) del bloque Configuración — Paso 2 (campos de entrada, ya en UI)."""
     items: list[tuple[str, str]] = []
     code = (entrada.get("Código mueble") or "").strip()
+    posicion_c2 = (entrada.get("Posición") or "").strip().upper()
     if code in CODIGOS_MUEBLE_ABIERTO:
         color_abierto = (entrada.get("Acabado del mueble abierto") or "").strip()
         if color_abierto:
@@ -2027,12 +2036,16 @@ def _bloque_configuracion_c(entrada: dict) -> list[tuple[str, str]]:
         rodapie = (entrada.get("Rodapié") or "").strip()
         if rodapie:
             items.append(("Rodapié", rodapie))
+        if posicion_c2 == "H":
+            items.append(("Posición", "de pared"))
     elif code in CODIGOS_TAPETA:
         gama    = (entrada.get("Gama del frente") or "").strip()
         acabado = _ui_color_frente(entrada.get("Acabado") or "")   # quita sufijo gama
         gama_acabado = " ".join(p for p in (gama, acabado) if p)
         if gama_acabado:
             items.append(("Gama y acabado", gama_acabado))
+        if posicion_c2 == "H":
+            items.append(("Posición", "de pared"))
     elif code in CODIGOS_JOUE:
         gama    = (entrada.get("Gama del frente") or "").strip()
         acabado = _ui_color_frente(entrada.get("Acabado") or "")
