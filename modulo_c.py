@@ -569,8 +569,8 @@ def calcular_opciones(entrada: list[dict]) -> list[dict]:
         _ancho_csv   = (fila.get("Ancho CSV") or "").replace("mm", "").strip()
         _alto_csv    = (fila.get("Alto CSV")  or "").replace("mm", "").strip()
         _cat_e_dim   = catalogo.get(code) or {}
-        _tiene_alto_var  = _cat_e_dim.get("alto_variable")  is not None
-        _tiene_ancho_var = _cat_e_dim.get("ancho_variable") is not None
+        _tiene_alto_var  = _cat_e_dim.get("alto_variable")  is not None or _cat_e_dim.get("alto_variable_por_gama")  is not None
+        _tiene_ancho_var = _cat_e_dim.get("ancho_variable") is not None or _cat_e_dim.get("ancho_variable_por_gama") is not None
 
         _es_joue_dim = code in _codigos_joue_hinge  # reutiliza el set ya cargado
         if code == "FF12V":
