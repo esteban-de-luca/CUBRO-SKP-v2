@@ -596,7 +596,7 @@ def calcular_opciones(entrada: list[dict]) -> list[dict]:
             "p_fastening":             p_fastening,
             "p_width":                 _p_width,
             "p_height":                _p_height,
-            "p_depth":                 _d.get("p_depth", 0),
+            "p_depth":                 None if _es_joue_dim else _d.get("p_depth", 0),
             "p_delivery_date":         _d.get("p_delivery_date"),
             "p_variant_options":       opciones_sg,
             **( {"p_built_in_detail": p_built_in} if p_built_in else {} ),
