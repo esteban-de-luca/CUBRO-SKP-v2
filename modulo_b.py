@@ -592,7 +592,7 @@ def construir_entrada_modulo_c(
         fila: dict[str, str] = {
             "Código mueble": (mueble.get("Name") or "").strip(),
             "Descripción": _designacion(mueble, catalogo),
-            "Posición": (mueble.get("Posicion") or "").strip(),
+            "Posición": (mueble.get("posicion") or "").strip(),
             "Summary": (mueble.get("Summary") or "").strip(),  # identificador SKP → p_item_origin_id
             "Apertura": _normalizar_vacio(_ui_apertura(mueble.get("Apertura", ""))),
             "Gama del frente": _gama_desde_acabado(mueble.get("Acabado", "")) if name in CODIGOS_JOUE else _ui_gama(mueble.get("D_Gama", "")),
@@ -796,7 +796,7 @@ def _bloque_informativo(mueble: dict, catalogo: dict) -> None:
     if name in CODIGOS_MUEBLE_ABIERTO:
         color_abierto = _ui_color_mueble_abierto(mueble.get("Color del mueble abierto", ""))
         rodapie_label = rodapie if rodapie != "—" else ("(vacío = suspendido)" if name in CODIGOS_PS_SEGUN_RODAPIE else "—")
-        posicion_ab   = (mueble.get("Posicion") or "").strip().upper()
+        posicion_ab   = (mueble.get("posicion") or "").strip().upper()
         partes_ab = [
             f"**Acabado del mueble abierto:** {color_abierto or '—'}",
             f"**Ancho:** {ancho}",
@@ -811,7 +811,7 @@ def _bloque_informativo(mueble: dict, catalogo: dict) -> None:
         acabado    = _ui_color_frente(mueble.get("Acabado") or "")   # quita sufijo gama
         ancho_std  = f"{entry.get('ancho_mm')} mm" if entry.get("ancho_mm") else "—"
         ancho_skp  = ancho   # valor que viene del modelo SKP
-        posicion   = (mueble.get("Posicion") or "").strip().upper()
+        posicion   = (mueble.get("posicion") or "").strip().upper()
         partes = [
             f"**Acabado:** {acabado or '—'}",
             f"**Ancho:** {ancho_std}",
