@@ -2501,7 +2501,7 @@ def generar_pdf_resumen(
 
         pdf.ln(2)
 
-        img_path = _imagen_mueble(code)
+        img_path = _imagen_mueble(code, entrada.get("Posición") or "")
         y_top    = pdf.get_y()
         img_h_mm = 0.0
 
