@@ -993,3 +993,18 @@ joues:
     - HABE19V12
     - HABE19V37
     - HABE19V60
+
+# -----------------------------------------------------------------------------
+# encimeras — PDT20C, NRWC, PAN20LAMC, PAN20LINOC
+# op_101 (acabado): viene de la columna "Acabado" del CSV.
+# Ancho y Fondo son variables y vienen del CSV.
+# Sin apertura, sin tirador, sin color interior, sin rodapié.
+# -----------------------------------------------------------------------------
+encimeras:
+  op_101_desde_acabado: true
+  codigos:
+    - PDT20C
+    - NRWC
+    - PAN20LAMC
+    - PAN20LINOC
+
