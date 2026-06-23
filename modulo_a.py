@@ -672,7 +672,7 @@ def parsear_csv(archivo) -> dict:
                             f"pero según el catálogo debería estar entre "
                             f"{rango['ancho_min']}mm y {rango['ancho_max']}mm"
                         )
-                elif name_raw in CATALOG_ANCHOS:
+                elif name_raw in CATALOG_ANCHOS and name_raw not in CODIGOS_TAPETA:
                     ancho_std = CATALOG_ANCHOS[name_raw]
                     if abs(ancho_mm - ancho_std) > 5:
                         avisos.append(
