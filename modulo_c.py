@@ -572,20 +572,13 @@ def calcular_opciones(entrada: list[dict]) -> list[dict]:
         _tiene_alto_var  = _cat_e_dim.get("alto_variable")  is not None or _cat_e_dim.get("alto_variable_por_gama")  is not None
         _tiene_ancho_var = _cat_e_dim.get("ancho_variable") is not None or _cat_e_dim.get("ancho_variable_por_gama") is not None
 
-        _es_joue_dim = code in _codigos_joue_hinge  # reutiliza el set ya cargado
+        # Solo las dimensiones variables van en el JSON; las fijas las conoce SG por código.
         if code == "FF12V":
-            # FF12V: el alto lo introduce el usuario en el paso 1 (alto_final_tapeta)
-            _p_width  = _d.get("p_width", 0)
-            _p_height = int(_alto_final) if _alto_final.isdigit() else _d.get("p_height", 0)
+            _p_width  = None
+            _p_height = int(_alto_final) if _alto_final.isdigit() else None
         else:
-            if _es_joue_dim:
-                # Joues/paneles: solo las dimensiones variables van en el JSON.
-                # Las fijas las conoce SG por el código del producto.
-                _p_width  = int(_ancho_csv) if _tiene_ancho_var and _ancho_csv.isdigit() else None
-                _p_height = int(_alto_csv)  if _tiene_alto_var  and _alto_csv.isdigit()  else None
-            else:
-                _p_width  = int(_ancho_csv) if _tiene_ancho_var and _ancho_csv.isdigit() else (_cat_e_dim.get("ancho_mm") or _d.get("p_width", 0))
-                _p_height = int(_alto_csv)  if _tiene_alto_var  and _alto_csv.isdigit()  else (_cat_e_dim.get("alto_mm")  or _d.get("p_height", 0))
+            _p_width  = int(_ancho_csv) if _tiene_ancho_var and _ancho_csv.isdigit() else None
+            _p_height = int(_alto_csv)  if _tiene_alto_var  and _alto_csv.isdigit()  else None
 
         p_item: dict = {
             "p_ord_cat_code":          str(i + 1),
@@ -597,7 +590,7 @@ def calcular_opciones(entrada: list[dict]) -> list[dict]:
             "p_fastening":             p_fastening,
             "p_width":                 _p_width,
             "p_height":                _p_height,
-            "p_depth":                 None if _es_joue_dim else (_cat_e_dim.get("fondo_mm") or _d.get("p_depth", 0)),
+            "p_depth":                 None,
             "p_delivery_date":         _d.get("p_delivery_date"),
             "p_variant_options":       opciones_sg,
             **( {"p_built_in_detail": p_built_in} if p_built_in else {} ),
