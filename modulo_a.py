@@ -567,7 +567,9 @@ def parsear_csv(archivo) -> dict:
             elif posicion_raw not in ("P", "S"):
                 avisos.append(f"Valor de posicion '{posicion_raw}' no válido para este elemento — los valores aceptados son P o S")
         elif name_raw in CODIGOS_TAPETA:
-            if posicion_raw and posicion_raw not in ("B", "H"):
+            if not posicion_raw:
+                avisos.append("Falta el valor de posicion — los valores aceptados son B o H")
+            elif posicion_raw not in ("B", "H"):
                 avisos.append(f"Valor de posicion '{posicion_raw}' no válido — los valores aceptados son B o H")
         name_skp           = name_raw  # preservar Name original de SketchUp
         summary_raw        = _str_or_none(fila.get("Summary", ""))
