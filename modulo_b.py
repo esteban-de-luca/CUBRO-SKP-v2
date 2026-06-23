@@ -592,7 +592,7 @@ def construir_entrada_modulo_c(
         fila: dict[str, str] = {
             "Código mueble": (mueble.get("Name") or "").strip(),
             "Descripción": _designacion(mueble, catalogo),
-            "Posición": "",  # placeholder reservado, lo rellenara C en el futuro
+            "Posición": (mueble.get("Posicion") or "").strip(),
             "Summary": (mueble.get("Summary") or "").strip(),  # identificador SKP → p_item_origin_id
             "Apertura": _normalizar_vacio(_ui_apertura(mueble.get("Apertura", ""))),
             "Gama del frente": _gama_desde_acabado(mueble.get("Acabado", "")) if name in CODIGOS_JOUE else _ui_gama(mueble.get("D_Gama", "")),

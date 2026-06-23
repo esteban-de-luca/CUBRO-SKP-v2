@@ -98,7 +98,7 @@ def _cargar_ui_aviso() -> dict[str, dict]:
 
 COLUMNAS_VALIDAS = [
     "Summary",  # identificador de origen SKP → p_item_origin_id en SG
-    "Name", "Ancho", "Alto", "Apertura", "D_Gama", "ColorFrente",
+    "Name", "Posicion", "Ancho", "Alto", "Apertura", "D_Gama", "ColorFrente",
     "Color del interior", "Tirador", "Trasera",
     "Color tir. de superficie", "C_Rodapietext", "Ancho reducido",
     "Acabado",
@@ -559,6 +559,7 @@ def parsear_csv(archivo) -> dict:
         ancho_raw          = ancho_check or ""   # rodapié: ancho vacío (no transmitido)
         ancho_reducido_raw = _str_or_none(fila.get("Ancho reducido", ""))
         acabado_raw        = _str_or_none(fila.get("Acabado", ""))
+        posicion_raw       = _str_or_none(fila.get("Posicion", "")) or ""
         name_skp           = name_raw  # preservar Name original de SketchUp
         summary_raw        = _str_or_none(fila.get("Summary", ""))
 
@@ -863,6 +864,7 @@ def parsear_csv(archivo) -> dict:
             "trasera":               trasera,
             "color_tirador":         color_tirador,
             "rodapie":               rodapie,
+            "posicion":              posicion_raw,
             "ancho":                 ancho_raw,
             "ancho_reducido":        ancho_reducido_raw,
             "acabado":               acabado_raw or "",
@@ -897,6 +899,7 @@ def _a_formato_b(m: dict) -> dict:
         "Trasera":                    m.get("trasera") or "",
         "Color tir. de superficie":   m.get("color_tirador") or "",
         "C_Rodapietext":              m.get("rodapie") or "",
+        "Posicion":                   m.get("posicion") or "",
         "Ancho":                      m.get("ancho") or "",
         "Ancho reducido":             m.get("ancho_reducido") or "",
         "Acabado":                    m.get("acabado") or "",
