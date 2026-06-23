@@ -571,6 +571,20 @@ def parsear_csv(archivo) -> dict:
                 avisos.append("Falta el valor de posicion — los valores aceptados son B o H")
             elif posicion_raw not in ("B", "H"):
                 avisos.append(f"Valor de posicion '{posicion_raw}' no válido — los valores aceptados son B o H")
+            # Validar ancho: debe ser ≤ al estándar del catálogo
+            _cat_tap = _CATALOGO.get(name_raw) or {}
+            _ancho_std_mm = _cat_tap.get("ancho_mm")
+            _ancho_skp_str = (ancho_raw or "").replace("mm", "").strip()
+            if _ancho_std_mm and _ancho_skp_str:
+                try:
+                    _ancho_skp_mm = float(_ancho_skp_str)
+                    if _ancho_skp_mm > _ancho_std_mm:
+                        avisos.append(
+                            f"El ancho del modelo ({_ancho_skp_mm:.0f} mm) supera el ancho estándar "
+                            f"de fabricación ({_ancho_std_mm} mm) — corrige el modelo en SketchUp"
+                        )
+                except ValueError:
+                    pass
         name_skp           = name_raw  # preservar Name original de SketchUp
         summary_raw        = _str_or_none(fila.get("Summary", ""))
 

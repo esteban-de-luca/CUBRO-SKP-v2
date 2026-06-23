@@ -823,13 +823,12 @@ def _bloque_informativo(mueble: dict, catalogo: dict) -> None:
         if posicion == "H":
             partes.append("**Posición:** de pared")
         st.markdown("  ·  ".join(partes))
-        # Aviso si el modelo SKP tiene un ancho distinto al estándar de fabricación
-        if ancho_skp and ancho_skp != "—" and ancho_skp != ancho_std:
-            st.info(
-                f"Este elemento tiene un ancho de **{ancho_skp}** en el modelo 3D, "
-                f"pero se enviará de **{ancho_std}** que es el ancho estándar.",
-                icon="ℹ️",
-            )
+        # Las tapetas siempre se envían a la medida estándar, independientemente del modelo SKP.
+        st.info(
+            f"Las tapetas se envían siempre de la medida estándar "
+            f"(**{ancho_std}**). El modelo 3D indica **{ancho_skp}**.",
+            icon="ℹ️",
+        )
     elif name in CODIGOS_RODAPIE:
         acabado   = _ui_color_frente(mueble.get("Acabado") or "")   # quita sufijo gama
         ancho_std = f"{entry.get('ancho_mm')} mm" if entry.get("ancho_mm") else "—"
