@@ -1936,14 +1936,22 @@ def paso_1(muebles: list[dict]) -> None:
                 and selecciones.get(_identificador_mueble(m), {}).get("check")
             )
         ],
-        key=lambda m: [
-            int(t) if t.isdigit() else t.lower()
-            for t in re.split(r"(\d+)", (m.get("Summary") or "").strip())
-        ],
+        # Encimeras siempre al final; dentro de cada grupo orden por Summary
+        key=lambda m: (
+            1 if (m.get("Name") or "").strip() in CODIGOS_ENCIMERA else 0,
+            [int(t) if t.isdigit() else t.lower()
+             for t in re.split(r"(\d+)", (m.get("Summary") or "").strip())],
+        ),
     )
 
     if a_mostrar:
+        _enc_header_paso1 = False
         for mueble in a_mostrar:
+            _name_loop = (mueble.get("Name") or "").strip()
+            if _name_loop in CODIGOS_ENCIMERA and not _enc_header_paso1:
+                st.divider()
+                st.subheader("Encimeras")
+                _enc_header_paso1 = True
             clave = _identificador_mueble(mueble)
             name  = (mueble.get("Name") or "").strip()
             aplicables = _opcionales_aplicables(mueble, interfaz)
@@ -2509,6 +2517,8 @@ def generar_pdf_resumen(
         '[auto] = Forzado automaticamente por reglas': '[auto] = Force automatiquement par les regles',
         '(i) Este mueble siempre se entrega desmontado.': '(i) Ce meuble est toujours livre demonte.',
         'Pag. ':                                      'Page ',
+        'Encimeras':                                  'Plans de travail',
+        'Rodapies':                                   'Plinthes',
     }
 
     def _t(text):
@@ -2608,7 +2618,16 @@ def generar_pdf_resumen(
     pdf = _PDF(_safe(csv_filename), _safe(fecha_export))
     pdf.add_page()
 
-    for i, entrada in enumerate(pedido):
+    # Ordenar en grupos: normales → encimeras → rodapiés
+    def _pdf_code(e): return (e.get('Código mueble') or '').strip()
+    _pdf_norm = [e for e in pedido if _pdf_code(e) not in CODIGOS_ENCIMERA and _pdf_code(e) not in CODIGOS_RODAPIE_SG]
+    _pdf_enc  = [e for e in pedido if _pdf_code(e) in CODIGOS_ENCIMERA]
+    _pdf_rod  = [e for e in pedido if _pdf_code(e) in CODIGOS_RODAPIE_SG]
+    _pedido_pdf = _pdf_norm + _pdf_enc + _pdf_rod
+    _enc_start  = len(_pdf_norm)
+    _rod_start  = len(_pdf_norm) + len(_pdf_enc)
+
+    for i, entrada in enumerate(_pedido_pdf):
         code    = (entrada.get('Código mueble') or '').strip()
         cat_e   = catalogo.get(code) or {}
         des_raw = (cat_e.get('designaciones') or {})
@@ -2617,11 +2636,32 @@ def generar_pdf_resumen(
 
         es_rodapie_sg = code in CODIGOS_RODAPIE_SG
 
+        # ── Cabecera de grupo al iniciar Encimeras o Rodapiés ────────────
+        _inicio_grupo = (
+            (i == _enc_start and _pdf_enc) or
+            (i == _rod_start and _pdf_rod)
+        )
+        if _inicio_grupo:
+            pdf.set_left_margin(MARGEN)
+            if i > 0:
+                _g_remaining = (297 - 15) - pdf.get_y()
+                if _g_remaining < 30:
+                    pdf.add_page()
+                else:
+                    pdf.ln(8)
+            _g_nombre = 'Encimeras' if (i == _enc_start and _pdf_enc) else 'Rodapies'
+            pdf.set_font(FONT_MAIN, 'B', FSZ_TITLE + 2)
+            pdf.cell(0, 8, _safe(_t(_g_nombre)), new_x='LMARGIN', new_y='NEXT')
+            pdf.set_draw_color(100, 100, 100)
+            pdf.line(MARGEN, pdf.get_y(), 210 - MARGEN, pdf.get_y())
+            pdf.set_draw_color(160, 160, 160)
+            pdf.ln(4)
+
         # Pre-calcular secciones para estimar altura antes del salto de página
         config = _bloque_configuracion_c(entrada)
         dims   = _bloque_dimensiones_c(entrada, catalogo)
 
-        _h_sep    = 10 if i > 0 else 0                          # separador entre elementos
+        _h_sep    = 10 if (i > 0 and not _inicio_grupo) else 0  # separador entre elementos
         _h_title  = 9                                            # cell(7) + ln(2)
         _h_config = (7 + len(config) * CELL_H + GAP_SECTION) if config else 0
         _h_dims   = (7 + len(dims)   * CELL_H + GAP_SECTION) if dims   else 0
@@ -2629,8 +2669,8 @@ def generar_pdf_resumen(
         _h_elem   = _h_sep + _h_title + _h_config + _h_dims + _h_opc
         _elem_min = max(MIN_SPACE, _h_elem)
 
-        # Separador entre elementos (excepto el primero)
-        if i > 0:
+        # Separador entre elementos (excepto el primero o tras cabecera de grupo)
+        if i > 0 and not _inicio_grupo:
             # Restaurar margen izquierdo (por si el elemento anterior tenia imagen)
             pdf.set_left_margin(MARGEN)
             remaining = (297 - 15) - pdf.get_y()
@@ -2784,8 +2824,23 @@ def paso_2(pedido: list[dict] | None) -> None:
 
     st.success(f"Pedido listo: **{len(pedido)} muebles** configurados.")
 
-    for item in pedido:
+    def _code_p2(e): return (e.get("Código mueble") or "").strip()
+    _norm_p2 = [e for e in pedido if _code_p2(e) not in CODIGOS_ENCIMERA and _code_p2(e) not in CODIGOS_RODAPIE_SG]
+    _enc_p2  = [e for e in pedido if _code_p2(e) in CODIGOS_ENCIMERA]
+    _rod_p2  = [e for e in pedido if _code_p2(e) in CODIGOS_RODAPIE_SG]
+
+    for item in _norm_p2:
         _render_card_resumen(item, catalogo)
+
+    if _enc_p2:
+        st.subheader("Encimeras")
+        for item in _enc_p2:
+            _render_card_resumen(item, catalogo)
+
+    if _rod_p2:
+        st.subheader("Rodapiés")
+        for item in _rod_p2:
+            _render_card_resumen(item, catalogo)
 
     st.divider()
 
