@@ -617,9 +617,9 @@ def calcular_opciones(entrada: list[dict]) -> list[dict]:
             _p_height = int(_alto_final) if _alto_final.isdigit() else 0
             _p_depth  = 0
         elif code in _codigos_enc_dim:
-            _p_width  = int(_ancho_csv) if _ancho_csv.isdigit() else 0
-            _p_depth  = int(_alto_csv) if _alto_csv.isdigit() else 0
-            _p_height = int(_cat_e_dim.get("espesor_mm") or 0)
+            _p_height = int(_ancho_csv) if _ancho_csv.isdigit() else 0
+            _p_width  = int(_alto_csv)  if _alto_csv.isdigit()  else 0
+            _p_depth  = 0
         else:
             _p_width  = int(_ancho_csv) if _tiene_ancho_var and _ancho_csv.isdigit() else 0
             _p_height = int(_alto_csv)  if _tiene_alto_var  and _alto_csv.isdigit()  else 0
