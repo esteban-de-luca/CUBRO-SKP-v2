@@ -124,6 +124,8 @@ CODIGOS_ENCIMERA: set[str] = (
     set((_OPCIONES_RAW.get("encimeras_panel") or {}).get("codigos") or []) |
     set((_OPCIONES_RAW.get("encimeras_pdt")   or {}).get("codigos") or [])
 )
+CODIGOS_BALDA: set[str] = {"ETAS19V20"}
+_CODIGOS_ENC_GRUPO: set[str] = CODIGOS_ENCIMERA - CODIGOS_BALDA
 
 
 def _es_desmontado(code: str) -> bool:
@@ -1939,7 +1941,7 @@ def paso_1(muebles: list[dict]) -> None:
         ],
         # Encimeras siempre al final; dentro de cada grupo orden por Summary
         key=lambda m: (
-            1 if (m.get("Name") or "").strip() in CODIGOS_ENCIMERA else 0,
+            1 if (m.get("Name") or "").strip() in _CODIGOS_ENC_GRUPO else 0,
             [int(t) if t.isdigit() else t.lower()
              for t in re.split(r"(\d+)", (m.get("Summary") or "").strip())],
         ),
@@ -1949,7 +1951,7 @@ def paso_1(muebles: list[dict]) -> None:
         _enc_header_paso1 = False
         for mueble in a_mostrar:
             _name_loop = (mueble.get("Name") or "").strip()
-            if _name_loop in CODIGOS_ENCIMERA and not _enc_header_paso1:
+            if _name_loop in _CODIGOS_ENC_GRUPO and not _enc_header_paso1:
                 st.divider()
                 st.subheader("Encimeras")
                 _enc_header_paso1 = True
@@ -2646,8 +2648,8 @@ def generar_pdf_resumen(
 
     # Ordenar en grupos: normales → encimeras → rodapiés
     def _pdf_code(e): return (e.get('Código mueble') or '').strip()
-    _pdf_norm = [e for e in pedido if _pdf_code(e) not in CODIGOS_ENCIMERA and _pdf_code(e) not in CODIGOS_RODAPIE_SG]
-    _pdf_enc  = [e for e in pedido if _pdf_code(e) in CODIGOS_ENCIMERA]
+    _pdf_norm = [e for e in pedido if _pdf_code(e) not in _CODIGOS_ENC_GRUPO and _pdf_code(e) not in CODIGOS_RODAPIE_SG]
+    _pdf_enc  = [e for e in pedido if _pdf_code(e) in _CODIGOS_ENC_GRUPO]
     _pdf_rod  = [e for e in pedido if _pdf_code(e) in CODIGOS_RODAPIE_SG]
     _pedido_pdf = _pdf_norm + _pdf_enc + _pdf_rod
     _enc_start  = len(_pdf_norm)
@@ -2851,8 +2853,8 @@ def paso_2(pedido: list[dict] | None) -> None:
     st.success(f"Pedido listo: **{len(pedido)} muebles** configurados.")
 
     def _code_p2(e): return (e.get("Código mueble") or "").strip()
-    _norm_p2 = [e for e in pedido if _code_p2(e) not in CODIGOS_ENCIMERA and _code_p2(e) not in CODIGOS_RODAPIE_SG]
-    _enc_p2  = [e for e in pedido if _code_p2(e) in CODIGOS_ENCIMERA]
+    _norm_p2 = [e for e in pedido if _code_p2(e) not in _CODIGOS_ENC_GRUPO and _code_p2(e) not in CODIGOS_RODAPIE_SG]
+    _enc_p2  = [e for e in pedido if _code_p2(e) in _CODIGOS_ENC_GRUPO]
     _rod_p2  = [e for e in pedido if _code_p2(e) in CODIGOS_RODAPIE_SG]
 
     for item in _norm_p2:
