@@ -586,6 +586,12 @@ def construir_entrada_modulo_c(
             _h = str(_dims.get("alto",  "")).strip()
             ancho_csv_j19vv = f"{_a} mm" if _a.isdigit() else (ancho_raw if not reduccion else "")
             alto_csv_j19vv  = f"{_h} mm" if _h.isdigit() else alto_csv_final
+        elif name in CODIGOS_ENCIMERA:
+            _dims_enc = opcionales.get(f"dims_enc_{clave}") or {}
+            _a_enc = str(_dims_enc.get("ancho", "")).strip()
+            _f_enc = str(_dims_enc.get("alto",  "")).strip()
+            ancho_csv_j19vv = f"{_a_enc} mm" if _a_enc.isdigit() else (ancho_raw if not reduccion else "")
+            alto_csv_j19vv  = f"{_f_enc} mm" if _f_enc.isdigit() else alto_csv_final
         else:
             ancho_csv_j19vv = None  # no aplica
             alto_csv_j19vv  = None
@@ -1508,6 +1514,73 @@ def _control_dimensiones_joue_variable(
         opcionales[_key] = {"ancho": prev_a, "alto": prev_h}
 
 
+def _control_dimensiones_encimera(
+    clave: str, name: str, mueble: dict, catalogo: dict, opcionales: dict, selecciones: dict
+) -> None:
+    """Controles para ajustar Ancho y Fondo de encimeras con dimensiones variables."""
+    cat_entry  = catalogo.get(name) or {}
+    av         = cat_entry.get("ancho_variable") or {}
+    fv         = cat_entry.get("alto_variable")  or {}  # "alto" del CSV = fondo físico
+
+    ancho_csv = (mueble.get("Ancho") or "").replace("mm", "").strip()
+    fondo_csv = (mueble.get("Alto")  or "").replace("mm", "").strip()
+
+    _key  = f"dims_enc_{clave}"
+    dims  = opcionales.get(_key) or {}
+    prev_a = str(dims.get("ancho", ancho_csv)).strip()
+    prev_f = str(dims.get("alto",  fondo_csv)).strip()
+
+    def _safe_int(s: str, fallback: int) -> int:
+        return int(s) if s.isdigit() else fallback
+
+    partes_info = []
+    if av:
+        partes_info.append(f"**{ancho_csv} mm** de ancho")
+    if fv:
+        partes_info.append(f"**{fondo_csv} mm** de fondo")
+    st.info(
+        f"Encimera de dimensiones variables. El modelo 3D indica "
+        f"{' · '.join(partes_info)}. Puedes ajustar las medidas.",
+        icon="ℹ️",
+    )
+
+    nuevo_a_s = prev_a
+    nuevo_f_s = prev_f
+
+    cols = st.columns(2 if (av and fv) else 1)
+    col_idx = 0
+
+    if av:
+        with cols[col_idx]:
+            nuevo_a = st.number_input(
+                f"Ancho (mm)  [{av['min']}–{av['max']}]",
+                min_value=av["min"], max_value=av["max"],
+                value=_safe_int(prev_a, av["min"]),
+                step=1,
+                key=f"dims_enc_ancho_{clave}",
+            )
+        nuevo_a_s = str(nuevo_a)
+        col_idx += 1
+
+    if fv:
+        with cols[col_idx]:
+            nuevo_f = st.number_input(
+                f"Fondo (mm)  [{fv['min']}–{fv['max']}]",
+                min_value=fv["min"], max_value=fv["max"],
+                value=_safe_int(prev_f, fv["min"]),
+                step=1,
+                key=f"dims_enc_fondo_{clave}",
+            )
+        nuevo_f_s = str(nuevo_f)
+
+    if nuevo_a_s != prev_a or nuevo_f_s != prev_f:
+        opcionales[_key] = {"ancho": nuevo_a_s, "alto": nuevo_f_s}
+        _registrar_edicion(clave, selecciones)
+        st.rerun()
+    elif _key not in opcionales:
+        opcionales[_key] = {"ancho": prev_a, "alto": prev_f}
+
+
 def _control_alto_tapeta_variable(
     clave: str, mueble: dict, opcionales: dict, selecciones: dict
 ) -> None:
@@ -1839,6 +1912,14 @@ def paso_1(muebles: list[dict]) -> None:
                 alto_init  = (mueble.get("Alto")  or "").replace("mm", "").strip()
                 opcionales[_key_init] = {"ancho": ancho_init, "alto": alto_init}
 
+        # Encimera: pre-inicializar dimensiones con los valores del CSV.
+        if name in CODIGOS_ENCIMERA:
+            _key_enc_init = f"dims_enc_{clave}"
+            if _key_enc_init not in opcionales:
+                ancho_init = (mueble.get("Ancho") or "").replace("mm", "").strip()
+                fondo_init = (mueble.get("Alto")  or "").replace("mm", "").strip()
+                opcionales[_key_enc_init] = {"ancho": ancho_init, "alto": fondo_init}
+
     st.header("Paso 1 — Selección de opciones")
     _render_cabecera_global(muebles_normales, selecciones, grupos_rodapie)
     st.divider()
@@ -1934,6 +2015,11 @@ def paso_1(muebles: list[dict]) -> None:
                             _control_dimensiones_joue_variable(
                                 clave, name, mueble, catalogo, estado["opcionales"], selecciones
                             )
+                    if name in CODIGOS_ENCIMERA:
+                            st.divider()
+                            _control_dimensiones_encimera(
+                                clave, name, mueble, catalogo, estado["opcionales"], selecciones
+                            )
                 else:
                     _bloque_informativo(mueble, catalogo)
                     _swatch()
@@ -1954,6 +2040,11 @@ def paso_1(muebles: list[dict]) -> None:
                     if _joue_tiene_dims_variables(name, catalogo):
                         st.divider()
                         _control_dimensiones_joue_variable(
+                            clave, name, mueble, catalogo, estado["opcionales"], selecciones
+                        )
+                    if name in CODIGOS_ENCIMERA:
+                        st.divider()
+                        _control_dimensiones_encimera(
                             clave, name, mueble, catalogo, estado["opcionales"], selecciones
                         )
 
