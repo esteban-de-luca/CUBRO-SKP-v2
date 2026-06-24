@@ -120,6 +120,7 @@ _RESOLUCION_RODAPIE: dict[str, list[str]] = _RODAPIES_CFG.get("resolucion") or {
 # Sin apertura, tirador, color interior, rodapié ni opcionales de usuario.
 _JOUES_CFG = _OPCIONES_RAW.get("joues") or {}
 CODIGOS_JOUE: set[str] = set(_JOUES_CFG.get("codigos") or [])
+CODIGOS_ENCIMERA: set[str] = set((_OPCIONES_RAW.get("encimeras") or {}).get("codigos") or [])
 
 
 def _es_desmontado(code: str) -> bool:
@@ -619,7 +620,7 @@ def construir_entrada_modulo_c(
             "Ancho reducido": ancho_reducido,
             # Tapetas y rodapiés: quitar sufijo de gama para que modulo_c pueda hacer
             # el lookup op_101 (tapetas) / op_401 (rodapiés) igual que "Acabado del frente".
-            "Acabado": _ui_color_frente(mueble.get("Acabado") or "") if name in CODIGOS_TAPETA or name in CODIGOS_RODAPIE or name in CODIGOS_JOUE else str(mueble.get("Acabado") or "").strip(),
+            "Acabado": _ui_color_frente(mueble.get("Acabado") or "") if name in CODIGOS_TAPETA or name in CODIGOS_RODAPIE or name in CODIGOS_JOUE or name in CODIGOS_ENCIMERA else str(mueble.get("Acabado") or "").strip(),
             "Ancho CSV": ancho_csv_j19vv if ancho_csv_j19vv is not None else ("" if reduccion else ancho_raw),
             "Alto CSV": alto_csv_j19vv if alto_csv_j19vv is not None else alto_csv_final,
             "Alto final tapeta": alto_ff12v if name == "FF12V" and _alto_ff12v_valido(alto_ff12v) else "",
@@ -733,6 +734,13 @@ def _cabecera_card(mueble: dict, catalogo: dict, revisado: bool) -> str:
         gama    = _gama_desde_acabado(mueble.get("Acabado") or "")
         acabado = _ui_color_frente(mueble.get("Acabado") or "")
         gama_acabado = " ".join(p for p in (gama, acabado) if p)
+        if gama_acabado:
+            partes.append(gama_acabado)
+    elif name_code in CODIGOS_ENCIMERA:
+        cat_enc  = (_cargar_catalogo() or {}).get(name_code) or {}
+        gama_cat = cat_enc.get("gama") or _ui_gama(mueble.get("D_Gama", ""))
+        acabado  = _ui_color_frente(mueble.get("Acabado") or "")
+        gama_acabado = " ".join(p for p in (gama_cat, acabado) if p)
         if gama_acabado:
             partes.append(gama_acabado)
     else:
@@ -858,6 +866,17 @@ def _bloque_informativo(mueble: dict, catalogo: dict) -> None:
             f"**Alto:** {alto_str}  ·  "
             f"**Espesor:** {fondo_str}"
         )
+    elif name in CODIGOS_ENCIMERA:
+        gama_cat     = entry.get("gama") or _ui_gama(mueble.get("D_Gama", ""))
+        acabado      = _ui_color_frente(mueble.get("Acabado") or "")
+        gama_acabado = " ".join(p for p in (gama_cat, acabado) if p)
+        espesor_str  = f"{entry['espesor_mm']} mm" if entry.get("espesor_mm") is not None else "—"
+        st.markdown(
+            f"**Acabado:** {gama_acabado or '—'}  ·  "
+            f"**Ancho:** {ancho}  ·  "
+            f"**Fondo:** {alto_str}  ·  "
+            f"**Espesor:** {espesor_str}"
+        )
     else:
         apertura       = _ui_apertura(mueble.get("Apertura", ""))
         color_interior = _ui_color_interior(mueble.get("Color del interior", ""))
@@ -933,7 +952,7 @@ def _opcionales_aplicables(mueble: dict, interfaz: dict) -> list[str]:
     # op_700 — aplica a todos salvo los no_aplica, tapetas y rodapiés.
     # Los forzadas (campanas HH*) también se incluyen: se muestran desactivados y marcados.
     meta_700 = interfaz.get("op_700_opcional") or {}
-    if "op_700_opcional" in interfaz and name not in (meta_700.get("excluidos") or []) and name not in CODIGOS_TAPETA and name not in CODIGOS_RODAPIE and name not in CODIGOS_JOUE:
+    if "op_700_opcional" in interfaz and name not in (meta_700.get("excluidos") or []) and name not in CODIGOS_TAPETA and name not in CODIGOS_RODAPIE and name not in CODIGOS_JOUE and name not in CODIGOS_ENCIMERA:
         aplicables.append("op_700_opcional")
 
     # op_126 — lista plana de muebles (BFT y AFS)
@@ -2064,6 +2083,13 @@ def _bloque_configuracion_c(entrada: dict) -> list[tuple[str, str]]:
         gama_acabado = " ".join(p for p in (gama, acabado) if p)
         if gama_acabado:
             items.append(("Acabado del panel", gama_acabado))
+    elif code in CODIGOS_ENCIMERA:
+        cat_enc  = (_cargar_catalogo() or {}).get(code) or {}
+        gama_cat = (cat_enc.get("gama") or (entrada.get("Gama del frente") or "")).strip()
+        acabado  = _ui_color_frente(entrada.get("Acabado") or "")
+        gama_acabado = " ".join(p for p in (gama_cat, acabado) if p)
+        if gama_acabado:
+            items.append(("Acabado", gama_acabado))
     elif code in CODIGOS_RODAPIE:
         gama    = (entrada.get("Gama del frente") or "").strip()
         acabado = _ui_color_frente(entrada.get("Acabado") or "")
@@ -2158,18 +2184,26 @@ def _bloque_dimensiones_c(entrada: dict, catalogo: dict) -> list[tuple[str, str]
         if ancho_csv:
             items.append(("Ancho", _fmt_mm(ancho_csv)))
 
-    if entry.get("alto_mm"):
+    if code in CODIGOS_ENCIMERA:
+        # Para encimeras: "Alto CSV" es el fondo físico. El espesor es fijo.
+        alto_csv = (entrada.get("Alto CSV") or "").strip()
+        if alto_csv:
+            items.append(("Fondo", _fmt_mm(alto_csv)))
+        espesor = entry.get("espesor_mm")
+        if espesor is not None:
+            items.append(("Espesor", f"{espesor} mm"))
+    elif entry.get("alto_mm"):
         items.append(("Alto", f"{entry['alto_mm']} mm"))
     else:
         alto_csv = (entrada.get("Alto CSV") or "").strip()
         if alto_csv:
             items.append(("Alto", _fmt_mm(alto_csv)))
 
-    fondo = entry.get("fondo_mm")
-    if fondo is not None:
-        # Tapetas y rodapiés: el "fondo" es en realidad el espesor del panel
-        etiqueta_fondo = "Espesor" if code in CODIGOS_TAPETA or code in CODIGOS_RODAPIE or code in CODIGOS_JOUE else "Fondo"
-        items.append((etiqueta_fondo, f"{fondo} mm"))
+    if code not in CODIGOS_ENCIMERA:
+        fondo = entry.get("fondo_mm")
+        if fondo is not None:
+            etiqueta_fondo = "Espesor" if code in CODIGOS_TAPETA or code in CODIGOS_RODAPIE or code in CODIGOS_JOUE else "Fondo"
+            items.append((etiqueta_fondo, f"{fondo} mm"))
 
     return items
 
@@ -2193,6 +2227,7 @@ def _render_card_resumen(entrada: dict, catalogo: dict) -> None:
     summary   = (entrada.get("Summary") or "").strip()
 
     es_tapeta      = code in CODIGOS_TAPETA
+    es_encimera    = code in CODIGOS_ENCIMERA
     es_rodapie     = code in CODIGOS_RODAPIE
     es_rodapie_sg  = code in CODIGOS_RODAPIE_SG
     es_abierto     = code in CODIGOS_MUEBLE_ABIERTO
@@ -2214,7 +2249,7 @@ def _render_card_resumen(entrada: dict, catalogo: dict) -> None:
     img_path = _imagen_mueble(code, entrada.get("Posición") or "")
 
     # Tapetas, rodapiés y joues: el color llega en "Acabado", no en "Acabado del frente"
-    if es_tapeta or es_rodapie:
+    if es_tapeta or es_rodapie or es_encimera:
         color_frente    = _ui_color_frente(entrada.get("Acabado") or "")
         etiqueta_frente = "Acabado"
     elif es_joue:

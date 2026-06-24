@@ -251,6 +251,10 @@ def _calcular_opciones_mueble(
     codigos_joue: set[str] = set((op_mueble.get("joues") or {}).get("codigos") or [])
     es_joue = code in codigos_joue
 
+    # ── Encimeras: op_101 desde "Acabado". Sin op_100. ──
+    codigos_encimera_local: set[str] = set((op_mueble.get("encimeras") or {}).get("codigos") or [])
+    es_encimera = code in codigos_encimera_local
+
     if es_abierto:
         # op_410 — Acabado del mueble abierto
         # op_420 — Acabado de la trasera (mismo código SG, forzada e invisible)
@@ -272,6 +276,12 @@ def _calcular_opciones_mueble(
         sg_621 = indices.get("op_101", {}).get(acabado_joue, "")
         if sg_621:
             _sg("op_621", sg_621)
+    elif es_encimera:
+        # ── op_101 desde "Acabado". Sin op_100. ──
+        acabado_enc = (fila.get("Acabado") or "").strip()
+        sg_101_enc  = indices.get("op_101", {}).get(acabado_enc, "")
+        if sg_101_enc:
+            _sg("op_101", sg_101_enc)
     else:
         # ── op_100 — Gama del frente (todos: O) ──────────────────────────────────
         sg_100 = indices.get("op_100", {}).get(gama_ui, "")
@@ -579,12 +589,19 @@ def calcular_opciones(entrada: list[dict]) -> list[dict]:
         _tiene_ancho_var = _cat_e_dim.get("ancho_variable") is not None or _cat_e_dim.get("ancho_variable_por_gama") is not None
 
         # Dimensiones: siempre presentes. Variable → valor del CSV. Fijo → 0.
+        _codigos_enc_dim: set[str] = set((op_mueble.get("encimeras") or {}).get("codigos") or [])
         if code == "FF12V":
             _p_width  = 0
             _p_height = int(_alto_final) if _alto_final.isdigit() else 0
+            _p_depth  = 0
+        elif code in _codigos_enc_dim:
+            _p_width  = int(_ancho_csv) if _ancho_csv.isdigit() else 0
+            _p_depth  = int(_alto_csv) if _alto_csv.isdigit() else 0
+            _p_height = int(_cat_e_dim.get("espesor_mm") or 0)
         else:
             _p_width  = int(_ancho_csv) if _tiene_ancho_var and _ancho_csv.isdigit() else 0
             _p_height = int(_alto_csv)  if _tiene_alto_var  and _alto_csv.isdigit()  else 0
+            _p_depth  = 0
 
         p_item: dict = {
             "p_ord_cat_code":          str(i + 1),
@@ -596,7 +613,7 @@ def calcular_opciones(entrada: list[dict]) -> list[dict]:
             "p_fastening":             p_fastening,
             "p_width":                 _p_width,
             "p_height":                _p_height,
-            "p_depth":                 0,
+            "p_depth":                 _p_depth,
             "p_delivery_date":         _d.get("p_delivery_date"),
             "p_variant_options":       opciones_sg,
             **( {"p_built_in_detail": p_built_in} if p_built_in else {} ),
