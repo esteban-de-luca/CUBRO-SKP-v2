@@ -88,7 +88,6 @@ def _cargar_ui_aviso() -> dict[str, dict]:
             "interior":            _tabla(del_csv.get("op_200")),           # "Blanco mueble"→"Blanco"…
             "tirador":             _tabla(del_csv.get("op_300")),           # "2"→"Round", "7"→"Plantea"…
             "trasera":             _tabla(del_csv.get("op_301_integrado")), # "Oak WOOD"→"Oak"…
-            "color_mueble_abierto": _tabla(del_csv.get("op_410")),         # "Oak WOOD"→"Oak"…
         }
     except Exception:
         return {}
@@ -102,7 +101,6 @@ COLUMNAS_VALIDAS = [
     "Color del interior", "Tirador", "Trasera",
     "Color tir. de superficie", "C_Rodapietext", "Ancho reducido",
     "Acabado",
-    "Color del mueble abierto",
 ]
 
 COLUMNAS_OBLIGATORIAS = ["Summary", "Name", "D_Gama", "ColorFrente", "Tirador", "C_Rodapietext", "Acabado"]
@@ -499,9 +497,6 @@ def parsear_csv(archivo) -> dict:
     _ui_interior = _ui.get("interior") or {}
     _ui_tirador  = _ui.get("tirador")  or {}
     _ui_trasera         = _ui.get("trasera")          or {}
-    _ui_color_abierto   = _ui.get("color_mueble_abierto") or {}
-    # Valores skp válidos para op_410 (color mueble abierto)
-    _color_abierto_validos: set[str] = set(_ui_color_abierto.keys())
 
     # 1. Leer CSV
     try:
@@ -694,20 +689,6 @@ def parsear_csv(archivo) -> dict:
 
         # ── Muebles abiertos (EOV/EOAVV) ──────────────────────────────────────
         es_mueble_abierto = name_raw in CODIGOS_MUEBLE_ABIERTO
-
-        # ── Color del mueble abierto ───────────────────────────────────────────
-        color_mueble_abierto_raw = _str_or_none(fila.get("Color del mueble abierto", ""))
-        if es_mueble_abierto:
-            if color_mueble_abierto_raw is None:
-                avisos.append("Falta el campo 'Color del mueble abierto' — es obligatorio para este mueble.")
-            elif color_mueble_abierto_raw not in _color_abierto_validos:
-                avisos.append(
-                    f"Color del mueble abierto '{color_mueble_abierto_raw}' no reconocido "
-                    f"— debe ser un color LACA o WOOD válido."
-                )
-        else:
-            if color_mueble_abierto_raw is not None:
-                avisos.append("Este mueble no admite el campo 'Color del mueble abierto'.")
 
         # Variables de frente/tirador — solo aplican a muebles con frente
         tirador       = None
@@ -905,7 +886,6 @@ def parsear_csv(archivo) -> dict:
             "ancho_reducido":        ancho_reducido_raw,
             "acabado":               acabado_raw or "",
             "len_z":                 len_z_raw,
-            "color_mueble_abierto":  color_mueble_abierto_raw or "",
             "avisos":                avisos,
             "avisos_internos":       avisos_internos,
         })
@@ -940,7 +920,6 @@ def _a_formato_b(m: dict) -> dict:
         "Ancho reducido":             m.get("ancho_reducido") or "",
         "Acabado":                    m.get("acabado") or "",
         "Alto":                       m.get("len_z") or "",
-        "Color del mueble abierto":   m.get("color_mueble_abierto") or "",
         "Avisos":                     " | ".join(m.get("avisos") or []),
     }
 

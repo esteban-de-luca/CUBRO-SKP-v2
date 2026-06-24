@@ -263,9 +263,9 @@ def _calcular_opciones_mueble(
     es_encimera = es_enc_panel or es_enc_pdt
 
     if es_abierto:
-        # op_410 — Acabado del mueble abierto
+        # op_410 — Acabado del mueble abierto (viene de la columna "Acabado")
         # op_420 — Acabado de la trasera (mismo código SG, forzada e invisible)
-        color_abierto = (fila.get("Acabado del mueble abierto") or "").strip()
+        color_abierto = (fila.get("Acabado") or "").strip()
         sg_410 = indices.get("op_410", {}).get(color_abierto, "")
         if sg_410:
             _sg("op_410", sg_410)  # visible en Configuración, no en Opciones adicionales

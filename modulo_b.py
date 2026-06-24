@@ -622,14 +622,10 @@ def construir_entrada_modulo_c(
             "Rodapié": _normalizar_vacio(
                 _ui_rodapie(mueble.get("C_Rodapietext", ""))
             ),
-            "Acabado del mueble abierto": _ui_color_mueble_abierto(
-                mueble.get("Color del mueble abierto", "")
-            ),
             "Reducción de ancho": _bool_str(reduccion),
             "Ancho reducido": ancho_reducido,
-            # Tapetas y rodapiés: quitar sufijo de gama para que modulo_c pueda hacer
-            # el lookup op_101 (tapetas) / op_401 (rodapiés) igual que "Acabado del frente".
-            "Acabado": _ui_color_frente(mueble.get("Acabado") or "") if name in CODIGOS_TAPETA or name in CODIGOS_RODAPIE or name in CODIGOS_JOUE or name in CODIGOS_ENCIMERA else str(mueble.get("Acabado") or "").strip(),
+            # Tapetas, rodapiés, joues, encimeras y muebles abiertos: quitar sufijo de gama.
+            "Acabado": _ui_color_frente(mueble.get("Acabado") or "") if name in CODIGOS_TAPETA or name in CODIGOS_RODAPIE or name in CODIGOS_JOUE or name in CODIGOS_ENCIMERA or name in CODIGOS_MUEBLE_ABIERTO else str(mueble.get("Acabado") or "").strip(),
             "Ancho CSV": ancho_csv_j19vv if ancho_csv_j19vv is not None else ("" if reduccion else ancho_raw),
             "Alto CSV": alto_csv_j19vv if alto_csv_j19vv is not None else alto_csv_final,
             "Alto final tapeta": alto_ff12v if name == "FF12V" and _alto_ff12v_valido(alto_ff12v) else "",
@@ -724,9 +720,9 @@ def _cabecera_card(mueble: dict, catalogo: dict, revisado: bool) -> str:
 
     name_code = (mueble.get("Name") or "").strip()
     if name_code in CODIGOS_MUEBLE_ABIERTO:
-        color_abierto = _ui_color_mueble_abierto(mueble.get("Color del mueble abierto", ""))
-        if color_abierto:
-            partes.append(color_abierto)
+        acabado_ab = _ui_color_frente(mueble.get("Acabado") or "")
+        if acabado_ab:
+            partes.append(acabado_ab)
     elif name_code in CODIGOS_TAPETA:
         gama    = _ui_gama(mueble.get("D_Gama", ""))
         acabado = _ui_color_frente(mueble.get("Acabado") or "")   # quita sufijo gama
@@ -820,11 +816,11 @@ def _bloque_informativo(mueble: dict, catalogo: dict) -> None:
     fondo_str = f"{fondo_mm} mm" if fondo_mm is not None else "—"
 
     if name in CODIGOS_MUEBLE_ABIERTO:
-        color_abierto = _ui_color_mueble_abierto(mueble.get("Color del mueble abierto", ""))
+        acabado_ab    = _ui_color_frente(mueble.get("Acabado") or "")
         rodapie_label = rodapie if rodapie != "—" else ("(vacío = suspendido)" if name in CODIGOS_PS_SEGUN_RODAPIE else "—")
         posicion_ab   = (mueble.get("posicion") or "").strip().upper()
         partes_ab = [
-            f"**Acabado del mueble abierto:** {color_abierto or '—'}",
+            f"**Acabado:** {acabado_ab or '—'}",
             f"**Ancho:** {ancho}",
             f"**Alto:** {alto_str}",
             f"**Fondo:** {fondo_str}",
@@ -1968,8 +1964,6 @@ def paso_1(muebles: list[dict]) -> None:
                 es_abierto  = name in CODIGOS_MUEBLE_ABIERTO
                 # Helper local: swatch adaptado a mueble normal, tapeta o rodapié
                 def _swatch(en_imagen: bool = True) -> None:
-                    if es_abierto:
-                        return
                     if name in CODIGOS_TAPETA:
                         _render_swatches_color(
                             _ui_color_frente(mueble.get("Acabado") or ""),
@@ -1988,7 +1982,7 @@ def paso_1(muebles: list[dict]) -> None:
                             "",
                             etiqueta_frente="Acabado del panel",
                         )
-                    elif name in CODIGOS_ENCIMERA:
+                    elif name in CODIGOS_ENCIMERA or name in CODIGOS_MUEBLE_ABIERTO:
                         _render_swatches_color(
                             _ui_color_frente(mueble.get("Acabado") or ""),
                             "",
@@ -2131,9 +2125,9 @@ def _bloque_configuracion(mueble: dict) -> list[tuple[str, str]]:
     items: list[tuple[str, str]] = []
     name = (mueble.get("Name") or "").strip()
     if name in CODIGOS_MUEBLE_ABIERTO:
-        color_abierto = _ui_color_mueble_abierto(mueble.get("Color del mueble abierto", ""))
-        if color_abierto:
-            items.append(("Acabado del mueble abierto", color_abierto))
+        acabado_ab = _ui_color_frente(mueble.get("Acabado") or "")
+        if acabado_ab:
+            items.append(("Acabado", acabado_ab))
         rodapie = _ui_rodapie(mueble.get("C_Rodapietext", ""))
         if rodapie and rodapie != "—":
             items.append(("Rodapié", rodapie))
@@ -2167,9 +2161,9 @@ def _bloque_configuracion_c(entrada: dict) -> list[tuple[str, str]]:
     code = (entrada.get("Código mueble") or "").strip()
     posicion_c2 = (entrada.get("Posición") or "").strip().upper()
     if code in CODIGOS_MUEBLE_ABIERTO:
-        color_abierto = (entrada.get("Acabado del mueble abierto") or "").strip()
-        if color_abierto:
-            items.append(("Acabado del mueble abierto", color_abierto))
+        acabado_ab = (entrada.get("Acabado") or "").strip()
+        if acabado_ab:
+            items.append(("Acabado", acabado_ab))
         rodapie = (entrada.get("Rodapié") or "").strip()
         if rodapie:
             items.append(("Rodapié", rodapie))
@@ -2356,8 +2350,8 @@ def _render_card_resumen(entrada: dict, catalogo: dict) -> None:
             titulo += f"  ·  {des}"
     img_path = _imagen_mueble(code, entrada.get("Posición") or "")
 
-    # Tapetas, rodapiés y joues: el color llega en "Acabado", no en "Acabado del frente"
-    if es_tapeta or es_rodapie or es_encimera:
+    # Tapetas, rodapiés, joues, encimeras y muebles abiertos: el color llega en "Acabado"
+    if es_tapeta or es_rodapie or es_encimera or es_abierto:
         color_frente    = _ui_color_frente(entrada.get("Acabado") or "")
         etiqueta_frente = "Acabado"
     elif es_joue:
@@ -2381,8 +2375,7 @@ def _render_card_resumen(entrada: dict, catalogo: dict) -> None:
         with col_img:
             if img_path:
                 st.image(str(img_path), width=229)
-            if not es_abierto:
-                _render_swatches_color(color_frente, color_interior, etiqueta_frente=etiqueta_frente)
+            _render_swatches_color(color_frente, color_interior, etiqueta_frente=etiqueta_frente)
 
         with col_config:
             config = _bloque_configuracion_c(entrada)
