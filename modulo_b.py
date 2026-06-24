@@ -2491,6 +2491,7 @@ def generar_pdf_resumen(
 
     # Traducciones español -> frances para etiquetas y titulos de seccion
     _FR = {
+        # ── Etiquetas de sección y campo ──────────────────────────────────────
         'Configuracion':                              'Configuration',
         'Dimensiones':                                'Dimensions',
         'Opciones adicionales':                       'Options additionnelles',
@@ -2499,7 +2500,8 @@ def generar_pdf_resumen(
         'Gama y acabado':                             'Gamme et finition',
         'Color interior':                             'Couleur interieur',
         'Tirador':                                    'Poignee',
-        'Rodapié':                               'Plinthe',
+        'Rodapié':                                    'Plinthe',
+        'Posición':                                   'Position',
         'Ancho':                                      'Largeur',
         'Alto':                                       'Hauteur',
         'Fondo':                                      'Profondeur',
@@ -2511,7 +2513,17 @@ def generar_pdf_resumen(
         'Electrodomestico':                           'Electromenager',
         'Electrodomestico 1':                         'Electromenager 1',
         'Electrodomestico 2':                         'Electromenager 2',
+        # ── Valores ───────────────────────────────────────────────────────────
+        'de pared':                                   'suspendu',
+        'con patas':                                  'pose',
+        '(vacío = suspendido)':                       '(vide = suspendu)',
+        'Izquierda':                                  'Gauche',
+        'Derecha':                                    'Droite',
+        'Lift':                                       'Lift',
+        'Sin patas':                                  'Sans pieds',
+        'Reducción de ancho':                         'Reduction de largeur',
         'Ninguna':                                    'Aucune',
+        # ── Pie de página / sistema ───────────────────────────────────────────
         '[auto] = Forzado automaticamente por reglas': '[auto] = Force automatiquement par les regles',
         '(i) Este mueble siempre se entrega desmontado.': '(i) Ce meuble est toujours livre demonte.',
         'Pag. ':                                      'Page ',
@@ -2522,6 +2534,22 @@ def generar_pdf_resumen(
     def _t(text):
         if idioma == 'fr':
             return _FR.get(text, text)
+        return text
+
+    def _tv(text):
+        """Traduce un valor de celda (no una etiqueta) para el idioma del PDF."""
+        if idioma != 'fr':
+            return text
+        if text in _FR:
+            return _FR[text]
+        # Composite: "Reducción (X mm)" → "Reduction (X mm)"
+        if text.startswith('Reducción ('):
+            return 'Reduction (' + text[len('Reducción ('):]
+        # Composite: "N pieza/s"
+        if text.endswith(' piezas'):
+            return text[:-len(' piezas')] + ' pieces'
+        if text.endswith(' pieza'):
+            return text[:-len(' pieza')] + ' piece'
         return text
 
     class _PDF(FPDF):
@@ -2582,7 +2610,7 @@ def generar_pdf_resumen(
             pdf.set_font(FONT_MAIN, 'B', FSZ_BODY)
             pdf.cell(COL_LABEL_W, CELL_H, _safe(_t(etiqueta) + ':'), border=0)
             pdf.set_font(FONT_MAIN, '', FSZ_BODY)
-            pdf.multi_cell(0, CELL_H, _safe(valor), border=0,
+            pdf.multi_cell(0, CELL_H, _safe(_tv(valor)), border=0,
                            new_x='LMARGIN', new_y='NEXT')
 
     def _seccion(pdf, titulo):

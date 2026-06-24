@@ -1,1197 +1,1667 @@
-{
-  "B308035": {
-    "designaciones": {
-      "es": "Mueble bajo con baldas, 1 puerta"
-    },
-    "ancho_mm": 300,
-    "alto_mm": 800,
-    "fondo_mm": 350
-  },
-  "B458035": {
-    "designaciones": {
-      "es": "Mueble bajo con baldas, 1 puerta"
-    },
-    "ancho_mm": 450,
-    "alto_mm": 800,
-    "fondo_mm": 350
-  },
-  "B608035": {
-    "designaciones": {
-      "es": "Mueble bajo con baldas, 1 puerta"
-    },
-    "ancho_mm": 600,
-    "alto_mm": 800,
-    "fondo_mm": 350
-  },
-  "B908035": {
-    "designaciones": {
-      "es": "Mueble bajo con baldas, 2 puertas"
-    },
-    "ancho_mm": 900,
-    "alto_mm": 800,
-    "fondo_mm": 350
-  },
-  "B308057": {
-    "designaciones": {
-      "es": "Mueble bajo con baldas, 1 puerta"
-    },
-    "ancho_mm": 300,
-    "alto_mm": 800,
-    "fondo_mm": 570
-  },
-  "B458057": {
-    "designaciones": {
-      "es": "Mueble bajo con baldas, 1 puerta"
-    },
-    "ancho_mm": 450,
-    "alto_mm": 800,
-    "fondo_mm": 570
-  },
-  "B608057": {
-    "designaciones": {
-      "es": "Mueble bajo con baldas, 1 puerta"
-    },
-    "ancho_mm": 600,
-    "alto_mm": 800,
-    "fondo_mm": 570
-  },
-  "B908057": {
-    "designaciones": {
-      "es": "Mueble bajo con baldas, 2 puertas"
-    },
-    "ancho_mm": 900,
-    "alto_mm": 800,
-    "fondo_mm": 570
-  },
-  "BB2T458035": {
-    "designaciones": {
-      "es": "Mueble bajo, 3 cajones"
-    },
-    "ancho_mm": 450,
-    "alto_mm": 800,
-    "fondo_mm": 350
-  },
-  "BB2T608035": {
-    "designaciones": {
-      "es": "Mueble bajo, 3 cajones"
-    },
-    "ancho_mm": 600,
-    "alto_mm": 800,
-    "fondo_mm": 350
-  },
-  "BB2T908035": {
-    "designaciones": {
-      "es": "Mueble bajo, 3 cajones"
-    },
-    "ancho_mm": 900,
-    "alto_mm": 800,
-    "fondo_mm": 350
-  },
-  "BB2T458057": {
-    "designaciones": {
-      "es": "Mueble bajo, 3 cajones"
-    },
-    "ancho_mm": 450,
-    "alto_mm": 800,
-    "fondo_mm": 570
-  },
-  "BB2T608057": {
-    "designaciones": {
-      "es": "Mueble bajo, 3 cajones"
-    },
-    "ancho_mm": 600,
-    "alto_mm": 800,
-    "fondo_mm": 570
-  },
-  "BB2T908057": {
-    "designaciones": {
-      "es": "Mueble bajo, 3 cajones"
-    },
-    "ancho_mm": 900,
-    "alto_mm": 800,
-    "fondo_mm": 570
-  },
-  "B2B458035": {
-    "designaciones": {
-      "es": "Mueble bajo, 2 cajones"
-    },
-    "ancho_mm": 450,
-    "alto_mm": 800,
-    "fondo_mm": 350
-  },
-  "B2B608035": {
-    "designaciones": {
-      "es": "Mueble bajo, 2 cajones"
-    },
-    "ancho_mm": 600,
-    "alto_mm": 800,
-    "fondo_mm": 350
-  },
-  "B2B908035": {
-    "designaciones": {
-      "es": "Mueble bajo, 2 cajones"
-    },
-    "ancho_mm": 900,
-    "alto_mm": 800,
-    "fondo_mm": 350
-  },
-  "B2B458057": {
-    "designaciones": {
-      "es": "Mueble bajo, 2 cajones"
-    },
-    "ancho_mm": 450,
-    "alto_mm": 800,
-    "fondo_mm": 570
-  },
-  "B2B608057": {
-    "designaciones": {
-      "es": "Mueble bajo, 2 cajones"
-    },
-    "ancho_mm": 600,
-    "alto_mm": 800,
-    "fondo_mm": 570
-  },
-  "B2B908057": {
-    "designaciones": {
-      "es": "Mueble bajo, 2 cajones"
-    },
-    "ancho_mm": 900,
-    "alto_mm": 800,
-    "fondo_mm": 570
-  },
-  "BC158057": {
-    "designaciones": {
-      "es": "Mueble bajo extraíble"
-    },
-    "ancho_mm": 150,
-    "alto_mm": 800,
-    "fondo_mm": 570
-  },
-  "BC604035": {
-    "designaciones": {
-      "es": "Mueble de banco, 1 cajón"
-    },
-    "ancho_mm": 600,
-    "alto_mm": 400,
-    "fondo_mm": 350
-  },
-  "BC604057": {
-    "designaciones": {
-      "es": "Mueble de banco, 1 cajón"
-    },
-    "ancho_mm": 600,
-    "alto_mm": 400,
-    "fondo_mm": 570
-  },
-  "BFT608057": {
-    "designaciones": {
-      "es": "Mueble bajo para horno"
-    },
-    "ancho_mm": 600,
-    "alto_mm": 800,
-    "fondo_mm": 570
-  },
-  "BCUB2T458057": {
-    "designaciones": {
-      "es": "Mueble para placa, 3 cajones"
-    },
-    "ancho_mm": 450,
-    "alto_mm": 800,
-    "fondo_mm": 570
-  },
-  "BCUB2T608057": {
-    "designaciones": {
-      "es": "Mueble para placa, 3 cajones"
-    },
-    "ancho_mm": 600,
-    "alto_mm": 800,
-    "fondo_mm": 570
-  },
-  "BCUB2T908057": {
-    "designaciones": {
-      "es": "Mueble para placa, 3 cajones"
-    },
-    "ancho_mm": 900,
-    "alto_mm": 800,
-    "fondo_mm": 570
-  },
-  "BIBTS608057": {
-    "designaciones": {
-      "es": "Mueble para placa aspirante, 2 cajones, 1 fijo"
-    },
-    "ancho_mm": 600,
-    "alto_mm": 800,
-    "fondo_mm": 570
-  },
-  "BIBTS908057": {
-    "designaciones": {
-      "es": "Mueble para placa aspirante, 2 cajones, 1 fijo"
-    },
-    "ancho_mm": 900,
-    "alto_mm": 800,
-    "fondo_mm": 570
-  },
-  "BETO458057": {
-    "designaciones": {
-      "es": "Mueble para fregadero, 1 puerta"
-    },
-    "ancho_mm": 450,
-    "alto_mm": 800,
-    "fondo_mm": 570
-  },
-  "BETO608057": {
-    "designaciones": {
-      "es": "Mueble para fregadero, 1 puerta"
-    },
-    "ancho_mm": 600,
-    "alto_mm": 800,
-    "fondo_mm": 570
-  },
-  "BETO908057": {
-    "designaciones": {
-      "es": "Mueble para fregadero, 2 puertas"
-    },
-    "ancho_mm": 900,
-    "alto_mm": 800,
-    "fondo_mm": 570
-  },
-  "BETOQ908057": {
-    "designaciones": {
-      "es": "Mueble para fregadero, 2 puertas (equipado con cubos de basura)"
-    },
-    "ancho_mm": 900,
-    "alto_mm": 800,
-    "fondo_mm": 570
-  },
-  "BE2B608057": {
-    "designaciones": {
-      "es": "Mueble para fregadero, 2 cajones"
-    },
-    "ancho_mm": 600,
-    "alto_mm": 800,
-    "fondo_mm": 570
-  },
-  "BE2B908057": {
-    "designaciones": {
-      "es": "Mueble para fregadero, 2 cajones"
-    },
-    "ancho_mm": 900,
-    "alto_mm": 800,
-    "fondo_mm": 570
-  },
-  "BEBTS608057": {
-    "designaciones": {
-      "es": "Mueble para fregadero, 3 cajones"
-    },
-    "ancho_mm": 600,
-    "alto_mm": 800,
-    "fondo_mm": 570
-  },
-  "BEBTS908057": {
-    "designaciones": {
-      "es": "Mueble para fregadero, 3 cajones"
-    },
-    "ancho_mm": 900,
-    "alto_mm": 800,
-    "fondo_mm": 570
-  },
-  "POBIF4580": {
-    "designaciones": {
-      "es": "Puerta completa para LVV y LVD integrables"
-    },
-    "ancho_mm": 450,
-    "alto_mm": 800,
-    "fondo_mm": null
-  },
-  "POBIF6080": {
-    "designaciones": {
-      "es": "Puerta completa para LVV y LVD integrables"
-    },
-    "ancho_mm": 600,
-    "alto_mm": 800,
-    "fondo_mm": null
-  },
-  "PO2BIF4580": {
-    "designaciones": {
-      "es": "Puerta completa para LVV y LVD integrables"
-    },
-    "ancho_mm": 450,
-    "alto_mm": 800,
-    "fondo_mm": null
-  },
-  "PO2BIF6080": {
-    "designaciones": {
-      "es": "Puerta completa para LVV y LVD integrables"
-    },
-    "ancho_mm": 600,
-    "alto_mm": 800,
-    "fondo_mm": null
-  },
-  "PO1BIF4580": {
-    "designaciones": {
-      "es": "Puerta completa para LVV y LVD integrables"
-    },
-    "ancho_mm": 450,
-    "alto_mm": 800,
-    "fondo_mm": null
-  },
-  "PO1BIF6080": {
-    "designaciones": {
-      "es": "Puerta completa para LVV y LVD integrables"
-    },
-    "ancho_mm": 600,
-    "alto_mm": 800,
-    "fondo_mm": null
-  },
-  "FHABS6580": {
-    "designaciones": {
-      "es": "Puerta para LVV y LVD no integrables"
-    },
-    "ancho_mm": 650,
-    "alto_mm": 800,
-    "fondo_mm": null
-  },
-  "BAV908057": {
-    "designaciones": {
-      "es": "Mueble bajo esquinero con baldas, 1 puerta"
-    },
-    "ancho_mm": 900,
-    "alto_mm": 800,
-    "fondo_mm": 570
-  },
-  "BAV1208057": {
-    "designaciones": {
-      "es": "Mueble bajo esquinero con baldas, 1 puerta"
-    },
-    "ancho_mm": 1200,
-    "alto_mm": 800,
-    "fondo_mm": 570
-  },
-  "BAV1P908057": {
-    "designaciones": {
-      "es": "Mueble bajo esquinero con accesorio extraíble, 1 puerta"
-    },
-    "ancho_mm": 900,
-    "alto_mm": 800,
-    "fondo_mm": 570
-  },
-  "BAV1P1208057": {
-    "designaciones": {
-      "es": "Mueble bajo esquinero con accesorio extraíble, 1 puerta"
-    },
-    "ancho_mm": 1200,
-    "alto_mm": 800,
-    "fondo_mm": 570
-  },
-  "H1306035": {
-    "designaciones": {
-      "es": "Mueble de pared con baldas, 1 puerta"
-    },
-    "ancho_mm": 300,
-    "alto_mm": 600,
-    "fondo_mm": 350
-  },
-  "H1456035": {
-    "designaciones": {
-      "es": "Mueble de pared con baldas, 1 puerta"
-    },
-    "ancho_mm": 450,
-    "alto_mm": 600,
-    "fondo_mm": 350
-  },
-  "H1606035": {
-    "designaciones": {
-      "es": "Mueble de pared con baldas, 1 puerta"
-    },
-    "ancho_mm": 600,
-    "alto_mm": 600,
-    "fondo_mm": 350
-  },
-  "H1906035": {
-    "designaciones": {
-      "es": "Mueble de pared con baldas, 2 puertas"
-    },
-    "ancho_mm": 900,
-    "alto_mm": 600,
-    "fondo_mm": 350
-  },
-  "H1308035": {
-    "designaciones": {
-      "es": "Mueble de pared con baldas, 1 puerta"
-    },
-    "ancho_mm": 300,
-    "alto_mm": 800,
-    "fondo_mm": 350
-  },
-  "H1458035": {
-    "designaciones": {
-      "es": "Mueble de pared con baldas, 1 puerta"
-    },
-    "ancho_mm": 450,
-    "alto_mm": 800,
-    "fondo_mm": 350
-  },
-  "H1608035": {
-    "designaciones": {
-      "es": "Mueble de pared con baldas, 1 puerta"
-    },
-    "ancho_mm": 600,
-    "alto_mm": 800,
-    "fondo_mm": 350
-  },
-  "H1908035": {
-    "designaciones": {
-      "es": "Mueble de pared con baldas, 2 puertas"
-    },
-    "ancho_mm": 900,
-    "alto_mm": 800,
-    "fondo_mm": 350
-  },
-  "H13010035": {
-    "designaciones": {
-      "es": "Mueble de pared con baldas, 1 puerta"
-    },
-    "ancho_mm": 300,
-    "alto_mm": 1000,
-    "fondo_mm": 350
-  },
-  "H14510035": {
-    "designaciones": {
-      "es": "Mueble de pared con baldas, 1 puerta"
-    },
-    "ancho_mm": 450,
-    "alto_mm": 1000,
-    "fondo_mm": 350
-  },
-  "H16010035": {
-    "designaciones": {
-      "es": "Mueble de pared con baldas, 1 puerta"
-    },
-    "ancho_mm": 600,
-    "alto_mm": 1000,
-    "fondo_mm": 350
-  },
-  "H19010035": {
-    "designaciones": {
-      "es": "Mueble de pared con baldas, 2 puertas"
-    },
-    "ancho_mm": 900,
-    "alto_mm": 1000,
-    "fondo_mm": 350
-  },
-  "HH1606035": {
-    "designaciones": {
-      "es": "Mueble para campana, 1 puerta"
-    },
-    "ancho_mm": 600,
-    "alto_mm": 600,
-    "fondo_mm": 350
-  },
-  "HH1906035": {
-    "designaciones": {
-      "es": "Mueble para campana, 2 puertas"
-    },
-    "ancho_mm": 900,
-    "alto_mm": 600,
-    "fondo_mm": 350
-  },
-  "HH1608035": {
-    "designaciones": {
-      "es": "Mueble para campana, 1 puerta"
-    },
-    "ancho_mm": 600,
-    "alto_mm": 800,
-    "fondo_mm": 350
-  },
-  "HH1908035": {
-    "designaciones": {
-      "es": "Mueble para campana, 2 puertas"
-    },
-    "ancho_mm": 900,
-    "alto_mm": 800,
-    "fondo_mm": 350
-  },
-  "HH16010035": {
-    "designaciones": {
-      "es": "Mueble para campana, 1 puerta"
-    },
-    "ancho_mm": 600,
-    "alto_mm": 1000,
-    "fondo_mm": 350
-  },
-  "HH19010035": {
-    "designaciones": {
-      "es": "Mueble para campana, 2 puertas"
-    },
-    "ancho_mm": 900,
-    "alto_mm": 1000,
-    "fondo_mm": 350
-  },
-  "HAV1906035": {
-    "designaciones": {
-      "es": "Mueble de pared esquinero con baldas, 1 puerta (45cm)"
-    },
-    "ancho_mm": 900,
-    "alto_mm": 600,
-    "fondo_mm": 350
-  },
-  "HAV1908035": {
-    "designaciones": {
-      "es": "Mueble de pared esquinero con baldas, 1 puerta (45cm)"
-    },
-    "ancho_mm": 900,
-    "alto_mm": 800,
-    "fondo_mm": 350
-  },
-  "HAV19010035": {
-    "designaciones": {
-      "es": "Mueble de pared esquinero con baldas, 1 puerta (45cm)"
-    },
-    "ancho_mm": 900,
-    "alto_mm": 1000,
-    "fondo_mm": 350
-  },
-  "HAV2906035": {
-    "designaciones": {
-      "es": "Mueble de pared esquinero con baldas, 1 puerta (60cm)"
-    },
-    "ancho_mm": 900,
-    "alto_mm": 600,
-    "fondo_mm": 350
-  },
-  "HAV2908035": {
-    "designaciones": {
-      "es": "Mueble de pared esquinero con baldas, 1 puerta (60cm)"
-    },
-    "ancho_mm": 900,
-    "alto_mm": 800,
-    "fondo_mm": 350
-  },
-  "HAV29010035": {
-    "designaciones": {
-      "es": "Mueble de pared esquinero con baldas, 1 puerta (60cm)"
-    },
-    "ancho_mm": 900,
-    "alto_mm": 1000,
-    "fondo_mm": 350
-  },
-  "HR45V35": {
-    "designaciones": {
-      "es": "Altillo de altura variable con baldas, 1 puerta"
-    },
-    "ancho_mm": 450,
-    "alto_mm": null,
-    "fondo_mm": 350,
-    "alto_variable": {
-      "min": 400,
-      "max": 1000
-    }
-  },
-  "HR60V35": {
-    "designaciones": {
-      "es": "Altillo de altura variable con baldas, 1 puerta"
-    },
-    "ancho_mm": 600,
-    "alto_mm": null,
-    "fondo_mm": 350,
-    "alto_variable": {
-      "min": 400,
-      "max": 1000
-    }
-  },
-  "HR45V57": {
-    "designaciones": {
-      "es": "Altillo de altura variable con baldas, 1 puerta"
-    },
-    "ancho_mm": 450,
-    "alto_mm": null,
-    "fondo_mm": 570,
-    "alto_variable": {
-      "min": 400,
-      "max": 1000
-    }
-  },
-  "HR60V57": {
-    "designaciones": {
-      "es": "Altillo de altura variable con baldas, 1 puerta"
-    },
-    "ancho_mm": 600,
-    "alto_mm": null,
-    "fondo_mm": 570,
-    "alto_variable": {
-      "min": 400,
-      "max": 1000
-    }
-  },
-  "HLVV57": {
-    "designaciones": {
-      "es": "Altillo de altura variable con baldas, 1 puerta (apertura lift)"
-    },
-    "ancho_mm": null,
-    "alto_mm": null,
-    "fondo_mm": 570,
-    "ancho_variable": {
-      "min": 450,
-      "max": 1200
-    },
-    "alto_variable": {
-      "min": 200,
-      "max": 400
-    }
-  },
-  "HPT60V57": {
-    "designaciones": {
-      "es": "Mueble sobre encimera de altura variable con baldas, 1 puerta"
-    },
-    "ancho_mm": 600,
-    "alto_mm": null,
-    "alto_variable": {"min": 1100, "max": 1400},
-    "fondo_mm": 570
-  },
-  "AVA4520035": {
-    "designaciones": {
-      "es": "Columna con baldas, 2 puertas"
-    },
-    "ancho_mm": 450,
-    "alto_mm": 2000,
-    "fondo_mm": 350
-  },
-  "AVA6020035": {
-    "designaciones": {
-      "es": "Columna con baldas, 2 puertas"
-    },
-    "ancho_mm": 600,
-    "alto_mm": 2000,
-    "fondo_mm": 350
-  },
-  "AVA4522035": {
-    "designaciones": {
-      "es": "Columna con baldas, 2 puertas"
-    },
-    "ancho_mm": 450,
-    "alto_mm": 2200,
-    "fondo_mm": 350
-  },
-  "AVA6022035": {
-    "designaciones": {
-      "es": "Columna con baldas, 2 puertas"
-    },
-    "ancho_mm": 600,
-    "alto_mm": 2200,
-    "fondo_mm": 350
-  },
-  "AVA4520057": {
-    "designaciones": {
-      "es": "Columna con baldas, 2 puertas"
-    },
-    "ancho_mm": 450,
-    "alto_mm": 2000,
-    "fondo_mm": 570
-  },
-  "AVA6020057": {
-    "designaciones": {
-      "es": "Columna con baldas, 2 puertas"
-    },
-    "ancho_mm": 600,
-    "alto_mm": 2000,
-    "fondo_mm": 570
-  },
-  "AVA4522057": {
-    "designaciones": {
-      "es": "Columna con baldas, 2 puertas"
-    },
-    "ancho_mm": 450,
-    "alto_mm": 2200,
-    "fondo_mm": 570
-  },
-  "AVA6022057": {
-    "designaciones": {
-      "es": "Columna con baldas, 2 puertas"
-    },
-    "ancho_mm": 600,
-    "alto_mm": 2200,
-    "fondo_mm": 570
-  },
-  "AVA1P4520035": {
-    "designaciones": {
-      "es": "Columna con baldas, 1 puerta"
-    },
-    "ancho_mm": 450,
-    "alto_mm": 2000,
-    "fondo_mm": 350
-  },
-  "AVA1P6020035": {
-    "designaciones": {
-      "es": "Columna con baldas, 1 puerta"
-    },
-    "ancho_mm": 600,
-    "alto_mm": 2000,
-    "fondo_mm": 350
-  },
-  "AVA1P9020035": {
-    "designaciones": {
-      "es": "Columna con baldas, 2 puertas"
-    },
-    "ancho_mm": 900,
-    "alto_mm": 2000,
-    "fondo_mm": 350
-  },
-  "AVA1P4520057": {
-    "designaciones": {
-      "es": "Columna con baldas, 1 puerta"
-    },
-    "ancho_mm": 450,
-    "alto_mm": 2000,
-    "fondo_mm": 570
-  },
-  "AVA1P6020057": {
-    "designaciones": {
-      "es": "Columna con baldas, 1 puerta"
-    },
-    "ancho_mm": 600,
-    "alto_mm": 2000,
-    "fondo_mm": 570
-  },
-  "AVA1P4522035": {
-    "designaciones": {
-      "es": "Columna con baldas, 1 puerta"
-    },
-    "ancho_mm": 450,
-    "alto_mm": 2200,
-    "fondo_mm": 350
-  },
-  "AVA1P6022035": {
-    "designaciones": {
-      "es": "Columna con baldas, 1 puerta"
-    },
-    "ancho_mm": 600,
-    "alto_mm": 2200,
-    "fondo_mm": 350
-  },
-  "AVA1P9022035": {
-    "designaciones": {
-      "es": "Columna con baldas, 2 puertas"
-    },
-    "ancho_mm": 900,
-    "alto_mm": 2200,
-    "fondo_mm": 350
-  },
-  "AVA1P4522057": {
-    "designaciones": {
-      "es": "Columna con baldas, 1 puerta"
-    },
-    "ancho_mm": 450,
-    "alto_mm": 2200,
-    "fondo_mm": 570
-  },
-  "AVA1P6022057": {
-    "designaciones": {
-      "es": "Columna con baldas, 1 puerta"
-    },
-    "ancho_mm": 600,
-    "alto_mm": 2200,
-    "fondo_mm": 570
-  },
-  "AQC34520057": {
-    "designaciones": {
-      "es": "Columna con 5 cajones interiores, 2 puertas"
-    },
-    "ancho_mm": 450,
-    "alto_mm": 2000,
-    "fondo_mm": 570
-  },
-  "AQC36020057": {
-    "designaciones": {
-      "es": "Columna con 5 cajones interiores, 2 puertas"
-    },
-    "ancho_mm": 600,
-    "alto_mm": 2000,
-    "fondo_mm": 570
-  },
-  "AQC34522057": {
-    "designaciones": {
-      "es": "Columna con 5 cajones interiores, 2 puertas"
-    },
-    "ancho_mm": 450,
-    "alto_mm": 2200,
-    "fondo_mm": 570
-  },
-  "AQC36022057": {
-    "designaciones": {
-      "es": "Columna con 5 cajones interiores, 2 puertas"
-    },
-    "ancho_mm": 600,
-    "alto_mm": 2200,
-    "fondo_mm": 570
-  },
-  "AQC31P4520057": {
-    "designaciones": {
-      "es": "Columna con 5 cajones interiores, 1 puerta"
-    },
-    "ancho_mm": 450,
-    "alto_mm": 2000,
-    "fondo_mm": 570
-  },
-  "AQC31P6020057": {
-    "designaciones": {
-      "es": "Columna con 5 cajones interiores, 1 puerta"
-    },
-    "ancho_mm": 600,
-    "alto_mm": 2000,
-    "fondo_mm": 570
-  },
-  "AQC31P4522057": {
-    "designaciones": {
-      "es": "Columna con 5 cajones interiores, 1 puerta"
-    },
-    "ancho_mm": 450,
-    "alto_mm": 2200,
-    "fondo_mm": 570
-  },
-  "AQC31P6022057": {
-    "designaciones": {
-      "es": "Columna con 5 cajones interiores, 1 puerta"
-    },
-    "ancho_mm": 600,
-    "alto_mm": 2200,
-    "fondo_mm": 570
-  },
-  "ABA6020057": {
-    "designaciones": {
-      "es": "Mueble escobero, 2 puertas"
-    },
-    "ancho_mm": 600,
-    "alto_mm": 2000,
-    "fondo_mm": 570
-  },
-  "ABA6022057": {
-    "designaciones": {
-      "es": "Mueble escobero, 2 puertas"
-    },
-    "ancho_mm": 600,
-    "alto_mm": 2200,
-    "fondo_mm": 570
-  },
-  "AFS6020057": {
-    "designaciones": {
-      "es": "Columna para horno o micro, 1 puerta"
-    },
-    "ancho_mm": 600,
-    "alto_mm": 2000,
-    "fondo_mm": 570
-  },
-  "AFS6022057": {
-    "designaciones": {
-      "es": "Columna para horno o micro, 1 puerta"
-    },
-    "ancho_mm": 600,
-    "alto_mm": 2200,
-    "fondo_mm": 570
-  },
-  "AFS2B6020057": {
-    "designaciones": {
-      "es": "Columna para horno o micro, 1 puerta, 2 cajones"
-    },
-    "ancho_mm": 600,
-    "alto_mm": 2000,
-    "fondo_mm": 570
-  },
-  "AFS2B6022057": {
-    "designaciones": {
-      "es": "Columna para horno o micro, 1 puerta, 2 cajones"
-    },
-    "ancho_mm": 600,
-    "alto_mm": 2200,
-    "fondo_mm": 570
-  },
-  "AFSMO6020057": {
-    "designaciones": {
-      "es": "Columna para horno+micro, 1 puerta"
-    },
-    "ancho_mm": 600,
-    "alto_mm": 2000,
-    "fondo_mm": 570
-  },
-  "AFSMO6022057": {
-    "designaciones": {
-      "es": "Columna para horno+micro, 1 puerta"
-    },
-    "ancho_mm": 600,
-    "alto_mm": 2200,
-    "fondo_mm": 570
-  },
-  "AFSMOBT6020057": {
-    "designaciones": {
-      "es": "Columna para horno+micro, 1 puerta, 2 cajones"
-    },
-    "ancho_mm": 600,
-    "alto_mm": 2000,
-    "fondo_mm": 570
-  },
-  "AFSMOBT6022057": {
-    "designaciones": {
-      "es": "Columna para horno+micro, 1 puerta, 2 cajones"
-    },
-    "ancho_mm": 600,
-    "alto_mm": 2200,
-    "fondo_mm": 570
-  },
-  "A2I6020057": {
-    "designaciones": {
-      "es": "Columna para frigorífico integrable, 2 puertas"
-    },
-    "ancho_mm": 600,
-    "alto_mm": 2000,
-    "fondo_mm": 570
-  },
-  "A2I6022057": {
-    "designaciones": {
-      "es": "Columna para frigorífico integrable, 2 puertas"
-    },
-    "ancho_mm": 600,
-    "alto_mm": 2200,
-    "fondo_mm": 570
-  },
-  "A2I7522057": {
-    "designaciones": {
-      "es": "Columna para frigorífico integrable, 2 puertas"
-    },
-    "ancho_mm": 750,
-    "alto_mm": 2200,
-    "fondo_mm": 570
-  },
-  "A2I1P6020057": {
-    "designaciones": {
-      "es": "Columna para frigorífico integrable, 1 puerta"
-    },
-    "ancho_mm": 600,
-    "alto_mm": 2000,
-    "fondo_mm": 570
-  },
-  "A2I1P6022057": {
-    "designaciones": {
-      "es": "Columna para frigorífico integrable, 1 puerta"
-    },
-    "ancho_mm": 600,
-    "alto_mm": 2200,
-    "fondo_mm": 570
-  },
-  "AGM9020057": {
-    "designaciones": {
-      "es": "Mueble de despensa, 4 puertas"
-    },
-    "ancho_mm": 900,
-    "alto_mm": 2000,
-    "fondo_mm": 570
-  },
-  "AGM9022057": {
-    "designaciones": {
-      "es": "Mueble de despensa, 4 puertas"
-    },
-    "ancho_mm": 900,
-    "alto_mm": 2200,
-    "fondo_mm": 570
-  },
-  "EOVV37": {
-    "designaciones": {
-      "es": "Elemento abierto variable",
-      "fr": "ELEMENT OUVERT VARIABLE"
-    },
-    "ancho_mm": null,
-    "alto_mm": null,
-    "fondo_mm": 375
-  },
-  "EOV8760": {
-    "designaciones": {
-      "es": "Elemento abierto para islas variable",
-      "fr": "ELEMENT OUVERT POUR ILOTS VARIABLE"
-    },
-    "ancho_mm": null,
-    "alto_mm": 870,
-    "fondo_mm": 600
-  },
-  "EOV9060": {
-    "designaciones": {
-      "es": "Elemento abierto para islas variable",
-      "fr": "ELEMENT OUVERT POUR ILOTS VARIABLE"
-    },
-    "ancho_mm": null,
-    "alto_mm": 900,
-    "fondo_mm": 600
-  },
-  "EOV20760": {
-    "designaciones": {
-      "es": "Elemento abierto armario variable fin de implantación",
-      "fr": "ELEMENT OUVERT ARMOIRE VARIABLE FIN D'IMPLANTATION"
-    },
-    "ancho_mm": null,
-    "alto_mm": 2070,
-    "fondo_mm": 600
-  },
-  "EOV21060": {
-    "designaciones": {
-      "es": "Elemento abierto armario variable fin de implantación",
-      "fr": "ELEMENT OUVERT ARMOIRE VARIABLE FIN D'IMPLANTATION"
-    },
-    "ancho_mm": null,
-    "alto_mm": 2100,
-    "fondo_mm": 600
-  },
-  "EOV22760": {
-    "designaciones": {
-      "es": "Elemento abierto armario variable fin de implantación",
-      "fr": "ELEMENT OUVERT ARMOIRE VARIABLE FIN D'IMPLANTATION"
-    },
-    "ancho_mm": null,
-    "alto_mm": 2270,
-    "fondo_mm": 600
-  },
-  "EOV23060": {
-    "designaciones": {
-      "es": "Elemento abierto armario variable fin de implantación",
-      "fr": "ELEMENT OUVERT ARMOIRE VARIABLE FIN D'IMPLANTATION"
-    },
-    "ancho_mm": null,
-    "alto_mm": 2300,
-    "fondo_mm": 600
-  },
-  "EOAVV37": {
-    "designaciones": {
-      "es": "Elemento abierto armario variable",
-      "fr": "ELEMENT OUVERT ARMOIRE VARIABLE"
-    },
-    "ancho_mm": null,
-    "alto_mm": null,
-    "fondo_mm": 375
-  },
-  "FF12200": {
-    "designaciones": { "es": "Tapeta vertical" },
-    "ancho_mm": 120,
-    "alto_mm": 2000,
-    "fondo_mm": 19
-  },
-  "FF12220": {
-    "designaciones": { "es": "Tapeta vertical" },
-    "ancho_mm": 120,
-    "alto_mm": 2200,
-    "fondo_mm": 19
-  },
-  "FF1260": {
-    "designaciones": { "es": "Tapeta vertical" },
-    "ancho_mm": 120,
-    "alto_mm": 600,
-    "fondo_mm": 19
-  },
-  "FF1280": {
-    "designaciones": { "es": "Tapeta vertical" },
-    "ancho_mm": 120,
-    "alto_mm": 800,
-    "fondo_mm": 19
-  },
-  "FF1287": {
-    "designaciones": { "es": "Tapeta vertical girada 90°" },
-    "ancho_mm": 120,
-    "alto_mm": 870,
-    "fondo_mm": 19
-  },
-  "FF1290": {
-    "designaciones": { "es": "Tapeta vertical girada 90°" },
-    "ancho_mm": 120,
-    "alto_mm": 900,
-    "fondo_mm": 19
-  },
-  "FF12100": {
-    "designaciones": { "es": "Tapeta vertical" },
-    "ancho_mm": 120,
-    "alto_mm": 1000,
-    "fondo_mm": 19
-  },
-  "FF12V": {
-    "designaciones": { "es": "Tapeta vertical de altura variable" },
-    "ancho_mm": 120,
-    "alto_mm": null,
-    "fondo_mm": 19,
-    "alto_variable": { "min": 600, "max": 2450 }
-  },
-  "FFAL1060": {
-    "designaciones": { "es": "Tapeta de ángulo" },
-    "ancho_mm": 100,
-    "alto_mm": 600,
-    "fondo_mm": 19
-  },
-  "FFAL1080": {
-    "designaciones": { "es": "Tapeta de ángulo" },
-    "ancho_mm": 100,
-    "alto_mm": 800,
-    "fondo_mm": 19
-  },
-  "FFAL10100": {
-    "designaciones": { "es": "Tapeta de ángulo" },
-    "ancho_mm": 100,
-    "alto_mm": 1000,
-    "fondo_mm": 19
-  },
-  "SOCX10": {
-    "designaciones": { "es": "Rodapié" },
-    "ancho_mm": null,
-    "alto_mm": 100,
-    "fondo_mm": 13
-  },
-  "SOCX07": {
-    "designaciones": { "es": "Rodapié" },
-    "ancho_mm": null,
-    "alto_mm": 70,
-    "fondo_mm": 13
-  },
-  "SOC36010": {
-    "designaciones": { "es": "Rodapié 100 mm — pieza 3600 mm" },
-    "ancho_mm": 3600,
-    "alto_mm": 100,
-    "fondo_mm": 13
-  },
-  "SOC18010": {
-    "designaciones": { "es": "Rodapié 100 mm — pieza 1800 mm" },
-    "ancho_mm": 1800,
-    "alto_mm": 100,
-    "fondo_mm": 13
-  },
-  "SOC3607": {
-    "designaciones": { "es": "Rodapié 70 mm — pieza 3600 mm" },
-    "ancho_mm": 3600,
-    "alto_mm": 70,
-    "fondo_mm": 13
-  },
-  "SOC1807": {
-    "designaciones": { "es": "Rodapié 70 mm — pieza 1800 mm" },
-    "ancho_mm": 1800,
-    "alto_mm": 70,
-    "fondo_mm": 13
-  },
-  "J199060":  { "designaciones": { "es": "Panel lateral 19mm", "fr": "Joue épaisseur 19mm" }, "ancho_mm": 600, "alto_mm": 900,  "fondo_mm": 19 },
-  "J198760":  { "designaciones": { "es": "Panel lateral 19mm", "fr": "Joue épaisseur 19mm" }, "ancho_mm": 600, "alto_mm": 870,  "fondo_mm": 19 },
-  "J199037":  { "designaciones": { "es": "Panel lateral 19mm", "fr": "Joue épaisseur 19mm" }, "ancho_mm": 375, "alto_mm": 900,  "fondo_mm": 19 },
-  "J198737":  { "designaciones": { "es": "Panel lateral 19mm", "fr": "Joue épaisseur 19mm" }, "ancho_mm": 375, "alto_mm": 870,  "fondo_mm": 19 },
-  "J1921060": { "designaciones": { "es": "Panel lateral 19mm", "fr": "Joue épaisseur 19mm" }, "ancho_mm": 600, "alto_mm": 2100, "fondo_mm": 19 },
-  "J1920760": { "designaciones": { "es": "Panel lateral 19mm", "fr": "Joue épaisseur 19mm" }, "ancho_mm": 600, "alto_mm": 2070, "fondo_mm": 19 },
-  "J1923060": { "designaciones": { "es": "Panel lateral 19mm", "fr": "Joue épaisseur 19mm" }, "ancho_mm": 600, "alto_mm": 2300, "fondo_mm": 19 },
-  "J1922760": { "designaciones": { "es": "Panel lateral 19mm", "fr": "Joue épaisseur 19mm" }, "ancho_mm": 600, "alto_mm": 2270, "fondo_mm": 19 },
-  "J1921037": { "designaciones": { "es": "Panel lateral 19mm", "fr": "Joue épaisseur 19mm" }, "ancho_mm": 375, "alto_mm": 2100, "fondo_mm": 19 },
-  "J1920737": { "designaciones": { "es": "Panel lateral 19mm", "fr": "Joue épaisseur 19mm" }, "ancho_mm": 375, "alto_mm": 2070, "fondo_mm": 19 },
-  "J1923037": { "designaciones": { "es": "Panel lateral 19mm", "fr": "Joue épaisseur 19mm" }, "ancho_mm": 375, "alto_mm": 2300, "fondo_mm": 19 },
-  "J1922737": { "designaciones": { "es": "Panel lateral 19mm", "fr": "Joue épaisseur 19mm" }, "ancho_mm": 375, "alto_mm": 2270, "fondo_mm": 19 },
-  "J196037":  { "designaciones": { "es": "Panel lateral 19mm", "fr": "Joue épaisseur 19mm" }, "ancho_mm": 375, "alto_mm": 600,  "fondo_mm": 19 },
-  "J198037":  { "designaciones": { "es": "Panel lateral 19mm", "fr": "Joue épaisseur 19mm" }, "ancho_mm": 375, "alto_mm": 800,  "fondo_mm": 19 },
-  "J1910037": { "designaciones": { "es": "Panel lateral 19mm", "fr": "Joue épaisseur 19mm" }, "ancho_mm": 375, "alto_mm": 1000, "fondo_mm": 19 },
-  "J19VV":    { "designaciones": { "es": "Panel lateral 19mm variable", "fr": "Joue épaisseur 19mm variable" }, "ancho_variable": { "min": 300, "max": 600 }, "alto_variable": { "min": 300, "max": 2450 }, "fondo_mm": 19 },
-  "BPLA1":    { "designaciones": { "es": "Cierre a techo", "fr": "Bandeau sous plafond" }, "ancho_variable": { "min": 100, "max": 2020 }, "alto_variable": { "min": 100, "max": 2500 }, "fondo_mm": 19 },
-  "HDV90C":    { "designaciones": { "es": "Panel trasero isla", "fr": "Habillage dos 19mm" }, "alto_mm": 900, "ancho_variable_por_gama": { "LACA": { "min": 300, "max": 2600 }, "LINOLEO": { "min": 300, "max": 2600 }, "LAMINADO": { "min": 300, "max": 2600 }, "WOOD": { "min": 300, "max": 2020 } }, "fondo_mm": 19 },
-  "HDV87C":    { "designaciones": { "es": "Panel trasero isla", "fr": "Habillage dos 19mm" }, "alto_mm": 870, "ancho_variable_por_gama": { "LACA": { "min": 300, "max": 2600 }, "LINOLEO": { "min": 300, "max": 2600 }, "LAMINADO": { "min": 300, "max": 2600 }, "WOOD": { "min": 300, "max": 2020 } }, "fondo_mm": 19 },
-  "HABE19V12": { "designaciones": { "es": "Recubrimiento superior para mueble", "fr": "Habillage étagère 19mm" }, "ancho_variable": { "min": 400, "max": 1240 }, "alto_mm": 120, "fondo_mm": 19 },
-  "HABE19V37": { "designaciones": { "es": "Recubrimiento superior para mueble", "fr": "Habillage étagère 19mm" }, "ancho_variable": { "min": 400, "max": 1240 }, "alto_mm": 375, "fondo_mm": 19 },
-  "HABE19V60": { "designaciones": { "es": "Recubrimiento superior para mueble", "fr": "Habillage étagère 19mm" }, "ancho_variable": { "min": 400, "max": 1240 }, "alto_mm": 600, "fondo_mm": 19 },
-
-  "PDT20C":     { "designaciones": { "es": "Encimera estratificada 20mm",  "fr": "Plan de travail stratifié 20mm"  }, "ancho_variable": { "min": 250, "max": 3100 }, "alto_variable": { "min": 250, "max": 1240 }, "espesor_mm": 20,  "fondo_mm": null },
-  "NRWC":       { "designaciones": { "es": "Frente de encimera estratificado", "fr": "Panneau de crédence stratifié" }, "ancho_variable": { "min": 300, "max": 3100 }, "alto_variable": { "min": 120, "max": 1200 }, "espesor_mm": 10,  "fondo_mm": null },
-  "PAN20LAMC":  { "designaciones": { "es": "Encimera laminado",  "fr": "Panneau laminate" }, "gama": "LAMINADO", "ancho_variable": { "min": 250, "max": 3000 }, "alto_variable": { "min": 250, "max": 1240 }, "espesor_mm": 19, "fondo_mm": null },
-  "PAN20LINOC": { "designaciones": { "es": "Encimera linoleo",   "fr": "Panneau lino"      }, "gama": "LINOLEO",  "ancho_variable": { "min": 250, "max": 2750 }, "alto_variable": { "min": 250, "max": 1240 }, "espesor_mm": 19, "fondo_mm": null }
+﻿{
+    "B308035":  {
+                    "designaciones":  {
+                                          "es":  "Mueble bajo con baldas, 1 puerta",
+                                          "fr":  "Meuble bas a etageres, 1 porte"
+                                      },
+                    "ancho_mm":  300,
+                    "alto_mm":  800,
+                    "fondo_mm":  350
+                },
+    "B458035":  {
+                    "designaciones":  {
+                                          "es":  "Mueble bajo con baldas, 1 puerta",
+                                          "fr":  "Meuble bas a etageres, 1 porte"
+                                      },
+                    "ancho_mm":  450,
+                    "alto_mm":  800,
+                    "fondo_mm":  350
+                },
+    "B608035":  {
+                    "designaciones":  {
+                                          "es":  "Mueble bajo con baldas, 1 puerta",
+                                          "fr":  "Meuble bas a etageres, 1 porte"
+                                      },
+                    "ancho_mm":  600,
+                    "alto_mm":  800,
+                    "fondo_mm":  350
+                },
+    "B908035":  {
+                    "designaciones":  {
+                                          "es":  "Mueble bajo con baldas, 2 puertas",
+                                          "fr":  "Meuble bas a etageres, 2 portes"
+                                      },
+                    "ancho_mm":  900,
+                    "alto_mm":  800,
+                    "fondo_mm":  350
+                },
+    "B308057":  {
+                    "designaciones":  {
+                                          "es":  "Mueble bajo con baldas, 1 puerta",
+                                          "fr":  "Meuble bas a etageres, 1 porte"
+                                      },
+                    "ancho_mm":  300,
+                    "alto_mm":  800,
+                    "fondo_mm":  570
+                },
+    "B458057":  {
+                    "designaciones":  {
+                                          "es":  "Mueble bajo con baldas, 1 puerta",
+                                          "fr":  "Meuble bas a etageres, 1 porte"
+                                      },
+                    "ancho_mm":  450,
+                    "alto_mm":  800,
+                    "fondo_mm":  570
+                },
+    "B608057":  {
+                    "designaciones":  {
+                                          "es":  "Mueble bajo con baldas, 1 puerta",
+                                          "fr":  "Meuble bas a etageres, 1 porte"
+                                      },
+                    "ancho_mm":  600,
+                    "alto_mm":  800,
+                    "fondo_mm":  570
+                },
+    "B908057":  {
+                    "designaciones":  {
+                                          "es":  "Mueble bajo con baldas, 2 puertas",
+                                          "fr":  "Meuble bas a etageres, 2 portes"
+                                      },
+                    "ancho_mm":  900,
+                    "alto_mm":  800,
+                    "fondo_mm":  570
+                },
+    "BB2T458035":  {
+                       "designaciones":  {
+                                             "es":  "Mueble bajo, 3 cajones",
+                                             "fr":  "Meuble bas, 3 tiroirs"
+                                         },
+                       "ancho_mm":  450,
+                       "alto_mm":  800,
+                       "fondo_mm":  350
+                   },
+    "BB2T608035":  {
+                       "designaciones":  {
+                                             "es":  "Mueble bajo, 3 cajones",
+                                             "fr":  "Meuble bas, 3 tiroirs"
+                                         },
+                       "ancho_mm":  600,
+                       "alto_mm":  800,
+                       "fondo_mm":  350
+                   },
+    "BB2T908035":  {
+                       "designaciones":  {
+                                             "es":  "Mueble bajo, 3 cajones",
+                                             "fr":  "Meuble bas, 3 tiroirs"
+                                         },
+                       "ancho_mm":  900,
+                       "alto_mm":  800,
+                       "fondo_mm":  350
+                   },
+    "BB2T458057":  {
+                       "designaciones":  {
+                                             "es":  "Mueble bajo, 3 cajones",
+                                             "fr":  "Meuble bas, 3 tiroirs"
+                                         },
+                       "ancho_mm":  450,
+                       "alto_mm":  800,
+                       "fondo_mm":  570
+                   },
+    "BB2T608057":  {
+                       "designaciones":  {
+                                             "es":  "Mueble bajo, 3 cajones",
+                                             "fr":  "Meuble bas, 3 tiroirs"
+                                         },
+                       "ancho_mm":  600,
+                       "alto_mm":  800,
+                       "fondo_mm":  570
+                   },
+    "BB2T908057":  {
+                       "designaciones":  {
+                                             "es":  "Mueble bajo, 3 cajones",
+                                             "fr":  "Meuble bas, 3 tiroirs"
+                                         },
+                       "ancho_mm":  900,
+                       "alto_mm":  800,
+                       "fondo_mm":  570
+                   },
+    "B2B458035":  {
+                      "designaciones":  {
+                                            "es":  "Mueble bajo, 2 cajones",
+                                            "fr":  "Meuble bas, 2 tiroirs"
+                                        },
+                      "ancho_mm":  450,
+                      "alto_mm":  800,
+                      "fondo_mm":  350
+                  },
+    "B2B608035":  {
+                      "designaciones":  {
+                                            "es":  "Mueble bajo, 2 cajones",
+                                            "fr":  "Meuble bas, 2 tiroirs"
+                                        },
+                      "ancho_mm":  600,
+                      "alto_mm":  800,
+                      "fondo_mm":  350
+                  },
+    "B2B908035":  {
+                      "designaciones":  {
+                                            "es":  "Mueble bajo, 2 cajones",
+                                            "fr":  "Meuble bas, 2 tiroirs"
+                                        },
+                      "ancho_mm":  900,
+                      "alto_mm":  800,
+                      "fondo_mm":  350
+                  },
+    "B2B458057":  {
+                      "designaciones":  {
+                                            "es":  "Mueble bajo, 2 cajones",
+                                            "fr":  "Meuble bas, 2 tiroirs"
+                                        },
+                      "ancho_mm":  450,
+                      "alto_mm":  800,
+                      "fondo_mm":  570
+                  },
+    "B2B608057":  {
+                      "designaciones":  {
+                                            "es":  "Mueble bajo, 2 cajones",
+                                            "fr":  "Meuble bas, 2 tiroirs"
+                                        },
+                      "ancho_mm":  600,
+                      "alto_mm":  800,
+                      "fondo_mm":  570
+                  },
+    "B2B908057":  {
+                      "designaciones":  {
+                                            "es":  "Mueble bajo, 2 cajones",
+                                            "fr":  "Meuble bas, 2 tiroirs"
+                                        },
+                      "ancho_mm":  900,
+                      "alto_mm":  800,
+                      "fondo_mm":  570
+                  },
+    "BC158057":  {
+                     "designaciones":  {
+                                           "es":  "Mueble bajo extraíble",
+                                           "fr":  "Meuble bas coulissant"
+                                       },
+                     "ancho_mm":  150,
+                     "alto_mm":  800,
+                     "fondo_mm":  570
+                 },
+    "BC604035":  {
+                     "designaciones":  {
+                                           "es":  "Mueble de banco, 1 cajón",
+                                           "fr":  "Meuble de banc, 1 tiroir"
+                                       },
+                     "ancho_mm":  600,
+                     "alto_mm":  400,
+                     "fondo_mm":  350
+                 },
+    "BC604057":  {
+                     "designaciones":  {
+                                           "es":  "Mueble de banco, 1 cajón",
+                                           "fr":  "Meuble de banc, 1 tiroir"
+                                       },
+                     "ancho_mm":  600,
+                     "alto_mm":  400,
+                     "fondo_mm":  570
+                 },
+    "BFT608057":  {
+                      "designaciones":  {
+                                            "es":  "Mueble bajo para horno",
+                                            "fr":  "Meuble bas pour four"
+                                        },
+                      "ancho_mm":  600,
+                      "alto_mm":  800,
+                      "fondo_mm":  570
+                  },
+    "BCUB2T458057":  {
+                         "designaciones":  {
+                                               "es":  "Mueble para placa, 3 cajones",
+                                               "fr":  "Meuble pour plaque, 3 tiroirs"
+                                           },
+                         "ancho_mm":  450,
+                         "alto_mm":  800,
+                         "fondo_mm":  570
+                     },
+    "BCUB2T608057":  {
+                         "designaciones":  {
+                                               "es":  "Mueble para placa, 3 cajones",
+                                               "fr":  "Meuble pour plaque, 3 tiroirs"
+                                           },
+                         "ancho_mm":  600,
+                         "alto_mm":  800,
+                         "fondo_mm":  570
+                     },
+    "BCUB2T908057":  {
+                         "designaciones":  {
+                                               "es":  "Mueble para placa, 3 cajones",
+                                               "fr":  "Meuble pour plaque, 3 tiroirs"
+                                           },
+                         "ancho_mm":  900,
+                         "alto_mm":  800,
+                         "fondo_mm":  570
+                     },
+    "BIBTS608057":  {
+                        "designaciones":  {
+                                              "es":  "Mueble para placa aspirante, 2 cajones, 1 fijo",
+                                              "fr":  "Meuble pour plaque aspirante, 2 tiroirs, 1 fixe"
+                                          },
+                        "ancho_mm":  600,
+                        "alto_mm":  800,
+                        "fondo_mm":  570
+                    },
+    "BIBTS908057":  {
+                        "designaciones":  {
+                                              "es":  "Mueble para placa aspirante, 2 cajones, 1 fijo",
+                                              "fr":  "Meuble pour plaque aspirante, 2 tiroirs, 1 fixe"
+                                          },
+                        "ancho_mm":  900,
+                        "alto_mm":  800,
+                        "fondo_mm":  570
+                    },
+    "BETO458057":  {
+                       "designaciones":  {
+                                             "es":  "Mueble para fregadero, 1 puerta",
+                                             "fr":  "Meuble pour evier, 1 porte"
+                                         },
+                       "ancho_mm":  450,
+                       "alto_mm":  800,
+                       "fondo_mm":  570
+                   },
+    "BETO608057":  {
+                       "designaciones":  {
+                                             "es":  "Mueble para fregadero, 1 puerta",
+                                             "fr":  "Meuble pour evier, 1 porte"
+                                         },
+                       "ancho_mm":  600,
+                       "alto_mm":  800,
+                       "fondo_mm":  570
+                   },
+    "BETO908057":  {
+                       "designaciones":  {
+                                             "es":  "Mueble para fregadero, 2 puertas",
+                                             "fr":  "Meuble pour evier, 2 portes"
+                                         },
+                       "ancho_mm":  900,
+                       "alto_mm":  800,
+                       "fondo_mm":  570
+                   },
+    "BETOQ908057":  {
+                        "designaciones":  {
+                                              "es":  "Mueble para fregadero, 2 puertas (equipado con cubos de basura)",
+                                              "fr":  "Meuble pour evier, 2 portes (avec poubelles)"
+                                          },
+                        "ancho_mm":  900,
+                        "alto_mm":  800,
+                        "fondo_mm":  570
+                    },
+    "BE2B608057":  {
+                       "designaciones":  {
+                                             "es":  "Mueble para fregadero, 2 cajones",
+                                             "fr":  "Meuble pour evier, 2 tiroirs"
+                                         },
+                       "ancho_mm":  600,
+                       "alto_mm":  800,
+                       "fondo_mm":  570
+                   },
+    "BE2B908057":  {
+                       "designaciones":  {
+                                             "es":  "Mueble para fregadero, 2 cajones",
+                                             "fr":  "Meuble pour evier, 2 tiroirs"
+                                         },
+                       "ancho_mm":  900,
+                       "alto_mm":  800,
+                       "fondo_mm":  570
+                   },
+    "BEBTS608057":  {
+                        "designaciones":  {
+                                              "es":  "Mueble para fregadero, 3 cajones",
+                                              "fr":  "Meuble pour evier, 3 tiroirs"
+                                          },
+                        "ancho_mm":  600,
+                        "alto_mm":  800,
+                        "fondo_mm":  570
+                    },
+    "BEBTS908057":  {
+                        "designaciones":  {
+                                              "es":  "Mueble para fregadero, 3 cajones",
+                                              "fr":  "Meuble pour evier, 3 tiroirs"
+                                          },
+                        "ancho_mm":  900,
+                        "alto_mm":  800,
+                        "fondo_mm":  570
+                    },
+    "POBIF4580":  {
+                      "designaciones":  {
+                                            "es":  "Puerta completa para LVV y LVD integrables",
+                                            "fr":  "Porte complete pour LVV et LVD integrables"
+                                        },
+                      "ancho_mm":  450,
+                      "alto_mm":  800,
+                      "fondo_mm":  null
+                  },
+    "POBIF6080":  {
+                      "designaciones":  {
+                                            "es":  "Puerta completa para LVV y LVD integrables",
+                                            "fr":  "Porte complete pour LVV et LVD integrables"
+                                        },
+                      "ancho_mm":  600,
+                      "alto_mm":  800,
+                      "fondo_mm":  null
+                  },
+    "PO2BIF4580":  {
+                       "designaciones":  {
+                                             "es":  "Puerta completa para LVV y LVD integrables",
+                                             "fr":  "Porte complete pour LVV et LVD integrables"
+                                         },
+                       "ancho_mm":  450,
+                       "alto_mm":  800,
+                       "fondo_mm":  null
+                   },
+    "PO2BIF6080":  {
+                       "designaciones":  {
+                                             "es":  "Puerta completa para LVV y LVD integrables",
+                                             "fr":  "Porte complete pour LVV et LVD integrables"
+                                         },
+                       "ancho_mm":  600,
+                       "alto_mm":  800,
+                       "fondo_mm":  null
+                   },
+    "PO1BIF4580":  {
+                       "designaciones":  {
+                                             "es":  "Puerta completa para LVV y LVD integrables",
+                                             "fr":  "Porte complete pour LVV et LVD integrables"
+                                         },
+                       "ancho_mm":  450,
+                       "alto_mm":  800,
+                       "fondo_mm":  null
+                   },
+    "PO1BIF6080":  {
+                       "designaciones":  {
+                                             "es":  "Puerta completa para LVV y LVD integrables",
+                                             "fr":  "Porte complete pour LVV et LVD integrables"
+                                         },
+                       "ancho_mm":  600,
+                       "alto_mm":  800,
+                       "fondo_mm":  null
+                   },
+    "FHABS6580":  {
+                      "designaciones":  {
+                                            "es":  "Puerta para LVV y LVD no integrables",
+                                            "fr":  "Porte pour LVV et LVD non integrables"
+                                        },
+                      "ancho_mm":  650,
+                      "alto_mm":  800,
+                      "fondo_mm":  null
+                  },
+    "BAV908057":  {
+                      "designaciones":  {
+                                            "es":  "Mueble bajo esquinero con baldas, 1 puerta",
+                                            "fr":  "Meuble bas d\u0027angle a etageres, 1 porte"
+                                        },
+                      "ancho_mm":  900,
+                      "alto_mm":  800,
+                      "fondo_mm":  570
+                  },
+    "BAV1208057":  {
+                       "designaciones":  {
+                                             "es":  "Mueble bajo esquinero con baldas, 1 puerta",
+                                             "fr":  "Meuble bas d\u0027angle a etageres, 1 porte"
+                                         },
+                       "ancho_mm":  1200,
+                       "alto_mm":  800,
+                       "fondo_mm":  570
+                   },
+    "BAV1P908057":  {
+                        "designaciones":  {
+                                              "es":  "Mueble bajo esquinero con accesorio extraíble, 1 puerta",
+                                              "fr":  "Meuble bas d\u0027angle avec accessoire coulissant, 1 porte"
+                                          },
+                        "ancho_mm":  900,
+                        "alto_mm":  800,
+                        "fondo_mm":  570
+                    },
+    "BAV1P1208057":  {
+                         "designaciones":  {
+                                               "es":  "Mueble bajo esquinero con accesorio extraíble, 1 puerta",
+                                               "fr":  "Meuble bas d\u0027angle avec accessoire coulissant, 1 porte"
+                                           },
+                         "ancho_mm":  1200,
+                         "alto_mm":  800,
+                         "fondo_mm":  570
+                     },
+    "H1306035":  {
+                     "designaciones":  {
+                                           "es":  "Mueble de pared con baldas, 1 puerta",
+                                           "fr":  "Meuble haut a etageres, 1 porte"
+                                       },
+                     "ancho_mm":  300,
+                     "alto_mm":  600,
+                     "fondo_mm":  350
+                 },
+    "H1456035":  {
+                     "designaciones":  {
+                                           "es":  "Mueble de pared con baldas, 1 puerta",
+                                           "fr":  "Meuble haut a etageres, 1 porte"
+                                       },
+                     "ancho_mm":  450,
+                     "alto_mm":  600,
+                     "fondo_mm":  350
+                 },
+    "H1606035":  {
+                     "designaciones":  {
+                                           "es":  "Mueble de pared con baldas, 1 puerta",
+                                           "fr":  "Meuble haut a etageres, 1 porte"
+                                       },
+                     "ancho_mm":  600,
+                     "alto_mm":  600,
+                     "fondo_mm":  350
+                 },
+    "H1906035":  {
+                     "designaciones":  {
+                                           "es":  "Mueble de pared con baldas, 2 puertas",
+                                           "fr":  "Meuble haut a etageres, 2 portes"
+                                       },
+                     "ancho_mm":  900,
+                     "alto_mm":  600,
+                     "fondo_mm":  350
+                 },
+    "H1308035":  {
+                     "designaciones":  {
+                                           "es":  "Mueble de pared con baldas, 1 puerta",
+                                           "fr":  "Meuble haut a etageres, 1 porte"
+                                       },
+                     "ancho_mm":  300,
+                     "alto_mm":  800,
+                     "fondo_mm":  350
+                 },
+    "H1458035":  {
+                     "designaciones":  {
+                                           "es":  "Mueble de pared con baldas, 1 puerta",
+                                           "fr":  "Meuble haut a etageres, 1 porte"
+                                       },
+                     "ancho_mm":  450,
+                     "alto_mm":  800,
+                     "fondo_mm":  350
+                 },
+    "H1608035":  {
+                     "designaciones":  {
+                                           "es":  "Mueble de pared con baldas, 1 puerta",
+                                           "fr":  "Meuble haut a etageres, 1 porte"
+                                       },
+                     "ancho_mm":  600,
+                     "alto_mm":  800,
+                     "fondo_mm":  350
+                 },
+    "H1908035":  {
+                     "designaciones":  {
+                                           "es":  "Mueble de pared con baldas, 2 puertas",
+                                           "fr":  "Meuble haut a etageres, 2 portes"
+                                       },
+                     "ancho_mm":  900,
+                     "alto_mm":  800,
+                     "fondo_mm":  350
+                 },
+    "H13010035":  {
+                      "designaciones":  {
+                                            "es":  "Mueble de pared con baldas, 1 puerta",
+                                            "fr":  "Meuble haut a etageres, 1 porte"
+                                        },
+                      "ancho_mm":  300,
+                      "alto_mm":  1000,
+                      "fondo_mm":  350
+                  },
+    "H14510035":  {
+                      "designaciones":  {
+                                            "es":  "Mueble de pared con baldas, 1 puerta",
+                                            "fr":  "Meuble haut a etageres, 1 porte"
+                                        },
+                      "ancho_mm":  450,
+                      "alto_mm":  1000,
+                      "fondo_mm":  350
+                  },
+    "H16010035":  {
+                      "designaciones":  {
+                                            "es":  "Mueble de pared con baldas, 1 puerta",
+                                            "fr":  "Meuble haut a etageres, 1 porte"
+                                        },
+                      "ancho_mm":  600,
+                      "alto_mm":  1000,
+                      "fondo_mm":  350
+                  },
+    "H19010035":  {
+                      "designaciones":  {
+                                            "es":  "Mueble de pared con baldas, 2 puertas",
+                                            "fr":  "Meuble haut a etageres, 2 portes"
+                                        },
+                      "ancho_mm":  900,
+                      "alto_mm":  1000,
+                      "fondo_mm":  350
+                  },
+    "HH1606035":  {
+                      "designaciones":  {
+                                            "es":  "Mueble para campana, 1 puerta",
+                                            "fr":  "Meuble pour hotte, 1 porte"
+                                        },
+                      "ancho_mm":  600,
+                      "alto_mm":  600,
+                      "fondo_mm":  350
+                  },
+    "HH1906035":  {
+                      "designaciones":  {
+                                            "es":  "Mueble para campana, 2 puertas",
+                                            "fr":  "Meuble pour hotte, 2 portes"
+                                        },
+                      "ancho_mm":  900,
+                      "alto_mm":  600,
+                      "fondo_mm":  350
+                  },
+    "HH1608035":  {
+                      "designaciones":  {
+                                            "es":  "Mueble para campana, 1 puerta",
+                                            "fr":  "Meuble pour hotte, 1 porte"
+                                        },
+                      "ancho_mm":  600,
+                      "alto_mm":  800,
+                      "fondo_mm":  350
+                  },
+    "HH1908035":  {
+                      "designaciones":  {
+                                            "es":  "Mueble para campana, 2 puertas",
+                                            "fr":  "Meuble pour hotte, 2 portes"
+                                        },
+                      "ancho_mm":  900,
+                      "alto_mm":  800,
+                      "fondo_mm":  350
+                  },
+    "HH16010035":  {
+                       "designaciones":  {
+                                             "es":  "Mueble para campana, 1 puerta",
+                                             "fr":  "Meuble pour hotte, 1 porte"
+                                         },
+                       "ancho_mm":  600,
+                       "alto_mm":  1000,
+                       "fondo_mm":  350
+                   },
+    "HH19010035":  {
+                       "designaciones":  {
+                                             "es":  "Mueble para campana, 2 puertas",
+                                             "fr":  "Meuble pour hotte, 2 portes"
+                                         },
+                       "ancho_mm":  900,
+                       "alto_mm":  1000,
+                       "fondo_mm":  350
+                   },
+    "HAV1906035":  {
+                       "designaciones":  {
+                                             "es":  "Mueble de pared esquinero con baldas, 1 puerta (45cm)",
+                                             "fr":  "Meuble haut d\u0027angle a etageres, 1 porte (45cm)"
+                                         },
+                       "ancho_mm":  900,
+                       "alto_mm":  600,
+                       "fondo_mm":  350
+                   },
+    "HAV1908035":  {
+                       "designaciones":  {
+                                             "es":  "Mueble de pared esquinero con baldas, 1 puerta (45cm)",
+                                             "fr":  "Meuble haut d\u0027angle a etageres, 1 porte (45cm)"
+                                         },
+                       "ancho_mm":  900,
+                       "alto_mm":  800,
+                       "fondo_mm":  350
+                   },
+    "HAV19010035":  {
+                        "designaciones":  {
+                                              "es":  "Mueble de pared esquinero con baldas, 1 puerta (45cm)",
+                                              "fr":  "Meuble haut d\u0027angle a etageres, 1 porte (45cm)"
+                                          },
+                        "ancho_mm":  900,
+                        "alto_mm":  1000,
+                        "fondo_mm":  350
+                    },
+    "HAV2906035":  {
+                       "designaciones":  {
+                                             "es":  "Mueble de pared esquinero con baldas, 1 puerta (60cm)",
+                                             "fr":  "Meuble haut d\u0027angle a etageres, 1 porte (60cm)"
+                                         },
+                       "ancho_mm":  900,
+                       "alto_mm":  600,
+                       "fondo_mm":  350
+                   },
+    "HAV2908035":  {
+                       "designaciones":  {
+                                             "es":  "Mueble de pared esquinero con baldas, 1 puerta (60cm)",
+                                             "fr":  "Meuble haut d\u0027angle a etageres, 1 porte (60cm)"
+                                         },
+                       "ancho_mm":  900,
+                       "alto_mm":  800,
+                       "fondo_mm":  350
+                   },
+    "HAV29010035":  {
+                        "designaciones":  {
+                                              "es":  "Mueble de pared esquinero con baldas, 1 puerta (60cm)",
+                                              "fr":  "Meuble haut d\u0027angle a etageres, 1 porte (60cm)"
+                                          },
+                        "ancho_mm":  900,
+                        "alto_mm":  1000,
+                        "fondo_mm":  350
+                    },
+    "HR45V35":  {
+                    "designaciones":  {
+                                          "es":  "Altillo de altura variable con baldas, 1 puerta",
+                                          "fr":  "Meuble hauteur variable a etageres, 1 porte"
+                                      },
+                    "ancho_mm":  450,
+                    "alto_mm":  null,
+                    "fondo_mm":  350,
+                    "alto_variable":  {
+                                          "min":  400,
+                                          "max":  1000
+                                      }
+                },
+    "HR60V35":  {
+                    "designaciones":  {
+                                          "es":  "Altillo de altura variable con baldas, 1 puerta",
+                                          "fr":  "Meuble hauteur variable a etageres, 1 porte"
+                                      },
+                    "ancho_mm":  600,
+                    "alto_mm":  null,
+                    "fondo_mm":  350,
+                    "alto_variable":  {
+                                          "min":  400,
+                                          "max":  1000
+                                      }
+                },
+    "HR45V57":  {
+                    "designaciones":  {
+                                          "es":  "Altillo de altura variable con baldas, 1 puerta",
+                                          "fr":  "Meuble hauteur variable a etageres, 1 porte"
+                                      },
+                    "ancho_mm":  450,
+                    "alto_mm":  null,
+                    "fondo_mm":  570,
+                    "alto_variable":  {
+                                          "min":  400,
+                                          "max":  1000
+                                      }
+                },
+    "HR60V57":  {
+                    "designaciones":  {
+                                          "es":  "Altillo de altura variable con baldas, 1 puerta",
+                                          "fr":  "Meuble hauteur variable a etageres, 1 porte"
+                                      },
+                    "ancho_mm":  600,
+                    "alto_mm":  null,
+                    "fondo_mm":  570,
+                    "alto_variable":  {
+                                          "min":  400,
+                                          "max":  1000
+                                      }
+                },
+    "HLVV57":  {
+                   "designaciones":  {
+                                         "es":  "Altillo de altura variable con baldas, 1 puerta (apertura lift)",
+                                         "fr":  "Meuble hauteur variable a etageres, 1 porte (ouverture lift)"
+                                     },
+                   "ancho_mm":  null,
+                   "alto_mm":  null,
+                   "fondo_mm":  570,
+                   "ancho_variable":  {
+                                          "min":  450,
+                                          "max":  1200
+                                      },
+                   "alto_variable":  {
+                                         "min":  200,
+                                         "max":  400
+                                     }
+               },
+    "HPT60V57":  {
+                     "designaciones":  {
+                                           "es":  "Mueble sobre encimera de altura variable con baldas, 1 puerta",
+                                           "fr":  "Meuble sur plan de travail hauteur variable, 1 porte"
+                                       },
+                     "ancho_mm":  600,
+                     "alto_mm":  null,
+                     "alto_variable":  {
+                                           "min":  1100,
+                                           "max":  1400
+                                       },
+                     "fondo_mm":  570
+                 },
+    "AVA4520035":  {
+                       "designaciones":  {
+                                             "es":  "Columna con baldas, 2 puertas",
+                                             "fr":  "Colonne a etageres, 2 portes"
+                                         },
+                       "ancho_mm":  450,
+                       "alto_mm":  2000,
+                       "fondo_mm":  350
+                   },
+    "AVA6020035":  {
+                       "designaciones":  {
+                                             "es":  "Columna con baldas, 2 puertas",
+                                             "fr":  "Colonne a etageres, 2 portes"
+                                         },
+                       "ancho_mm":  600,
+                       "alto_mm":  2000,
+                       "fondo_mm":  350
+                   },
+    "AVA4522035":  {
+                       "designaciones":  {
+                                             "es":  "Columna con baldas, 2 puertas",
+                                             "fr":  "Colonne a etageres, 2 portes"
+                                         },
+                       "ancho_mm":  450,
+                       "alto_mm":  2200,
+                       "fondo_mm":  350
+                   },
+    "AVA6022035":  {
+                       "designaciones":  {
+                                             "es":  "Columna con baldas, 2 puertas",
+                                             "fr":  "Colonne a etageres, 2 portes"
+                                         },
+                       "ancho_mm":  600,
+                       "alto_mm":  2200,
+                       "fondo_mm":  350
+                   },
+    "AVA4520057":  {
+                       "designaciones":  {
+                                             "es":  "Columna con baldas, 2 puertas",
+                                             "fr":  "Colonne a etageres, 2 portes"
+                                         },
+                       "ancho_mm":  450,
+                       "alto_mm":  2000,
+                       "fondo_mm":  570
+                   },
+    "AVA6020057":  {
+                       "designaciones":  {
+                                             "es":  "Columna con baldas, 2 puertas",
+                                             "fr":  "Colonne a etageres, 2 portes"
+                                         },
+                       "ancho_mm":  600,
+                       "alto_mm":  2000,
+                       "fondo_mm":  570
+                   },
+    "AVA4522057":  {
+                       "designaciones":  {
+                                             "es":  "Columna con baldas, 2 puertas",
+                                             "fr":  "Colonne a etageres, 2 portes"
+                                         },
+                       "ancho_mm":  450,
+                       "alto_mm":  2200,
+                       "fondo_mm":  570
+                   },
+    "AVA6022057":  {
+                       "designaciones":  {
+                                             "es":  "Columna con baldas, 2 puertas",
+                                             "fr":  "Colonne a etageres, 2 portes"
+                                         },
+                       "ancho_mm":  600,
+                       "alto_mm":  2200,
+                       "fondo_mm":  570
+                   },
+    "AVA1P4520035":  {
+                         "designaciones":  {
+                                               "es":  "Columna con baldas, 1 puerta",
+                                               "fr":  "Colonne a etageres, 1 porte"
+                                           },
+                         "ancho_mm":  450,
+                         "alto_mm":  2000,
+                         "fondo_mm":  350
+                     },
+    "AVA1P6020035":  {
+                         "designaciones":  {
+                                               "es":  "Columna con baldas, 1 puerta",
+                                               "fr":  "Colonne a etageres, 1 porte"
+                                           },
+                         "ancho_mm":  600,
+                         "alto_mm":  2000,
+                         "fondo_mm":  350
+                     },
+    "AVA1P9020035":  {
+                         "designaciones":  {
+                                               "es":  "Columna con baldas, 2 puertas",
+                                               "fr":  "Colonne a etageres, 2 portes"
+                                           },
+                         "ancho_mm":  900,
+                         "alto_mm":  2000,
+                         "fondo_mm":  350
+                     },
+    "AVA1P4520057":  {
+                         "designaciones":  {
+                                               "es":  "Columna con baldas, 1 puerta",
+                                               "fr":  "Colonne a etageres, 1 porte"
+                                           },
+                         "ancho_mm":  450,
+                         "alto_mm":  2000,
+                         "fondo_mm":  570
+                     },
+    "AVA1P6020057":  {
+                         "designaciones":  {
+                                               "es":  "Columna con baldas, 1 puerta",
+                                               "fr":  "Colonne a etageres, 1 porte"
+                                           },
+                         "ancho_mm":  600,
+                         "alto_mm":  2000,
+                         "fondo_mm":  570
+                     },
+    "AVA1P4522035":  {
+                         "designaciones":  {
+                                               "es":  "Columna con baldas, 1 puerta",
+                                               "fr":  "Colonne a etageres, 1 porte"
+                                           },
+                         "ancho_mm":  450,
+                         "alto_mm":  2200,
+                         "fondo_mm":  350
+                     },
+    "AVA1P6022035":  {
+                         "designaciones":  {
+                                               "es":  "Columna con baldas, 1 puerta",
+                                               "fr":  "Colonne a etageres, 1 porte"
+                                           },
+                         "ancho_mm":  600,
+                         "alto_mm":  2200,
+                         "fondo_mm":  350
+                     },
+    "AVA1P9022035":  {
+                         "designaciones":  {
+                                               "es":  "Columna con baldas, 2 puertas",
+                                               "fr":  "Colonne a etageres, 2 portes"
+                                           },
+                         "ancho_mm":  900,
+                         "alto_mm":  2200,
+                         "fondo_mm":  350
+                     },
+    "AVA1P4522057":  {
+                         "designaciones":  {
+                                               "es":  "Columna con baldas, 1 puerta",
+                                               "fr":  "Colonne a etageres, 1 porte"
+                                           },
+                         "ancho_mm":  450,
+                         "alto_mm":  2200,
+                         "fondo_mm":  570
+                     },
+    "AVA1P6022057":  {
+                         "designaciones":  {
+                                               "es":  "Columna con baldas, 1 puerta",
+                                               "fr":  "Colonne a etageres, 1 porte"
+                                           },
+                         "ancho_mm":  600,
+                         "alto_mm":  2200,
+                         "fondo_mm":  570
+                     },
+    "AQC34520057":  {
+                        "designaciones":  {
+                                              "es":  "Columna con 5 cajones interiores, 2 puertas",
+                                              "fr":  "Colonne avec 5 tiroirs interieurs, 2 portes"
+                                          },
+                        "ancho_mm":  450,
+                        "alto_mm":  2000,
+                        "fondo_mm":  570
+                    },
+    "AQC36020057":  {
+                        "designaciones":  {
+                                              "es":  "Columna con 5 cajones interiores, 2 puertas",
+                                              "fr":  "Colonne avec 5 tiroirs interieurs, 2 portes"
+                                          },
+                        "ancho_mm":  600,
+                        "alto_mm":  2000,
+                        "fondo_mm":  570
+                    },
+    "AQC34522057":  {
+                        "designaciones":  {
+                                              "es":  "Columna con 5 cajones interiores, 2 puertas",
+                                              "fr":  "Colonne avec 5 tiroirs interieurs, 2 portes"
+                                          },
+                        "ancho_mm":  450,
+                        "alto_mm":  2200,
+                        "fondo_mm":  570
+                    },
+    "AQC36022057":  {
+                        "designaciones":  {
+                                              "es":  "Columna con 5 cajones interiores, 2 puertas",
+                                              "fr":  "Colonne avec 5 tiroirs interieurs, 2 portes"
+                                          },
+                        "ancho_mm":  600,
+                        "alto_mm":  2200,
+                        "fondo_mm":  570
+                    },
+    "AQC31P4520057":  {
+                          "designaciones":  {
+                                                "es":  "Columna con 5 cajones interiores, 1 puerta",
+                                                "fr":  "Colonne avec 5 tiroirs interieurs, 1 porte"
+                                            },
+                          "ancho_mm":  450,
+                          "alto_mm":  2000,
+                          "fondo_mm":  570
+                      },
+    "AQC31P6020057":  {
+                          "designaciones":  {
+                                                "es":  "Columna con 5 cajones interiores, 1 puerta",
+                                                "fr":  "Colonne avec 5 tiroirs interieurs, 1 porte"
+                                            },
+                          "ancho_mm":  600,
+                          "alto_mm":  2000,
+                          "fondo_mm":  570
+                      },
+    "AQC31P4522057":  {
+                          "designaciones":  {
+                                                "es":  "Columna con 5 cajones interiores, 1 puerta",
+                                                "fr":  "Colonne avec 5 tiroirs interieurs, 1 porte"
+                                            },
+                          "ancho_mm":  450,
+                          "alto_mm":  2200,
+                          "fondo_mm":  570
+                      },
+    "AQC31P6022057":  {
+                          "designaciones":  {
+                                                "es":  "Columna con 5 cajones interiores, 1 puerta",
+                                                "fr":  "Colonne avec 5 tiroirs interieurs, 1 porte"
+                                            },
+                          "ancho_mm":  600,
+                          "alto_mm":  2200,
+                          "fondo_mm":  570
+                      },
+    "ABA6020057":  {
+                       "designaciones":  {
+                                             "es":  "Mueble escobero, 2 puertas",
+                                             "fr":  "Armoire de menage, 2 portes"
+                                         },
+                       "ancho_mm":  600,
+                       "alto_mm":  2000,
+                       "fondo_mm":  570
+                   },
+    "ABA6022057":  {
+                       "designaciones":  {
+                                             "es":  "Mueble escobero, 2 puertas",
+                                             "fr":  "Armoire de menage, 2 portes"
+                                         },
+                       "ancho_mm":  600,
+                       "alto_mm":  2200,
+                       "fondo_mm":  570
+                   },
+    "AFS6020057":  {
+                       "designaciones":  {
+                                             "es":  "Columna para horno o micro, 1 puerta",
+                                             "fr":  "Colonne pour four ou micro-ondes, 1 porte"
+                                         },
+                       "ancho_mm":  600,
+                       "alto_mm":  2000,
+                       "fondo_mm":  570
+                   },
+    "AFS6022057":  {
+                       "designaciones":  {
+                                             "es":  "Columna para horno o micro, 1 puerta",
+                                             "fr":  "Colonne pour four ou micro-ondes, 1 porte"
+                                         },
+                       "ancho_mm":  600,
+                       "alto_mm":  2200,
+                       "fondo_mm":  570
+                   },
+    "AFS2B6020057":  {
+                         "designaciones":  {
+                                               "es":  "Columna para horno o micro, 1 puerta, 2 cajones",
+                                               "fr":  "Colonne pour four ou micro-ondes, 1 porte, 2 tiroirs"
+                                           },
+                         "ancho_mm":  600,
+                         "alto_mm":  2000,
+                         "fondo_mm":  570
+                     },
+    "AFS2B6022057":  {
+                         "designaciones":  {
+                                               "es":  "Columna para horno o micro, 1 puerta, 2 cajones",
+                                               "fr":  "Colonne pour four ou micro-ondes, 1 porte, 2 tiroirs"
+                                           },
+                         "ancho_mm":  600,
+                         "alto_mm":  2200,
+                         "fondo_mm":  570
+                     },
+    "AFSMO6020057":  {
+                         "designaciones":  {
+                                               "es":  "Columna para horno+micro, 1 puerta",
+                                               "fr":  "Colonne pour four+micro-ondes, 1 porte"
+                                           },
+                         "ancho_mm":  600,
+                         "alto_mm":  2000,
+                         "fondo_mm":  570
+                     },
+    "AFSMO6022057":  {
+                         "designaciones":  {
+                                               "es":  "Columna para horno+micro, 1 puerta",
+                                               "fr":  "Colonne pour four+micro-ondes, 1 porte"
+                                           },
+                         "ancho_mm":  600,
+                         "alto_mm":  2200,
+                         "fondo_mm":  570
+                     },
+    "AFSMOBT6020057":  {
+                           "designaciones":  {
+                                                 "es":  "Columna para horno+micro, 1 puerta, 2 cajones",
+                                                 "fr":  "Colonne pour four+micro-ondes, 1 porte, 2 tiroirs"
+                                             },
+                           "ancho_mm":  600,
+                           "alto_mm":  2000,
+                           "fondo_mm":  570
+                       },
+    "AFSMOBT6022057":  {
+                           "designaciones":  {
+                                                 "es":  "Columna para horno+micro, 1 puerta, 2 cajones",
+                                                 "fr":  "Colonne pour four+micro-ondes, 1 porte, 2 tiroirs"
+                                             },
+                           "ancho_mm":  600,
+                           "alto_mm":  2200,
+                           "fondo_mm":  570
+                       },
+    "A2I6020057":  {
+                       "designaciones":  {
+                                             "es":  "Columna para frigorífico integrable, 2 puertas",
+                                             "fr":  "Colonne pour refrigerateur integrable, 2 portes"
+                                         },
+                       "ancho_mm":  600,
+                       "alto_mm":  2000,
+                       "fondo_mm":  570
+                   },
+    "A2I6022057":  {
+                       "designaciones":  {
+                                             "es":  "Columna para frigorífico integrable, 2 puertas",
+                                             "fr":  "Colonne pour refrigerateur integrable, 2 portes"
+                                         },
+                       "ancho_mm":  600,
+                       "alto_mm":  2200,
+                       "fondo_mm":  570
+                   },
+    "A2I7522057":  {
+                       "designaciones":  {
+                                             "es":  "Columna para frigorífico integrable, 2 puertas",
+                                             "fr":  "Colonne pour refrigerateur integrable, 2 portes"
+                                         },
+                       "ancho_mm":  750,
+                       "alto_mm":  2200,
+                       "fondo_mm":  570
+                   },
+    "A2I1P6020057":  {
+                         "designaciones":  {
+                                               "es":  "Columna para frigorífico integrable, 1 puerta",
+                                               "fr":  "Colonne pour refrigerateur integrable, 1 porte"
+                                           },
+                         "ancho_mm":  600,
+                         "alto_mm":  2000,
+                         "fondo_mm":  570
+                     },
+    "A2I1P6022057":  {
+                         "designaciones":  {
+                                               "es":  "Columna para frigorífico integrable, 1 puerta",
+                                               "fr":  "Colonne pour refrigerateur integrable, 1 porte"
+                                           },
+                         "ancho_mm":  600,
+                         "alto_mm":  2200,
+                         "fondo_mm":  570
+                     },
+    "AGM9020057":  {
+                       "designaciones":  {
+                                             "es":  "Mueble de despensa, 4 puertas",
+                                             "fr":  "Meuble epicerie, 4 portes"
+                                         },
+                       "ancho_mm":  900,
+                       "alto_mm":  2000,
+                       "fondo_mm":  570
+                   },
+    "AGM9022057":  {
+                       "designaciones":  {
+                                             "es":  "Mueble de despensa, 4 puertas",
+                                             "fr":  "Meuble epicerie, 4 portes"
+                                         },
+                       "ancho_mm":  900,
+                       "alto_mm":  2200,
+                       "fondo_mm":  570
+                   },
+    "EOVV37":  {
+                   "designaciones":  {
+                                         "es":  "Elemento abierto variable",
+                                         "fr":  "Element ouvert variable"
+                                     },
+                   "ancho_mm":  null,
+                   "alto_mm":  null,
+                   "fondo_mm":  375
+               },
+    "EOV8760":  {
+                    "designaciones":  {
+                                          "es":  "Elemento abierto para islas variable",
+                                          "fr":  "Element ouvert pour ilots variable"
+                                      },
+                    "ancho_mm":  null,
+                    "alto_mm":  870,
+                    "fondo_mm":  600
+                },
+    "EOV9060":  {
+                    "designaciones":  {
+                                          "es":  "Elemento abierto para islas variable",
+                                          "fr":  "Element ouvert pour ilots variable"
+                                      },
+                    "ancho_mm":  null,
+                    "alto_mm":  900,
+                    "fondo_mm":  600
+                },
+    "EOV20760":  {
+                     "designaciones":  {
+                                           "es":  "Elemento abierto armario variable fin de implantación",
+                                           "fr":  "Element ouvert armoire variable fin d\u0027implantation"
+                                       },
+                     "ancho_mm":  null,
+                     "alto_mm":  2070,
+                     "fondo_mm":  600
+                 },
+    "EOV21060":  {
+                     "designaciones":  {
+                                           "es":  "Elemento abierto armario variable fin de implantación",
+                                           "fr":  "Element ouvert armoire variable fin d\u0027implantation"
+                                       },
+                     "ancho_mm":  null,
+                     "alto_mm":  2100,
+                     "fondo_mm":  600
+                 },
+    "EOV22760":  {
+                     "designaciones":  {
+                                           "es":  "Elemento abierto armario variable fin de implantación",
+                                           "fr":  "Element ouvert armoire variable fin d\u0027implantation"
+                                       },
+                     "ancho_mm":  null,
+                     "alto_mm":  2270,
+                     "fondo_mm":  600
+                 },
+    "EOV23060":  {
+                     "designaciones":  {
+                                           "es":  "Elemento abierto armario variable fin de implantación",
+                                           "fr":  "Element ouvert armoire variable fin d\u0027implantation"
+                                       },
+                     "ancho_mm":  null,
+                     "alto_mm":  2300,
+                     "fondo_mm":  600
+                 },
+    "EOAVV37":  {
+                    "designaciones":  {
+                                          "es":  "Elemento abierto armario variable",
+                                          "fr":  "Element ouvert armoire variable"
+                                      },
+                    "ancho_mm":  null,
+                    "alto_mm":  null,
+                    "fondo_mm":  375
+                },
+    "FF12200":  {
+                    "designaciones":  {
+                                          "es":  "Tapeta vertical",
+                                          "fr":  "Cache-joint vertical"
+                                      },
+                    "ancho_mm":  120,
+                    "alto_mm":  2000,
+                    "fondo_mm":  19
+                },
+    "FF12220":  {
+                    "designaciones":  {
+                                          "es":  "Tapeta vertical",
+                                          "fr":  "Cache-joint vertical"
+                                      },
+                    "ancho_mm":  120,
+                    "alto_mm":  2200,
+                    "fondo_mm":  19
+                },
+    "FF1260":  {
+                   "designaciones":  {
+                                         "es":  "Tapeta vertical",
+                                         "fr":  "Cache-joint vertical"
+                                     },
+                   "ancho_mm":  120,
+                   "alto_mm":  600,
+                   "fondo_mm":  19
+               },
+    "FF1280":  {
+                   "designaciones":  {
+                                         "es":  "Tapeta vertical",
+                                         "fr":  "Cache-joint vertical"
+                                     },
+                   "ancho_mm":  120,
+                   "alto_mm":  800,
+                   "fondo_mm":  19
+               },
+    "FF1287":  {
+                   "designaciones":  {
+                                         "es":  "Tapeta vertical girada 90°",
+                                         "fr":  "Cache-joint vertical pivote a 90"
+                                     },
+                   "ancho_mm":  120,
+                   "alto_mm":  870,
+                   "fondo_mm":  19
+               },
+    "FF1290":  {
+                   "designaciones":  {
+                                         "es":  "Tapeta vertical girada 90°",
+                                         "fr":  "Cache-joint vertical pivote a 90"
+                                     },
+                   "ancho_mm":  120,
+                   "alto_mm":  900,
+                   "fondo_mm":  19
+               },
+    "FF12100":  {
+                    "designaciones":  {
+                                          "es":  "Tapeta vertical",
+                                          "fr":  "Cache-joint vertical"
+                                      },
+                    "ancho_mm":  120,
+                    "alto_mm":  1000,
+                    "fondo_mm":  19
+                },
+    "FF12V":  {
+                  "designaciones":  {
+                                        "es":  "Tapeta vertical de altura variable",
+                                        "fr":  "Cache-joint vertical hauteur variable"
+                                    },
+                  "ancho_mm":  120,
+                  "alto_mm":  null,
+                  "fondo_mm":  19,
+                  "alto_variable":  {
+                                        "min":  600,
+                                        "max":  2450
+                                    }
+              },
+    "FFAL1060":  {
+                     "designaciones":  {
+                                           "es":  "Tapeta de ángulo",
+                                           "fr":  "Cache-joint d\u0027angle"
+                                       },
+                     "ancho_mm":  100,
+                     "alto_mm":  600,
+                     "fondo_mm":  19
+                 },
+    "FFAL1080":  {
+                     "designaciones":  {
+                                           "es":  "Tapeta de ángulo",
+                                           "fr":  "Cache-joint d\u0027angle"
+                                       },
+                     "ancho_mm":  100,
+                     "alto_mm":  800,
+                     "fondo_mm":  19
+                 },
+    "FFAL10100":  {
+                      "designaciones":  {
+                                            "es":  "Tapeta de ángulo",
+                                            "fr":  "Cache-joint d\u0027angle"
+                                        },
+                      "ancho_mm":  100,
+                      "alto_mm":  1000,
+                      "fondo_mm":  19
+                  },
+    "SOCX10":  {
+                   "designaciones":  {
+                                         "es":  "Rodapié",
+                                         "fr":  "Plinthe"
+                                     },
+                   "ancho_mm":  null,
+                   "alto_mm":  100,
+                   "fondo_mm":  13
+               },
+    "SOCX07":  {
+                   "designaciones":  {
+                                         "es":  "Rodapié",
+                                         "fr":  "Plinthe"
+                                     },
+                   "ancho_mm":  null,
+                   "alto_mm":  70,
+                   "fondo_mm":  13
+               },
+    "SOC36010":  {
+                     "designaciones":  {
+                                           "es":  "Rodapié 100 mm — pieza 3600 mm",
+                                           "fr":  "Plinthe 100 mm - piece 3600 mm"
+                                       },
+                     "ancho_mm":  3600,
+                     "alto_mm":  100,
+                     "fondo_mm":  13
+                 },
+    "SOC18010":  {
+                     "designaciones":  {
+                                           "es":  "Rodapié 100 mm — pieza 1800 mm",
+                                           "fr":  "Plinthe 100 mm - piece 1800 mm"
+                                       },
+                     "ancho_mm":  1800,
+                     "alto_mm":  100,
+                     "fondo_mm":  13
+                 },
+    "SOC3607":  {
+                    "designaciones":  {
+                                          "es":  "Rodapié 70 mm — pieza 3600 mm",
+                                          "fr":  "Plinthe 70 mm - piece 3600 mm"
+                                      },
+                    "ancho_mm":  3600,
+                    "alto_mm":  70,
+                    "fondo_mm":  13
+                },
+    "SOC1807":  {
+                    "designaciones":  {
+                                          "es":  "Rodapié 70 mm — pieza 1800 mm",
+                                          "fr":  "Plinthe 70 mm - piece 1800 mm"
+                                      },
+                    "ancho_mm":  1800,
+                    "alto_mm":  70,
+                    "fondo_mm":  13
+                },
+    "J199060":  {
+                    "designaciones":  {
+                                          "es":  "Panel lateral 19mm",
+                                          "fr":  "Panneau joue 19mm"
+                                      },
+                    "ancho_mm":  600,
+                    "alto_mm":  900,
+                    "fondo_mm":  19
+                },
+    "J198760":  {
+                    "designaciones":  {
+                                          "es":  "Panel lateral 19mm",
+                                          "fr":  "Panneau joue 19mm"
+                                      },
+                    "ancho_mm":  600,
+                    "alto_mm":  870,
+                    "fondo_mm":  19
+                },
+    "J199037":  {
+                    "designaciones":  {
+                                          "es":  "Panel lateral 19mm",
+                                          "fr":  "Panneau joue 19mm"
+                                      },
+                    "ancho_mm":  375,
+                    "alto_mm":  900,
+                    "fondo_mm":  19
+                },
+    "J198737":  {
+                    "designaciones":  {
+                                          "es":  "Panel lateral 19mm",
+                                          "fr":  "Panneau joue 19mm"
+                                      },
+                    "ancho_mm":  375,
+                    "alto_mm":  870,
+                    "fondo_mm":  19
+                },
+    "J1921060":  {
+                     "designaciones":  {
+                                           "es":  "Panel lateral 19mm",
+                                           "fr":  "Panneau joue 19mm"
+                                       },
+                     "ancho_mm":  600,
+                     "alto_mm":  2100,
+                     "fondo_mm":  19
+                 },
+    "J1920760":  {
+                     "designaciones":  {
+                                           "es":  "Panel lateral 19mm",
+                                           "fr":  "Panneau joue 19mm"
+                                       },
+                     "ancho_mm":  600,
+                     "alto_mm":  2070,
+                     "fondo_mm":  19
+                 },
+    "J1923060":  {
+                     "designaciones":  {
+                                           "es":  "Panel lateral 19mm",
+                                           "fr":  "Panneau joue 19mm"
+                                       },
+                     "ancho_mm":  600,
+                     "alto_mm":  2300,
+                     "fondo_mm":  19
+                 },
+    "J1922760":  {
+                     "designaciones":  {
+                                           "es":  "Panel lateral 19mm",
+                                           "fr":  "Panneau joue 19mm"
+                                       },
+                     "ancho_mm":  600,
+                     "alto_mm":  2270,
+                     "fondo_mm":  19
+                 },
+    "J1921037":  {
+                     "designaciones":  {
+                                           "es":  "Panel lateral 19mm",
+                                           "fr":  "Panneau joue 19mm"
+                                       },
+                     "ancho_mm":  375,
+                     "alto_mm":  2100,
+                     "fondo_mm":  19
+                 },
+    "J1920737":  {
+                     "designaciones":  {
+                                           "es":  "Panel lateral 19mm",
+                                           "fr":  "Panneau joue 19mm"
+                                       },
+                     "ancho_mm":  375,
+                     "alto_mm":  2070,
+                     "fondo_mm":  19
+                 },
+    "J1923037":  {
+                     "designaciones":  {
+                                           "es":  "Panel lateral 19mm",
+                                           "fr":  "Panneau joue 19mm"
+                                       },
+                     "ancho_mm":  375,
+                     "alto_mm":  2300,
+                     "fondo_mm":  19
+                 },
+    "J1922737":  {
+                     "designaciones":  {
+                                           "es":  "Panel lateral 19mm",
+                                           "fr":  "Panneau joue 19mm"
+                                       },
+                     "ancho_mm":  375,
+                     "alto_mm":  2270,
+                     "fondo_mm":  19
+                 },
+    "J196037":  {
+                    "designaciones":  {
+                                          "es":  "Panel lateral 19mm",
+                                          "fr":  "Panneau joue 19mm"
+                                      },
+                    "ancho_mm":  375,
+                    "alto_mm":  600,
+                    "fondo_mm":  19
+                },
+    "J198037":  {
+                    "designaciones":  {
+                                          "es":  "Panel lateral 19mm",
+                                          "fr":  "Panneau joue 19mm"
+                                      },
+                    "ancho_mm":  375,
+                    "alto_mm":  800,
+                    "fondo_mm":  19
+                },
+    "J1910037":  {
+                     "designaciones":  {
+                                           "es":  "Panel lateral 19mm",
+                                           "fr":  "Panneau joue 19mm"
+                                       },
+                     "ancho_mm":  375,
+                     "alto_mm":  1000,
+                     "fondo_mm":  19
+                 },
+    "J19VV":  {
+                  "designaciones":  {
+                                        "es":  "Panel lateral 19mm variable",
+                                        "fr":  "Panneau joue 19mm variable"
+                                    },
+                  "ancho_variable":  {
+                                         "min":  300,
+                                         "max":  600
+                                     },
+                  "alto_variable":  {
+                                        "min":  300,
+                                        "max":  2450
+                                    },
+                  "fondo_mm":  19
+              },
+    "BPLA1":  {
+                  "designaciones":  {
+                                        "es":  "Cierre a techo",
+                                        "fr":  "Fermeture plafond"
+                                    },
+                  "ancho_variable":  {
+                                         "min":  100,
+                                         "max":  2020
+                                     },
+                  "alto_variable":  {
+                                        "min":  100,
+                                        "max":  2500
+                                    },
+                  "fondo_mm":  19
+              },
+    "HDV90C":  {
+                   "designaciones":  {
+                                         "es":  "Panel trasero isla",
+                                         "fr":  "Panneau arriere ilot"
+                                     },
+                   "alto_mm":  900,
+                   "ancho_variable_por_gama":  {
+                                                   "LACA":  {
+                                                                "min":  300,
+                                                                "max":  2600
+                                                            },
+                                                   "LINOLEO":  {
+                                                                   "min":  300,
+                                                                   "max":  2600
+                                                               },
+                                                   "LAMINADO":  {
+                                                                    "min":  300,
+                                                                    "max":  2600
+                                                                },
+                                                   "WOOD":  {
+                                                                "min":  300,
+                                                                "max":  2020
+                                                            }
+                                               },
+                   "fondo_mm":  19
+               },
+    "HDV87C":  {
+                   "designaciones":  {
+                                         "es":  "Panel trasero isla",
+                                         "fr":  "Panneau arriere ilot"
+                                     },
+                   "alto_mm":  870,
+                   "ancho_variable_por_gama":  {
+                                                   "LACA":  {
+                                                                "min":  300,
+                                                                "max":  2600
+                                                            },
+                                                   "LINOLEO":  {
+                                                                   "min":  300,
+                                                                   "max":  2600
+                                                               },
+                                                   "LAMINADO":  {
+                                                                    "min":  300,
+                                                                    "max":  2600
+                                                                },
+                                                   "WOOD":  {
+                                                                "min":  300,
+                                                                "max":  2020
+                                                            }
+                                               },
+                   "fondo_mm":  19
+               },
+    "HABE19V12":  {
+                      "designaciones":  {
+                                            "es":  "Recubrimiento superior para mueble",
+                                            "fr":  "Recouvrement superieur de meuble"
+                                        },
+                      "ancho_variable":  {
+                                             "min":  400,
+                                             "max":  1240
+                                         },
+                      "alto_mm":  120,
+                      "fondo_mm":  19
+                  },
+    "HABE19V37":  {
+                      "designaciones":  {
+                                            "es":  "Recubrimiento superior para mueble",
+                                            "fr":  "Recouvrement superieur de meuble"
+                                        },
+                      "ancho_variable":  {
+                                             "min":  400,
+                                             "max":  1240
+                                         },
+                      "alto_mm":  375,
+                      "fondo_mm":  19
+                  },
+    "HABE19V60":  {
+                      "designaciones":  {
+                                            "es":  "Recubrimiento superior para mueble",
+                                            "fr":  "Recouvrement superieur de meuble"
+                                        },
+                      "ancho_variable":  {
+                                             "min":  400,
+                                             "max":  1240
+                                         },
+                      "alto_mm":  600,
+                      "fondo_mm":  19
+                  },
+    "PDT20C":  {
+                   "designaciones":  {
+                                         "es":  "Encimera estratificada 20mm",
+                                         "fr":  "Plan de travail stratifie 20mm"
+                                     },
+                   "ancho_variable":  {
+                                          "min":  250,
+                                          "max":  3100
+                                      },
+                   "alto_variable":  {
+                                         "min":  250,
+                                         "max":  1240
+                                     },
+                   "espesor_mm":  20,
+                   "fondo_mm":  null
+               },
+    "NRWC":  {
+                 "designaciones":  {
+                                       "es":  "Frente de encimera estratificado",
+                                       "fr":  "Nez de plan de travail stratifie"
+                                   },
+                 "ancho_variable":  {
+                                        "min":  300,
+                                        "max":  3100
+                                    },
+                 "alto_variable":  {
+                                       "min":  120,
+                                       "max":  1200
+                                   },
+                 "espesor_mm":  10,
+                 "fondo_mm":  null
+             },
+    "PAN20LAMC":  {
+                      "designaciones":  {
+                                            "es":  "Encimera laminado",
+                                            "fr":  "Plan de travail lamine"
+                                        },
+                      "gama":  "LAMINADO",
+                      "ancho_variable":  {
+                                             "min":  250,
+                                             "max":  3000
+                                         },
+                      "alto_variable":  {
+                                            "min":  250,
+                                            "max":  1240
+                                        },
+                      "espesor_mm":  19,
+                      "fondo_mm":  null
+                  },
+    "PAN20LINOC":  {
+                       "designaciones":  {
+                                             "es":  "Encimera linoleo",
+                                             "fr":  "Plan de travail linoleum"
+                                         },
+                       "gama":  "LINOLEO",
+                       "ancho_variable":  {
+                                              "min":  250,
+                                              "max":  2750
+                                          },
+                       "alto_variable":  {
+                                             "min":  250,
+                                             "max":  1240
+                                         },
+                       "espesor_mm":  19,
+                       "fondo_mm":  null
+                   }
 }
