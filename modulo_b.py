@@ -2617,12 +2617,24 @@ def generar_pdf_resumen(
 
         es_rodapie_sg = code in CODIGOS_RODAPIE_SG
 
+        # Pre-calcular secciones para estimar altura antes del salto de página
+        config = _bloque_configuracion_c(entrada)
+        dims   = _bloque_dimensiones_c(entrada, catalogo)
+
+        _h_sep    = 10 if i > 0 else 0                          # separador entre elementos
+        _h_title  = 9                                            # cell(7) + ln(2)
+        _h_config = (7 + len(config) * CELL_H + GAP_SECTION) if config else 0
+        _h_dims   = (7 + len(dims)   * CELL_H + GAP_SECTION) if dims   else 0
+        _h_opc    = 7 + CELL_H                                  # mínimo: cabecera + "Ninguna"
+        _h_elem   = _h_sep + _h_title + _h_config + _h_dims + _h_opc
+        _elem_min = max(MIN_SPACE, _h_elem)
+
         # Separador entre elementos (excepto el primero)
         if i > 0:
             # Restaurar margen izquierdo (por si el elemento anterior tenia imagen)
             pdf.set_left_margin(MARGEN)
             remaining = (297 - 15) - pdf.get_y()
-            if remaining < MIN_SPACE:
+            if remaining < _elem_min:
                 pdf.add_page()
             else:
                 pdf.ln(5)
@@ -2667,10 +2679,7 @@ def generar_pdf_resumen(
             pdf.set_left_margin(MARGEN + IMG_W + IMG_GAP)
             pdf.set_x(MARGEN + IMG_W + IMG_GAP)
 
-        config = _bloque_configuracion_c(entrada)
         _seccion_con_tabla(pdf, 'Configuracion', config)
-
-        dims = _bloque_dimensiones_c(entrada, catalogo)
         _seccion_con_tabla(pdf, 'Dimensiones', dims)
 
         opc_adic      = entrada.get('opciones_adicionales') or []
