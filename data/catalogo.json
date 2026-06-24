@@ -1663,5 +1663,22 @@
                                          },
                        "espesor_mm":  19,
                        "fondo_mm":  null
-                   }
+                   },
+    "ETAS19V20":  {
+                      "designaciones":  {
+                                            "es":  "Tabla de colores",
+                                            "fr":  "Tableau des coloris"
+                                        },
+                      "ancho_mm":  null,
+                      "alto_mm":  null,
+                      "fondo_mm":  null,
+                      "ancho_variable":  {
+                                             "min":  100,
+                                             "max":  3000
+                                         },
+                      "alto_variable":  {
+                                            "min":  100,
+                                            "max":  3000
+                                        }
+                  }
 }

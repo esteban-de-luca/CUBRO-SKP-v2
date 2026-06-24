@@ -37,11 +37,12 @@ prefijos:
   EOAVV37:  EOAVV37.png
   # EOVV37: imagen según posición (S/P) — gestionado en código, no aquí
 
-  # ── Encimeras ────────────────────────────────────────────────────────────
+  # ── Encimeras y baldas ───────────────────────────────────────────────────
   PAN20LAMC:  PAN20LAMC.png
   PAN20LINOC: PAN20LINOC.png
   PDT20C:     PDT20C.png
   NRWC:       NRWC.png
+  ETAS19V20:  ETA.png
 
   # ── Resto de muebles ─────────────────────────────────────────────────────
   HPT60V57: HPT60V57.png

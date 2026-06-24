@@ -1004,6 +1004,7 @@ encimeras_panel:
   codigos:
     - PAN20LAMC
     - PAN20LINOC
+    - ETAS19V20
 
 # -----------------------------------------------------------------------------
 # encimeras_pdt — PDT20C, NRWC
