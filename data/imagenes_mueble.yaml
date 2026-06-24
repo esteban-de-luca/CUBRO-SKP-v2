@@ -37,7 +37,7 @@ prefijos:
   EOAVV37:  EOAVV37.png
   # EOVV37: imagen según posición (S/P) — gestionado en código, no aquí
 
-  # ── Encimeras y baldas ───────────────────────────────────────────────────
+  # ── Encimeras ────────────────────────────────────────────────────────────
   PAN20LAMC:  PAN20LAMC.png
   PAN20LINOC: PAN20LINOC.png
   PDT20C:     PDT20C.png
