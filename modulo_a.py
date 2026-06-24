@@ -247,6 +247,13 @@ CODIGOS_SIN_APERTURA |= CODIGOS_JOUE
 CODIGOS_SIN_INTERIOR |= CODIGOS_JOUE
 CODIGOS_SIN_RODAPIE  |= CODIGOS_JOUE
 
+# Encimeras (PDT20C, NRWC, PAN20LAMC, PAN20LINOC): solo llevan Ancho, Alto y Acabado.
+# Sin apertura, tirador, color interior, gama, trasera ni rodapié.
+CODIGOS_ENCIMERA: set[str] = set((_OPCIONES.get("encimeras") or {}).get("codigos") or [])
+CODIGOS_SIN_APERTURA |= CODIGOS_ENCIMERA
+CODIGOS_SIN_INTERIOR |= CODIGOS_ENCIMERA
+CODIGOS_SIN_RODAPIE  |= CODIGOS_ENCIMERA
+
 # Altos estándar por código para validación A21
 CATALOG_ALTOS: dict[str, int] = {
     code: data["alto_mm"]
@@ -709,19 +716,20 @@ def parsear_csv(archivo) -> dict:
         color_tirador = None
 
         if not es_mueble_abierto:
-            # Tapetas (FF*/FFAL*), rodapiés (SOCX*) y joues (J19*): sin tirador, sin color
+            # Tapetas (FF*/FFAL*), rodapiés (SOCX*), joues (J19*) y encimeras: sin tirador, sin color
             es_tapeta   = name_raw in CODIGOS_TAPETA
             es_rodapie  = name_raw in CODIGOS_RODAPIE
             es_joue     = name_raw in CODIGOS_JOUE
+            es_encimera = name_raw in CODIGOS_ENCIMERA
 
-            # A12/A14 — Tirador (no aplica a tapetas, rodapiés ni joues)
-            if not es_tapeta and not es_rodapie and not es_joue:
+            # A12/A14 — Tirador (no aplica a tapetas, rodapiés, joues ni encimeras)
+            if not es_tapeta and not es_rodapie and not es_joue and not es_encimera:
                 tirador = _normalizar_tirador(fila.get("Tirador", ""))
-            if not es_tapeta and not es_rodapie and not es_joue and tirador is None:
+            if not es_tapeta and not es_rodapie and not es_joue and not es_encimera and tirador is None:
                 avisos.append("Falta el tipo de tirador")
-            elif not es_tapeta and not es_rodapie and not es_joue and tirador not in TIRADORES_VALIDOS:
+            elif not es_tapeta and not es_rodapie and not es_joue and not es_encimera and tirador not in TIRADORES_VALIDOS:
                 avisos.append(f"Tipo de tirador '{_ui_tirador.get(str(tirador), str(tirador))}' no reconocido")
-            elif not es_tapeta and not es_rodapie and not es_joue and tirador in TIRADORES_MECANISMO:
+            elif not es_tapeta and not es_rodapie and not es_joue and not es_encimera and tirador in TIRADORES_MECANISMO:
                 # Touch Latch (20) o Prise de main (21) — validar compatibilidad con el mueble
                 _nombre_tir = _ui_tirador.get(str(tirador), str(tirador))
                 if name_raw in CODIGOS_SIN_MECANISMO:
@@ -749,9 +757,9 @@ def parsear_csv(archivo) -> dict:
                         f"solo se admiten: {', '.join(_permitidos)}"
                     )
 
-            # A11 — D_Gama vacío (no aplica a rodapiés ni joues — no usan op_100)
+            # A11 — D_Gama vacío (no aplica a rodapiés, joues ni encimeras — no usan op_100)
             d_gama = _str_or_none(fila.get("D_Gama", ""))
-            if d_gama is None and not es_rodapie and not es_joue:
+            if d_gama is None and not es_rodapie and not es_joue and not es_encimera:
                 avisos.append("Falta la gama del frente")
 
             # A05/A13 — Color del interior (no aplica a frentes sin mueble)
