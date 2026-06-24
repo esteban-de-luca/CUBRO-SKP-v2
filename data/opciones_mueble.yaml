@@ -995,14 +995,27 @@ joues:
     - HABE19V60
 
 # -----------------------------------------------------------------------------
-# encimeras — PDT20C, NRWC, PAN20LAMC, PAN20LINOC
-# Ancho y Alto (= fondo físico) variables desde CSV. op_101 desde "Acabado".
+# encimeras_panel — PAN20LAMC, PAN20LINOC
+# op_621 (coloris panneaux) desde "Acabado". Mismo índice de valores que op_101.
 # Sin apertura, tirador, color interior, rodapié ni opciones de usuario.
 # -----------------------------------------------------------------------------
-encimeras:
-  op_101_desde_acabado: true
+encimeras_panel:
+  op_621_desde_acabado: true
+  codigos:
+    - PAN20LAMC
+    - PAN20LINOC
+
+# -----------------------------------------------------------------------------
+# encimeras_pdt — PDT20C, NRWC
+# op_601 (coloris PdT) y op_603 (coloris chant) desde "Acabado".
+# PDT20C además lleva op_637 = CAP (forzada).
+# Sin apertura, tirador, color interior, rodapié ni opciones de usuario.
+# -----------------------------------------------------------------------------
+encimeras_pdt:
+  op_601_desde_acabado: true
+  op_603_desde_acabado: true
   codigos:
     - PDT20C
     - NRWC
-    - PAN20LAMC
-    - PAN20LINOC
+  op_637_forzada:
+    - PDT20C

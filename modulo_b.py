@@ -120,7 +120,10 @@ _RESOLUCION_RODAPIE: dict[str, list[str]] = _RODAPIES_CFG.get("resolucion") or {
 # Sin apertura, tirador, color interior, rodapié ni opcionales de usuario.
 _JOUES_CFG = _OPCIONES_RAW.get("joues") or {}
 CODIGOS_JOUE: set[str] = set(_JOUES_CFG.get("codigos") or [])
-CODIGOS_ENCIMERA: set[str] = set((_OPCIONES_RAW.get("encimeras") or {}).get("codigos") or [])
+CODIGOS_ENCIMERA: set[str] = (
+    set((_OPCIONES_RAW.get("encimeras_panel") or {}).get("codigos") or []) |
+    set((_OPCIONES_RAW.get("encimeras_pdt")   or {}).get("codigos") or [])
+)
 
 
 def _es_desmontado(code: str) -> bool:

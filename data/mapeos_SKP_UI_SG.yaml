@@ -281,6 +281,29 @@ del_csv:
     - { skp: "Oak WOOD",        ui: Oak,        sg: TAK }
     - { skp: "Smoked Oak WOOD", ui: Smoked Oak, sg: TNK }
 
+  # ---------------------------------------------------------------------------
+  # Coloris plan de travail → Opción 601 — PDT20C y NRWC (superficie)
+  # Coloris chant           → Opción 603 — PDT20C y NRWC (canto)
+  # CSV = UI = nombre sin sufijo de gama (Grava, Busto, …)
+  # ---------------------------------------------------------------------------
+  op_601:
+    - { skp: Busto,      ui: Busto,      sg: BUO }
+    - { skp: Cantera,    ui: Cantera,    sg: CTE }
+    - { skp: Ebano,      ui: Ebano,      sg: EBA }
+    - { skp: Grava,      ui: Grava,      sg: GAA }
+    - { skp: "Nordic Oak", ui: Nordic Oak, sg: NOK }
+    - { skp: Opalo,      ui: Opalo,      sg: OPA }
+    - { skp: Raya,       ui: Raya,       sg: RAY }
+
+  op_603:
+    - { skp: Busto,      ui: Busto,      sg: BUO }
+    - { skp: Cantera,    ui: Cantera,    sg: CTE }
+    - { skp: Ebano,      ui: Ebano,      sg: EBA }
+    - { skp: Grava,      ui: Grava,      sg: GAA }
+    - { skp: "Nordic Oak", ui: Nordic Oak, sg: NOK }
+    - { skp: Opalo,      ui: Opalo,      sg: OPA }
+    - { skp: Raya,       ui: Raya,       sg: RAY }
+
 
 # =============================================================================
 # FORZADAS
@@ -322,6 +345,10 @@ forzadas:
   op_700:   # Sin encolar (ver opciones_mueble.yaml)
     sg: DEM
     ui: "Sin encolar"
+
+  op_637:   # Chant plan de travail — PDT20C siempre CAP
+    sg: CAP
+    ui: "Canto encimera"
 
 
 # =============================================================================

@@ -249,7 +249,10 @@ CODIGOS_SIN_RODAPIE  |= CODIGOS_JOUE
 
 # Encimeras (PDT20C, NRWC, PAN20LAMC, PAN20LINOC): solo llevan Ancho, Alto y Acabado.
 # Sin apertura, tirador, color interior, gama, trasera ni rodapié.
-CODIGOS_ENCIMERA: set[str] = set((_OPCIONES.get("encimeras") or {}).get("codigos") or [])
+CODIGOS_ENCIMERA: set[str] = (
+    set((_OPCIONES.get("encimeras_panel") or {}).get("codigos") or []) |
+    set((_OPCIONES.get("encimeras_pdt")   or {}).get("codigos") or [])
+)
 CODIGOS_SIN_APERTURA |= CODIGOS_ENCIMERA
 CODIGOS_SIN_INTERIOR |= CODIGOS_ENCIMERA
 CODIGOS_SIN_RODAPIE  |= CODIGOS_ENCIMERA

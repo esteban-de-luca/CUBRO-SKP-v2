@@ -251,9 +251,16 @@ def _calcular_opciones_mueble(
     codigos_joue: set[str] = set((op_mueble.get("joues") or {}).get("codigos") or [])
     es_joue = code in codigos_joue
 
-    # ── Encimeras: op_101 desde "Acabado". Sin op_100. ──
-    codigos_encimera_local: set[str] = set((op_mueble.get("encimeras") or {}).get("codigos") or [])
-    es_encimera = code in codigos_encimera_local
+    # ── Encimeras panel (PAN20LAMC, PAN20LINOC): op_621 desde "Acabado". ──
+    codigos_enc_panel: set[str] = set((op_mueble.get("encimeras_panel") or {}).get("codigos") or [])
+    es_enc_panel = code in codigos_enc_panel
+
+    # ── Encimeras PDT (PDT20C, NRWC): op_601 + op_603 desde "Acabado". PDT20C: op_637=CAP. ──
+    _enc_pdt_cfg: dict = op_mueble.get("encimeras_pdt") or {}
+    codigos_enc_pdt: set[str] = set(_enc_pdt_cfg.get("codigos") or [])
+    es_enc_pdt = code in codigos_enc_pdt
+
+    es_encimera = es_enc_panel or es_enc_pdt
 
     if es_abierto:
         # op_410 — Acabado del mueble abierto
@@ -276,12 +283,24 @@ def _calcular_opciones_mueble(
         sg_621 = indices.get("op_101", {}).get(acabado_joue, "")
         if sg_621:
             _sg("op_621", sg_621)
-    elif es_encimera:
-        # ── op_101 desde "Acabado". Sin op_100. ──
+    elif es_enc_panel:
+        # ── op_621 — Coloris panneaux (PAN20LAMC, PAN20LINOC). Mismo mapeo que op_101. ──
         acabado_enc = (fila.get("Acabado") or "").strip()
-        sg_101_enc  = indices.get("op_101", {}).get(acabado_enc, "")
-        if sg_101_enc:
-            _sg("op_101", sg_101_enc)
+        sg_621_enc  = indices.get("op_101", {}).get(acabado_enc, "")
+        if sg_621_enc:
+            _sg("op_621", sg_621_enc)
+    elif es_enc_pdt:
+        # ── op_601 + op_603 — Coloris PdT y chant (PDT20C, NRWC). ──
+        acabado_enc = (fila.get("Acabado") or "").strip()
+        sg_601 = indices.get("op_601", {}).get(acabado_enc, "")
+        if sg_601:
+            _sg("op_601", sg_601)
+        sg_603 = indices.get("op_603", {}).get(acabado_enc, "")
+        if sg_603:
+            _sg("op_603", sg_603)
+        # ── op_637 — Canto encimera: forzada CAP solo en PDT20C. ──
+        if code in set(_enc_pdt_cfg.get("op_637_forzada") or []):
+            _sg("op_637", "CAP")
     else:
         # ── op_100 — Gama del frente (todos: O) ──────────────────────────────────
         sg_100 = indices.get("op_100", {}).get(gama_ui, "")
@@ -589,7 +608,10 @@ def calcular_opciones(entrada: list[dict]) -> list[dict]:
         _tiene_ancho_var = _cat_e_dim.get("ancho_variable") is not None or _cat_e_dim.get("ancho_variable_por_gama") is not None
 
         # Dimensiones: siempre presentes. Variable → valor del CSV. Fijo → 0.
-        _codigos_enc_dim: set[str] = set((op_mueble.get("encimeras") or {}).get("codigos") or [])
+        _codigos_enc_dim: set[str] = (
+            set((op_mueble.get("encimeras_panel") or {}).get("codigos") or []) |
+            set((op_mueble.get("encimeras_pdt")   or {}).get("codigos") or [])
+        )
         if code == "FF12V":
             _p_width  = 0
             _p_height = int(_alto_final) if _alto_final.isdigit() else 0
