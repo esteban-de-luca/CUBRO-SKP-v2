@@ -2584,6 +2584,27 @@ def generar_pdf_resumen(
                  new_x='LMARGIN', new_y='NEXT')
         pdf.ln(1)
 
+    def _seccion_con_tabla(pdf, titulo, items):
+        """Renderiza cabecera de sección + filas manteniéndolas juntas.
+
+        Si el bloque completo no cabe en el espacio restante de la página,
+        fuerza un salto de página antes de empezar la sección.
+        """
+        if not items:
+            return
+        # Estimación de altura: cabecera (6+1) + filas + gap
+        altura_estimada = 7 + len(items) * CELL_H + GAP_SECTION
+        espacio_restante = pdf.h - pdf.b_margin - pdf.get_y()
+        if espacio_restante < altura_estimada:
+            pdf.add_page()
+            if img_path:
+                # Restaurar margen izquierdo tras el salto de página
+                pdf.set_left_margin(MARGEN + IMG_W + IMG_GAP)
+                pdf.set_x(MARGEN + IMG_W + IMG_GAP)
+        _seccion(pdf, titulo)
+        _render_tabla(pdf, items)
+        pdf.ln(GAP_SECTION)
+
     pdf = _PDF(_safe(csv_filename), _safe(fecha_export))
     pdf.add_page()
 
@@ -2647,16 +2668,10 @@ def generar_pdf_resumen(
             pdf.set_x(MARGEN + IMG_W + IMG_GAP)
 
         config = _bloque_configuracion_c(entrada)
-        if config:
-            _seccion(pdf, 'Configuracion')
-            _render_tabla(pdf, config)
-            pdf.ln(GAP_SECTION)
+        _seccion_con_tabla(pdf, 'Configuracion', config)
 
         dims = _bloque_dimensiones_c(entrada, catalogo)
-        if dims:
-            _seccion(pdf, 'Dimensiones')
-            _render_tabla(pdf, dims)
-            pdf.ln(GAP_SECTION)
+        _seccion_con_tabla(pdf, 'Dimensiones', dims)
 
         opc_adic      = entrada.get('opciones_adicionales') or []
         marca         = (entrada.get('Marca electro')        or '').strip()
@@ -2696,6 +2711,15 @@ def generar_pdf_resumen(
                     alto_str_2 = (alto_e_2 + ' mm') if alto_e_2 else ''
                     opc_items.append((_t('Electrodomestico 2'),
                                       ' - '.join(p for p in (marca_2, alto_str_2) if p)))
+
+        # Forzar salto si la sección "Opciones adicionales" no cabe
+        _n_opc = len(opc_items) if opc_items else 1
+        _altura_opc = 7 + _n_opc * CELL_H
+        if pdf.h - pdf.b_margin - pdf.get_y() < _altura_opc:
+            pdf.add_page()
+            if img_path:
+                pdf.set_left_margin(MARGEN + IMG_W + IMG_GAP)
+                pdf.set_x(MARGEN + IMG_W + IMG_GAP)
 
         _seccion(pdf, 'Opciones adicionales')
         if opc_items:
