@@ -44,14 +44,13 @@ frente:
   "Blue Haze":    Lino_Blue_Haze.png
   "Smokey Blue":  Lino_Smokey_Blue.png
 
-  # ENCIMERAS (estratificado / laminado / linoleo)
-  Opalo:       Opalo.png
-  Busto:       Busto.png
-  Cantera:     Cantera.png
-  Ebano:       Ebano.png
-  Grava:       Grava.png
-  "Nordic Oak": Nordic Oak.png
-  Raya:        Raya.png
+  # ENCIMERAS (estratificado / sin gama)
+  Opalo:    Opalo.png
+  Busto:    Busto.png
+  Cantera:  Cantera.png
+  Ebano:    Ebano.png
+  Grava:    Grava.png
+  Raya:     Raya.png
 
   # LAMINADO
   Sable:    Lam_Sable.png
