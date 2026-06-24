@@ -98,7 +98,7 @@ def _cargar_ui_aviso() -> dict[str, dict]:
 
 COLUMNAS_VALIDAS = [
     "Summary",  # identificador de origen SKP → p_item_origin_id en SG
-    "Name", "posicion", "Ancho", "Fondo", "Alto", "Apertura", "D_Gama", "ColorFrente",
+    "Name", "posicion", "Ancho", "Alto", "Apertura", "D_Gama", "ColorFrente",
     "Color del interior", "Tirador", "Trasera",
     "Color tir. de superficie", "C_Rodapietext", "Ancho reducido",
     "Acabado",
@@ -246,13 +246,6 @@ CODIGOS_JOUE: set[str] = set((_OPCIONES.get("joues") or {}).get("codigos") or []
 CODIGOS_SIN_APERTURA |= CODIGOS_JOUE
 CODIGOS_SIN_INTERIOR |= CODIGOS_JOUE
 CODIGOS_SIN_RODAPIE  |= CODIGOS_JOUE
-
-# Encimeras (PDT20C, NRWC, PAN20LAMC, PAN20LINOC): Ancho + Fondo variables del CSV.
-# Sin apertura, tirador, color interior, gama ni rodapié.
-CODIGOS_ENCIMERA: set[str] = set((_OPCIONES.get("encimeras") or {}).get("codigos") or [])
-CODIGOS_SIN_APERTURA |= CODIGOS_ENCIMERA
-CODIGOS_SIN_INTERIOR |= CODIGOS_ENCIMERA
-CODIGOS_SIN_RODAPIE  |= CODIGOS_ENCIMERA
 
 # Altos estándar por código para validación A21
 CATALOG_ALTOS: dict[str, int] = {
@@ -565,7 +558,6 @@ def parsear_csv(archivo) -> dict:
 
         ancho_raw          = ancho_check or ""   # rodapié: ancho vacío (no transmitido)
         ancho_reducido_raw = _str_or_none(fila.get("Ancho reducido", ""))
-        fondo_raw          = _str_or_none(fila.get("Fondo", ""))
         acabado_raw        = _str_or_none(fila.get("Acabado", ""))
         posicion_raw       = (_str_or_none(fila.get("posicion", "")) or "").strip().upper()
         _es_eo = name_raw.startswith("EO")
@@ -593,25 +585,6 @@ def parsear_csv(archivo) -> dict:
                         )
                 except ValueError:
                     pass
-        # Validar Fondo para encimeras
-        if name_raw in CODIGOS_ENCIMERA:
-            _cat_enc = _CATALOGO.get(name_raw) or {}
-            _rango_fondo = _cat_enc.get("fondo_variable") or {}
-            if not fondo_raw:
-                avisos.append("Falta la columna Fondo — es obligatoria para este elemento")
-            elif _rango_fondo:
-                try:
-                    _fondo_mm = float(fondo_raw.replace("mm", "").replace(",", ".").strip())
-                    _fmin, _fmax = _rango_fondo.get("min"), _rango_fondo.get("max")
-                    if _fmin is not None and _fmax is not None:
-                        if not (_fmin <= _fondo_mm <= _fmax):
-                            avisos.append(
-                                f"El fondo del modelo ({_fondo_mm:.0f} mm) está fuera del rango "
-                                f"de fabricación ({_fmin}–{_fmax} mm)"
-                            )
-                except ValueError:
-                    pass
-
         name_skp           = name_raw  # preservar Name original de SketchUp
         summary_raw        = _str_or_none(fila.get("Summary", ""))
 
@@ -919,7 +892,6 @@ def parsear_csv(archivo) -> dict:
             "posicion":              posicion_raw,
             "ancho":                 ancho_raw,
             "ancho_reducido":        ancho_reducido_raw,
-            "fondo":                 fondo_raw or "",
             "acabado":               acabado_raw or "",
             "len_z":                 len_z_raw,
             "color_mueble_abierto":  color_mueble_abierto_raw or "",
@@ -955,7 +927,6 @@ def _a_formato_b(m: dict) -> dict:
         "posicion":                   m.get("posicion") or "",
         "Ancho":                      m.get("ancho") or "",
         "Ancho reducido":             m.get("ancho_reducido") or "",
-        "Fondo":                      m.get("fondo") or "",
         "Acabado":                    m.get("acabado") or "",
         "Alto":                       m.get("len_z") or "",
         "Color del mueble abierto":   m.get("color_mueble_abierto") or "",

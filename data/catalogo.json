@@ -1188,10 +1188,5 @@
   "HDV87C":    { "designaciones": { "es": "Panel trasero isla", "fr": "Habillage dos 19mm" }, "alto_mm": 870, "ancho_variable_por_gama": { "LACA": { "min": 300, "max": 2600 }, "LINOLEO": { "min": 300, "max": 2600 }, "LAMINADO": { "min": 300, "max": 2600 }, "WOOD": { "min": 300, "max": 2020 } }, "fondo_mm": 19 },
   "HABE19V12": { "designaciones": { "es": "Recubrimiento superior para mueble", "fr": "Habillage étagère 19mm" }, "ancho_variable": { "min": 400, "max": 1240 }, "alto_mm": 120, "fondo_mm": 19 },
   "HABE19V37": { "designaciones": { "es": "Recubrimiento superior para mueble", "fr": "Habillage étagère 19mm" }, "ancho_variable": { "min": 400, "max": 1240 }, "alto_mm": 375, "fondo_mm": 19 },
-  "HABE19V60": { "designaciones": { "es": "Recubrimiento superior para mueble", "fr": "Habillage étagère 19mm" }, "ancho_variable": { "min": 400, "max": 1240 }, "alto_mm": 600, "fondo_mm": 19 },
-
-  "PDT20C":    { "designaciones": { "es": "Encimera estratificada 20mm", "fr": "Plan de travail stratifié 20mm" }, "ancho_variable": { "min": 250, "max": 3100 }, "fondo_variable": { "min": 250, "max": 1240 }, "alto_mm": 20, "fondo_mm": null },
-  "NRWC":      { "designaciones": { "es": "Frente de encimera estratificado", "fr": "Panneau de crédence stratifié" }, "ancho_variable": { "min": 300, "max": 3100 }, "fondo_variable": { "min": 120, "max": 1200 }, "alto_mm": 10, "fondo_mm": null },
-  "PAN20LAMC": { "designaciones": { "es": "Encimera laminado", "fr": "Panneau laminate" }, "gama": "LAMINADO", "ancho_variable": { "min": 250, "max": 3000 }, "fondo_variable": { "min": 250, "max": 1240 }, "alto_mm": 19, "fondo_mm": null },
-  "PAN20LINOC": { "designaciones": { "es": "Encimera linoleo", "fr": "Panneau lino" }, "gama": "LINOLEO", "ancho_variable": { "min": 250, "max": 2750 }, "fondo_variable": { "min": 250, "max": 1240 }, "alto_mm": 19, "fondo_mm": null }
+  "HABE19V60": { "designaciones": { "es": "Recubrimiento superior para mueble", "fr": "Habillage étagère 19mm" }, "ancho_variable": { "min": 400, "max": 1240 }, "alto_mm": 600, "fondo_mm": 19 }
 }
