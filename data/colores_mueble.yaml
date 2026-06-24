@@ -27,7 +27,7 @@ frente:
   Laurel:     Laurel.png
 
   # WOOD
-  "Nordic Oak":   Nordic_Oak.png
+  "Nordic Oak":   Nordic Oak.png
   Oak:            Oak.png
   "Smoked Oak":   Smoked_Oak.png
 
@@ -43,6 +43,15 @@ frente:
   Vapour:         Lino_Vapour.png
   "Blue Haze":    Lino_Blue_Haze.png
   "Smokey Blue":  Lino_Smokey_Blue.png
+
+  # ENCIMERAS (estratificado / laminado / linoleo)
+  Opalo:       Opalo.png
+  Busto:       Busto.png
+  Cantera:     Cantera.png
+  Ebano:       Ebano.png
+  Grava:       Grava.png
+  "Nordic Oak": Nordic Oak.png
+  Raya:        Raya.png
 
   # LAMINADO
   Sable:    Lam_Sable.png

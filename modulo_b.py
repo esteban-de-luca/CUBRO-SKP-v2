@@ -1896,6 +1896,12 @@ def paso_1(muebles: list[dict]) -> None:
                             "",
                             etiqueta_frente="Acabado del panel",
                         )
+                    elif name in CODIGOS_ENCIMERA:
+                        _render_swatches_color(
+                            _ui_color_frente(mueble.get("Acabado") or ""),
+                            "",
+                            etiqueta_frente="Acabado",
+                        )
                     else:
                         _render_swatches_color(
                             _ui_color_frente(mueble.get("ColorFrente", "")),
