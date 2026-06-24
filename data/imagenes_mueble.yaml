@@ -27,6 +27,16 @@ prefijos:
   FF1260:    FF1260.png
   FF12V:     FF12V.png
 
+  # ── Muebles abiertos EOV / EOAVV ─────────────────────────────────────────
+  EOV23060: EOV-Columna.png
+  EOV22760: EOV-Columna.png
+  EOV21060: EOV-Columna.png
+  EOV20760: EOV-Columna.png
+  EOV9060:  EOV-Bajo.png
+  EOV8760:  EOV-Bajo.png
+  EOAVV37:  EOAVV37.png
+  # EOVV37: imagen según posición (S/P) — gestionado en código, no aquí
+
   # ── Encimeras ────────────────────────────────────────────────────────────
   PAN20LAMC:  PAN20LAMC.png
   PAN20LINOC: PAN20LINOC.png

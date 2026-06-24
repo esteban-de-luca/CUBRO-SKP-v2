@@ -202,6 +202,11 @@ def _imagen_mueble(code: str, posicion: str = "") -> pathlib.Path | None:
         ruta = _ASSETS_MUEBLES / "FF1260.png"
         if ruta.exists():
             return ruta
+    if code == "EOVV37":
+        suffix = "S" if posicion.upper() == "S" else "P"
+        ruta = _ASSETS_MUEBLES / f"EOVV37-{suffix}.png"
+        if ruta.exists():
+            return ruta
     for prefijo, filename in _cargar_imagenes():
         if code.startswith(prefijo):
             ruta = _ASSETS_MUEBLES / filename
