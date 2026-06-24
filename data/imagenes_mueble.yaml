@@ -27,6 +27,12 @@ prefijos:
   FF1260:    FF1260.png
   FF12V:     FF12V.png
 
+  # ── Encimeras ────────────────────────────────────────────────────────────
+  PAN20LAMC:  PAN20LAMC.png
+  PAN20LINOC: PAN20LINOC.png
+  PDT20C:     PDT20C.png
+  NRWC:       NRWC.png
+
   # ── Resto de muebles ─────────────────────────────────────────────────────
   HPT60V57: HPT60V57.png
   AFSMOBT:  AFSMOBT.png
