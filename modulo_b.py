@@ -2531,6 +2531,10 @@ def generar_pdf_resumen(
         'Pag. ':                                      'Page ',
         'Encimeras':                                  'Plans de travail',
         'Rodapies':                                   'Plinthes',
+        'Frente':                                     'Facade',
+        'Interior':                                   'Interieur',
+        'Acabado':                                    'Finition',
+        'Acabado del panel':                          'Finition panneau',
     }
 
     def _t(text):
@@ -2763,29 +2767,40 @@ def generar_pdf_resumen(
             _sw_frente = (entrada.get('Acabado del frente') or '').strip()
         _sw_interior = (entrada.get('Color interior') or '').strip()
 
+        # Etiqueta visible para el frente según tipo de mueble
+        if _es_tap_pdf or _es_enc_pdf or _es_rod_pdf or _es_ab_pdf or _es_joue_pdf:
+            _sw_lbl_frente = 'Acabado'
+        else:
+            _sw_lbl_frente = 'Frente'
+
         _colores_data = _cargar_colores()
         _SWATCH_W = 8.0
-        _sw_items = []
+        _sw_items = []   # list of (etiqueta_es, color_nombre, path)
         _fn_f = (_colores_data.get('frente') or {}).get(_sw_frente)
         if _fn_f:
             _sp_f = _ASSETS_COLORES / _fn_f
             if _sp_f.exists():
-                _sw_items.append(_sp_f)
+                _sw_items.append((_sw_lbl_frente, _sw_frente, _sp_f))
         _fn_i = (_colores_data.get('interior') or {}).get(_sw_interior)
         if _fn_i:
             _sp_i = _ASSETS_COLORES / _fn_i
             if _sp_i.exists():
-                _sw_items.append(_sp_i)
+                _sw_items.append(('Interior', _sw_interior, _sp_i))
 
         if _sw_items:
             _sw_y = y_top + img_h_mm + (2.0 if img_path else 0.0)
             if not img_path:
                 pdf.set_left_margin(MARGEN + IMG_W + IMG_GAP)
                 pdf.set_x(MARGEN + IMG_W + IMG_GAP)
-            for _sw_path in _sw_items:
+            for _sw_etq, _sw_color, _sw_path in _sw_items:
                 pdf.image(str(_sw_path), x=MARGEN, y=_sw_y, w=_SWATCH_W, h=_SWATCH_W)
+                pdf.set_xy(MARGEN + _SWATCH_W + 1.5, _sw_y + 1.5)
+                pdf.set_font(FONT_MAIN, '', FSZ_BODY - 1)
+                _sw_line = _safe(_t(_sw_etq) + ': ' + _sw_color)
+                pdf.cell(IMG_W - _SWATCH_W - 1.5, _SWATCH_W - 1.5, _sw_line)
                 _sw_y += _SWATCH_W + 2.0
             img_h_mm = _sw_y - y_top
+            pdf.set_x(MARGEN + IMG_W + IMG_GAP)
 
         _seccion_con_tabla(pdf, 'Configuracion', config)
         _seccion_con_tabla(pdf, 'Dimensiones', dims)
