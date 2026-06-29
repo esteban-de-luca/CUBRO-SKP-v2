@@ -2757,30 +2757,31 @@ def generar_pdf_resumen(
         _es_rod_pdf  = code in CODIGOS_RODAPIE
         _es_ab_pdf   = code in CODIGOS_MUEBLE_ABIERTO
         _es_joue_pdf = code in CODIGOS_JOUE
+        _sw_gama = (entrada.get('Gama del frente') or '').strip()
         if _es_tap_pdf or _es_enc_pdf or _es_rod_pdf or _es_ab_pdf:
-            _sw_frente = _ui_color_frente(entrada.get('Acabado') or '')
+            _sw_frente      = _ui_color_frente(entrada.get('Acabado') or '')
+            _sw_lbl_frente  = 'Acabado'
+            _sw_color_disp  = _sw_frente
         elif _es_joue_pdf:
-            _gj = (entrada.get('Gama del frente') or '').strip()
             _aj = _ui_color_frente(entrada.get('Acabado') or '')
-            _sw_frente = ' '.join(p for p in (_gj, _aj) if p)
+            _sw_frente      = ' '.join(p for p in (_sw_gama, _aj) if p)
+            _sw_lbl_frente  = 'Acabado'
+            _sw_color_disp  = _sw_frente
         else:
-            _sw_frente = (entrada.get('Acabado del frente') or '').strip()
+            _sw_frente      = (entrada.get('Acabado del frente') or '').strip()
+            _sw_lbl_frente  = 'Frente'
+            # Incluir gama cuando existe (ej. "LACA Blanco")
+            _sw_color_disp  = ' '.join(p for p in (_sw_gama, _sw_frente) if p) if _sw_gama else _sw_frente
         _sw_interior = (entrada.get('Color interior') or '').strip()
-
-        # Etiqueta visible para el frente según tipo de mueble
-        if _es_tap_pdf or _es_enc_pdf or _es_rod_pdf or _es_ab_pdf or _es_joue_pdf:
-            _sw_lbl_frente = 'Acabado'
-        else:
-            _sw_lbl_frente = 'Frente'
 
         _colores_data = _cargar_colores()
         _SWATCH_W = 8.0
-        _sw_items = []   # list of (etiqueta_es, color_nombre, path)
+        _sw_items = []   # list of (etiqueta_es, texto_display, path)
         _fn_f = (_colores_data.get('frente') or {}).get(_sw_frente)
         if _fn_f:
             _sp_f = _ASSETS_COLORES / _fn_f
             if _sp_f.exists():
-                _sw_items.append((_sw_lbl_frente, _sw_frente, _sp_f))
+                _sw_items.append((_sw_lbl_frente, _sw_color_disp, _sp_f))
         _fn_i = (_colores_data.get('interior') or {}).get(_sw_interior)
         if _fn_i:
             _sp_i = _ASSETS_COLORES / _fn_i
@@ -2791,7 +2792,6 @@ def generar_pdf_resumen(
             _sw_y = y_top + img_h_mm + (2.0 if img_path else 0.0)
             if not img_path:
                 pdf.set_left_margin(MARGEN + IMG_W + IMG_GAP)
-                pdf.set_x(MARGEN + IMG_W + IMG_GAP)
             for _sw_etq, _sw_color, _sw_path in _sw_items:
                 pdf.image(str(_sw_path), x=MARGEN, y=_sw_y, w=_SWATCH_W, h=_SWATCH_W)
                 pdf.set_xy(MARGEN + _SWATCH_W + 1.5, _sw_y + 1.5)
@@ -2800,7 +2800,8 @@ def generar_pdf_resumen(
                 pdf.cell(IMG_W - _SWATCH_W - 1.5, _SWATCH_W - 1.5, _sw_line)
                 _sw_y += _SWATCH_W + 2.0
             img_h_mm = _sw_y - y_top
-            pdf.set_x(MARGEN + IMG_W + IMG_GAP)
+        # Restaurar posición al inicio del bloque de texto (y_top, columna derecha)
+        pdf.set_xy(MARGEN + IMG_W + IMG_GAP, y_top)
 
         _seccion_con_tabla(pdf, 'Configuracion', config)
         _seccion_con_tabla(pdf, 'Dimensiones', dims)
