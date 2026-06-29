@@ -2747,6 +2747,46 @@ def generar_pdf_resumen(
             pdf.set_left_margin(MARGEN + IMG_W + IMG_GAP)
             pdf.set_x(MARGEN + IMG_W + IMG_GAP)
 
+        # Swatches de color — misma lógica que Paso 2
+        _es_tap_pdf  = code in CODIGOS_TAPETA
+        _es_enc_pdf  = code in CODIGOS_ENCIMERA
+        _es_rod_pdf  = code in CODIGOS_RODAPIE
+        _es_ab_pdf   = code in CODIGOS_MUEBLE_ABIERTO
+        _es_joue_pdf = code in CODIGOS_JOUE
+        if _es_tap_pdf or _es_enc_pdf or _es_rod_pdf or _es_ab_pdf:
+            _sw_frente = _ui_color_frente(entrada.get('Acabado') or '')
+        elif _es_joue_pdf:
+            _gj = (entrada.get('Gama del frente') or '').strip()
+            _aj = _ui_color_frente(entrada.get('Acabado') or '')
+            _sw_frente = ' '.join(p for p in (_gj, _aj) if p)
+        else:
+            _sw_frente = (entrada.get('Acabado del frente') or '').strip()
+        _sw_interior = (entrada.get('Color interior') or '').strip()
+
+        _colores_data = _cargar_colores()
+        _SWATCH_W = 8.0
+        _sw_items = []
+        _fn_f = (_colores_data.get('frente') or {}).get(_sw_frente)
+        if _fn_f:
+            _sp_f = _ASSETS_COLORES / _fn_f
+            if _sp_f.exists():
+                _sw_items.append(_sp_f)
+        _fn_i = (_colores_data.get('interior') or {}).get(_sw_interior)
+        if _fn_i:
+            _sp_i = _ASSETS_COLORES / _fn_i
+            if _sp_i.exists():
+                _sw_items.append(_sp_i)
+
+        if _sw_items:
+            _sw_y = y_top + img_h_mm + (2.0 if img_path else 0.0)
+            if not img_path:
+                pdf.set_left_margin(MARGEN + IMG_W + IMG_GAP)
+                pdf.set_x(MARGEN + IMG_W + IMG_GAP)
+            for _sw_path in _sw_items:
+                pdf.image(str(_sw_path), x=MARGEN, y=_sw_y, w=_SWATCH_W, h=_SWATCH_W)
+                _sw_y += _SWATCH_W + 2.0
+            img_h_mm = _sw_y - y_top
+
         _seccion_con_tabla(pdf, 'Configuracion', config)
         _seccion_con_tabla(pdf, 'Dimensiones', dims)
 
@@ -2825,8 +2865,8 @@ def generar_pdf_resumen(
                                new_x='LMARGIN', new_y='NEXT')
             pdf.set_text_color(0, 0, 0)
 
-        # Restaurar margen y avanzar mas alla de la imagen si es necesario
-        if img_path:
+        # Restaurar margen y avanzar mas alla de la imagen/swatch si es necesario
+        if img_path or _sw_items:
             pdf.set_left_margin(MARGEN)
             y_min = y_top + img_h_mm + 2
             if pdf.get_y() < y_min:
