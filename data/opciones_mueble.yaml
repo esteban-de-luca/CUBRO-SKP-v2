@@ -958,6 +958,29 @@ rodapiés:
       - SOC3607    # pieza 3600 mm, alto 70 mm
       - SOC1807    # pieza 1800 mm, alto 70 mm
 
+# -----------------------------------------------------------------------------
+# rodapiés_pieza_unica — SO250*LAM / SO250*LIN
+# Llegan de SKP con el mismo código que va a SG. Una sola longitud de pieza por código.
+# La cantidad mínima = ceil(ancho_total / ancho_pieza_mm).
+# -----------------------------------------------------------------------------
+rodapiés_pieza_unica:
+  SO25010LAM:
+    ancho_pieza_mm: 3000
+    alto_mm: 100
+    gama: LAMINADO
+  SO2507LAM:
+    ancho_pieza_mm: 3000
+    alto_mm: 70
+    gama: LAMINADO
+  SO25010LIN:
+    ancho_pieza_mm: 2750
+    alto_mm: 100
+    gama: LINOLEO
+  SO2507LIN:
+    ancho_pieza_mm: 2750
+    alto_mm: 70
+    gama: LINOLEO
+
 
 # -----------------------------------------------------------------------------
 # joues — J19*

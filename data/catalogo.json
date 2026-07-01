@@ -1671,5 +1671,41 @@
                       "ancho_mm":  null,
                       "alto_mm":  null,
                       "fondo_mm":  null
+                  },
+    "SO25010LAM": {
+                      "designaciones":  {
+                                            "es":  "Rodapié laminado 100 mm",
+                                            "fr":  "Plinthe lamine 100 mm"
+                                        },
+                      "ancho_mm":  3000,
+                      "alto_mm":   100,
+                      "fondo_mm":  19
+                  },
+    "SO2507LAM":  {
+                      "designaciones":  {
+                                            "es":  "Rodapié laminado 70 mm",
+                                            "fr":  "Plinthe lamine 70 mm"
+                                        },
+                      "ancho_mm":  3000,
+                      "alto_mm":   70,
+                      "fondo_mm":  19
+                  },
+    "SO25010LIN": {
+                      "designaciones":  {
+                                            "es":  "Rodapié linoleo 100 mm",
+                                            "fr":  "Plinthe linoleum 100 mm"
+                                        },
+                      "ancho_mm":  2750,
+                      "alto_mm":   100,
+                      "fondo_mm":  19
+                  },
+    "SO2507LIN":  {
+                      "designaciones":  {
+                                            "es":  "Rodapié linoleo 70 mm",
+                                            "fr":  "Plinthe linoleum 70 mm"
+                                        },
+                      "ancho_mm":  2750,
+                      "alto_mm":   70,
+                      "fondo_mm":  19
                   }
 }
