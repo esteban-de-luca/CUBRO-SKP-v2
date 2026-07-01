@@ -1990,9 +1990,7 @@ def _render_card_grupo_rodapie_pu(grupo: dict, catalogo: dict) -> None:
 
             total_elegido = qty_nuevo * ancho_pieza
 
-            if qty_nuevo == 0:
-                st.info(f"Cantidad mínima necesaria: **{min_qty} pieza{'s' if min_qty != 1 else ''}**.")
-            elif qty_nuevo < min_qty:
+            if qty_nuevo < min_qty:
                 falta_qty = min_qty - qty_nuevo
                 st.error(
                     f"No se cubre la cantidad mínima necesaria. "
@@ -2072,10 +2070,11 @@ def paso_1(muebles: list[dict]) -> None:
     if "rodapie_pu_grupos_abiertos" not in st.session_state:
         st.session_state.rodapie_pu_grupos_abiertos = set()
     for grupo_pu in grupos_rodapie_pu:
+        import math as _math
         key_pu = grupo_pu["key"]
-        es_nuevo_pu = key_pu not in st.session_state.rodapie_pu_grupos
-        st.session_state.rodapie_pu_grupos.setdefault(key_pu, {"qty": 0, "check": False})
-        if es_nuevo_pu:
+        if key_pu not in st.session_state.rodapie_pu_grupos:
+            _min_init = _math.ceil(grupo_pu["total_mm"] / grupo_pu["ancho_pieza_mm"]) if grupo_pu["ancho_pieza_mm"] else 1
+            st.session_state.rodapie_pu_grupos[key_pu] = {"qty": _min_init, "check": False}
             st.session_state.rodapie_pu_grupos_abiertos.add(key_pu)
 
     # Expandidos por defecto: inicializar con todas las claves si aún no existe.
