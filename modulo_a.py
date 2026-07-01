@@ -233,7 +233,12 @@ CODIGOS_SIN_RODAPIE  |= CODIGOS_TAPETA
 # Rodapiés (SOCX*): sin apertura, tirador, color interior ni patas.
 # op_401 viene de la columna "Acabado" del CSV (mismo índice que op_101).
 # El campo Ancho llega vacío desde SketchUp (la X del código sustituye el ancho).
-CODIGOS_RODAPIE: set[str] = set((_OPCIONES.get("rodapiés") or {}).get("codigos") or [])
+# Rodapiés de pieza única (SO25010LAM etc.): mismo tratamiento; el Ancho de SKP es la
+# longitud real necesaria, NO la longitud de la pieza — se excluye de la validación de catálogo.
+_RODAPIES_PU_CODIGOS: set[str] = set((_OPCIONES.get("rodapiés_pieza_unica") or {}).keys())
+CODIGOS_RODAPIE: set[str] = (
+    set((_OPCIONES.get("rodapiés") or {}).get("codigos") or []) | _RODAPIES_PU_CODIGOS
+)
 CODIGOS_SIN_APERTURA |= CODIGOS_RODAPIE
 # CODIGOS_SIN_INTERIOR y CODIGOS_SIN_RODAPIE ya incluyen CODIGOS_RODAPIE
 # vía op_200.excepciones y op_402.excepciones respectivamente.
@@ -677,7 +682,7 @@ def parsear_csv(archivo) -> dict:
                             f"pero según el catálogo debería estar entre "
                             f"{rango['ancho_min']}mm y {rango['ancho_max']}mm"
                         )
-                elif name_raw in CATALOG_ANCHOS and name_raw not in CODIGOS_TAPETA:
+                elif name_raw in CATALOG_ANCHOS and name_raw not in CODIGOS_TAPETA and name_raw not in _RODAPIES_PU_CODIGOS:
                     ancho_std = CATALOG_ANCHOS[name_raw]
                     if abs(ancho_mm - ancho_std) > 5:
                         avisos.append(
