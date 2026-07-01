@@ -1487,7 +1487,7 @@
                                     },
                   "ancho_variable":  {
                                          "min":  300,
-                                         "max":  600
+                                         "max":  1200
                                      },
                   "alto_variable":  {
                                         "min":  300,
