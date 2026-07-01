@@ -239,9 +239,9 @@ _RODAPIES_PU_CODIGOS: set[str] = set((_OPCIONES.get("rodapiés_pieza_unica") or 
 CODIGOS_RODAPIE: set[str] = (
     set((_OPCIONES.get("rodapiés") or {}).get("codigos") or []) | _RODAPIES_PU_CODIGOS
 )
-CODIGOS_SIN_APERTURA |= CODIGOS_RODAPIE
-# CODIGOS_SIN_INTERIOR y CODIGOS_SIN_RODAPIE ya incluyen CODIGOS_RODAPIE
-# vía op_200.excepciones y op_402.excepciones respectivamente.
+CODIGOS_SIN_APERTURA  |= CODIGOS_RODAPIE
+CODIGOS_SIN_INTERIOR  |= _RODAPIES_PU_CODIGOS
+CODIGOS_SIN_RODAPIE   |= _RODAPIES_PU_CODIGOS
 
 # Joues (J19*): paneles laterales. Solo llevan Ancho, Alto y Acabado.
 # Sin apertura, tirador, color interior, gama, trasera ni rodapié.
