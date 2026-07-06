@@ -719,11 +719,17 @@ def parsear_csv(archivo) -> dict:
                 elif name_raw in RANGOS_POR_GAMA:
                     _gama_lbl  = _GAMA_LABEL.get(_str_or_none(fila.get("D_Gama", "")) or "", "")
                     _rango_pg  = RANGOS_POR_GAMA[name_raw].get(_gama_lbl) or {}
-                    if _rango_pg.get("ancho_max") is not None and ancho_mm > _rango_pg["ancho_max"]:
+                    _cat_pg    = _CATALOGO.get(name_raw) or {}
+                    _max_metal = _cat_pg.get("ancho_max_laminado_metal")
+                    _acabado_pg = (_str_or_none(fila.get("Acabado", "")) or "").lower()
+                    _es_metal  = bool(_max_metal and _gama_lbl == "LAMINADO" and "metal" in _acabado_pg)
+                    _ancho_max_efectivo = _max_metal if _es_metal else _rango_pg.get("ancho_max")
+                    if _ancho_max_efectivo is not None and ancho_mm > _ancho_max_efectivo:
                         avisos.append(
                             f"El informe de SketchUp indica ancho {ancho_mm:.0f}mm, "
-                            f"pero el máximo permitido para esta pieza en gama {_gama_lbl} "
-                            f"es {_rango_pg['ancho_max']}mm"
+                            f"pero el máximo permitido para esta pieza en gama {_gama_lbl}"
+                            + (" (Lam métal)" if _es_metal else "") +
+                            f" es {_ancho_max_efectivo:.0f}mm"
                         )
                 elif name_raw in CATALOG_ANCHOS and name_raw not in CODIGOS_TAPETA and name_raw not in _RODAPIES_PU_CODIGOS:
                     ancho_std = CATALOG_ANCHOS[name_raw]
