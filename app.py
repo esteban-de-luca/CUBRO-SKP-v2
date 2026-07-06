@@ -382,20 +382,18 @@ def _verificar_login() -> None:
     if "auth" not in st.secrets:
         return
 
-    _is_logged_in = getattr(st.experimental_user, "is_logged_in", None)
-    if _is_logged_in is None:
-        st.set_page_config(page_title="Order Hub CUBRO", layout="centered")
-        st.error("La versión de Streamlit desplegada no soporta autenticación. Actualiza la app desde Streamlit Cloud.")
-        st.stop()
-
-    if not _is_logged_in:
+    _user = getattr(st, "experimental_user", None)
+    if _user is None or not getattr(_user, "is_logged_in", False):
         st.set_page_config(page_title="Order Hub CUBRO", layout="centered")
         st.title("Order Hub CUBRO")
         st.info("Inicia sesión con tu cuenta de Google de CUBRO para continuar.")
-        st.login("google")
+        if hasattr(st, "login"):
+            st.login("google")
+        else:
+            st.error("Actualiza la app desde Streamlit Cloud para activar el login (Manage app → Reboot).")
         st.stop()
 
-    email = getattr(st.experimental_user, "email", None) or ""
+    email = getattr(_user, "email", None) or ""
     if not email.endswith(_DOMINIO_PERMITIDO):
         st.set_page_config(page_title="Order Hub CUBRO", layout="centered")
         st.error(
