@@ -1532,23 +1532,12 @@
                                      },
                    "alto_mm":  900,
                    "ancho_variable_por_gama":  {
-                                                   "LACA":  {
-                                                                "min":  300,
-                                                                "max":  2600
-                                                            },
-                                                   "LINOLEO":  {
-                                                                   "min":  300,
-                                                                   "max":  2600
-                                                               },
-                                                   "LAMINADO":  {
-                                                                    "min":  300,
-                                                                    "max":  2600
-                                                                },
-                                                   "WOOD":  {
-                                                                "min":  300,
-                                                                "max":  2020
-                                                            }
+                                                   "LACA":      {"min": 300, "max": 2600},
+                                                   "LINOLEO":   {"min": 300, "max": 2600},
+                                                   "LAMINADO":  {"min": 300, "max": 2600},
+                                                   "WOOD":      {"min": 300, "max": 2020}
                                                },
+                   "ancho_max_laminado_metal":  1250,
                    "fondo_mm":  19
                },
     "HDV87C":  {
@@ -1558,23 +1547,12 @@
                                      },
                    "alto_mm":  870,
                    "ancho_variable_por_gama":  {
-                                                   "LACA":  {
-                                                                "min":  300,
-                                                                "max":  2600
-                                                            },
-                                                   "LINOLEO":  {
-                                                                   "min":  300,
-                                                                   "max":  2600
-                                                               },
-                                                   "LAMINADO":  {
-                                                                    "min":  300,
-                                                                    "max":  2600
-                                                                },
-                                                   "WOOD":  {
-                                                                "min":  300,
-                                                                "max":  2020
-                                                            }
+                                                   "LACA":      {"min": 300, "max": 2600},
+                                                   "LINOLEO":   {"min": 300, "max": 2600},
+                                                   "LAMINADO":  {"min": 300, "max": 2600},
+                                                   "WOOD":      {"min": 300, "max": 2020}
                                                },
+                   "ancho_max_laminado_metal":  1250,
                    "fondo_mm":  19
                },
     "HABE19V12":  {
