@@ -1123,7 +1123,9 @@
                                      },
                    "ancho_mm":  null,
                    "alto_mm":  null,
-                   "fondo_mm":  375
+                   "fondo_mm":  375,
+                   "ancho_variable":  {"min": 300, "max": 900},
+                   "alto_variable":   {"min": 600, "max": 1400}
                },
     "EOV8760":  {
                     "designaciones":  {
@@ -1132,7 +1134,8 @@
                                       },
                     "ancho_mm":  null,
                     "alto_mm":  870,
-                    "fondo_mm":  600
+                    "fondo_mm":  600,
+                    "ancho_variable":  {"min": 300, "max": 600}
                 },
     "EOV9060":  {
                     "designaciones":  {
@@ -1141,7 +1144,8 @@
                                       },
                     "ancho_mm":  null,
                     "alto_mm":  900,
-                    "fondo_mm":  600
+                    "fondo_mm":  600,
+                    "ancho_variable":  {"min": 300, "max": 600}
                 },
     "EOV20760":  {
                      "designaciones":  {
@@ -1150,7 +1154,8 @@
                                        },
                      "ancho_mm":  null,
                      "alto_mm":  2070,
-                     "fondo_mm":  600
+                     "fondo_mm":  600,
+                     "ancho_variable":  {"min": 300, "max": 600}
                  },
     "EOV21060":  {
                      "designaciones":  {
@@ -1159,7 +1164,8 @@
                                        },
                      "ancho_mm":  null,
                      "alto_mm":  2100,
-                     "fondo_mm":  600
+                     "fondo_mm":  600,
+                     "ancho_variable":  {"min": 300, "max": 600}
                  },
     "EOV22760":  {
                      "designaciones":  {
@@ -1168,7 +1174,8 @@
                                        },
                      "ancho_mm":  null,
                      "alto_mm":  2270,
-                     "fondo_mm":  600
+                     "fondo_mm":  600,
+                     "ancho_variable":  {"min": 300, "max": 600}
                  },
     "EOV23060":  {
                      "designaciones":  {
@@ -1177,7 +1184,8 @@
                                        },
                      "ancho_mm":  null,
                      "alto_mm":  2300,
-                     "fondo_mm":  600
+                     "fondo_mm":  600,
+                     "ancho_variable":  {"min": 300, "max": 600}
                  },
     "EOAVV37":  {
                     "designaciones":  {
@@ -1186,7 +1194,9 @@
                                       },
                     "ancho_mm":  null,
                     "alto_mm":  null,
-                    "fondo_mm":  375
+                    "fondo_mm":  375,
+                    "ancho_variable":  {"min": 300, "max": 600},
+                    "alto_variable":   {"min": 1000, "max": 2200}
                 },
     "FF12200":  {
                     "designaciones":  {
