@@ -672,7 +672,12 @@ def parsear_csv(archivo) -> dict:
                 if familia in RANGOS_VARIABLES:
                     rango = RANGOS_VARIABLES[familia]
                     if rango["alto_min"] is not None and rango["alto_max"] is not None:
-                        if not (rango["alto_min"] <= len_z_mm <= rango["alto_max"]):
+                        _por_gama_code = name_raw in RANGOS_POR_GAMA
+                        _fuera = (
+                            len_z_mm > rango["alto_max"] or
+                            (not _por_gama_code and len_z_mm < rango["alto_min"])
+                        )
+                        if _fuera:
                             avisos.append(
                                 f"El informe de SketchUp indica alto {len_z_mm:.0f}mm, "
                                 f"pero según el catálogo debería estar entre "
