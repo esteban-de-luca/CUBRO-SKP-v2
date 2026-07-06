@@ -374,7 +374,14 @@ _DOMINIO_PERMITIDO = "@cubrodesign.com"
 
 
 def _verificar_login() -> None:
-    """Bloquea el acceso si el usuario no ha iniciado sesión con cuenta cubrodesign.com."""
+    """Bloquea el acceso si el usuario no ha iniciado sesión con cuenta cubrodesign.com.
+
+    Si los secrets de auth no están configurados en Streamlit Cloud, omite el control
+    (modo desarrollo local o pendiente de configuración).
+    """
+    if "auth" not in st.secrets:
+        return
+
     if not st.experimental_user.is_logged_in:
         st.set_page_config(page_title="Order Hub CUBRO", layout="centered")
         st.title("Order Hub CUBRO")
