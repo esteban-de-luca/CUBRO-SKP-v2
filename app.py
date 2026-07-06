@@ -1,5 +1,5 @@
 """
-app.py — CUBRO × Schmidt Groupe
+app.py — Order Hub CUBRO
 Orquestación Streamlit del flujo A → B → C → B.
 """
 
@@ -370,9 +370,34 @@ def _render_modal_reemplazo() -> None:
             st.rerun()
 
 
+_DOMINIO_PERMITIDO = "@cubrodesign.com"
+
+
+def _verificar_login() -> None:
+    """Bloquea el acceso si el usuario no ha iniciado sesión con cuenta cubrodesign.com."""
+    if not st.experimental_user.is_logged_in:
+        st.set_page_config(page_title="Order Hub CUBRO", layout="centered")
+        st.title("Order Hub CUBRO")
+        st.info("Inicia sesión con tu cuenta de Google de CUBRO para continuar.")
+        st.login("google")
+        st.stop()
+
+    email = st.experimental_user.email or ""
+    if not email.endswith(_DOMINIO_PERMITIDO):
+        st.set_page_config(page_title="Order Hub CUBRO", layout="centered")
+        st.error(
+            f"Acceso restringido. Solo se permiten cuentas **{_DOMINIO_PERMITIDO}**. "
+            f"Has iniciado sesión como **{email}**."
+        )
+        if st.button("Cerrar sesión"):
+            st.logout()
+        st.stop()
+
+
 def main() -> None:
+    _verificar_login()
     st.set_page_config(
-        page_title="CUBRO × Schmidt Groupe",
+        page_title="Order Hub CUBRO",
         layout="wide",
         initial_sidebar_state="expanded",
     )
@@ -390,7 +415,7 @@ def main() -> None:
         return
 
     if st.session_state.muebles is None:
-        st.title("CUBRO × Schmidt Groupe")
+        st.title("Order Hub CUBRO")
         st.info("Sube un CSV exportado desde SketchUp en la barra lateral para comenzar.")
         return
 
