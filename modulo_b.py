@@ -1522,13 +1522,14 @@ def _control_dimensiones_joue_variable(
     def _safe_int(s: str, fallback: int) -> int:
         return int(s) if s.isdigit() else fallback
 
+    _desc_dim = (cat_entry.get("designaciones") or {}).get("es") or "Panel"
     partes_info = []
     if tiene_av:
         partes_info.append(f"**{ancho_csv} mm** de ancho")
     if tiene_altv:
         partes_info.append(f"**{alto_csv} mm** de alto")
     st.info(
-        f"Panel de dimensiones variables. El modelo 3D indica "
+        f"{_desc_dim} de dimensiones variables. El modelo 3D indica "
         f"{' · '.join(partes_info)}. "
         f"Puedes ajustar las medidas para recrecerlas y ajustar en obra.",
         icon="ℹ️",
