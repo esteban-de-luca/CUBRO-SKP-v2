@@ -1495,10 +1495,12 @@
                                         "es":  "Panel lateral 19mm variable",
                                         "fr":  "Panneau joue 19mm variable"
                                     },
-                  "ancho_variable":  {
-                                         "min":  300,
-                                         "max":  1200
-                                     },
+                  "ancho_variable_por_gama":  {
+                                                  "LACA":      {"min":  95, "max": 1200},
+                                                  "LAMINADO":  {"min": 120, "max": 1200},
+                                                  "LINOLEO":   {"min": 120, "max": 1200},
+                                                  "WOOD":      {"min": 120, "max": 1300}
+                                              },
                   "alto_variable":  {
                                         "min":  300,
                                         "max":  2450
