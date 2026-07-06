@@ -1505,6 +1505,9 @@ def _control_dimensiones_joue_variable(
     gama       = _gama_desde_acabado(mueble.get("Acabado", ""))
     av         = _rango_variable_joue(cat_entry, "ancho", gama)
     alt_v      = _rango_variable_joue(cat_entry, "alto",  gama)
+    _max_metal = cat_entry.get("ancho_max_laminado_metal")
+    if _max_metal and gama == "LAMINADO" and "metal" in (mueble.get("Acabado") or "").lower():
+        av = {**av, "max": _max_metal}
     tiene_av   = bool(av)
     tiene_altv = bool(alt_v)
 

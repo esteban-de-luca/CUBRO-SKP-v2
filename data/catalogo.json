@@ -1510,13 +1510,16 @@
                                         "es":  "Cierre a techo",
                                         "fr":  "Fermeture plafond"
                                     },
-                  "ancho_variable":  {
-                                         "min":  100,
-                                         "max":  2020
-                                     },
+                  "ancho_variable_por_gama":  {
+                                                  "LACA":      {"min": 400, "max": 2500},
+                                                  "LINOLEO":   {"min": 400, "max": 2500},
+                                                  "LAMINADO":  {"min": 400, "max": 2500},
+                                                  "WOOD":      {"min": 400, "max": 2020}
+                                              },
+                  "ancho_max_laminado_metal":  1250,
                   "alto_variable":  {
                                         "min":  100,
-                                        "max":  2500
+                                        "max":  400
                                     },
                   "fondo_mm":  19
               },
