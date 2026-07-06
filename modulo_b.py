@@ -1538,17 +1538,55 @@ def _control_dimensiones_joue_variable(
     nuevo_a_s = prev_a
     nuevo_h_s = prev_h
 
+    # Avisos por dimensión fuera de rango respecto al valor original de SKP
+    if tiene_av:
+        ancho_min = av.get("min", 100)
+        ancho_max = av.get("max", 9999)
+        if ancho_csv.isdigit():
+            _a_skp = int(ancho_csv)
+            if _a_skp > ancho_max:
+                st.error(
+                    f"El ancho en el modelo SKP es **{ancho_csv} mm**, "
+                    f"pero el máximo permitido para esta pieza es **{ancho_max} mm**. "
+                    f"Revisa el modelo antes de continuar.",
+                    icon="🚫",
+                )
+            elif _a_skp < ancho_min:
+                st.warning(
+                    f"El ancho en el modelo SKP es **{ancho_csv} mm**, "
+                    f"pero el mínimo de fabricación es **{ancho_min} mm**. "
+                    f"Se enviará con **{ancho_min} mm** para ajustar en obra.",
+                    icon="⚠️",
+                )
+    if tiene_altv:
+        alto_min = alt_v.get("min", 100)
+        alto_max = alt_v.get("max", 9999)
+        if alto_csv.isdigit():
+            _h_skp = int(alto_csv)
+            if _h_skp > alto_max:
+                st.error(
+                    f"El alto en el modelo SKP es **{alto_csv} mm**, "
+                    f"pero el máximo permitido para esta pieza es **{alto_max} mm**. "
+                    f"Revisa el modelo antes de continuar.",
+                    icon="🚫",
+                )
+            elif _h_skp < alto_min:
+                st.warning(
+                    f"El alto en el modelo SKP es **{alto_csv} mm**, "
+                    f"pero el mínimo de fabricación es **{alto_min} mm**. "
+                    f"Se enviará con **{alto_min} mm** para ajustar en obra.",
+                    icon="⚠️",
+                )
+
     cols = st.columns(2 if (tiene_av and tiene_altv) else 1)
     col_idx = 0
 
     if tiene_av:
-        ancho_min = av.get("min", 100)
-        ancho_max = av.get("max", 9999)
         with cols[col_idx]:
             nuevo_a = st.number_input(
                 f"Ancho (mm)  [{ancho_min}–{ancho_max}]",
                 min_value=ancho_min, max_value=ancho_max,
-                value=_safe_int(prev_a, ancho_min),
+                value=max(ancho_min, min(ancho_max, _safe_int(prev_a, ancho_min))),
                 step=1,
                 key=f"dims_joue_var_ancho_{clave}",
             )
@@ -1556,13 +1594,11 @@ def _control_dimensiones_joue_variable(
         col_idx += 1
 
     if tiene_altv:
-        alto_min = alt_v.get("min", 100)
-        alto_max = alt_v.get("max", 9999)
         with cols[col_idx]:
             nuevo_h = st.number_input(
                 f"Alto (mm)  [{alto_min}–{alto_max}]",
                 min_value=alto_min, max_value=alto_max,
-                value=_safe_int(prev_h, alto_min),
+                value=max(alto_min, min(alto_max, _safe_int(prev_h, alto_min))),
                 step=1,
                 key=f"dims_joue_var_alto_{clave}",
             )
@@ -2268,6 +2304,22 @@ def paso_1(muebles: list[dict]) -> None:
                         )
 
                 razon_bloqueo = None
+                if _joue_tiene_dims_variables(name, catalogo):
+                    _cat_blq  = catalogo.get(name) or {}
+                    _gama_blq = _gama_desde_acabado(mueble.get("Acabado", ""))
+                    _av_blq   = _rango_variable_joue(_cat_blq, "ancho", _gama_blq)
+                    _altv_blq = _rango_variable_joue(_cat_blq, "alto",  _gama_blq)
+                    _ancho_blq = (mueble.get("Ancho") or "").replace("mm", "").strip()
+                    _alto_blq  = (mueble.get("Alto")  or "").replace("mm", "").strip()
+                    _excede = (
+                        (_av_blq   and _ancho_blq.isdigit() and int(_ancho_blq) > _av_blq.get("max",   9999)) or
+                        (_altv_blq and _alto_blq.isdigit()  and int(_alto_blq)  > _altv_blq.get("max", 9999))
+                    )
+                    if _excede:
+                        razon_bloqueo = (
+                            "El modelo SKP tiene dimensiones que superan el máximo permitido. "
+                            "Revisa el modelo antes de continuar."
+                        )
                 if name == "FF12V":
                     if not _alto_ff12v_valido(estado["opcionales"].get("alto_ff12v", "")):
                         razon_bloqueo = (
