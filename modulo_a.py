@@ -300,6 +300,27 @@ def _build_rangos_variables() -> dict:
 
 RANGOS_VARIABLES = _build_rangos_variables()
 
+_GAMA_LABEL = {"1": "LACA", "2": "WOOD", "3": "LINOLEO", "4": "LAMINADO"}
+
+def _build_rangos_por_gama() -> dict:
+    """Rangos de ancho por código y gama para piezas con ancho_variable_por_gama."""
+    rangos: dict = {}
+    for code, data in _CATALOGO.items():
+        axvg = data.get("ancho_variable_por_gama")
+        altv = data.get("alto_variable")
+        if axvg:
+            rangos[code] = {
+                gama: {"ancho_min": r["min"], "ancho_max": r["max"]}
+                for gama, r in axvg.items()
+            }
+            if altv:
+                for gama in rangos[code]:
+                    rangos[code][gama]["alto_min"] = altv["min"]
+                    rangos[code][gama]["alto_max"] = altv["max"]
+    return rangos
+
+RANGOS_POR_GAMA = _build_rangos_por_gama()
+
 
 # ── Catálogo de anchos por (familia, alto, fondo) — para corrección op_231 ────
 
@@ -657,6 +678,14 @@ def parsear_csv(archivo) -> dict:
                                 f"pero según el catálogo debería estar entre "
                                 f"{rango['alto_min']}mm y {rango['alto_max']}mm"
                             )
+                elif name_raw in RANGOS_POR_GAMA:
+                    _gama_lbl_a = _GAMA_LABEL.get(_str_or_none(fila.get("D_Gama", "")) or "", "")
+                    _rango_pg_a = RANGOS_POR_GAMA[name_raw].get(_gama_lbl_a) or {}
+                    if _rango_pg_a.get("alto_max") is not None and len_z_mm > _rango_pg_a["alto_max"]:
+                        avisos.append(
+                            f"El informe de SketchUp indica alto {len_z_mm:.0f}mm, "
+                            f"pero el máximo permitido para esta pieza es {_rango_pg_a['alto_max']}mm"
+                        )
                 elif name_raw in CATALOG_ALTOS:
                     alto_cat = CATALOG_ALTOS[name_raw]
                     if abs(len_z_mm - alto_cat) > LENZ_TOLERANCIA_MM:
@@ -681,6 +710,15 @@ def parsear_csv(archivo) -> dict:
                             f"El informe de SketchUp indica ancho {ancho_mm:.0f}mm, "
                             f"pero según el catálogo debería estar entre "
                             f"{rango['ancho_min']}mm y {rango['ancho_max']}mm"
+                        )
+                elif name_raw in RANGOS_POR_GAMA:
+                    _gama_lbl  = _GAMA_LABEL.get(_str_or_none(fila.get("D_Gama", "")) or "", "")
+                    _rango_pg  = RANGOS_POR_GAMA[name_raw].get(_gama_lbl) or {}
+                    if _rango_pg.get("ancho_max") is not None and ancho_mm > _rango_pg["ancho_max"]:
+                        avisos.append(
+                            f"El informe de SketchUp indica ancho {ancho_mm:.0f}mm, "
+                            f"pero el máximo permitido para esta pieza en gama {_gama_lbl} "
+                            f"es {_rango_pg['ancho_max']}mm"
                         )
                 elif name_raw in CATALOG_ANCHOS and name_raw not in CODIGOS_TAPETA and name_raw not in _RODAPIES_PU_CODIGOS:
                     ancho_std = CATALOG_ANCHOS[name_raw]
