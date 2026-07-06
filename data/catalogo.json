@@ -1676,11 +1676,13 @@
                    },
     "ETAS19V20":  {
                       "designaciones":  {
-                                            "fr":  "Tableau des coloris"
+                                            "es":  "Balda",
+                                            "fr":  "Étagère"
                                         },
                       "ancho_mm":  null,
-                      "alto_mm":  null,
-                      "fondo_mm":  null
+                      "alto_mm":  19,
+                      "fondo_mm":  200,
+                      "ancho_variable":  {"min": 400, "max": 1240}
                   },
     "SO25010LAM": {
                       "designaciones":  {

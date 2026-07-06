@@ -1596,8 +1596,9 @@ def _control_dimensiones_encimera(
         partes_info.append(f"**{ancho_csv} mm** de ancho")
     if fv:
         partes_info.append(f"**{fondo_csv} mm** de fondo")
+    _tipo_dim = "Balda" if name in CODIGOS_BALDA else "Encimera"
     st.info(
-        f"Encimera de dimensiones variables. El modelo 3D indica "
+        f"{_tipo_dim} de dimensiones variables. El modelo 3D indica "
         f"{' · '.join(partes_info)}. Puedes ajustar las medidas.",
         icon="ℹ️",
     )
