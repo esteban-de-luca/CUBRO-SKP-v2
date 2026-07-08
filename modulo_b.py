@@ -3316,5 +3316,14 @@ def paso_2(pedido: list[dict] | None) -> None:
                             f"✅ Export guardado en Drive correctamente. "
                             f"[Abrir carpeta en Drive]({url_carpeta})"
                         )
+                        st.session_state["_export_ok_url"] = url_carpeta
                     except Exception as e:
                         st.error(f"❌ Error al subir a Drive: {e}")
+
+        if st.session_state.get("_export_ok_url"):
+            st.button(
+                "Finalizar y subir nuevo CSV",
+                type="secondary",
+                use_container_width=True,
+                on_click=lambda: st.session_state.update({"_reset_requested": True, "_export_ok_url": None}),
+            )
