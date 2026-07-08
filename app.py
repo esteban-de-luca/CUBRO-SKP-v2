@@ -384,7 +384,6 @@ def _verificar_login() -> None:
 
     _user = getattr(st, "experimental_user", None)
     if _user is None or not getattr(_user, "is_logged_in", False):
-        st.set_page_config(page_title="Order Hub CUBRO", layout="centered")
         st.title("Order Hub CUBRO")
         st.info("Inicia sesión con tu cuenta de Google de CUBRO para continuar.")
         if hasattr(st, "login"):
@@ -395,7 +394,6 @@ def _verificar_login() -> None:
 
     email = getattr(_user, "email", None) or ""
     if not email.endswith(_DOMINIO_PERMITIDO):
-        st.set_page_config(page_title="Order Hub CUBRO", layout="centered")
         st.error(
             f"Acceso restringido. Solo se permiten cuentas **{_DOMINIO_PERMITIDO}**. "
             f"Has iniciado sesión como **{email}**."
@@ -406,12 +404,12 @@ def _verificar_login() -> None:
 
 
 def main() -> None:
-    _verificar_login()
     st.set_page_config(
         page_title="Order Hub CUBRO",
         layout="wide",
         initial_sidebar_state="expanded",
     )
+    _verificar_login()
     _init_session_state()
 
     # modulo_b puede solicitar un reset completo desde la Pantalla 0.
