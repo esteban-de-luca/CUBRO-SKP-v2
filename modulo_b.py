@@ -3159,32 +3159,111 @@ def paso_2(pedido: list[dict] | None) -> None:
 
     st.divider()
 
-    def _generar_zip_export():
-        import io as _io
-        import zipfile as _zf
-        from datetime import datetime as _dt
-        csv_fn = st.session_state.get('csv_filename') or 'pedido'
-        fecha  = _dt.now().strftime('%d/%m/%Y %H:%M')
-        nombre = _nombre_export_base()
-        buf = _io.BytesIO()
-        with _zf.ZipFile(buf, 'w', _zf.ZIP_DEFLATED) as zfile:
-            import modulo_c as _mc
-            json_bytes = json.dumps(
-                _mc.generar_json_pedido(pedido), ensure_ascii=False, indent=2
-            ).encode('utf-8')
-            zfile.writestr(nombre + '_pedido.json', json_bytes)
-            pdf_es = generar_pdf_resumen(pedido, catalogo, csv_fn, fecha, idioma='es')
-            zfile.writestr(nombre + '_resumen_es.pdf', pdf_es)
-            pdf_fr = generar_pdf_resumen(pedido, catalogo, csv_fn, fecha, idioma='fr')
-            zfile.writestr(nombre + '_resumen_fr.pdf', pdf_fr)
-        return buf.getvalue()
+    def _parsear_folder_id(url_o_id: str) -> str:
+        """Extrae el folder ID de una URL de Google Drive o lo devuelve tal cual."""
+        import re as _re
+        url_o_id = url_o_id.strip()
+        m = _re.search(r'/folders/([a-zA-Z0-9_-]+)', url_o_id)
+        return m.group(1) if m else url_o_id
 
-    nombre = _nombre_export_base()
-    st.download_button(
-        '\U0001f4e6 Exportar pedido JSON',
-        data=_generar_zip_export(),
-        file_name=nombre + '.zip',
-        mime='application/zip',
-        type='primary',
-        use_container_width=True,
-    )
+    def _drive_credenciales():
+        from google.oauth2 import service_account as _sa
+        from googleapiclient.discovery import build as _build
+        info = dict(st.secrets["google"]["credentials"])
+        creds = _sa.Credentials.from_service_account_info(
+            info,
+            scopes=["https://www.googleapis.com/auth/drive"],
+        )
+        return _build("drive", "v3", credentials=creds, cache_discovery=False)
+
+    def _subir_a_drive(nombre_carpeta: str, folder_id_padre: str, pedido, catalogo, csv_fn, fecha):
+        from googleapiclient.http import MediaIoBaseUpload as _MIU
+        import io as _io
+        import modulo_c as _mc
+
+        drive = _drive_credenciales()
+
+        # Crear subcarpeta con el nombre del export
+        meta_carpeta = {
+            "name": nombre_carpeta,
+            "mimeType": "application/vnd.google-apps.folder",
+            "parents": [folder_id_padre],
+        }
+        carpeta = drive.files().create(
+            body=meta_carpeta,
+            fields="id,webViewLink",
+            supportsAllDrives=True,
+        ).execute()
+        carpeta_id = carpeta["id"]
+        carpeta_url = carpeta.get("webViewLink", "")
+
+        def _subir(nombre_archivo, contenido_bytes, mime):
+            media = _MIU(_io.BytesIO(contenido_bytes), mimetype=mime, resumable=False)
+            drive.files().create(
+                body={"name": nombre_archivo, "parents": [carpeta_id]},
+                media_body=media,
+                fields="id",
+                supportsAllDrives=True,
+            ).execute()
+
+        nombre_base = _nombre_export_base()
+        json_bytes = json.dumps(
+            _mc.generar_json_pedido(pedido), ensure_ascii=False, indent=2
+        ).encode("utf-8")
+        _subir(nombre_base + "_pedido.json", json_bytes, "application/json")
+
+        pdf_es = generar_pdf_resumen(pedido, catalogo, csv_fn, fecha, idioma="es")
+        _subir(nombre_base + "_resumen_es.pdf", pdf_es, "application/pdf")
+
+        pdf_fr = generar_pdf_resumen(pedido, catalogo, csv_fn, fecha, idioma="fr")
+        _subir(nombre_base + "_resumen_fr.pdf", pdf_fr, "application/pdf")
+
+        return carpeta_url
+
+    # --- Formulario de export ---
+    drive_configurado = "google" in st.secrets and "credentials" in st.secrets.get("google", {})
+
+    if not drive_configurado:
+        st.info("Google Drive no está configurado. Contacta con el administrador para activar la exportación.")
+    else:
+        from datetime import datetime as _dt
+        csv_fn_export = st.session_state.get("csv_filename") or "pedido"
+        fecha_export  = _dt.now().strftime("%d/%m/%Y %H:%M")
+
+        with st.form("form_export_drive"):
+            st.markdown("### Exportar pedido a Google Drive")
+            nombre_export = st.text_input(
+                "Nombre del export",
+                placeholder="Ej: Cocina García 2026-07",
+                help="Será el nombre de la carpeta creada en Drive.",
+            )
+            link_carpeta = st.text_input(
+                "Link a la carpeta de Drive destino",
+                placeholder="https://drive.google.com/drive/folders/...",
+                help="Pega el link de la carpeta de Drive donde quieres guardar el export.",
+            )
+            submitted = st.form_submit_button("📤 Exportar a Drive", type="primary", use_container_width=True)
+
+        if submitted:
+            if not nombre_export.strip():
+                st.error("Escribe un nombre para el export.")
+            elif not link_carpeta.strip():
+                st.error("Pega el link de la carpeta de Drive destino.")
+            else:
+                folder_id = _parsear_folder_id(link_carpeta)
+                with st.spinner("Subiendo archivos a Google Drive..."):
+                    try:
+                        url_carpeta = _subir_a_drive(
+                            nombre_export.strip(),
+                            folder_id,
+                            pedido,
+                            catalogo,
+                            csv_fn_export,
+                            fecha_export,
+                        )
+                        st.success(
+                            f"✅ Export subido correctamente. "
+                            f"[Abrir carpeta en Drive]({url_carpeta})"
+                        )
+                    except Exception as e:
+                        st.error(f"❌ Error al subir a Drive: {e}")
