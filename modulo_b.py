@@ -3314,11 +3314,15 @@ def paso_2(pedido: list[dict] | None) -> None:
                 st.session_state.pop("drive_subcarpetas", None)
                 st.rerun()
 
+        _nombre_csv = (st.session_state.get("csv_filename") or "pedido")
+        if _nombre_csv.lower().endswith(".csv"):
+            _nombre_csv = _nombre_csv[:-4]
+
         with st.form("form_export_drive"):
             nombre_export = st.text_input(
                 "Nombre del export",
-                placeholder="Ej: Cocina García 2026-07",
-                help="Será el nombre de la carpeta creada dentro de la subcarpeta destino.",
+                value=_nombre_csv,
+                help="Por defecto es el nombre del CSV subido. Puedes modificarlo.",
             )
             seleccion = st.selectbox(
                 "Subcarpeta destino dentro de CUBRO-npd-orderhub",
