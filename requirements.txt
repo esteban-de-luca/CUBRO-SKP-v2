@@ -1,5 +1,4 @@
-streamlit>=1.41,<2.0
-authlib
+streamlit
 pandas
 pyyaml
 openpyxl

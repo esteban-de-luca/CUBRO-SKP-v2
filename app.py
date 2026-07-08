@@ -370,46 +370,12 @@ def _render_modal_reemplazo() -> None:
             st.rerun()
 
 
-_DOMINIO_PERMITIDO = "@cubrodesign.com"
-
-
-def _verificar_login() -> None:
-    """Bloquea el acceso si el usuario no ha iniciado sesión con cuenta cubrodesign.com.
-
-    Si los secrets de auth no están configurados en Streamlit Cloud, omite el control
-    (modo desarrollo local o pendiente de configuración).
-    """
-    if "auth" not in st.secrets:
-        return
-
-    _user = getattr(st, "experimental_user", None)
-    if _user is None or not getattr(_user, "is_logged_in", False):
-        st.title("Order Hub CUBRO")
-        st.info("Inicia sesión con tu cuenta de Google de CUBRO para continuar.")
-        if hasattr(st, "login"):
-            st.login("google")
-        else:
-            st.error("Actualiza la app desde Streamlit Cloud para activar el login (Manage app → Reboot).")
-        st.stop()
-
-    email = getattr(_user, "email", None) or ""
-    if not email.endswith(_DOMINIO_PERMITIDO):
-        st.error(
-            f"Acceso restringido. Solo se permiten cuentas **{_DOMINIO_PERMITIDO}**. "
-            f"Has iniciado sesión como **{email}**."
-        )
-        if st.button("Cerrar sesión"):
-            st.logout()
-        st.stop()
-
-
 def main() -> None:
     st.set_page_config(
         page_title="Order Hub CUBRO",
         layout="wide",
         initial_sidebar_state="expanded",
     )
-    _verificar_login()
     _init_session_state()
 
     # modulo_b puede solicitar un reset completo desde la Pantalla 0.
