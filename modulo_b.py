@@ -3302,7 +3302,6 @@ def paso_2(pedido: list[dict] | None) -> None:
                 st.warning(f"No se pudieron cargar las subcarpetas de Drive: {e}")
 
         subcarpetas_dict = st.session_state.get("drive_subcarpetas") or {}
-        opciones_selector = list(subcarpetas_dict.keys()) + [_OPC_NUEVA]
 
         col_ref, col_btn = st.columns([5, 1])
         with col_ref:
@@ -3314,6 +3313,33 @@ def paso_2(pedido: list[dict] | None) -> None:
                 st.session_state.pop("drive_subcarpetas", None)
                 st.rerun()
 
+        # --- Selector de subcarpeta (fuera del form para reacción inmediata) ---
+        busqueda = st.text_input(
+            "Buscar subcarpeta",
+            placeholder="Escribe para filtrar…",
+            label_visibility="collapsed",
+        )
+        nombres_filtrados = [
+            n for n in subcarpetas_dict.keys()
+            if busqueda.lower() in n.lower()
+        ] if busqueda else list(subcarpetas_dict.keys())
+        opciones_selector = nombres_filtrados + [_OPC_NUEVA]
+
+        seleccion = st.selectbox(
+            "Subcarpeta destino dentro de CUBRO-npd-orderhub",
+            options=opciones_selector,
+            index=None,
+            placeholder="Selecciona una subcarpeta…",
+        )
+
+        nombre_nueva = ""
+        if seleccion == _OPC_NUEVA:
+            nombre_nueva = st.text_input(
+                "Nombre de la nueva subcarpeta",
+                placeholder="Ej: Proyecto García",
+            )
+
+        # --- Formulario: solo nombre del export y botón ---
         _nombre_csv = (st.session_state.get("csv_filename") or "pedido")
         if _nombre_csv.lower().endswith(".csv"):
             _nombre_csv = _nombre_csv[:-4]
@@ -3324,23 +3350,14 @@ def paso_2(pedido: list[dict] | None) -> None:
                 value=_nombre_csv,
                 help="Por defecto es el nombre del CSV subido. Puedes modificarlo.",
             )
-            seleccion = st.selectbox(
-                "Subcarpeta destino dentro de CUBRO-npd-orderhub",
-                options=opciones_selector,
-                help="Selecciona una subcarpeta existente o elige '➕ Nueva subcarpeta…' para crearla.",
-            )
-            nombre_nueva = ""
-            if seleccion == _OPC_NUEVA:
-                nombre_nueva = st.text_input(
-                    "Nombre de la nueva subcarpeta",
-                    placeholder="Ej: Proyecto García",
-                )
             submitted = st.form_submit_button("📤 Exportar a Drive", type="primary", use_container_width=True)
 
         if submitted:
             nombre_export = nombre_export.strip()
             if not nombre_export:
                 st.error("Escribe un nombre para el export.")
+            elif not seleccion:
+                st.error("Selecciona una subcarpeta destino.")
             elif seleccion == _OPC_NUEVA and not nombre_nueva.strip():
                 st.error("Escribe el nombre de la nueva subcarpeta.")
             else:
@@ -3349,7 +3366,6 @@ def paso_2(pedido: list[dict] | None) -> None:
                         drive = _drive_client()
                         if seleccion == _OPC_NUEVA:
                             subcarpeta_id = _resolver_subcarpeta(drive, nombre_nueva.strip(), root_drive_id)
-                            # Refrescar lista para la próxima vez
                             st.session_state.pop("drive_subcarpetas", None)
                         else:
                             subcarpeta_id = subcarpetas_dict[seleccion]
