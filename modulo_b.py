@@ -3223,10 +3223,25 @@ def paso_2(pedido: list[dict] | None) -> None:
 
         drive = _drive_client()
 
+        # Contar carpetas existentes en la subcarpeta para calcular versión
+        res_count = drive.files().list(
+            q=(
+                f"'{subcarpeta_id}' in parents "
+                f"and mimeType = 'application/vnd.google-apps.folder' "
+                f"and trashed = false"
+            ),
+            fields="files(id)",
+            supportsAllDrives=True,
+            includeItemsFromAllDrives=True,
+            pageSize=1000,
+        ).execute()
+        version = len(res_count.get("files", [])) + 1
+        nombre_versionado = f"{nombre_export}_V{version}"
+
         # Crear carpeta del export dentro de la subcarpeta destino
         carpeta = drive.files().create(
             body={
-                "name": nombre_export,
+                "name": nombre_versionado,
                 "mimeType": "application/vnd.google-apps.folder",
                 "parents": [subcarpeta_id],
             },
@@ -3257,7 +3272,7 @@ def paso_2(pedido: list[dict] | None) -> None:
         pdf_fr = generar_pdf_resumen(pedido, catalogo, csv_fn, fecha, idioma="fr")
         _subir(nombre_base + "_resumen_fr.pdf", pdf_fr, "application/pdf")
 
-        return carpeta_url
+        return carpeta_url, nombre_versionado
 
     # --- Formulario de export ---
     drive_configurado = (
@@ -3376,12 +3391,12 @@ def paso_2(pedido: list[dict] | None) -> None:
                                 st.session_state.pop("drive_subcarpetas", None)
                             else:
                                 subcarpeta_id = subcarpetas_dict[seleccion]
-                            url_carpeta = _subir_a_drive(
+                            url_carpeta, nombre_final = _subir_a_drive(
                                 _ne, subcarpeta_id, pedido, catalogo, csv_fn_export, fecha_export,
                             )
                             st.success(
-                                f"✅ Export guardado en Drive. "
-                                f"[Abrir carpeta]({url_carpeta})"
+                                f"✅ Export guardado como **{nombre_final}**. "
+                                f"[Abrir carpeta en Drive]({url_carpeta})"
                             )
                             st.session_state["_export_ok_url"] = url_carpeta
                         except Exception as e:
