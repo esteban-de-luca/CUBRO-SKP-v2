@@ -3274,38 +3274,83 @@ def paso_2(pedido: list[dict] | None) -> None:
         fecha_export  = _dt.now().strftime("%d/%m/%Y %H:%M")
         root_drive_id = st.secrets["drive"]["folder_id"]
 
-        with st.form("form_export_drive"):
+        _OPC_NUEVA = "➕ Nueva subcarpeta…"
+
+        def _cargar_subcarpetas():
+            drive = _drive_client()
+            query = (
+                f"'{root_drive_id}' in parents "
+                f"and mimeType = 'application/vnd.google-apps.folder' "
+                f"and trashed = false"
+            )
+            res = drive.files().list(
+                q=query,
+                fields="files(id, name)",
+                orderBy="name",
+                supportsAllDrives=True,
+                includeItemsFromAllDrives=True,
+                pageSize=200,
+            ).execute()
+            return {f["name"]: f["id"] for f in res.get("files", [])}
+
+        # Cargar lista de subcarpetas (cacheada en session_state hasta que se refresque)
+        if "drive_subcarpetas" not in st.session_state:
+            try:
+                st.session_state["drive_subcarpetas"] = _cargar_subcarpetas()
+            except Exception as e:
+                st.session_state["drive_subcarpetas"] = {}
+                st.warning(f"No se pudieron cargar las subcarpetas de Drive: {e}")
+
+        subcarpetas_dict = st.session_state.get("drive_subcarpetas") or {}
+        opciones_selector = list(subcarpetas_dict.keys()) + [_OPC_NUEVA]
+
+        col_ref, col_btn = st.columns([5, 1])
+        with col_ref:
             st.markdown("### Exportar pedido a Google Drive")
             st.caption("Los exports se guardan en la unidad compartida **CUBRO-npd-orderhub**.")
+        with col_btn:
+            st.write("")
+            if st.button("🔄", help="Recargar lista de subcarpetas desde Drive"):
+                st.session_state.pop("drive_subcarpetas", None)
+                st.rerun()
+
+        with st.form("form_export_drive"):
             nombre_export = st.text_input(
                 "Nombre del export",
                 placeholder="Ej: Cocina García 2026-07",
                 help="Será el nombre de la carpeta creada dentro de la subcarpeta destino.",
             )
-            subcarpeta_input = st.text_input(
+            seleccion = st.selectbox(
                 "Subcarpeta destino dentro de CUBRO-npd-orderhub",
-                placeholder="Nombre de subcarpeta  o  link de Drive",
-                help=(
-                    "Escribe un nombre (se crea si no existe) "
-                    "o pega el link de una subcarpeta ya existente dentro de CUBRO-npd-orderhub."
-                ),
+                options=opciones_selector,
+                help="Selecciona una subcarpeta existente o elige '➕ Nueva subcarpeta…' para crearla.",
             )
+            nombre_nueva = ""
+            if seleccion == _OPC_NUEVA:
+                nombre_nueva = st.text_input(
+                    "Nombre de la nueva subcarpeta",
+                    placeholder="Ej: Proyecto García",
+                )
             submitted = st.form_submit_button("📤 Exportar a Drive", type="primary", use_container_width=True)
 
         if submitted:
-            if not nombre_export.strip():
+            nombre_export = nombre_export.strip()
+            if not nombre_export:
                 st.error("Escribe un nombre para el export.")
-            elif not subcarpeta_input.strip():
-                st.error("Indica la subcarpeta destino dentro de CUBRO-npd-orderhub.")
+            elif seleccion == _OPC_NUEVA and not nombre_nueva.strip():
+                st.error("Escribe el nombre de la nueva subcarpeta.")
             else:
                 with st.spinner("Preparando carpeta y subiendo archivos a Google Drive..."):
                     try:
                         drive = _drive_client()
-                        subcarpeta_id = _resolver_subcarpeta(
-                            drive, subcarpeta_input.strip(), root_drive_id
-                        )
+                        if seleccion == _OPC_NUEVA:
+                            subcarpeta_id = _resolver_subcarpeta(drive, nombre_nueva.strip(), root_drive_id)
+                            # Refrescar lista para la próxima vez
+                            st.session_state.pop("drive_subcarpetas", None)
+                        else:
+                            subcarpeta_id = subcarpetas_dict[seleccion]
                         url_carpeta = _subir_a_drive(
-                            nombre_export.strip(),
+                            nombre_export,
                             subcarpeta_id,
                             pedido,
                             catalogo,
