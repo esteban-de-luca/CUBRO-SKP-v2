@@ -3159,14 +3159,15 @@ def paso_2(pedido: list[dict] | None) -> None:
 
     st.divider()
 
-    def _parsear_folder_id(url_o_id: str) -> str:
-        """Extrae el folder ID de una URL de Google Drive o lo devuelve tal cual."""
-        import re as _re
-        url_o_id = url_o_id.strip()
-        m = _re.search(r'/folders/([a-zA-Z0-9_-]+)', url_o_id)
-        return m.group(1) if m else url_o_id
+    def _es_link_drive(texto: str) -> bool:
+        return "drive.google.com" in texto
 
-    def _drive_credenciales():
+    def _parsear_folder_id(url: str) -> str:
+        import re as _re
+        m = _re.search(r'/folders/([a-zA-Z0-9_-]+)', url)
+        return m.group(1) if m else url.strip()
+
+    def _drive_client():
         from google.oauth2 import service_account as _sa
         from googleapiclient.discovery import build as _build
         info = dict(st.secrets["google"]["credentials"])
@@ -3176,25 +3177,63 @@ def paso_2(pedido: list[dict] | None) -> None:
         )
         return _build("drive", "v3", credentials=creds, cache_discovery=False)
 
-    def _subir_a_drive(nombre_carpeta: str, folder_id_padre: str, pedido, catalogo, csv_fn, fecha):
+    def _resolver_subcarpeta(drive, nombre_o_link: str, root_id: str) -> str:
+        """Devuelve el folder ID de la subcarpeta destino.
+
+        Si nombre_o_link es un link de Drive → extrae el ID directamente.
+        Si es un nombre de texto → busca en root_id; si no existe, la crea.
+        """
+        if _es_link_drive(nombre_o_link):
+            return _parsear_folder_id(nombre_o_link)
+
+        nombre = nombre_o_link.strip()
+        # Buscar carpeta existente con ese nombre dentro del root
+        query = (
+            f"name = '{nombre}' "
+            f"and '{root_id}' in parents "
+            f"and mimeType = 'application/vnd.google-apps.folder' "
+            f"and trashed = false"
+        )
+        res = drive.files().list(
+            q=query,
+            fields="files(id)",
+            supportsAllDrives=True,
+            includeItemsFromAllDrives=True,
+        ).execute()
+        archivos = res.get("files", [])
+        if archivos:
+            return archivos[0]["id"]
+
+        # No existe → crearla
+        nueva = drive.files().create(
+            body={
+                "name": nombre,
+                "mimeType": "application/vnd.google-apps.folder",
+                "parents": [root_id],
+            },
+            fields="id",
+            supportsAllDrives=True,
+        ).execute()
+        return nueva["id"]
+
+    def _subir_a_drive(nombre_export: str, subcarpeta_id: str, pedido, catalogo, csv_fn, fecha):
         from googleapiclient.http import MediaIoBaseUpload as _MIU
         import io as _io
         import modulo_c as _mc
 
-        drive = _drive_credenciales()
+        drive = _drive_client()
 
-        # Crear subcarpeta con el nombre del export
-        meta_carpeta = {
-            "name": nombre_carpeta,
-            "mimeType": "application/vnd.google-apps.folder",
-            "parents": [folder_id_padre],
-        }
+        # Crear carpeta del export dentro de la subcarpeta destino
         carpeta = drive.files().create(
-            body=meta_carpeta,
+            body={
+                "name": nombre_export,
+                "mimeType": "application/vnd.google-apps.folder",
+                "parents": [subcarpeta_id],
+            },
             fields="id,webViewLink",
             supportsAllDrives=True,
         ).execute()
-        carpeta_id = carpeta["id"]
+        carpeta_id  = carpeta["id"]
         carpeta_url = carpeta.get("webViewLink", "")
 
         def _subir(nombre_archivo, contenido_bytes, mime):
@@ -3221,7 +3260,11 @@ def paso_2(pedido: list[dict] | None) -> None:
         return carpeta_url
 
     # --- Formulario de export ---
-    drive_configurado = "google" in st.secrets and "credentials" in st.secrets.get("google", {})
+    drive_configurado = (
+        "google" in st.secrets
+        and "credentials" in st.secrets.get("google", {})
+        and "drive" in st.secrets
+    )
 
     if not drive_configurado:
         st.info("Google Drive no está configurado. Contacta con el administrador para activar la exportación.")
@@ -3229,40 +3272,48 @@ def paso_2(pedido: list[dict] | None) -> None:
         from datetime import datetime as _dt
         csv_fn_export = st.session_state.get("csv_filename") or "pedido"
         fecha_export  = _dt.now().strftime("%d/%m/%Y %H:%M")
+        root_drive_id = st.secrets["drive"]["folder_id"]
 
         with st.form("form_export_drive"):
             st.markdown("### Exportar pedido a Google Drive")
+            st.caption("Los exports se guardan en la unidad compartida **CUBRO-npd-orderhub**.")
             nombre_export = st.text_input(
                 "Nombre del export",
                 placeholder="Ej: Cocina García 2026-07",
-                help="Será el nombre de la carpeta creada en Drive.",
+                help="Será el nombre de la carpeta creada dentro de la subcarpeta destino.",
             )
-            link_carpeta = st.text_input(
-                "Link a la carpeta de Drive destino",
-                placeholder="https://drive.google.com/drive/folders/...",
-                help="Pega el link de la carpeta de Drive donde quieres guardar el export.",
+            subcarpeta_input = st.text_input(
+                "Subcarpeta destino dentro de CUBRO-npd-orderhub",
+                placeholder="Nombre de subcarpeta  o  link de Drive",
+                help=(
+                    "Escribe un nombre (se crea si no existe) "
+                    "o pega el link de una subcarpeta ya existente dentro de CUBRO-npd-orderhub."
+                ),
             )
             submitted = st.form_submit_button("📤 Exportar a Drive", type="primary", use_container_width=True)
 
         if submitted:
             if not nombre_export.strip():
                 st.error("Escribe un nombre para el export.")
-            elif not link_carpeta.strip():
-                st.error("Pega el link de la carpeta de Drive destino.")
+            elif not subcarpeta_input.strip():
+                st.error("Indica la subcarpeta destino dentro de CUBRO-npd-orderhub.")
             else:
-                folder_id = _parsear_folder_id(link_carpeta)
-                with st.spinner("Subiendo archivos a Google Drive..."):
+                with st.spinner("Preparando carpeta y subiendo archivos a Google Drive..."):
                     try:
+                        drive = _drive_client()
+                        subcarpeta_id = _resolver_subcarpeta(
+                            drive, subcarpeta_input.strip(), root_drive_id
+                        )
                         url_carpeta = _subir_a_drive(
                             nombre_export.strip(),
-                            folder_id,
+                            subcarpeta_id,
                             pedido,
                             catalogo,
                             csv_fn_export,
                             fecha_export,
                         )
                         st.success(
-                            f"✅ Export subido correctamente. "
+                            f"✅ Export guardado en Drive correctamente. "
                             f"[Abrir carpeta en Drive]({url_carpeta})"
                         )
                     except Exception as e:
