@@ -3313,23 +3313,23 @@ def paso_2(pedido: list[dict] | None) -> None:
                 st.session_state.pop("drive_subcarpetas", None)
                 st.rerun()
 
-        # --- Selector de subcarpeta (fuera del form para reacción inmediata) ---
-        busqueda = st.text_input(
-            "Buscar subcarpeta",
-            placeholder="Escribe para filtrar…",
-            label_visibility="collapsed",
+        # --- Nombre del export ---
+        _nombre_csv = (st.session_state.get("csv_filename") or "pedido")
+        if _nombre_csv.lower().endswith(".csv"):
+            _nombre_csv = _nombre_csv[:-4]
+        nombre_export = st.text_input(
+            "Nombre del export",
+            value=_nombre_csv,
+            help="Por defecto es el nombre del CSV subido. Puedes modificarlo.",
         )
-        nombres_filtrados = [
-            n for n in subcarpetas_dict.keys()
-            if busqueda.lower() in n.lower()
-        ] if busqueda else list(subcarpetas_dict.keys())
-        opciones_selector = nombres_filtrados + [_OPC_NUEVA]
 
+        # --- Selector de subcarpeta ---
+        opciones_selector = list(subcarpetas_dict.keys()) + [_OPC_NUEVA]
         seleccion = st.selectbox(
             "Subcarpeta destino dentro de CUBRO-npd-orderhub",
             options=opciones_selector,
             index=None,
-            placeholder="Selecciona una subcarpeta…",
+            placeholder="Escribe o selecciona una subcarpeta…",
         )
 
         nombre_nueva = ""
@@ -3339,51 +3339,62 @@ def paso_2(pedido: list[dict] | None) -> None:
                 placeholder="Ej: Proyecto García",
             )
 
-        # --- Formulario: solo nombre del export y botón ---
-        _nombre_csv = (st.session_state.get("csv_filename") or "pedido")
-        if _nombre_csv.lower().endswith(".csv"):
-            _nombre_csv = _nombre_csv[:-4]
+        # --- Botones de export ---
+        def _generar_zip():
+            import io as _io
+            import zipfile as _zf
+            import modulo_c as _mc
+            nombre_base = _nombre_export_base()
+            buf = _io.BytesIO()
+            with _zf.ZipFile(buf, "w", _zf.ZIP_DEFLATED) as zf:
+                json_bytes = json.dumps(
+                    _mc.generar_json_pedido(pedido), ensure_ascii=False, indent=2
+                ).encode("utf-8")
+                zf.writestr(nombre_base + "_pedido.json", json_bytes)
+                pdf_es = generar_pdf_resumen(pedido, catalogo, csv_fn_export, fecha_export, idioma="es")
+                zf.writestr(nombre_base + "_resumen_es.pdf", pdf_es)
+                pdf_fr = generar_pdf_resumen(pedido, catalogo, csv_fn_export, fecha_export, idioma="fr")
+                zf.writestr(nombre_base + "_resumen_fr.pdf", pdf_fr)
+            return buf.getvalue()
 
-        with st.form("form_export_drive"):
-            nombre_export = st.text_input(
-                "Nombre del export",
-                value=_nombre_csv,
-                help="Por defecto es el nombre del CSV subido. Puedes modificarlo.",
+        col_drive, col_dl = st.columns(2)
+        with col_drive:
+            if st.button("📤 Exportar a Drive", type="primary", use_container_width=True):
+                _ne = nombre_export.strip()
+                if not _ne:
+                    st.error("Escribe un nombre para el export.")
+                elif not seleccion:
+                    st.error("Selecciona una subcarpeta destino.")
+                elif seleccion == _OPC_NUEVA and not nombre_nueva.strip():
+                    st.error("Escribe el nombre de la nueva subcarpeta.")
+                else:
+                    with st.spinner("Subiendo archivos a Google Drive..."):
+                        try:
+                            drive = _drive_client()
+                            if seleccion == _OPC_NUEVA:
+                                subcarpeta_id = _resolver_subcarpeta(drive, nombre_nueva.strip(), root_drive_id)
+                                st.session_state.pop("drive_subcarpetas", None)
+                            else:
+                                subcarpeta_id = subcarpetas_dict[seleccion]
+                            url_carpeta = _subir_a_drive(
+                                _ne, subcarpeta_id, pedido, catalogo, csv_fn_export, fecha_export,
+                            )
+                            st.success(
+                                f"✅ Export guardado en Drive. "
+                                f"[Abrir carpeta]({url_carpeta})"
+                            )
+                            st.session_state["_export_ok_url"] = url_carpeta
+                        except Exception as e:
+                            st.error(f"❌ Error al subir a Drive: {e}")
+        with col_dl:
+            _zip_nombre = (nombre_export.strip() or _nombre_csv) + ".zip"
+            st.download_button(
+                "⬇️ Exportar a Descargas",
+                data=_generar_zip(),
+                file_name=_zip_nombre,
+                mime="application/zip",
+                use_container_width=True,
             )
-            submitted = st.form_submit_button("📤 Exportar a Drive", type="primary", use_container_width=True)
-
-        if submitted:
-            nombre_export = nombre_export.strip()
-            if not nombre_export:
-                st.error("Escribe un nombre para el export.")
-            elif not seleccion:
-                st.error("Selecciona una subcarpeta destino.")
-            elif seleccion == _OPC_NUEVA and not nombre_nueva.strip():
-                st.error("Escribe el nombre de la nueva subcarpeta.")
-            else:
-                with st.spinner("Preparando carpeta y subiendo archivos a Google Drive..."):
-                    try:
-                        drive = _drive_client()
-                        if seleccion == _OPC_NUEVA:
-                            subcarpeta_id = _resolver_subcarpeta(drive, nombre_nueva.strip(), root_drive_id)
-                            st.session_state.pop("drive_subcarpetas", None)
-                        else:
-                            subcarpeta_id = subcarpetas_dict[seleccion]
-                        url_carpeta = _subir_a_drive(
-                            nombre_export,
-                            subcarpeta_id,
-                            pedido,
-                            catalogo,
-                            csv_fn_export,
-                            fecha_export,
-                        )
-                        st.success(
-                            f"✅ Export guardado en Drive correctamente. "
-                            f"[Abrir carpeta en Drive]({url_carpeta})"
-                        )
-                        st.session_state["_export_ok_url"] = url_carpeta
-                    except Exception as e:
-                        st.error(f"❌ Error al subir a Drive: {e}")
 
         if st.session_state.get("_export_ok_url"):
             st.button(
