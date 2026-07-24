@@ -422,7 +422,10 @@ def main() -> None:
         return
 
     if st.session_state.muebles is None:
-        st.title("Order Hub CUBRO")
+        st.markdown(
+            "<h1 style='color: purple;'>Order Hub CUBRO</h1>",
+            unsafe_allow_html=True,
+        )
         st.info("Sube un CSV exportado desde SketchUp en la barra lateral para comenzar.")
         return
 
